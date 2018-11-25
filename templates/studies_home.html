@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Studies</li>
+{% endblock %}
+
+{% block content %}
+
+  <div class="mb-4">
+    <a href="{% url 'new_study' %}" class="btn btn-primary">New study</a>
+  </div>
+  
+
+  <table class="table">
+    <thead class="thead-inverse">
+      <tr>
+        <th>Study</th>
+        <th>Add Rep</th>
+        <th>Reps</th>
+        <th>Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for study in studies %}
+        <tr>
+          <td>
+            <!-- <a href="{% url 'board_topics' study.pk %}">{{ study.name }}</a> -->
+            <a href="{% url 'edit_study' study.pk %}">{{ study.name }}</a>
+            <small class="text-muted d-block">{{ study.description }}</small>
+          </td>
+          <td class="align-middle">
+            <a href="{% url 'add_rep' study.pk %}">Add Rep</a>
+          </td>
+          <td class="align-middle">0</td>
+          <td class="align-middle">{{ study.owner }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

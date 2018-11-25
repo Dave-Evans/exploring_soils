@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="title" content="cgms-be" />
+  <meta name="robots" content="index,follow" /> 
+  <meta name="author" content="Julien" />
+  <!-- <link rel="stylesheet" href="lib/bootstrap-3.3.6-dist/css/bootstrap.css"> -->
+  <!-- debug css version--> 
+  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  
+  <!-- <link rel="stylesheet" href="css/style.css" type="text/css" /> -->
+  <style>
+    /* body */
+    html, body {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+    body {
+      padding-top: 50px;   /* the size of the padding-top need to be the one of the navbar */
+    }
+    /* Main containers */
+    .header{
+       -webkit-box-shadow: 0 5px 15px rgba(1,1,1,.7);  /* makes a grey shadow below the navbar */
+       box-shadow: 0 5px 15px rgba(1,1,1,.7); 
+    }
+    .bodyContainer {
+      height:100%;
+      width: auto;  /* need to overwrite the width set by bootstrap */
+    }
+    .mapContainer {
+      height: 100%; 
+    }
+    div#map {
+      height: 100%;         /* to specify the full height for the map, works only if height is set in body and parent divs */ 
+      background-color: #b5d0d0; 
+      padding-right: 0px;   /* need to overwrite the padding-right and padding-left set by bootstrap */
+      padding-left: 0px;
+    }
+    div#panel {
+      position: absolute;
+      top: 50px;
+      padding-top: 8px;          /* needed to move the content below the gray shadow specified in the header */
+      height: calc(100% - 50px); /* calc is used to substract the height of the navbar */
+      width: 400px;
+      background-color: #fafafa;
+      opacity: 0.92;
+      -webkit-transition: width 0.6s;
+      transition: width 0.6s;
+      z-index: 100;
+    }
+    /* Collapse buttons */
+    div#collapseBtnXs{
+       position: absolute;
+       bottom: 10px;
+       left: 10px;
+       z-index:2;
+    }
+    div#collapseBtnXs button {
+      font-weight: bold;
+    }
+    div#collapseBtn {
+      float:right;
+      margin-top: 3px;
+      margin-right: 3px;
+      font-weight: bold;
+    }
+    div#collapseBtn button {
+      font-weight: bold;
+    }
+    div#panelContent {
+      opacity: 1;
+      height: inherit;   /* better than height: 100% */
+      width: 100%;
+      overflow: auto;
+      -webkit-transition: opacity 0.6s;
+      transition: opacity 0.6s;
+    }
+    @media all and (max-width: 768px) {
+      div#panel {
+         width: 0px;
+         }
+      div#panelContent{
+         opacity: 0;
+      }
+    }
+    /* OpenLayers controls */
+    .ol-zoom {
+       right: 8px;
+       top: 12px;
+       left: auto;      /* needed to avoid the background-color of the ol zoom control spanning from the left side of the screen */
+    }
+    @media all and (max-width: 768px) {
+      .ol-zoom {
+         top: initial;   /* needed to clear the top property specified by OpenLayers */
+         right: 8px;
+         bottom: 6px;
+         left: auto;   /* needed to avoid the background-color of the ol zoom control spanning from the left side of the screen */
+       }
+    }
+    .ol-scale-line {
+      right: 40px;
+      left: auto;
+    }
+    /* Hamburger button */
+    .header button span{
+       background-color: #23527c;
+    }
+    .navbar-collapse {
+      background-color: #fff;
+    }
+  </style>
+
+  <!-- Used for  show/collapse panel functions -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  
+  <!-- // <script type="text/javascript" src="lib/ol3.8.2/ol-debug.js"></script>  -->
+  <!-- The below doesn't seem necessary to the working of this map -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.5.0/ol.css" type="text/css" /> -->
+  <!-- // <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.8.0/ol.js"></script> -->
+
+
+
+  <title>Add a rep to {{study.name}} </title>
+  <!-- 
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+     -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+
+  <style>
+    /*#map{ width: 900px; height: 1000px; }*/
+    /*#map{ width: 100%; height: 100%; }*/
+    .legend {
+      /*border: 120%;*/
+      /*margin: 70px;*/
+      padding: 5px;
+      text-align: left;
+      line-height: 18px;
+      color: #000;
+      background: #fff;
+    }
+    .legend i {
+      width: 18px;
+      height: 18px;
+      float: left;
+      margin-right: 8px;
+      opacity: 1;
+    }
+/*    .legend .circle {
+      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      margin-top: 8px;
+    }*/
+  </style>
+ </head>
+ <body> 
+   
+   <!-- navigation bar -->
+   <nav class="navbar navbar-fixed-top header" role="navigation">
+    <div class="navbar-header">
+     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+     </button>
+     <a class="navbar-brand" href="#">Add Rep to {{study.name}}</a>
+    </div>
+    <div class="collapse navbar-collapse" id="navbar">
+     <ul class="nav navbar-nav">
+      <li><a href="#" >menu1</a></li>
+      <li><a href="#" >menu2</a></li>
+      <li><a href="#" >menu3</a></li>
+     </ul>
+    </div>
+   </nav>
+   
+  <div class="container bodyContainer">
+   <div class="row mapContainer"> 
+    
+    <!-- panel --> 
+    <div id="collapseBtnXs" class="visible-xs">   
+      <button type="button" class="btn"  onclick="collapsePanelXs();">+</button>
+    </div>
+       
+    <div id="panel" >
+      
+     <div id="collapseBtn" >     
+      <button type="button" class="btn btn-sm hidden-xs"  onclick="collapsePanel();"><</button>
+     </div>
+     
+     <div id="panelContent" class="container-fluid" >
+      <br>
+      <b> {{study.name}} </b>
+      <br>
+     Add a rep.
+        <div style="border: black; font-size:12px; width:400px">
+      
+          <!-- These will be replaced wth text boxes -->
+          <!-- The Lower left (Southwest-most) point: <br>
+            <p id="lower_left_point_lat">0</p>
+            <p id="lower_left_point_long">0</p>
+          The Upper left (Southwest-most) point: <br>
+            <p id="upper_left_point_lat">0</p>
+            <p id="upper_left_point_long">0</p> -->
+
+
+            
+              <form method="post" novalidate>
+                {% csrf_token %}
+                {% include 'includes/form.html' %}
+                <button type="submit" class="btn btn-success">Save Rep</button>
+              </form>
+            
+              <button id='btn_start_drawing' class="btn btn-success">Start Drawing</button>
+              <br>
+              <button id='btn_stop_drawing' class="btn btn-success">Stop Drawing</button>
+              <br>
+              <button id='btn_clear_drawing' class="btn btn-success">Clear Drawing</button>
+        <br>
+      
+      </div>
+
+    </div>
+    </div>
+    
+    <!-- map -->
+    <div class="col-xs-12" id="map" ></div>
+     <script>
+//https://awoodruff.github.io/leaflet-intro/
+  // initialize the map
+  // var map = L.map('map', {
+  //   crs: L.CRS.EPSG3395
+  // }).setView([43.21, -89.41], 12);
+
+  // var map = L.map('map').setView([43.21, -89.41], 12);
+  // // load a tile layer
+  // L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {'attribution': '<a href="http://stamen.com">Stamen Design</a>'})
+  //   .addTo(map);
+
+// https://stackoverflow.com/questions/29900697/labelled-satellite-base-map-layer-not-using-google-maps
+  // Thanks!: http://bl.ocks.org/d3noob/8663620
+  var map = L.map('map').setView([43.21, -89.41], 14);
+  mapLink = 
+      '<a href="http://www.esri.com/">Esri</a>';
+  wholink = 
+      'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+  L.tileLayer(
+      'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; '+mapLink+', '+wholink,
+      maxZoom: 18,
+      }).addTo(map);
+  $("#map").css("zIndex", 1)    
+
+    var ll_marker = L.marker([0,0])
+    var ul_marker = L.marker([0,0])
+    
+    function clearCoords(){
+      $('#id_lower_left_corner_y').val(0);
+      $('#id_lower_left_corner_x').val(0);
+      $('#id_upper_left_corner_y').val(0);
+      $('#id_upper_left_corner_x').val(0);
+    };
+    clearCoords();
+//43.294281854583 89.3825554847717 43.2972803939921 89.3825554847717
+    //var dataurl = " url 'get_plots' study.pk";
+    
+
+
+    function grabClickedPoint(e) {
+          if ($('#id_lower_left_corner_y').val() == 0){
+            var ll_lat = e.latlng.lat;
+            var ll_long = e.latlng.lng;
+            $('#id_lower_left_corner_y').val(ll_lat);
+            $('#id_lower_left_corner_x').val(ll_long);
+            ll_marker = L.marker(e.latlng);
+            ll_marker.addTo(map);
+          } else {
+            var ul_lat = e.latlng.lat;
+            var ul_long = e.latlng.lng;
+            $('#id_upper_left_corner_y').val(ul_lat);
+            $('#id_upper_left_corner_x').val(ul_long);
+            map.removeLayer(ul_marker);
+            ul_marker = L.marker(e.latlng);
+            ul_marker.addTo(map);
+          };
+    
+
+          
+
+    };
+    
+// leaflet load geojson from django url template
+
+
+    $('#btn_start_drawing').on('click', function(e) {
+
+      console.log("lets start drawing.");
+      map.on('click', grabClickedPoint);
+    
+    });
+
+
+// /studies/get_rep/1/43.294281854583/-89.3825554847717/43.2972803939921/-89.3825554847717
+// /studies/get_rep/1/43.206763321826394/-89.43153262138367/43.208170926806
+    var plotLayer;
+    $('#btn_stop_drawing').on('click', function(e) {
+
+      console.log("lets stop drawing.");
+      map.off('click', grabClickedPoint);
+      var dataurl = "/studies/get_rep/{{ study.pk }}/" + $('#id_lower_left_corner_y').val().toString() + "/" +
+        $('#id_lower_left_corner_x').val().toString() + "/" +
+        $('#id_upper_left_corner_y').val().toString() + "/" +
+        $('#id_upper_left_corner_x').val().toString();
+      
+      
+      $.getJSON(dataurl, function(data) {
+              plotLayer = L.geoJson(data, {
+
+              onEachFeature: function (feature, layer) {
+                console.log(feature.properties.plot_num.toString());
+                 layer.bindPopup(feature.properties.plot_num.toString());
+                  }
+              
+              });
+          //wpLayer.addTo(map);
+            map.addLayer(plotLayer);
+          });
+    });
+      
+
+
+    $('#btn_clear_drawing').on('click', function(e) {
+
+      console.log("lets clear drawing.");
+      clearCoords();
+      map.removeLayer(plotLayer);
+      map.removeLayer(ll_marker);
+      map.removeLayer(ul_marker);
+      
+    
+    });
+
+  </script>
+   </div>
+  </div>
+  
+
+
+  <script type="text/javascript">
+var showPanel = true;
+var collapsePanel = function(){
+  if(showPanel === true){
+    $('div#panel').css('width','35px');
+    $('div#panelContent').css('opacity','0' );
+    $('div#collapseBtn button').text('>');
+    showPanel =! showPanel;
+    }
+   else{
+    $('div#panel').css('width','300px');
+    $('div#panelContent').css('opacity','1');
+    $('div#collapseBtn button').text('<');
+    showPanel =! showPanel;
+    }
+}
+// Hide/show panel function for mobile view. The panel is not shown by default.
+var showPanelXs = false;
+var collapsePanelXs = function(){
+  if(showPanelXs === true){
+    $('div#panel').css('width','0px');
+    $('div#panelContent').css('opacity','0' );
+    showPanelXs =! showPanelXs;
+    }
+   else{
+     $('div#panel').css('width','calc(100% - 45px)');
+     $('div#panelContent').css('opacity','1');
+     $('div#navbar').removeClass('in')
+    showPanelXs =! showPanelXs;
+    }
+}
+
+
+  var house = "Assembly";
+  var year = "2014";
+  $("#house_asm").change(function() {
+    check_house();
+  });
+  $("#house_sen").change(function() {
+    check_house();
+  });
+  $("#sel_year").change(function() {
+    
+    year = $(this).val();
+    console.log("Selected year is " + year);
+    updateFillColors(year.substring(2));
+    updatePopup(year.substring(2));
+  });
+  var check_house = function(){
+      console.log("Checking house...");
+      if ($("#house_sen").is(':checked')){
+        house = "Senate";
+      } else {
+        house = "Assembly";
+      }
+      console.log("Checked house is " + house);
+    }
+  </script>
+  
+ </body>  
+</html>
+
+<!-- <script type="text/javascript" src="map.js"></script> -->
+
