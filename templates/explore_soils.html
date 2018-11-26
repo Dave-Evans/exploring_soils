@@ -246,6 +246,40 @@
               <button id='btn_clear_drawing' class="btn btn-success">Clear Drawing</button>
         <br>
 
+        <div>Select a Soil Property to View
+          <br>
+          <select id="sel_property">
+           <option value="drainagecl">Drainage Class</option>
+           <option value="sandtotal_r">Sand Percentage</option>
+           <option value="silttotal_r">Silt Percentage</option>
+           <option value="claytotal_r">Clay Percentage</option>
+
+           <option value="om_r">Organic Matter</option>
+           <option value="dbovendry_r">Bulk Density</option>
+           <option value="ksat_r">Saturated Conductivity</option>
+           <option value="awc_r">Available Water Capacity</option>
+           <option value="ph">pH</option>
+          </select>
+        </div>
+        <div>Select a Depth
+          <br>
+          <select id="sel_depth">
+           <option value="0">0 cm (surface)</option>
+           <option value="10">10 cm</option>
+           <option value="20">20 cm</option>
+           <option value="30">30 cm</option>
+
+           <option value="40">40 cm</option>
+           <option value="50">50 cm</option>
+           <option value="75">75 cm</option>
+           <option value="100">100 cm</option>
+           <option value="125">125 cm</option>
+           <option value="150">150 cm</option>
+           <option value="175">175 cm</option>
+           <option value="200">200 cm</option>
+          </select>
+        </div>
+
       </div>
 
     </div>
@@ -267,7 +301,7 @@
 
 // https://stackoverflow.com/questions/29900697/labelled-satellite-base-map-layer-not-using-google-maps
   // Thanks!: http://bl.ocks.org/d3noob/8663620
-  var map = L.map('map').setView([43.21, -89.41], 14);
+  var map = L.map('map').setView([42.4, -91.118], 14);
   mapLink =
       '<a href="http://www.esri.com/">Esri</a>';
   wholink =
@@ -291,8 +325,41 @@
     clearCoords();
 //43.294281854583 89.3825554847717 43.2972803939921 89.3825554847717
     //var dataurl = " url 'get_plots' study.pk";
+    var style_var = 'sandtotal_r_0cm';
+    var style_txt = 'Sand total ';
+    var selected_property = "sandtotal_r";
+    var selected_depth = "0";
 
+    function buildPropString(prop, depth){
+      var prop_dep_str = prop + "_" + depth + "cm";
 
+      if (prop == "drainagecl"){
+        prop_dep_str = "drainagecl";
+      }
+      style_var = prop_dep_str;
+    };
+
+    $("#sel_property").change(function() {
+
+      var prop = $(this).val();
+      var depth = $('#sel_depth').val();
+      console.log("Selected property is " + prop);
+
+      buildPropString(prop, depth);
+      changePolyColor();
+      style_txt = $('#sel_property option:selected').text();
+
+    });
+
+    $("#sel_depth").change(function() {
+
+      var depth = $(this).val();
+      var prop = $('#sel_property').val();
+      console.log("Selected depth is " + depth);
+
+      buildPropString(prop, depth);
+      changePolyColor();
+    });
 
     function grabClickedPoint(e) {
           if ($('#id_lower_left_corner_y').val() == 0){
@@ -325,7 +392,7 @@
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
         this._div.innerHTML = '<h4>Hover over a mapunit to look at a common soil property.</h4>' +  (props ?
-            '<b>' + props.muname + '</b><br />' + props[style_var] + '% silt'
+            '<b>' + props.muname + '</b><br />' + style_txt + ": " + props[style_var]
             : 'Explore soils!');
     };
 
@@ -357,10 +424,7 @@
 
     });
 
-
-// /studies/get_rep/1/43.294281854583/-89.3825554847717/43.2972803939921/-89.3825554847717
-// /studies/get_rep/1/43.206763321826394/-89.43153262138367/43.208170926806
-    var plotLayer;
+    var soilsLayer;
     $('#btn_stop_drawing').on('click', function(e) {
 
       console.log("lets stop drawing.");
@@ -406,7 +470,7 @@
                d > 1   ? '#FED976' :
                         '#FFEDA0';
     };
-    var style_var = 'silttotal_r_0cm';
+
     function styleFun(feature) {
         return {
             fillColor: getColor(feature.properties[style_var]),
@@ -425,11 +489,11 @@
           mouseout: resetHighlight,
         });
 
-      var silt_val = feature.properties[style_var];
-      if (silt_val != null){
-        silt_val = silt_val.toString();
+      var val = feature.properties[style_var];
+      if (val != null){
+        val = val.toString();
        };
-       layer.bindPopup(feature.properties.muname.toString() + "\n" + "Silt percent: " + silt_val);
+       layer.bindPopup(feature.properties.muname.toString() + "\n" + style_txt  + ": " + val);
       }
 
 
@@ -450,6 +514,10 @@
     function resetHighlight(e) {
         soilsLayer.resetStyle(e.target);
         info.update();
+    }
+
+    function changePolyColor(){
+      soilsLayer.setStyle(styleFun)
     }
 
   </script>
@@ -503,7 +571,7 @@ var collapsePanelXs = function(){
 
     year = $(this).val();
     console.log("Selected year is " + year);
-    updateFillColors(year.substring(2));
+    //updateFillColors(year.substring(2));
     updatePopup(year.substring(2));
   });
   var check_house = function(){
