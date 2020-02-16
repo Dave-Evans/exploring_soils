@@ -1,5 +1,7 @@
 ## Exploring Soils
 
+This was going to be an application just aimed at visualizing soil properties at depth, but has shifted and will now be the main Django project for a variety of projects, name to change soon.
+
 There are two aims to this web app, first and foremost is to build something to easily explore soil properties using SSURGO data.
 The idea will be select an area, then pull in soils and have the data aggregated to the mapunit level.
 Then you can select which property and depth you are interested and "dig in" and explore the soil.
