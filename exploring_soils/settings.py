@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'boards',
     ## custom app
     'plotter',
+    ## custom app
+    'books',
 
 ]
 

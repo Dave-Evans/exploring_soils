@@ -21,6 +21,8 @@ from django.urls import path
 from accounts import views as accounts_views
 from boards import views
 from plotter import views as plotter_views
+from books import views as books_views
+
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^new_study/$', plotter_views.new_study, name='new_study'),
@@ -37,6 +39,11 @@ urlpatterns = [
     url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
 
+    # Books app
+    url(r'^books/$', books_views.book_list, name="book_list"),
+    url(r'^books/create/$', books_views.book_create, name='book_create'),
+    url(r'^books/(?P<pk>\d+)/update/$', books_views.book_update, name='book_update'),
+    url(r'^books/(?P<pk>\d+)/delete/$', books_views.book_delete, name='book_delete'),
 
     url(r'^settings/password/$', auth_views.PasswordChangeView.as_view(template_name='password_change.html'),
         name='password_change'),
