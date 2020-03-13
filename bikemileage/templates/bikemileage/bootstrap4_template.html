@@ -27,13 +27,7 @@
                     </form>
                 </div>
             {% endif %}
-              <p>
-                <button type="button" class="btn btn-primary js-create-ride"
-                        data-url="{% url 'ride_create' %}">
-                  <span class="glyphicon glyphicon-plus"></span>
-                  Add new ride
-                </button>
-              </p>
+
             <div class="col-sm-10">
                 {% render_table table %}
             </div>
