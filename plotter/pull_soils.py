@@ -93,9 +93,6 @@ def retrieve_and_process_soils(llx, lly, urx, ury):
     mu_co_cols = ['muname', 'mukey', 'comppct_r', 'compname',
             'slope_r', 'cokey', 'drainagecl']
 
-    col_sels = ['cokey','compname', 'hzname',
-        'hzdept_r', 'hzdepb_r', 'sandtotal_r']
-
     attrs = [ 'sandtotal_r', 'silttotal_r', 'claytotal_r',
         'om_r', 'dbovendry_r', 'ksat_r', 'awc_r', 'ph']
 
@@ -111,7 +108,7 @@ def retrieve_and_process_soils(llx, lly, urx, ury):
         right_index=True)
 
 
-    depths = [0,10,20,30,40,50,75,100]
+    depths = [0,10,20,30,40,50,75,100, 125, 150, 175, 200]
     lbl_depth = "{0}_{1}cm"
 
     lst_dats = []
@@ -188,6 +185,7 @@ def retrieve_and_process_soils(llx, lly, urx, ury):
 
 def return_soils_json(llx, lly, urx, ury):
     fl_nm = retrieve_and_process_soils(llx, lly, urx, ury)
+    # fl_nm = os.path.join(dir_tmp_dat, "temp_soils_geom_-91.1503_42.43372_-91.11803_42.44791.geojson")
     with open(fl_nm, "rt") as f:
         json_soils = json.load(f)
 
@@ -248,25 +246,3 @@ WHERE mu.mukey IN
 ORDER BY museq, comppct_r DESC, compname, hzdept_r
 
 '''
-
-##      Drop components with no horizon data?
-
-##  then bring to map unit level
-
-
-
-
-
-
-
-## Crap and extra
-
-
-# dat.loc[dat['hzdept_r'] == 0, col_sels ]
-## At 10
-# dat.loc[ (dat['hzdept_r'] <= 10) &\
-#     (dat['hzdepb_r'] > 10), col_sels ]
-
-## At 25
-# dat.loc[ (dat['hzdept_r'] <= 30) &\
-#     (dat['hzdepb_r'] > 30), col_sels ]
