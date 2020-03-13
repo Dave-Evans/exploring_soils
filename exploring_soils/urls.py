@@ -22,6 +22,8 @@ from accounts import views as accounts_views
 from boards import views
 from plotter import views as plotter_views
 from books import views as books_views
+from bikemileage import views as mileage_views
+from bikemileage.views import CustomMileageListView
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -34,6 +36,9 @@ urlpatterns = [
     url(r'^studies/(?P<pk>\d+)/retrieve_existing_reps/$', plotter_views.retrieve_existing_reps, name='retrieve_existing_reps'),
 
     url(r'^studies/get_rep/(?P<pk>\d+)/(?P<lly>-?\d+\.\d+)/(?P<llx>-?\d+\.\d+)/(?P<uly>-?\d+\.\d+)/(?P<ulx>-?\d+\.\d+)/$', plotter_views.get_plots, name='get_plots'),
+    # bikemileage App
+    url(r'^mileage/$',mileage_views.mileage_list, name='mileage_list' ),
+    path('custom_mileage', CustomMileageListView.as_view() , name='custom_mileage' ),
 
     url(r'^signup/$', accounts_views.signup, name='signup'),
     url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),

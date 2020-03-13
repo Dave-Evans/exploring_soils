@@ -47,6 +47,11 @@ INSTALLED_APPS = [
     'plotter',
     ## custom app
     'books',
+    ## custom app
+    'bikemileage',
+    "bootstrap4",
+    "django_tables2",
+    "django_filters",
 
 ]
 
