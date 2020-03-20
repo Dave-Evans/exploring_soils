@@ -17,6 +17,15 @@
 
         <h3>django_tables2 with <a href="https://getbootstrap.com/docs/4.0/">Bootstrap 4</a> template example</h3>
 
+          <p>
+            <a href="{% url 'mileage_create' %}"
+            <button type="button" class="btn btn-primary create-mileage">
+              <span class="glyphicon glyphicon-plus"></span>
+              Enter new ride
+            </button>
+            </a>
+          </p>
+
 
         <div class="row">
             {% if filter %}

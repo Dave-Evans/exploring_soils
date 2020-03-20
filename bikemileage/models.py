@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.urls import reverse
 
 class Mileage(models.Model):
     # TODO Bike should be separate model class
@@ -23,3 +23,7 @@ class Mileage(models.Model):
     comment         = models.TextField(blank=True, null=True)
     cost           = models.FloatField(null=True)
 
+    def get_absolute_url(self):
+        return reverse('custom_mileage')
+        #, kwargs={'pk': self.pk})
+        #sort=-ride_date

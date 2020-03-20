@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.template import loader
 
 from django.views.generic.base import TemplateView
+from django.views.generic import CreateView
 from django_filters.views import FilterView
 
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableMixin, SingleTableView
@@ -26,6 +27,10 @@ def mileage_list(request):
 
     return render(request, "bikemileage/bootstrap4_template.html", {"table": table})
 
+
+class MileageCreateView(CreateView):
+    model = Mileage
+    fields = ('ride_date', 'rider', 'mileage', 'bike_type', 'comment', 'cost')
 
 
 

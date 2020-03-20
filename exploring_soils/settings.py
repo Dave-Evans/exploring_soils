@@ -39,6 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'widget_tweaks',
+
+    'bootstrap4',
+    'django_tables2',
+    'django_filters',
+    'crispy_forms',
+
     ## For authenticating users
     'accounts',
     ## custom app
@@ -49,11 +55,10 @@ INSTALLED_APPS = [
     'books',
     ## custom app
     'bikemileage',
-    "bootstrap4",
-    "django_tables2",
-    "django_filters",
 
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
