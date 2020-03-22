@@ -4,14 +4,16 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.template import loader
 
+
 from django.views.generic.base import TemplateView
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from django_filters.views import FilterView
 
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableMixin, SingleTableView
 from django_tables2.export.views import ExportMixin
 from django_tables2.paginators import LazyPaginator
 
+from .forms import MileageForm
 from .filters import MileageFilter
 from .models import Mileage
 from .tables import (
@@ -32,7 +34,13 @@ class MileageCreateView(CreateView):
     model = Mileage
     fields = ('ride_date', 'rider', 'mileage', 'bike_type', 'comment', 'cost')
 
+# TODO: add a 'cancel' button to the update page, where is that update page?
+class MileageUpdateView(UpdateView):
+    model = Mileage
+    form_class = MileageForm
+    template_name = 'bikemileage/mileage_update_form.html'
 
+# TODO: Add mileage delete
 
 class CustomMileageListView(ExportMixin, SingleTableMixin, FilterView):
     """List mileage entries, with filters"""

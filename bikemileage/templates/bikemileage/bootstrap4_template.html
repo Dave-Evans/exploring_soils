@@ -1,16 +1,8 @@
-{% load static %}
+{% extends 'base.html' %}
 {% load render_table from django_tables2 %}
 {% load bootstrap4 %}
-<!doctype html>
-<html>
-<head>
-    <title>django_tables2 with bootstrap 4 template example</title>
-    {% bootstrap_css %}
 
-</head>
-<body>
-    <div class="container">
-        {% block body %}
+        {% block content %}
 
         <a href="https://getbootstrap.com/docs/4.0/content/tables/">Bootstrap 4 - tables docs</a> |
         <a href="https://getbootstrap.com/docs/4.0/components/pagination/">Bootstrap 4 - pagination docs</a>
@@ -42,6 +34,4 @@
             </div>
         </div>
         {% endblock %}
-    </div>
-</body>
-</html>
+

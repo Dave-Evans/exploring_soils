@@ -25,5 +25,6 @@ class Mileage(models.Model):
 
     def get_absolute_url(self):
         return reverse('custom_mileage')
+        # TODO figure out how to redirect to a sorted page
         #, kwargs={'pk': self.pk})
         #sort=-ride_date

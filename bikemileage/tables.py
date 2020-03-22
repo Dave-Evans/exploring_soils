@@ -1,4 +1,5 @@
 import django_tables2 as tables
+from django_tables2 import TemplateColumn
 
 from .models import Mileage
 
@@ -13,3 +14,4 @@ class Bootstrap4Table(tables.Table):
         attrs = {"class": "table table-hover"}
         # exclude = ("friendly",)
 
+    edit = TemplateColumn(template_name='bikemileage/mileage_update_column.html')

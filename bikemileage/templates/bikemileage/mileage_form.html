@@ -7,5 +7,6 @@
     {% csrf_token %}
     {{ form|crispy }}
     <button type="submit" class="btn btn-success">Save ride</button>
+    <a href="{% url 'custom_mileage' %}" <button class="btn btn-danger">Cancel</button> </a>
   </form>
 {% endblock %}
