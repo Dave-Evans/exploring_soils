@@ -8,7 +8,7 @@
     <td>{{ book.publication_date }}</td>
     <td>{{ book.pages }}</td>
     <td>{{ book.completed }}</td>
-    <td>{{ book.description }}</td>
+    <td>{{ book.description|truncatechars:25 }}</td>
 
     <td style="width: 150px">
       <button type="button"
