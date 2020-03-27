@@ -15,3 +15,4 @@ class Bootstrap4Table(tables.Table):
         # exclude = ("friendly",)
 
     edit = TemplateColumn(template_name='bikemileage/mileage_update_column.html')
+    delete = TemplateColumn(template_name='bikemileage/mileage_delete_column.html')

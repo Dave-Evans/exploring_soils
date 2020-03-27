@@ -1,12 +1,12 @@
 from random import choice
 
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.template import loader
 
 
 from django.views.generic.base import TemplateView
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django_filters.views import FilterView
 
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableMixin, SingleTableView
@@ -40,7 +40,10 @@ class MileageUpdateView(UpdateView):
     form_class = MileageForm
     template_name = 'bikemileage/mileage_update_form.html'
 
-# TODO: Add mileage delete
+class MileageDeleteView(DeleteView):
+    model = Mileage
+    # template_name = 'bikemileage/mileage_update_form.html'
+    success_url = reverse_lazy('custom_mileage')
 
 class CustomMileageListView(ExportMixin, SingleTableMixin, FilterView):
     """List mileage entries, with filters"""
