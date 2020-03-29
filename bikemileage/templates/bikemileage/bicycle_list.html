@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Bicycles</h2>
+      <p>
+      <a href="{% url 'bicycle_create' %}">
+        <button type="button" class="btn btn-primary create-bicycle">
+          <span class="glyphicon glyphicon-plus"></span>
+          New bicycle
+        </button>
+        </a>
+      </p>    
+    <ul>
+    {% for bicycle in bicycles %}
+        <li>{{ bicycle.name }}</li>
+    {% empty %}
+        <li colspan="7" class="text-center bg-warning">No bicycles</li>
+
+    {% endfor %}
+
+    </ul>
+{% endblock %}
