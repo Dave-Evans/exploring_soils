@@ -24,6 +24,7 @@ from plotter import views as plotter_views
 from books import views as books_views
 from bikemileage import views as mileage_views
 from bikemileage.views import CustomMileageListView, MileageCreateView, MileageUpdateView, MileageDeleteView
+from bikemileage.views import BicycleListView, BicycleCreateView, BicycleUpdateView, BicycleDeleteView
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -42,6 +43,11 @@ urlpatterns = [
     url(r'^mileage/create/$', MileageCreateView.as_view(), name='mileage_create'),
     url(r'^mileage/delete/(?P<pk>\d+)/', MileageDeleteView.as_view(), name='mileage_delete'),
     path('mileage/<int:pk>/edit/', MileageUpdateView.as_view(), name='mileage_update'),
+
+    path('bicycles', BicycleListView.as_view(), name='bicycle_list'),
+    path('bicycles/create', BicycleCreateView.as_view(), name='bicycle_create'),
+    path('bicycles/<int:pk>/', BicycleUpdateView.as_view(), name='bicycle_update'),
+    path('bicycles/<int:pk>/delete', BicycleDeleteView.as_view(), name='bicycle_delete'),
 
     url(r'^signup/$', accounts_views.signup, name='signup'),
     url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
