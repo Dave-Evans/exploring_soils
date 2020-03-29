@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Bicycles</h2>
+  <h1 class="page-header">Books</h1>
       <p>
       <a href="{% url 'bicycle_create' %}">
         <button type="button" class="btn btn-primary create-bicycle">
@@ -10,13 +10,32 @@
         </button>
         </a>
       </p>    
-    <ul>
-    {% for bicycle in bicycles %}
-        <li>{{ bicycle.name }}</li>
-    {% empty %}
-        <li colspan="7" class="text-center bg-warning">No bicycles</li>
-
-    {% endfor %}
-
-    </ul>
+  <table class="table" id="bicycle-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Make</th>
+        <th>Model</th>
+        <th>Year</th>
+        <th>Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for bicycle in bicycles %}
+        <tr>
+          <td>{{ bicycle.name }}</td>
+          <td>{{ bicycle.make }}</td>
+          <td>{{ bicycle.model }}</td>
+          <td>{{ bicycle.year }}</td>
+          <td>{{ bicycle.owner }}</td>
+          <td><a href="{% url 'bicycle_update' bicycle.pk %}">Edit</a></td>
+          <td><a href="{% url 'bicycle_delete' bicycle.pk %}">Delete</a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7" class="text-center bg-warning">No bikes</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
