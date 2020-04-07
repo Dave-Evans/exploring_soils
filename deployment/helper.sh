@@ -109,12 +109,19 @@ LOG_HANDLER_LOGFILE() {
 
 # Backup a file to aws S3
 case "$1" in
+    setcron)
+        croncmd="bash /home/ubuntu/exploring_soils/deployment/helper.sh bkup /home/ubuntu/exploring_soils/db.sqlite3"
+        cronjob="0 22 * * * $croncmd"
+        INFO "Creating cronjob:"
+        INFO "$cronjob"
+        ( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
+        ;;
     bkup)
         bucket="davemike-backup"
         folder="db"
         file=$(basename -- "$2")
-        echo Copying "$2"
-        echo To "s3://$bucket/$folder/$file"
+        INFO "Copying $2'"
+        INFO "To 's3://$bucket/$folder/$file'"
         aws s3 cp "$2" "s3://$bucket/$folder/$file"
         ;;
 esac
