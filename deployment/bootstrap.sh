@@ -31,7 +31,7 @@ python3 -m venv myvenv
 source myvenv/bin/activate
 
 # Install necessary python modules
-pip3 install -y -r requirements.txt
+pip3 install -r requirements.txt
 
 # Pull database info from S3
 aws s3 cp s3://davemike-backup/db/db.sqlite3 ./db.sqlite3
@@ -43,5 +43,10 @@ chmod 664 db.sqlite3
 sudo chown :www-data db.sqlite3
 sudo chown :www-data ~/exploring_soils
 sudo service apache2 restart
+
+bash ./deployment/helper.sh setcron
+bash ./deployment/helper.sh setcron
+
+
 
 

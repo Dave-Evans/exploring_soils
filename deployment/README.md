@@ -22,11 +22,13 @@ Short term, I will just work on getting it running.
 # Specify volume? VPC? Placement?
 aws ec2 run-instances --image-id ami-0fc20dd1da406780b\
     --count 1\
-    --instance-type t1.micro\
+    --instance-type t2.micro\
     --key-name wieff_1\
     --security-group-ids sg-09832f5ae52230593\
-    --iam-instance-profile Arn=arn:aws:iam::392349258765:instance-profile/davemike-test-ec2-role,Name=AIPAVWWOWSQG2MPNGSDR6\
-    --placement AvailabilityZone=string
+    --iam-instance-profile Arn=arn:aws:iam::392349258765:instance-profile/davemike-test-ec2-role\
+    --placement AvailabilityZone=us-east-2c > webserver_info.json
+# Need to parse the output for the Instance ID and then run describe on that instance to get the public IP
+
 ```
 ```sh
 sudo apt update -y
