@@ -20,7 +20,7 @@ for _tool in awscli python3-pip python3-venv gdal-bin apache2 libapache2-mod-wsg
     sudo apt install ${_tool} -y
 done;
 
-# Pull in project
+# Pull in project code
 git clone https://github.com/Dave-Evans/exploring_soils.git
 cd exploring_soils
 git config --global user.name "Dave-Evans"

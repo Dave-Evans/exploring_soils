@@ -19,6 +19,16 @@ Short term, I will just work on getting it running.
 	- GDAL
 
 ```sh
+# Specify volume? VPC? Placement?
+aws ec2 run-instances --image-id ami-0fc20dd1da406780b\
+    --count 1\
+    --instance-type t1.micro\
+    --key-name wieff_1\
+    --security-group-ids sg-09832f5ae52230593\
+    --iam-instance-profile Arn=arn:aws:iam::392349258765:instance-profile/davemike-test-ec2-role,Name=AIPAVWWOWSQG2MPNGSDR6\
+    --placement AvailabilityZone=string
+```
+```sh
 sudo apt update -y
 sudo apt upgrade -y
 sudo apt install python3-pip -y
@@ -46,6 +56,9 @@ sudo apt install gdal-bin
 # Install Apache
 sudo apt-get install apache2 libapache2-mod-wsgi-py3 -y
 
+# Install aws cli
+sudo apt  install awscli -y
+
 
 ```
  - Pull in code
@@ -62,9 +75,22 @@ sudo apt-get install apache2 libapache2-mod-wsgi-py3 -y
  - Hide the security key
  - Hide other stuff using some kind of config from SIBTC
  - Back up script for db.sqlite to S3
+    - Done with helper script and `bash deployment/helper.sh bkup db.sqlite3`
+    - schedule with cron:
+        - `bash /home/ubuntu/exploring_soils/deployment/helper.sh bkup /home/ubuntu/exploring_soils/db.sqlite3`
  - Force login for entering mileage
  - build bootstrap script
  - commit apache config file
+ - Address Github raised vulnerabilities
+ 
+#### Investigate
+
+ - HTTPs?
+ - Gnunicorn
+ - shift to postgresql
+ 
+ 
+ aws ec2 run-instances --image-id ami-xxxxxxxx --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-903004f8 --subnet-id subnet-6e7f829e
  
 
 
