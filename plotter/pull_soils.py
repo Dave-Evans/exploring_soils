@@ -18,9 +18,7 @@ import json
 # ury = 43.22081445495995
 # urx = -89.42193031311037
 
-dir_tmp_dat = "./tmp_data"
-if not os.path.exists(dir_tmp_dat):
-    os.mkdir(dir_tmp_dat)
+
 
 
 def retrieve_and_process_soils(llx, lly, urx, ury):
@@ -37,6 +35,9 @@ def retrieve_and_process_soils(llx, lly, urx, ury):
     )
     file_name_json = file_name.replace('gml', 'geojson')
     print("Downloading geometry...")
+    dir_tmp_dat = "./tmp_data"
+    if not os.path.exists(dir_tmp_dat):
+        os.mkdir(dir_tmp_dat)
     with urllib.request.urlopen(url.format(llx = llx, lly=lly, urx = urx, ury = ury)) as response, open(file_name, 'wb') as out_file:
         data = response.read() # a `bytes` object
         out_file.write(data)
