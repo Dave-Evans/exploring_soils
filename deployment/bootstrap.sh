@@ -1,20 +1,7 @@
 #!/bin/bash
 
-sudo apt update -y
-sudo apt upgrade -y
-sudo apt install python3-pip -y
-# Install virtual environment
-sudo apt install -y python3-venv
-# GDAL
-sudo apt install gdal-bin
 
-# Install Apache
-sudo apt install apache2 libapache2-mod-wsgi-py3 -y
-
-# Install aws cli
-sudo apt install awscli -y
-
-# Check for dependencies
+# software install
 for _tool in awscli python3-pip python3-venv gdal-bin apache2 libapache2-mod-wsgi-py3 git; do
     echo "Installing ${_tool}"
     sudo apt install ${_tool} -y

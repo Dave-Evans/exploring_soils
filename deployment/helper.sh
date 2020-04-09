@@ -107,8 +107,85 @@ LOG_HANDLER_LOGFILE() {
   echo "$log" >> "$LOGFILE"
 }
 
+create_tag () {
+    
+    #InstanceID=$(jq -r '.Instances[0].InstanceId' out_runinstance.json)
+    InstanceID=$1
+    Key=$2
+    Value=$3
+    aws ec2 create-tags --resources $InstanceID --tags Key=$Key,Value=$Value
+
+}
+
+
+pull_instance_id () {
+    # For pull instance ID from output of run-instances
+    # Takes filename of JSON as arg
+    local instance_id=$(jq -r '.Instances[0].InstanceId' $1)
+    echo $instance_id
+    #INFO "Instance ID: $instance_id"
+}
+
+pull_ipaddress () {
+    # For pull public ip address from output of describe
+    # Takes filename of JSON as arg
+    local ipaddress=$(jq -r '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp' $1)
+    echo $ipaddress
+}
+
+remote_maintenance() {
+    # arg is ipaddress
+    ssh -i ../wieff_1.pem ubuntu@$1 "sudo apt update -y"
+    ssh -i ../wieff_1.pem ubuntu@$1 "sudo apt upgrade -y"
+    ssh -i ../wieff_1.pem ubuntu@$1 "sudo reboot"
+}
+
+spinup_server () {
+    image_id="ami-0fc20dd1da406780b"
+    key_name="wieff_1"
+    secgrp_id="sg-09832f5ae52230593"
+    inst_prof="Arn=arn:aws:iam::392349258765:instance-profile/davemike-test-ec2-role"
+    place="AvailabilityZone=us-east-2c"
+
+    out_runinst=$(aws ec2 run-instances --image-id $image_id\
+        --count 1\
+        --instance-type t2.micro\
+        --key-name $key_name\
+        --security-group-ids $secgrp_id\
+        --iam-instance-profile $inst_prof\
+        --placement $place)
+    # DEBUG $out_runinst;
+    instance_id=$(echo $out_runinst | jq -r '.Instances[0].InstanceId')
+    # DEBUG "Instance ID: $instance_id"
+    out_filename="out_runinstance.json"
+    echo $out_runinst > $out_filename
+    # INFO "Output stored in $out_filename"
+    echo $out_filename
+}
+
 # Backup a file to aws S3
 case "$1" in
+    deploy)
+        # spin up ec2 server
+        outfile=$(spinup_server)
+        INFO "Output file: $outfile"
+        # grab instance id
+        instance_id=$(pull_instance_id $outfile)
+        # Wait until Running
+        aws ec2 wait instance-running --instance-ids $instance_id
+        
+        describe=$(aws ec2 describe-instances --instance-id $instance_id)
+        echo $describe > "describe.json"
+        #   and then ip address
+        ipaddress=$(pull_ipaddress "describe.json")
+        # Basic maintenance
+        remote_maintenance $ipaddress
+        aws ec2 wait instance-running --instance-ids $instance_id
+        # run bootstrap script
+        ssh -i ../wieff_1 ubuntu@$ipaddress 'bash -s' < bootstrap.sh
+        
+        #   including create server specific variables
+        ;;
     setcron)
         croncmd="bash /home/ubuntu/exploring_soils/deployment/helper.sh bkup /home/ubuntu/exploring_soils/db.sqlite3"
         cronjob="0 22 * * * $croncmd"
