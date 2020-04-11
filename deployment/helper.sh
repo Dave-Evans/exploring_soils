@@ -107,6 +107,15 @@ LOG_HANDLER_LOGFILE() {
   echo "$log" >> "$LOGFILE"
 }
 
+# Global variables...for now
+image_id="ami-0fc20dd1da406780b"
+key_name="wieff_1"
+secgrp_id="sg-09832f5ae52230593"
+inst_prof="Arn=arn:aws:iam::392349258765:instance-profile/davemike-test-ec2-role"
+place="AvailabilityZone=us-east-2c"
+out_runinsts="out_runinstance.json"
+out_describe="describe.json"
+
 create_tag () {
     
     #InstanceID=$(jq -r '.Instances[0].InstanceId' out_runinstance.json)
@@ -135,60 +144,68 @@ pull_ipaddress () {
 
 remote_maintenance() {
     # arg is ipaddress
-    ssh -i ../wieff_1.pem ubuntu@$1 "sudo apt update -y"
-    ssh -i ../wieff_1.pem ubuntu@$1 "sudo apt upgrade -y"
-    ssh -i ../wieff_1.pem ubuntu@$1 "sudo reboot"
+    ssh -i ../$1.pem ubuntu@$2 "sudo apt update -y"
+    ssh -i ../$1.pem ubuntu@$2 "sudo apt upgrade -y"
+    # ssh -i ../$1.pem ubuntu@$2 "sudo reboot"
 }
 
 spinup_server () {
-    image_id="ami-0fc20dd1da406780b"
-    key_name="wieff_1"
-    secgrp_id="sg-09832f5ae52230593"
-    inst_prof="Arn=arn:aws:iam::392349258765:instance-profile/davemike-test-ec2-role"
-    place="AvailabilityZone=us-east-2c"
-
-    out_runinst=$(aws ec2 run-instances --image-id $image_id\
+    # $1 image_id="ami-0fc20dd1da406780b"
+    # $2 key_name="wieff_1"
+    # $3 secgrp_id="sg-09832f5ae52230593"
+    # $4 inst_prof="Arn=arn:aws:iam::392349258765:instance-profile/davemike-test-ec2-role"
+    # $5 place="AvailabilityZone=us-east-2c"
+    # $6 out_runinsts="out_runinstance.json"
+    
+    output=$(aws ec2 run-instances --image-id $1\
         --count 1\
         --instance-type t2.micro\
-        --key-name $key_name\
-        --security-group-ids $secgrp_id\
-        --iam-instance-profile $inst_prof\
-        --placement $place)
-    # DEBUG $out_runinst;
-    instance_id=$(echo $out_runinst | jq -r '.Instances[0].InstanceId')
-    # DEBUG "Instance ID: $instance_id"
-    out_filename="out_runinstance.json"
-    echo $out_runinst > $out_filename
-    # INFO "Output stored in $out_filename"
-    echo $out_filename
+        --key-name $2\
+        --security-group-ids $3\
+        --iam-instance-profile $4\
+        --placement $5)
+    instance_id=$(echo $output | jq -r '.Instances[0].InstanceId')
+    echo $output > $6
 }
 
 # Backup a file to aws S3
 case "$1" in
-    deploy)
+    spinup)
         # spin up ec2 server
-        outfile=$(spinup_server)
-        INFO "Output file: $outfile"
+        # spinup_server $image_id $key_name $secgrp_id $inst_prof $place $out_runinsts
+        INFO "Output file: $out_runinsts"
         # grab instance id
-        instance_id=$(pull_instance_id $outfile)
+        instance_id=$(pull_instance_id $out_runinsts)
+        INFO "Instance ID: $instance_id"
         # Wait until Running
         aws ec2 wait instance-running --instance-ids $instance_id
-        
+        INFO "Running describe on instance..."
         describe=$(aws ec2 describe-instances --instance-id $instance_id)
-        echo $describe > "describe.json"
-        #   and then ip address
-        ipaddress=$(pull_ipaddress "describe.json")
-        # Basic maintenance
-        remote_maintenance $ipaddress
-        aws ec2 wait instance-running --instance-ids $instance_id
-        # run bootstrap script
-        ssh -i ../wieff_1 ubuntu@$ipaddress 'bash -s' < bootstrap.sh
+        echo $describe > $out_describe
+        INFO "Stored in $out_describe"
         
-        #   including create server specific variables
+        #   get ip address
+        ipaddress=$(pull_ipaddress $out_describe)
+        # Basic maintenance
+        INFO "Running updates and upgrades..."
+        remote_maintenance $key_name $ipaddress
+        aws ec2 wait instance-running --instance-ids $instance_id        
+        # Make this a separate function so that it doesn't end the flow
+        INFO "Running bootstrap.sh..."
+        ssh -i ../$key_name.pem ubuntu@$ipaddress 'bash -s' < bootstrap.sh
+        
+        INFO "Bootstrapping complete."
+        INFO "Creating tags..."
+        create_tag $instance_id "tier" "prod"
+        create_tag $instance_id "branch" "master"
+        ;;
+    opensite)
+        ipaddress=$(pull_ipaddress $out_describe)
+        python -mwebbrowser http://$ipaddress
         ;;
     setcron)
         croncmd="bash /home/ubuntu/exploring_soils/deployment/helper.sh bkup /home/ubuntu/exploring_soils/db.sqlite3"
-        cronjob="0 22 * * * $croncmd"
+        cronjob="52 00 * * * $croncmd"
         INFO "Creating cronjob:"
         INFO "$cronjob"
         ( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
@@ -200,6 +217,10 @@ case "$1" in
         INFO "Copying $2'"
         INFO "To 's3://$bucket/$folder/$file'"
         aws s3 cp "$2" "s3://$bucket/$folder/$file"
+        ;;
+    *)
+        ERROR "Usage: bash helper.sh spinup|opensite|setcron|bkup"
+        exit 1        
         ;;
 esac
 
