@@ -25,16 +25,15 @@
       </tr>
     </thead>
     <tbody>
-      {% for topic in board.topics.all %}
-        <tr>
-          <td><a href="{% url 'topic_posts' board.pk topic.pk %}">{{ topic.subject }}</a></td>
-          <td>{{ topic.starter.username }}</td>
-          <td>{{ topic.replies }}</td>
-          <td>{{ topic.views }}</td>
-          <td>{{ topic.last_updated }}</td>
-
-        </tr>
-      {% endfor %}
+    {% for topic in topics %}
+      <tr>
+        <td><a href="{% url 'topic_posts' board.pk topic.pk %}">{{ topic.subject }}</a></td>
+        <td>{{ topic.starter.username }}</td>
+        <td>{{ topic.replies }}</td>
+        <td>{{ topic.views  }} </td>
+        <td>{{ topic.last_updated }}</td>
+      </tr>
+    {% endfor %}
     </tbody>
   </table>
 {% endblock %}

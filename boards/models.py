@@ -9,16 +9,26 @@ class Board(models.Model):
     def __str__(self):
         return self.name
 
+    def get_posts_count(self):
+        return Post.objects.filter(topic__board=self).count()
+
+    def get_last_post(self):
+        return Post.objects.filter(topic__board=self).order_by('-created_at').first()
+
 
 class Topic(models.Model):
     subject = models.CharField(max_length=255)
     last_updated = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board, on_delete=models.PROTECT, related_name='topics')
+    views = models.PositiveIntegerField(default=0)
     starter = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         related_name='topics',
         null=True)
+    
+    def __str__(self):
+        return self.subject
 
 
 class Post(models.Model):
@@ -36,3 +46,7 @@ class Post(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         related_name='+')
+
+    def __str__(self):
+        truncated_message = Truncator(self.message)
+        return truncated_message.chars(30)
