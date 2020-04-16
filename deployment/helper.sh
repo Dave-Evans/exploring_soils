@@ -138,7 +138,10 @@ pull_instance_id () {
 pull_ipaddress () {
     # For pull public ip address from output of describe
     # Takes filename of JSON as arg
+    # I would like to expand this to also return the publicdnsname, how to use a default arg?
     local ipaddress=$(jq -r '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp' $1)
+    # local publicdnsname=$(jq -r '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicDnsName' $1)
+    
     echo $ipaddress
 }
 
@@ -166,6 +169,17 @@ spinup_server () {
         --placement $5)
     instance_id=$(echo $output | jq -r '.Instances[0].InstanceId')
     echo $output > $6
+}
+
+create_env() {
+
+    local ipaddress=$(pull_ipaddress $out_describe)
+    local secret_key=$(grep -e 'SECRET_KEY' .env | sed 's/SECRET_KEY=//')
+    local debug='False'
+    local allowed_hosts="$ipaddress,"
+    local database_url='sqlite:////home/ubuntu/exploring_soils/db.sqlite3'
+    echo -e "SECRET_KEY=$secret_key\nDEBUG=$debug\nALLOWED_HOSTS=$allowed_hosts\nDATABASE_URL=$database_url" > remote.env
+
 }
 
 # Backup a file to aws S3
