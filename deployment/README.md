@@ -26,9 +26,10 @@ aws ec2 run-instances --image-id ami-0fc20dd1da406780b\
     --key-name wieff_1\
     --security-group-ids sg-09832f5ae52230593\
     --iam-instance-profile Arn=arn:aws:iam::392349258765:instance-profile/davemike-test-ec2-role\
-    --placement AvailabilityZone=us-east-2c > webserver_info.json
+    --placement AvailabilityZone=us-east-2c > out_runinstance.json
 # Need to parse the output for the Instance ID and then run describe on that instance to get the public IP
-
+InstanceID=$(jq -r '.Instances[0].InstanceId' out_runinstance.json)
+aws ec2 describe-instances $InstanceID
 ```
 ```sh
 sudo apt update -y

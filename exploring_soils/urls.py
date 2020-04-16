@@ -27,7 +27,7 @@ from bikemileage.views import CustomMileageListView, MileageCreateView, MileageU
 from bikemileage.views import BicycleListView, BicycleCreateView, BicycleUpdateView, BicycleDeleteView
 
 urlpatterns = [
-    url(r'^$', views.home, name='home'),
+    url(r'^$', views.BoardListView.as_view(), name='home'),
     url(r'^new_study/$', plotter_views.new_study, name='new_study'),
     url(r'^edit_study/(?P<pk>\d+)$', plotter_views.edit_study, name='edit_study'),
     url(r'^studies/$', plotter_views.studies, name='studies'),
@@ -58,7 +58,8 @@ urlpatterns = [
     url(r'^books/create/$', books_views.book_create, name='book_create'),
     url(r'^books/(?P<pk>\d+)/update/$', books_views.book_update, name='book_update'),
     url(r'^books/(?P<pk>\d+)/delete/$', books_views.book_delete, name='book_delete'),
-
+    
+    # Accounts
     url(r'^settings/password/$', auth_views.PasswordChangeView.as_view(template_name='password_change.html'),
         name='password_change'),
     url(r'^settings/password/done/$', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'),
@@ -80,10 +81,16 @@ urlpatterns = [
     url(r'^reset/complete/$',
         auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
         name='password_reset_complete'),
-
+    url(r'^settings/account/$', accounts_views.UserUpdateView.as_view(), name='my_account'),
+        
+    # Boards 
+    url(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/posts/(?P<post_pk>\d+)/edit/$',
+        views.PostUpdateView.as_view(), name='edit_post'),
+    url(r'^new_post/$', views.NewPostView.as_view(), name='new_post'),
     url(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/reply/$', views.reply_topic, name='reply_topic'),
-    url(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/$', views.topic_posts, name='topic_posts'),
-    url(r'^boards/(?P<pk>\d+)/$', views.board_topics, name='board_topics'),
+    url(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/$', views.PostListView.as_view(), name='topic_posts'),
+    # url(r'^boards/(?P<pk>\d+)/$', views.board_topics, name='board_topics'),
+    url(r'^boards/(?P<pk>\d+)/$', views.TopicListView.as_view(), name='board_topics'),
     url(r'^boards/(?P<pk>\d+)/new/$', views.new_topic, name='new_topic'),
     path('admin/', admin.site.urls),
 ]
