@@ -107,14 +107,23 @@ LOG_HANDLER_LOGFILE() {
   echo "$log" >> "$LOGFILE"
 }
 
+# TODO: 
+#   Make remote_maintenance and bootstrap so they don't end the script
+#   Do this with subshells and while loops to grep the pid?
 # Global variables...for now
+
+top_level=$(git rev-parse --show-toplevel)
+
 image_id="ami-0fc20dd1da406780b"
 key_name="wieff_1"
 secgrp_id="sg-09832f5ae52230593"
 inst_prof="Arn=arn:aws:iam::392349258765:instance-profile/davemike-test-ec2-role"
 place="AvailabilityZone=us-east-2c"
-out_runinsts="out_runinstance.json"
-out_describe="describe.json"
+
+env_file="$top_level/.env"
+key_file="$top_level/$key_name.pem"
+
+
 
 create_tag () {
     
@@ -135,21 +144,47 @@ pull_instance_id () {
     #INFO "Instance ID: $instance_id"
 }
 
+pull_instance_status () {
+    # Pull status
+    # Takes filename of JSON as arg
+    local status=$(jq -r '.Reservations[0].Instances[0].State.Name' $1)
+    echo $status
+
+}
+
 pull_ipaddress () {
     # For pull public ip address from output of describe
     # Takes filename of JSON as arg
     # I would like to expand this to also return the publicdnsname, how to use a default arg?
-    local ipaddress=$(jq -r '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp' $1)
-    # local publicdnsname=$(jq -r '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicDnsName' $1)
-    
-    echo $ipaddress
+    if [ $# -eq 1 ] || [ $2 == ip ]
+        then 
+            local result=$(jq -r '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp' $1)
+    elif [ $2 == dns ]
+        then 
+            local result=$(jq -r '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicDnsName' $1)
+    else
+        printf "arg must be 'ip', 'dns', or none"
+        # exit 1
+    fi
+    echo $result
 }
 
 remote_maintenance() {
-    # arg is ipaddress
-    ssh -i ../$1.pem ubuntu@$2 "sudo apt update -y"
-    ssh -i ../$1.pem ubuntu@$2 "sudo apt upgrade -y"
-    # ssh -i ../$1.pem ubuntu@$2 "sudo reboot"
+    # arg 1 is ipaddress
+    # arg 2 is key file
+    # arg 3 is optional and is whether to reboot
+    ssh -t -i $1 ubuntu@$2 "sudo apt update -y"
+    ssh -t -i $1 ubuntu@$2 "sudo apt upgrade -y"
+    
+    if [ $3 == 'restart' ]
+        then
+            ssh -t -i $1 ubuntu@$2 "sudo reboot"
+    fi
+            
+}
+
+run_bootstrap() {
+    ssh -i $key_file ubuntu@$ipaddress 'bash -s' < bootstrap.sh
 }
 
 spinup_server () {
@@ -171,28 +206,65 @@ spinup_server () {
     echo $output > $6
 }
 
-create_env() {
+create_env_file() {
 
-    local ipaddress=$(pull_ipaddress $out_describe)
-    local secret_key=$(grep -e 'SECRET_KEY' .env | sed 's/SECRET_KEY=//')
+    local ipaddress=$(pull_ipaddress $out_describe ip)
+    local pubdns=$(pull_ipaddress $out_describe dns)
+    local secret_key=$(grep -e 'SECRET_KEY' $env_file | sed 's/SECRET_KEY=//')
     local debug='False'
-    local allowed_hosts="$ipaddress,"
+    local allowed_hosts="$ipaddress,$pubdns"
     local database_url='sqlite:////home/ubuntu/exploring_soils/db.sqlite3'
     echo -e "SECRET_KEY=$secret_key\nDEBUG=$debug\nALLOWED_HOSTS=$allowed_hosts\nDATABASE_URL=$database_url" > remote.env
+    echo remote.env
+
+}
+
+scp_to_server() {
+    # first arg is src
+    # second is dst
+    scp -i $key_file $1 ubuntu@$ipaddress:$2
 
 }
 
 # Backup a file to aws S3
+branchname=$2
+out_runinsts="$top_level/deployment/out_runinstance_$branchname.json"
+out_describe="$top_level/deployment/describe_$branchname.json"
+        
 case "$1" in
     spinup)
+
+        INFO "Looking at branch $branchname"
+        b_spinup=true
+        # Currently just handling the case when its still running
+        if [ -a $out_runinsts ]
+            then
+                instance_id=$(pull_instance_id $out_runinsts)        
+                describe=$(aws ec2 describe-instances --instance-id $instance_id)
+                echo $describe > $out_describe
+                status=$(pull_instance_status $out_describe)
+                
+                if [ $status == running ]
+                    then             
+                        INFO "Instance $instance_id is currently running"
+                        b_spinup=false
+                fi
+        fi    
         # spin up ec2 server
-        # spinup_server $image_id $key_name $secgrp_id $inst_prof $place $out_runinsts
+        if [ $b_spinup == true ]
+            then
+                INFO "Spinning up EC2 Server"
+                spinup_server $image_id $key_name $secgrp_id $inst_prof $place $out_runinsts      
+        fi
+
         INFO "Output file: $out_runinsts"
-        # grab instance id
+
         instance_id=$(pull_instance_id $out_runinsts)
         INFO "Instance ID: $instance_id"
-        # Wait until Running
+
+        INFO "Waiting until instance is running..."
         aws ec2 wait instance-running --instance-ids $instance_id
+        
         INFO "Running describe on instance..."
         describe=$(aws ec2 describe-instances --instance-id $instance_id)
         echo $describe > $out_describe
@@ -200,22 +272,38 @@ case "$1" in
         
         #   get ip address
         ipaddress=$(pull_ipaddress $out_describe)
-        # Basic maintenance
-        INFO "Running updates and upgrades..."
-        remote_maintenance $key_name $ipaddress
-        aws ec2 wait instance-running --instance-ids $instance_id        
+
+        INFO "Running maintenance, updates and upgrades..."
+        remote_maintenance $key_file $ipaddress
+        
+        INFO "Restarting instance..."
+        remote_maintenance $key_file $ipaddress restart
+        aws ec2 wait instance-running --instance-ids $instance_id
         # Make this a separate function so that it doesn't end the flow
         INFO "Running bootstrap.sh..."
-        ssh -i ../$key_name.pem ubuntu@$ipaddress 'bash -s' < bootstrap.sh
+        # run_bootstrap
+        INFO "Bootstrapping complete."        
+        # Create remote.env file
+        remote_env=$(create_env_file)
+        # scp to server as .env 
+        scp_to_server $remote_env '~/exploring_soils/.env'
         
-        INFO "Bootstrapping complete."
         INFO "Creating tags..."
         create_tag $instance_id "tier" "prod"
-        create_tag $instance_id "branch" "master"
+        create_tag $instance_id "branch" $branchname
         ;;
     opensite)
-        ipaddress=$(pull_ipaddress $out_describe)
+        ipaddress=$(pull_ipaddress $out_describe ip)
         python -mwebbrowser http://$ipaddress
+        ;;
+    maintenance)
+        INFO "Restarting instance..."
+        ipaddress=$(pull_ipaddress $out_describe ip)
+        remote_maintenance $key_file $ipaddress restart
+        aws ec2 wait instance-running --instance-ids $instance_id
+        INFO "Additional commands"
+        INFO "Additional commands."
+        WARNING "Additional commands."
         ;;
     setcron)
         croncmd="bash /home/ubuntu/exploring_soils/deployment/helper.sh bkup /home/ubuntu/exploring_soils/db.sqlite3"
