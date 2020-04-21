@@ -9,6 +9,8 @@ from django.views.generic.base import TemplateView
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableMixin, SingleTableView
 from django_tables2.export.views import ExportMixin
@@ -30,24 +32,32 @@ def mileage_list(request):
 
     return render(request, "bikemileage/bootstrap4_template.html", {"table": table})
 
-
+@method_decorator(login_required, name='dispatch')
 class MileageCreateView(CreateView):
     model = Mileage
-    fields = ('ride_date', 'rider', 'mileage', 'bike_type', 'comment', 'cost')
+    fields = ('ride_date', 'rider', 'bike_type', 'comment', 'cost')
+    
+    def form_valid(self, form):
+        mileage = form.save(commit=False)
+        mileage.rider = self.request.user
+        mileage.save()
+        return redirect('custom_mileage')
+    
 
 # TODO: add a 'cancel' button to the update page, where is that update page?
+@method_decorator(login_required, name='dispatch')
 class MileageUpdateView(UpdateView):
     model = Mileage
     form_class = MileageForm
     template_name = 'bikemileage/mileage_update_form.html'
 
-
+@method_decorator(login_required, name='dispatch')
 class MileageDeleteView(DeleteView):
     model = Mileage
     # template_name = 'bikemileage/mileage_update_form.html'
     success_url = reverse_lazy('custom_mileage')
 
-
+@method_decorator(login_required, name='dispatch')
 class CustomMileageListView(ExportMixin, SingleTableMixin, FilterView):
     """List mileage entries, with filters"""
     table_class = Bootstrap4Table
@@ -59,7 +69,8 @@ class CustomMileageListView(ExportMixin, SingleTableMixin, FilterView):
     export_formats = ("csv", "xls")
 
     def get_queryset(self):
-        return super().get_queryset()#.select_related("bike_type")
+        return super().get_queryset().filter(rider=self.request.user)        
+
 
     def get_table_kwargs(self):
         return {"template_name": "django_tables2/bootstrap.html"}
