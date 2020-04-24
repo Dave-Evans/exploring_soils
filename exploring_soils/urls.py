@@ -25,6 +25,8 @@ from books import views as books_views
 from bikemileage import views as mileage_views
 from bikemileage.views import CustomMileageListView, MileageCreateView, MileageUpdateView, MileageDeleteView
 from bikemileage.views import BicycleListView, BicycleCreateView, BicycleUpdateView, BicycleDeleteView
+from kanopy import views as kanopy_views
+
 
 urlpatterns = [
     url(r'^$', views.BoardListView.as_view(), name='home'),
@@ -52,6 +54,9 @@ urlpatterns = [
     url(r'^signup/$', accounts_views.signup, name='signup'),
     url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
+    
+    # Kanopy app
+    url(r'^kanopy_upload$', kanopy_views.model_form_upload, name='kanopy_upload'),
 
     # Books app
     url(r'^books/$', books_views.book_list, name="book_list"),

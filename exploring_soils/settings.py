@@ -28,6 +28,9 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+# For uploaded files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Application definition
 
@@ -56,6 +59,8 @@ INSTALLED_APPS = [
     'books',
     ## custom app
     'bikemileage',
+    ##
+    'kanopy',
 
 ]
 
