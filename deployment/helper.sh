@@ -296,6 +296,11 @@ case "$1" in
         ipaddress=$(pull_ipaddress $out_describe ip)
         python -mwebbrowser http://$ipaddress
         ;;
+    ssh)
+        ipaddress=$(pull_ipaddress $out_describe ip)
+        INFO "ssh'ing into server at $ipaddress"
+        ssh -i $key_file ubuntu@$ipaddress
+        ;;        
     maintenance)
         INFO "Restarting instance..."
         ipaddress=$(pull_ipaddress $out_describe ip)
@@ -321,7 +326,7 @@ case "$1" in
         aws s3 cp "$2" "s3://$bucket/$folder/$file"
         ;;
     *)
-        ERROR "Usage: bash helper.sh spinup|opensite|setcron|bkup"
+        ERROR "Usage: bash helper.sh spinup|opensite|ssh|setcron|bkup"
         exit 1        
         ;;
 esac
