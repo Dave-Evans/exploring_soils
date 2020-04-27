@@ -1,8 +1,28 @@
 {% extends 'base.html' %}
 
 {% load crispy_forms_tags %}
+{% load leaflet_tags %}
 
 {% block content %}
+
+{% leaflet_map "mymap" %}
+<style>
+
+    .leaflet-container {  /* all maps */
+        width:  600px;
+        height: 400px;
+    }
+
+    #specialbigmap {
+        height: 800px;
+    }
+
+    /* Resize the "display_raw" textbox */
+    .django-leaflet-raw-textarea {
+        width: 100%;
+    }
+
+</style>
 
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -18,7 +38,7 @@
       </div>
       <div class="form-group col-md-2 mb-0">
         {{ form.longitude|as_crispy_field }}
-      </div>
+      </div>   
     </div>
     <div class="form-row">
       <div class="form-group col-md-6 mb-0">
@@ -29,4 +49,6 @@
   </form>
 
   <p><a href="{% url 'home' %}">Return to home</a></p>
+  
+      
 {% endblock %}
