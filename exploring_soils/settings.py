@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize', 
+    'django.contrib.gis',    
     'widget_tweaks',
 
     'bootstrap4',
@@ -105,17 +106,17 @@ WSGI_APPLICATION = 'exploring_soils.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
+# DATABASES = {
+#    'default': dj_database_url.config(
+#        default=config('DATABASE_URL')
+#    )
+#}
 
 
 # Password validation
@@ -179,3 +180,5 @@ LEAFLET_CONFIG = {
     # 'MIN_ZOOM': 3,
     # 'MAX_ZOOM': 18,
 }
+
+SPATIALITE_LIBRARY_PATH='/usr/local/lib/mod_spatialite.so'
