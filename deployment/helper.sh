@@ -320,7 +320,7 @@ case "$1" in
         WARNING "Additional commands."
         ;;
     setcron)
-        croncmd="bash /home/ubuntu/exploring_soils/deployment/helper.sh bkup /home/ubuntu/exploring_soils/db.sqlite3"
+        croncmd="bash $top_level/deployment/helper.sh bkup /home/ubuntu/exploring_soils/data/dump.json"
         cronjob="52 00 * * * $croncmd"
         INFO "Creating cronjob:"
         INFO "$cronjob"
