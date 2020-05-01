@@ -123,6 +123,8 @@ place="AvailabilityZone=us-east-2c"
 env_file="$top_level/.env"
 key_file="$top_level/$key_name.pem"
 
+myvenv_dir="$top_level/myvenv"
+
 
 
 create_tag () {
@@ -226,6 +228,13 @@ scp_to_server() {
 
 }
 
+dump_db() {
+    # For dumping the database as backup
+    source $myvenv_dir/bin/activate
+    python $top_level/manage.py dumpdata --indent 4 --natural-primary --natural-foreign --traceback > ./data/dump.json
+    deactivate
+}
+
 # Backup a file to aws S3
 branchname=$2
 out_runinsts="$top_level/deployment/out_runinstance_$branchname.json"
@@ -316,6 +325,10 @@ case "$1" in
         INFO "Creating cronjob:"
         INFO "$cronjob"
         ( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
+        ;;
+    dumpdb)
+        INFO "Dumping database to ./data/dump.json"
+        dump_db
         ;;
     bkup)
         bucket="davemike-backup"
