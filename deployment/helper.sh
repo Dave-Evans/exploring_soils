@@ -311,6 +311,7 @@ case "$1" in
         WARNING "Additional commands."
         ;;
     setcron)
+        # Ought to update: https://stackoverflow.com/questions/610839/how-can-i-programmatically-create-a-new-cron-job?noredirect=1&lq=1
         croncmd="bash $top_level/deployment/helper.sh bkup $top_level/data/dump.json"
         cronjob="52 00 * * * $croncmd"
         INFO "Creating cronjob:"
