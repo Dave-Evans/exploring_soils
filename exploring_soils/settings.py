@@ -106,17 +106,17 @@ WSGI_APPLICATION = 'exploring_soils.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 # DATABASES = {
-#    'default': dj_database_url.config(
-#        default=config('DATABASE_URL')
-#    )
-#}
+    # 'default': {
+        # 'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
+# }
+DATABASES = {
+   'default': dj_database_url.config(
+       default=config('DATABASE_URL')
+   )
+}
 
 
 # Password validation
@@ -156,6 +156,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'home/daveevans/Documents/exploring_soils/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -181,4 +182,3 @@ LEAFLET_CONFIG = {
     # 'MAX_ZOOM': 18,
 }
 
-SPATIALITE_LIBRARY_PATH='/usr/local/lib/mod_spatialite.so'

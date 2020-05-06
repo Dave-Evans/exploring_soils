@@ -57,6 +57,11 @@ urlpatterns = [
     
     # Kanopy app
     url(r'^kanopy_upload$', kanopy_views.model_form_upload, name='kanopy_upload'),
+    # url(r'^kanopy_sample$', kanopy_views.sample_point_form_upload, name='kanopy_sample'),
+    url(r'^kanopy_sample$', kanopy_views.addPointOnMap, name='kanopy_sample'),
+    # url(r'^kanopy_sample$', kanopy_views.MapView.as_view(), name='kanopy_sample'),
+    
+    
 
     # Books app
     url(r'^books/$', books_views.book_list, name="book_list"),
