@@ -28,8 +28,8 @@ class GroundcoverForm(forms.ModelForm):
         # )
         widget=forms.OSMWidget(
             attrs={
-                'map_width': 800,
-                'map_height': 500,
+                # 'map_width': 650,
+                # 'map_height': 500,
                 'default_lat' : 44.6720744,
                 'default_lon' : -93.1725846,
                 'default_zoom': 7

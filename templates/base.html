@@ -1,5 +1,4 @@
 {% load static %}
-{% load leaflet_tags %}
 
 <!DOCTYPE html>
 <html>
@@ -9,9 +8,6 @@
     <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
-
-    {% leaflet_js %}
-    {% leaflet_css %}
     
     {% block stylesheet %}{% endblock %}
   </head>

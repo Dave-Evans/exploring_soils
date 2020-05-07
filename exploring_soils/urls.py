@@ -56,6 +56,7 @@ urlpatterns = [
     url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     
     # Kanopy app
+    url(r'^kanopy$', kanopy_views.kanopy_home, name='kanopy_home'),
     url(r'^kanopy_upload$', kanopy_views.model_form_upload, name='kanopy_upload'),
     # url(r'^kanopy_sample$', kanopy_views.sample_point_form_upload, name='kanopy_sample'),
     url(r'^kanopy_sample$', kanopy_views.addPointOnMap, name='kanopy_sample'),

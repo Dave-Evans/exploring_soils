@@ -3,6 +3,10 @@ from django.views.generic import TemplateView, CreateView, UpdateView, DeleteVie
 from kanopy.forms import GroundcoverForm, AddPointForm
 from kanopy.models import Samplepoint
 
+def kanopy_home(request):
+
+    return render(request, 'kanopy/kanopy_home.html')
+
 def model_form_upload(request):
     if request.method == 'POST':
         form = GroundcoverForm(request.POST, request.FILES)
