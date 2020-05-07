@@ -7,13 +7,18 @@ def model_form_upload(request):
     if request.method == 'POST':
         form = GroundcoverForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            new_point = form.save()
+            # new_point.save() # don't need this, right?
+            # Here do the county lookup
+            # new_point.county = find_count()
             return redirect('kanopy_upload')
     else:
         form = GroundcoverForm()
-    return render(request, 'kanopy/model_form_upload.html', {
-        'form': form
-    })
+        context = {
+            'form': form,
+        }
+    template = 'kanopy/model_form_upload.html'
+    return render(request, template, context)
 
 
         
