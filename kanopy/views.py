@@ -1,7 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
+from django_tables2 import RequestConfig
 from kanopy.forms import GroundcoverForm, AddPointForm
-from kanopy.models import Samplepoint
+from kanopy.models import Samplepoint, Groundcoverdoc
+from kanopy.tables import (
+    KanopyTable,
+)
+
+
+def kanopy_table(request):
+    """List Kanopy entries"""
+
+    table = KanopyTable(Groundcoverdoc.objects.all())
+    RequestConfig(request, paginate={"per_page": 15}).configure(table)
+
+    return render(request, "kanopy/kanopy_table.html", {"table": table})
 
 def kanopy_home(request):
 

@@ -18,6 +18,9 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 from accounts import views as accounts_views
 from boards import views
 from plotter import views as plotter_views
@@ -57,6 +60,7 @@ urlpatterns = [
     
     # Kanopy app
     url(r'^kanopy$', kanopy_views.kanopy_home, name='kanopy_home'),
+    url(r'^kanopy_table$', kanopy_views.kanopy_table, name='kanopy_table'),
     url(r'^kanopy_upload$', kanopy_views.model_form_upload, name='kanopy_upload'),
     # url(r'^kanopy_sample$', kanopy_views.sample_point_form_upload, name='kanopy_sample'),
     url(r'^kanopy_sample$', kanopy_views.addPointOnMap, name='kanopy_sample'),
@@ -104,4 +108,4 @@ urlpatterns = [
     url(r'^boards/(?P<pk>\d+)/$', views.TopicListView.as_view(), name='board_topics'),
     url(r'^boards/(?P<pk>\d+)/new/$', views.new_topic, name='new_topic'),
     path('admin/', admin.site.urls),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
