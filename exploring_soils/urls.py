@@ -40,7 +40,7 @@ urlpatterns = [
 
     url(r'^studies/get_rep/(?P<pk>\d+)/(?P<lly>-?\d+\.\d+)/(?P<llx>-?\d+\.\d+)/(?P<uly>-?\d+\.\d+)/(?P<ulx>-?\d+\.\d+)/$', plotter_views.get_plots, name='get_plots'),
     # bikemileage App
-    url(r'^mileage/$',mileage_views.mileage_list, name='mileage_list' ),
+    # url(r'^mileage/$',mileage_views.mileage_list, name='mileage_list' ),
     path('custom_mileage', CustomMileageListView.as_view() , name='custom_mileage' ),
     url(r'^mileage/create/$', MileageCreateView.as_view(), name='mileage_create'),
     url(r'^mileage/delete/(?P<pk>\d+)/', MileageDeleteView.as_view(), name='mileage_delete'),
