@@ -1,6 +1,6 @@
 from random import choice
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse, reverse_lazy
 from django.template import loader
 
@@ -35,7 +35,7 @@ def mileage_list(request):
 @method_decorator(login_required, name='dispatch')
 class MileageCreateView(CreateView):
     model = Mileage
-    fields = ('ride_date', 'rider', 'bike_type', 'comment', 'cost')
+    fields = ('ride_date', 'mileage', 'bike_type', 'comment', 'cost')
     
     def form_valid(self, form):
         mileage = form.save(commit=False)

@@ -2,4 +2,6 @@
 *.pyc
 *.pyo
 myvenv/
-.sqlite3
+*.sqlite3
+*.json
+.env

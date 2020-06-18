@@ -311,11 +311,13 @@ case "$1" in
         WARNING "Additional commands."
         ;;
     setcron)
-        croncmd="bash /home/ubuntu/exploring_soils/deployment/helper.sh bkup /home/ubuntu/exploring_soils/db.sqlite3"
+        # Ought to update: https://stackoverflow.com/questions/610839/how-can-i-programmatically-create-a-new-cron-job?noredirect=1&lq=1
+        croncmd="bash $top_level/deployment/helper.sh bkup $top_level/data/dump.json"
         cronjob="52 00 * * * $croncmd"
         INFO "Creating cronjob:"
         INFO "$cronjob"
-        ( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
+        #( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
+        (crontab -l 2>/dev/null; echo "$cronjob" ) | crontab -
         ;;
     bkup)
         bucket="davemike-backup"
