@@ -1,8 +1,16 @@
 {% extends 'kanopy/base_kanopy.html' %}
 
 {% block title %}Welcome to Green CovR{% endblock %}
-  
+  {% load static %}
 {% load crispy_forms_tags %}
+
+{% block javascript %}
+  <!-- Fengyuan Chen's Datepicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+
+  <script type="text/javascript" src="{% static "js/fgcc.js" %}"></script>
+{% endblock %}
 
 {% block content %}
 <head>
@@ -34,20 +42,92 @@
                     <div class="form-group col-md-4 mb-0">
                         {{ form.image|as_crispy_field }}
                     </div>
+                    <div class="form-group col-md-4 mb-0">
+                        <input id="id_fgcc_value" value=0>
+                        
+                    </div>                    
                 </div>    
                 <div class="form-row">
                     <div class="form-group col-md-4 mb-0">
                         {{ form.collectionpoint }}
-                    </div>   
-                </div>
+                    </div>
 
+                </div>
+                
                 <button type="submit" class="btn btn-primary">Upload</button>
+
+                
             </form>
         </div>
         <div class="card-footer text-muted text-center">
           Questions? See our references <a href="#">page</a>
         </div>
+        <button class="btn btn-primary" id="test_button">Click</button>
       </div>
     </div>
   </div>
+  
+  <script>
+  <!-- For seeing when a file is uploaded -->
+      var firstFile;
+      const fileSelector = document.getElementById('id_image');
+      fileSelector.addEventListener('change', (event) => {
+        const fileList = event.target.files;
+        <!-- const firstFile = fileList[0]; -->
+        firstFile = fileList[0];
+        console.log("First file is:");
+        console.log(firstFile);
+        calcFGCC(firstFile);
+      });
+      
+     function calcFGCC(firstFile) {
+     
+        var url = URL.createObjectURL(firstFile);
+        var img = document.createElement("img");
+        img.alt = firstFile.name;
+        img.onload = () => getFGCCcoverage(img);
+        img.src = url;
+
+        
+     
+     };
+     
+     function getFGCCcoverage(img){
+     
+        var input = document.createElement("canvas");
+        input.width = img.width;
+        input.height = img.height;
+
+        var output = document.createElement("canvas");
+        output.width = img.width;
+        output.height = img.height;
+
+        var context = input.getContext("2d");
+        context.drawImage(img, 0, 0, input.width, input.height);
+
+        var classifier = new FGCC(input, output);
+        classifier.p1 = 0.95;
+        classifier.p2 = 0.95;
+        classifier.p3 = 20;
+        classifier.noise = 100;
+        var coverage = classifier.classify(); 
+        // var fgcc = (coverage * 100).toFixed(2)
+        updateFGCCval(coverage);     
+     };
+      
+
+      
+      function updateFGCCval(value){
+          $('#id_fgcc_value').val(value);
+        };
+    
+    $('#test_button').on('click', function(e) {
+
+        updateFGCCval(76);
+
+    });      
+</script>
+
+
+  
 {% endblock %}
