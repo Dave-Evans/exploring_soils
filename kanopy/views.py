@@ -31,11 +31,11 @@ def model_form_upload(request):
             return redirect('kanopy_upload')
     else:
         form = GroundcoverForm()
-        context = {
-            'form': form,
-        }
+        
     template = 'kanopy/model_form_upload.html'
-    return render(request, template, context)
+    return render(request, template, {
+            'form': form,
+        })
 
 
         

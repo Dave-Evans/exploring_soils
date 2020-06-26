@@ -43,7 +43,7 @@
                         {{ form.image|as_crispy_field }}
                     </div>
                     <div class="form-group col-md-4 mb-0">
-                        <input id="id_fgcc_value" value=0>
+                        {{ form.fgcc_value|as_crispy_field }}
                         
                     </div>                    
                 </div>    
@@ -62,7 +62,7 @@
         <div class="card-footer text-muted text-center">
           Questions? See our references <a href="#">page</a>
         </div>
-        <button class="btn btn-primary" id="test_button">Click</button>
+        
       </div>
     </div>
   </div>
@@ -111,8 +111,8 @@
         classifier.p3 = 20;
         classifier.noise = 100;
         var coverage = classifier.classify(); 
-        // var fgcc = (coverage * 100).toFixed(2)
-        updateFGCCval(coverage);     
+        var fgcc = (coverage).toFixed(5)
+        updateFGCCval(fgcc);     
      };
       
 

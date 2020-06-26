@@ -6,6 +6,8 @@ from kanopy.models import Groundcoverdoc, Samplepoint
 
 class GroundcoverForm(forms.ModelForm):
 
+
+    locname = forms.CharField(label = 'Location name')
     description = forms.CharField(
         max_length=100,
         widget=forms.TextInput(
@@ -15,6 +17,9 @@ class GroundcoverForm(forms.ModelForm):
                 }
             ),
         )
+     
+    fgcc_value = forms.DecimalField(widget = forms.TextInput(attrs={'readonly':'readonly'}), label ='Fractional Green Canopy Cover')
+
     collectionpoint = forms.PointField(
         # widget=forms.OpenLayersWidget(
             # attrs={
@@ -39,7 +44,7 @@ class GroundcoverForm(forms.ModelForm):
 
     class Meta:
         model = Groundcoverdoc
-        fields = ('locname', 'description', 'image', 'collectionpoint')
+        fields = ('locname', 'description', 'image', 'collectionpoint', 'fgcc_value')
 
 
 class AddPointForm(forms.ModelForm):
