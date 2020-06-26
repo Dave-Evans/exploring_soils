@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 from django_tables2 import RequestConfig
-from kanopy.forms import GroundcoverForm, AddPointForm
-from kanopy.models import Samplepoint, Groundcoverdoc
+from kanopy.forms import GroundcoverForm
+from kanopy.models import Groundcoverdoc
 from kanopy.tables import (
     KanopyTable,
 )
@@ -39,20 +39,6 @@ def model_form_upload(request):
 
 
         
-def addPointOnMap(request):
-    if request.method == "POST":
-        geoform = AddPointForm(request.POST or None)
-        if geoform.is_valid():
-            new_point = geoform.save()
-            new_point.save()
-            return redirect('kanopy_sample')
-    else:
-        geoform = AddPointForm()
-        context = {
-            'geoform': geoform,
-        }
-    template = 'kanopy/geo_sample_template.html'
-    return render(request, template, context)
     
 
 class MapView(TemplateView):

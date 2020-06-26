@@ -10,6 +10,4 @@ class Groundcoverdoc(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     fgcc_value = models.DecimalField(max_digits=10, decimal_places=7, blank=True)
 
-class Samplepoint(geo_models.Model):
-    description = models.CharField(max_length=255, blank=True)
-    sampleloc = geo_models.PointField()
+
