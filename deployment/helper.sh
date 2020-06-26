@@ -320,8 +320,8 @@ case "$1" in
         WARNING "Additional commands."
         ;;
     setcron)
-        croncmd="bash $top_level/deployment/helper.sh bkup /home/ubuntu/exploring_soils/data/dump.json"
-        cronjob="52 00 * * * $croncmd"
+        croncmd="cd $top_level; bash ./deployment/helper.sh dumpdb; bash ./deployment/helper.sh bkup ./data/dump.json"
+        cronjob="42 01 * * * $croncmd"
         INFO "Creating cronjob:"
         INFO "$cronjob"
         ( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
