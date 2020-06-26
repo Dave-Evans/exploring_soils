@@ -123,6 +123,8 @@ place="AvailabilityZone=us-east-2c"
 env_file="$top_level/.env"
 key_file="$top_level/$key_name.pem"
 
+myvenv_dir="$top_level/myvenv"
+
 
 
 create_tag () {
@@ -226,6 +228,13 @@ scp_to_server() {
 
 }
 
+dump_db() {
+    # For dumping the database as backup
+    source $myvenv_dir/bin/activate
+    python $top_level/manage.py dumpdata --indent 4 --natural-primary --natural-foreign --traceback > ./data/dump.json
+    deactivate
+}
+
 # Backup a file to aws S3
 branchname=$2
 out_runinsts="$top_level/deployment/out_runinstance_$branchname.json"
@@ -300,7 +309,7 @@ case "$1" in
         ipaddress=$(pull_ipaddress $out_describe ip)
         INFO "ssh'ing into server at $ipaddress"
         ssh -i $key_file ubuntu@$ipaddress
-        ;;        
+        ;;      
     maintenance)
         INFO "Restarting instance..."
         ipaddress=$(pull_ipaddress $out_describe ip)
@@ -311,13 +320,15 @@ case "$1" in
         WARNING "Additional commands."
         ;;
     setcron)
-        # Ought to update: https://stackoverflow.com/questions/610839/how-can-i-programmatically-create-a-new-cron-job?noredirect=1&lq=1
-        croncmd="bash $top_level/deployment/helper.sh bkup $top_level/data/dump.json"
-        cronjob="52 00 * * * $croncmd"
+        croncmd="cd $top_level; bash ./deployment/helper.sh dumpdb; bash ./deployment/helper.sh bkup ./data/dump.json"
+        cronjob="42 01 * * * $croncmd"
         INFO "Creating cronjob:"
         INFO "$cronjob"
-        #( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
-        (crontab -l 2>/dev/null; echo "$cronjob" ) | crontab -
+        ( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
+        ;;
+    dumpdb)
+        INFO "Dumping database to ./data/dump.json"
+        dump_db
         ;;
     bkup)
         bucket="davemike-backup"
