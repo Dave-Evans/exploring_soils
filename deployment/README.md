@@ -75,15 +75,15 @@ sudo apt  install awscli -y
 
  - Move the `os.mkdir` in pull_soils.py into a function
  - Turn off debug
- - Hide the security key
- - Hide other stuff using some kind of config from SIBTC
+ - ** COMPLETE** Hide the security key
+ - ** COMPLETE** Hide other stuff using some kind of config from SIBTC
  - Back up script for db.sqlite to S3
     - Done with helper script and `bash deployment/helper.sh bkup db.sqlite3`
     - schedule with cron:
         - `bash /home/ubuntu/exploring_soils/deployment/helper.sh bkup /home/ubuntu/exploring_soils/db.sqlite3`
- - Force login for entering mileage
- - build bootstrap script
- - commit apache config file
+ - ** COMPLETE** Force login for entering mileage
+ - ** COMPLETE** build bootstrap script
+ - ** COMPLETE** commit apache config file
  - Address Github raised vulnerabilities
  
 #### Investigate

@@ -2,7 +2,7 @@
 
 
 # software install
-for _tool in awscli python3-pip python3-venv gdal-bin apache2 libapache2-mod-wsgi-py3 git; do
+for _tool in awscli python3-pip python3-venv gdal-bin apache2 libapache2-mod-wsgi-py3 git postgresql postgresql-contrib postgis; do
     echo "Installing ${_tool}"
     sudo apt install ${_tool} -y
 done;
