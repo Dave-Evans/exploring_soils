@@ -1,16 +1,21 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 
 from .models import Book
 from .forms import BookForm
 
+# TODO 
+# Add 'user' to model and filter by that in list
 
+@login_required
 def book_list(request):
     books = Book.objects.all()
     books = books.order_by("finished_date")
     return render(request, 'books/book_list.html', {'books': books})
 
+@login_required
 def book_delete(request, pk):
     book = get_object_or_404(Book, pk=pk)
     data = dict()
@@ -45,7 +50,7 @@ def save_book_form(request, form, template_name):
     data['html_form'] = render_to_string(template_name, context, request=request)
     return JsonResponse(data)
 
-
+@login_required
 def book_create(request):
     if request.method == 'POST':
         form = BookForm(request.POST)

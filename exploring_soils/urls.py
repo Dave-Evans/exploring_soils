@@ -18,6 +18,9 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 from accounts import views as accounts_views
 from boards import views
 from plotter import views as plotter_views
@@ -40,7 +43,7 @@ urlpatterns = [
 
     url(r'^studies/get_rep/(?P<pk>\d+)/(?P<lly>-?\d+\.\d+)/(?P<llx>-?\d+\.\d+)/(?P<uly>-?\d+\.\d+)/(?P<ulx>-?\d+\.\d+)/$', plotter_views.get_plots, name='get_plots'),
     # bikemileage App
-    url(r'^mileage/$',mileage_views.mileage_list, name='mileage_list' ),
+    # url(r'^mileage/$',mileage_views.mileage_list, name='mileage_list' ),
     path('custom_mileage', CustomMileageListView.as_view() , name='custom_mileage' ),
     url(r'^mileage/create/$', MileageCreateView.as_view(), name='mileage_create'),
     url(r'^mileage/delete/(?P<pk>\d+)/', MileageDeleteView.as_view(), name='mileage_delete'),
@@ -56,7 +59,14 @@ urlpatterns = [
     url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     
     # Kanopy app
+    url(r'^kanopy$', kanopy_views.kanopy_home, name='kanopy_home'),
+    url(r'^kanopy_table$', kanopy_views.kanopy_table, name='kanopy_table'),
     url(r'^kanopy_upload$', kanopy_views.model_form_upload, name='kanopy_upload'),
+    # url(r'^kanopy_sample$', kanopy_views.sample_point_form_upload, name='kanopy_sample'),
+    # url(r'^kanopy_sample$', kanopy_views.addPointOnMap, name='kanopy_sample'),
+    # url(r'^kanopy_sample$', kanopy_views.MapView.as_view(), name='kanopy_sample'),
+    
+    
 
     # Books app
     url(r'^books/$', books_views.book_list, name="book_list"),
@@ -98,4 +108,4 @@ urlpatterns = [
     url(r'^boards/(?P<pk>\d+)/$', views.TopicListView.as_view(), name='board_topics'),
     url(r'^boards/(?P<pk>\d+)/new/$', views.new_topic, name='new_topic'),
     path('admin/', admin.site.urls),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,28 @@
+{% extends 'kanopy/base_kanopy.html' %}
+
+{% block title %}Welcome to Green CovR{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Upload a photo</h3>
+            <p>
+            This project aims to source photographs of groundcover and catologue the percent green of the site.
+            To upload your photo simply click the below!
+            Ready to upload your photo? <a href="{% url 'kanopy_upload' %}">Click here to begin.</a>
+            </p>
+          <!-- <form method="post" novalidate> -->
+            <!-- {% csrf_token %} -->
+            <!-- {% include 'includes/form.html' %} -->
+            <!-- <button type="submit" class="btn btn-primary btn-block">Create an account</button> -->
+          <!-- </form> -->
+        </div>
+        <div class="card-footer text-muted text-center">
+          Questions? See our references <a href="#">page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -42,12 +42,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize', 
+    'django.contrib.gis',    
     'widget_tweaks',
 
     'bootstrap4',
     'django_tables2',
     'django_filters',
     'crispy_forms',
+    
+    'leaflet',
+    'djgeojson',    
 
     ## For authenticating users
     'accounts',
@@ -103,15 +107,15 @@ WSGI_APPLICATION = 'exploring_soils.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
+    # 'default': {
+        # 'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
 # }
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+   'default': dj_database_url.config(
+       default=config('DATABASE_URL')
+   )
 }
 
 
@@ -165,3 +169,15 @@ LOGIN_REDIRECT_URL = 'home'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 # EMAIL_FILE_PATH = '/tmp/app-messages' # change this to a proper location
+# 
+LEAFLET_CONFIG = {
+    'SPATIAL_EXTENT': (-96.6, 43.0, -90, 48.5),
+    'TILES': 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    'OVERLAYS': [('Cadastral', 'http://server/a/{z}/{x}/{y}.png', {'attribution': '&copy; IGN'})],
+    'MINIMAP': True  
+    # 'DEFAULT_CENTER': (-94.0, 46.0),
+    # 'DEFAULT_ZOOM': 14,
+    # 'MIN_ZOOM': 3,
+    # 'MAX_ZOOM': 18,
+}
+

@@ -3,8 +3,15 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from bikemileage.models import Mileage
 
+
 class MileageForm(forms.ModelForm):
+
+    # ride_date = forms.DateField(input_formats=['%Y-%m-%d'], widget=XDSoftDatePickerInput()) 
+    # ride_date = forms.DateField(widget=forms.SelectDateWidget()) 
+    ride_date = forms.DateField(input_formats=['%Y-%m-%d']) 
+
     class Meta:
+        
         model = Mileage
         fields = ('ride_date', 'rider', 'mileage', 'bike_type', 'comment', 'cost')
 

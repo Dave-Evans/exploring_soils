@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<html>
+  <head>
+    {{ geoform.media }}
+  </head>
+<body>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ geoform.as_p }}
+<input type="submit"/>
+</form>
+</html>
+{% endblock %}

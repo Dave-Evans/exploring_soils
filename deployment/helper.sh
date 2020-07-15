@@ -110,6 +110,7 @@ LOG_HANDLER_LOGFILE() {
 # TODO: 
 #   Make remote_maintenance and bootstrap so they don't end the script
 #   Do this with subshells and while loops to grep the pid?
+#   handle multiple branches
 # Global variables...for now
 
 top_level=$(git rev-parse --show-toplevel)
@@ -209,13 +210,14 @@ spinup_server () {
 }
 
 create_env_file() {
-
+    # Consumes .env file, which is local and is created by hand, and describe file 
     local ipaddress=$(pull_ipaddress $out_describe ip)
     local pubdns=$(pull_ipaddress $out_describe dns)
     local secret_key=$(grep -e 'SECRET_KEY' $env_file | sed 's/SECRET_KEY=//')
     local debug='False'
     local allowed_hosts="$ipaddress,$pubdns"
-    local database_url='sqlite:////home/ubuntu/exploring_soils/db.sqlite3'
+    # local database_url='sqlite:////home/ubuntu/exploring_soils/db.sqlite3'
+    local database_url=$(grep -e '^DATABASE_URL' $env_file | sed 's/DATABASE_URL=//')
     echo -e "SECRET_KEY=$secret_key\nDEBUG=$debug\nALLOWED_HOSTS=$allowed_hosts\nDATABASE_URL=$database_url" > remote.env
     echo remote.env
 
@@ -239,7 +241,9 @@ dump_db() {
 branchname=$2
 out_runinsts="$top_level/deployment/out_runinstance_$branchname.json"
 out_describe="$top_level/deployment/describe_$branchname.json"
-        
+
+
+
 case "$1" in
     spinup)
 
@@ -288,14 +292,17 @@ case "$1" in
         INFO "Restarting instance..."
         remote_maintenance $key_file $ipaddress restart
         aws ec2 wait instance-running --instance-ids $instance_id
+        
+        # Create remote.env file, this is consumed in bootstrapping...
+        remote_env=$(create_env_file)
+        # scp to server as .env 
+        scp_to_server $remote_env '~/exploring_soils/.env'
+        
         # Make this a separate function so that it doesn't end the flow
         INFO "Running bootstrap.sh..."
         # run_bootstrap
         INFO "Bootstrapping complete."        
-        # Create remote.env file
-        remote_env=$(create_env_file)
-        # scp to server as .env 
-        scp_to_server $remote_env '~/exploring_soils/.env'
+
         
         INFO "Creating tags..."
         create_tag $instance_id "tier" "prod"
@@ -309,7 +316,7 @@ case "$1" in
         ipaddress=$(pull_ipaddress $out_describe ip)
         INFO "ssh'ing into server at $ipaddress"
         ssh -i $key_file ubuntu@$ipaddress
-        ;;        
+        ;;      
     maintenance)
         INFO "Restarting instance..."
         ipaddress=$(pull_ipaddress $out_describe ip)
@@ -320,8 +327,8 @@ case "$1" in
         WARNING "Additional commands."
         ;;
     setcron)
-        croncmd="bash $top_level/deployment/helper.sh bkup /home/ubuntu/exploring_soils/data/dump.json"
-        cronjob="52 00 * * * $croncmd"
+        croncmd="cd $top_level; bash ./deployment/helper.sh dumpdb; bash ./deployment/helper.sh bkup ./data/dump.json"
+        cronjob="42 01 * * * $croncmd"
         INFO "Creating cronjob:"
         INFO "$cronjob"
         ( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
