@@ -8,7 +8,7 @@ class GroundcoverForm(forms.ModelForm):
 
 
     locname = forms.CharField(label = 'Location name')
-    description = forms.CharField(
+    comments = forms.CharField(
         max_length=100,
         widget=forms.TextInput(
             attrs={
@@ -44,5 +44,20 @@ class GroundcoverForm(forms.ModelForm):
 
     class Meta:
         model = Groundcoverdoc
-        fields = ('locname', 'description', 'image', 'collectionpoint', 'fgcc_value')
+        fields = (
+            'locname', 
+            'cover_crop_species_1',
+            'cover_crop_species_2',
+            'cover_crop_species_3',
+            'cover_crop_species_4',
+            'cover_crop_planting_date',
+            'cover_crop_planting_rate',
+            'crop_prior',
+            'seeding_method',
+            'cover_crop_termination_date',
+            'image',
+            'collectionpoint',
+            'fgcc_value',
+            'comments'
+        )
 

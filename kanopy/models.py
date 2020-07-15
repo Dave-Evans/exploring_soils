@@ -11,7 +11,7 @@ class CoverCrops(models.TextChoices):
     CEREAL_RYE = 'CEREAL_RYE', 'Cereal Rye (Secale cereale)'
     COWPEAS = 'COWPEAS', 'Cowpeas (Vigna unguiculata)'
     CRIMSON_CLOVER = 'CRIMSON_CLOVER', 'Crimson Clover (Trifolium incarnatum)'
-    HAIRY_VETCH = 'HAIRY_VETCH', 'Vicia villosa'
+    HAIRY_VETCH = 'HAIRY_VETCH', 'Hairy Vetch (Vicia villosa)'
     MUSTARDS = 'MUSTARDS', 'Mustartds (Brassicaceae)'
     OATS = 'OATS', 'Oats (Avena sativa)'
     PENNYCRESS = 'PENNYCRESS', 'Pennycress (Thlaspi arvense)'
@@ -53,7 +53,6 @@ class Groundcoverdoc(models.Model):
     image = models.ImageField(upload_to='documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     fgcc_value = models.DecimalField(max_digits=10, decimal_places=7, blank=True)
-    
     
     cover_crop_species_1 = models.CharField(
         max_length=25, 
