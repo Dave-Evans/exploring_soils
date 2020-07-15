@@ -30,9 +30,12 @@ aws s3 cp s3://davemike-backup/db/dump.json ./data/dump.json
 local database_url=$(grep -e '^DATABASE_URL' .env | sed 's/DATABASE_URL=//')
 # Splitting the database url into components
 CONN=(${database_url//:/ })
-local db_username=${CONN[2]};
-local db_name=${CONN[2]};
-local db_pass=${CONN[2]};
+# Grabbing the username portion and stripping off forward slashes
+local db_username=$(echo ${CONN[1]} | sed -e 's/\/\///')
+# Grabbing name of database by stripping off port digits and forward slash
+local db_name=$(echo ${CONN[3]} | sed -e 's/[0-9]*//' | sed -e 's/\///')
+# Grabbing password by grabbing everying before @
+local db_pass=$(${CONN[2]} | sed 's/@.*//')
 
 CREATE DATABASE db_davemike;
 CREATE USER usr_davemike;
