@@ -25,9 +25,14 @@ def model_form_upload(request):
         form = GroundcoverForm(request.POST, request.FILES)
         if form.is_valid():
             new_point = form.save()
-            # new_point.save() # don't need this, right?
+            
             # Here do the county lookup
-            # new_point.county = find_count()
+            # new_point.county = find_county()
+            
+            # Here pull long and lat from point field
+            # new_point.long = new_point.collection_point.coords[0]
+            # new_point.lat = new_point.collection_point.coords[1]
+            
             return redirect('kanopy_upload')
     else:
         form = GroundcoverForm()

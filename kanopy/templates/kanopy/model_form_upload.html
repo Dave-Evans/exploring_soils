@@ -24,7 +24,30 @@
         <div class="card-body">
           <h3 class="card-title">Upload a photo</h3>
             <p>
-            Please upload your photo and fill in the requested information about your photo and your site.
+            Thank you for submitting a cover crop ground cover photo to the MN Office for Soil Health (MOSH) Green CovR database. 
+            The app was developed in the Wilson Lab for manure management and water quality.
+            MOSH will use this data anonymously to evaluate how successful cover crops are when planted in different contexts.
+            Please give us as much information as possible about the field where photos are taken in order to interpret the data correctly.
+            If you are unsure about the accuracy of dates or other information, please leave a note in the “Comments” section. 
+            </p>
+            <h4>How to take a photo for the database</h4>
+            <p>
+                <b>What:</b> A photo looking down at the ground when the cover crop is growing, especially at maximum growth right before termination or winter freeze.
+                <br/>
+                <b>When:</b> Photos should be taken at least 2 hours after sunrise or before sunset to minimize shadows.
+                    Sun overhead is preferred.
+                <br/>
+                <b>Where:</b> In an “average” part of your cover crop stand, preferably not headlands, drowned out or other marginal areas.
+                <br/>
+                <b>How:</b> Hold your camera 4-5’ off the ground, far enough away from your body to avoid your shoes in the frame.
+                    Keep it as horizontal as possible.
+                    Check the photo for any odd rocks, shadows or other non-plant or soil material.
+                    Then submit with the data below!
+                 <br/>
+                Good photo example:                         Bad photo example:
+                <br/>
+                Questions? Contact Anna Cates, catesa@umn.edu. 
+            
             </p>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -35,9 +58,41 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-4 mb-0">    
-                        {{ form.description|as_crispy_field }}
+                        {{ form.cover_crop_planting_date|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">    
+                        {{ form.cover_crop_planting_rate|as_crispy_field }}
                     </div>
                 </div>    
+                <div class="form-row">
+                    <div class="form-group col-md-4 mb-0">    
+                        {{ form.cover_crop_species_1|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4 mb-0">    
+                        {{ form.cover_crop_species_2|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">    
+                        {{ form.cover_crop_species_3|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">    
+                        {{ form.cover_crop_species_4|as_crispy_field }}
+                    </div>                    
+                </div>                    
+                <div class="form-row">
+                    <div class="form-group col-md-4 mb-0">
+                        {{ form.crop_prior|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ form.seeding_method|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ form.cover_crop_termination_date|as_crispy_field }}
+                        
+                    </div>                    
+                </div>    
+                
                 <div class="form-row">
                     <div class="form-group col-md-4 mb-0">
                         {{ form.image|as_crispy_field }}
@@ -47,13 +102,21 @@
                         
                     </div>                    
                 </div>    
+                    <label class=" requiredFiled" for="id_collection_point">
+                        Click on the map where the photo was taken
+                        <span class="asteriskField">*</span> 
+                        <br/>
+                    </label>                
                 <div class="form-row">
                     <div class="form-group col-md-4 mb-0">
                         {{ form.collectionpoint }}
                     </div>
-
                 </div>
-                
+                <div class="form-row">
+                    <div class="form-group col-md-8 mb-0">
+                        {{ form.comments|as_crispy_field }}
+                    </div>
+                </div>                
                 <button type="submit" class="btn btn-primary">Upload</button>
 
                 
@@ -127,7 +190,26 @@
 
     });      
 </script>
+    // Creating date selectors
+     <script>
+    $(function () {
+      $("#id_cover_crop_planting_date").datepicker({
+      format:'yyyy-mm-dd',
+    });
+    });
+    
+    $(function () {
+      $("#id_cover_crop_termination_date").datepicker({
+      format:'yyyy-mm-dd',
+    });
+    });
+  </script>
 
+    <script>
+    $('#id_collection_point_div_map').append(
+        '<label class=" requiredFiled" for="id_collection_point">        Click where the photo was taken        <span class="asteriskField">*</span>    </label>'
+        );        
+    </script>
 
   
 {% endblock %}

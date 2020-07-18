@@ -4,6 +4,7 @@ from django.contrib.gis.db import models as geo_models
 
 class CoverCrops(models.TextChoices):
     '''Different Cover crops from which to choose'''
+    NONE = 'NONE', ''
     ALFALFA = 'ALFALFA', 'Alfalfa (Medicago sativa)'
     ANNUAL_RYE = 'ANNUAL_RYE', 'Annual Rye (Lolium multiflorum'
     BUCKWHEAT = 'BUCKWHEAT', 'Buckweat (Fagopyrum esculentum)'
@@ -22,6 +23,7 @@ class CoverCrops(models.TextChoices):
     TURNIP = 'TURNIP', 'Turnip (Brassica rapa var. rapa)'
     WHITE_CLOVER = 'WHITE_CLOVER', 'White Clover (Trifolium repens)'
     OTHER = 'OTHER', 'Other'
+    
     
 class SeedingMethod(models.TextChoices):
     '''Different seeding methods'''
