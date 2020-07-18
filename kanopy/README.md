@@ -19,3 +19,5 @@
  - https
  - Good vs Bad examples
  - Help text?
+ - Verify that it is clear when errors occur
+ - cover crop 1 should not allow nulls, but the rest should. Can I do this and still use all the same `choices` object?

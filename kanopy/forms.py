@@ -43,7 +43,6 @@ class GroundcoverForm(forms.ModelForm):
             # ),
         # )
         label="Location",
-        help_text='Click on the map in the location where the photo was taken',
         widget=geo_forms.OSMWidget(
             attrs={
                 # 'map_width': 650,
@@ -71,6 +70,7 @@ class GroundcoverForm(forms.ModelForm):
             'image',
             'collectionpoint',
             'fgcc_value',
-            'comments'
+            'comments',
+            'contact_email'
         )
 

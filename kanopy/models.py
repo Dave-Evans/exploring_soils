@@ -4,7 +4,7 @@ from django.contrib.gis.db import models as geo_models
 
 class CoverCrops(models.TextChoices):
     '''Different Cover crops from which to choose'''
-    NONE = 'NONE', ''
+    NONE = None, '----------'
     ALFALFA = 'ALFALFA', 'Alfalfa (Medicago sativa)'
     ANNUAL_RYE = 'ANNUAL_RYE', 'Annual Rye (Lolium multiflorum'
     BUCKWHEAT = 'BUCKWHEAT', 'Buckweat (Fagopyrum esculentum)'
@@ -81,7 +81,7 @@ class Groundcoverdoc(models.Model):
     
     cover_crop_termination_date = models.DateField(blank=True)
     
-    cover_crop_planting_rate = models.FloatField()
+    cover_crop_planting_rate = models.FloatField(help_text = 'in pounds per acre')
     
     crop_prior = models.CharField(
         max_length=25,
@@ -95,3 +95,4 @@ class Groundcoverdoc(models.Model):
     
     comments = models.TextField(blank=True)
 
+    contact_email = models.EmailField(blank=True)
