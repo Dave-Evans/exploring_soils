@@ -60,18 +60,6 @@
                     <div class="form-group col-md-4 mb-0">    
                         {{ form.cover_crop_species_1|as_crispy_field }}
                     </div>
-                    <div class="form-group col-md-4 mb-0">
-                        {{ form.seeding_method|as_crispy_field }}
-                    </div>                    
-                </div>                
-                <div class="form-row">
-                    <div class="form-group col-md-4 mb-0">    
-                        {{ form.cover_crop_planting_date|as_crispy_field }}
-                    </div>
-                    <div class="form-group col-md-4 mb-0">    
-                        {{ form.cover_crop_planting_rate|as_crispy_field }}
-                    </div>
-                </div>    
                 <div class="form-row">
                     <div class="form-group col-md-4 mb-0">    
                         {{ form.cover_crop_species_2|as_crispy_field }}
@@ -83,13 +71,34 @@
                         {{ form.cover_crop_species_4|as_crispy_field }}
                     </div>                    
                 </div>                    
+                </div>                
                 <div class="form-row">
+                    <div class="form-group col-md-4 mb-0">    
+                        {{ form.cover_crop_planting_date|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">    
+                        {{ form.cover_crop_planting_rate|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4 mb-0">
+                        {{ form.seeding_method|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-2 mb-0">
+                        {{ form.cover_crop_interseeded|as_crispy_field }}
+                    </div>
                     <div class="form-group col-md-4 mb-0">
                         {{ form.cover_crop_termination_date|as_crispy_field }}                        
                     </div>                    
+                </div>    
+                <div class="form-row">
+
                     <div class="form-group col-md-4 mb-0">
                         {{ form.crop_prior|as_crispy_field }}
-                    </div>                    
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ form.crop_posterior|as_crispy_field }}
+                    </div>
                 </div>    
                 
                 <div class="form-row">
@@ -97,18 +106,15 @@
                         {{ form.image|as_crispy_field }}
                     </div>
                     <div class="form-group col-md-4 mb-0">
-                        {{ form.fgcc_value|as_crispy_field }}
-                        
+                        {{ form.photo_taken_date|as_crispy_field }}    
+                    </div>                                        
+                    <div class="form-group col-md-4 mb-0">
+                        {{ form.fgcc_value|as_crispy_field }}    
                     </div>                    
                 </div>    
-                    <label class=" requiredFiled" for="id_collection_point">
-                        Click on the map where the photo was taken
-                        <span class="asteriskField">*</span> 
-                        <br/>
-                    </label>                
                 <div class="form-row">
                     <div class="form-group col-md-4 mb-0">
-                        {{ form.collectionpoint }}
+                        {{ form.collectionpoint|as_crispy_field }}
                     </div>
                 </div>
                 <div class="form-row">
@@ -207,13 +213,11 @@
       format:'yyyy-mm-dd',
     });
     });
+    
+    $(function () {
+      $("#id_photo_taken_date").datepicker({
+      format:'yyyy-mm-dd',
+    });
+    });
   </script>
-
-    <script>
-    $('#id_collection_point_div_map').append(
-        '<label class=" requiredFiled" for="id_collection_point">        Click where the photo was taken        <span class="asteriskField">*</span>    </label>'
-        );        
-    </script>
-
-  
 {% endblock %}

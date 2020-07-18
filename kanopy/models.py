@@ -52,6 +52,7 @@ class Groundcoverdoc(models.Model):
     
     collectionpoint = geo_models.PointField(verbose_name="Collection Point", null=True)
     
+    photo_taken_date = models.DateField(null=False)
     image = models.ImageField(upload_to='documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     fgcc_value = models.DecimalField(max_digits=10, decimal_places=7, blank=True)
@@ -84,11 +85,21 @@ class Groundcoverdoc(models.Model):
     cover_crop_planting_rate = models.FloatField(help_text = 'in pounds per acre')
     
     crop_prior = models.CharField(
+        verbose_name='Cash crop planted prior',
         max_length=25,
-        choices=CashCrops.choices
+        choices=CashCrops.choices,
+        blank=True
     ) 
+    crop_posterior = models.CharField(
+        verbose_name='Cash crop to be planted after',
+        max_length=25,
+        choices=CashCrops.choices,
+        blank=True
+    )
+    cover_crop_interseeded = models.BooleanField(verbose_name='Was the cover crop interseeded?', null=True)
 
     seeding_method = models.CharField(
+        verbose_name='Cover crop seeding method',
         max_length=55,
         choices=SeedingMethod.choices
     )

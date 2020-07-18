@@ -9,11 +9,11 @@
  - ** COMPLETED ** Date picker
  - ** COMPLETED ** Integrate FGCC: https://github.com/fgcc-app/fgcc-app.github.io
  - ** COMPLETED ** Add necessary fields
- - Add email field, not required
+ - ** COMPLETED **Add email field, not required
  - Model work:
     - County lookup from point
     - split out lattitude and longitude from point field
- - Why is the label option for `collectionpoint` not showing up on the form?
+ - ** COMPLETED ** Why is the label option for `collectionpoint` not showing up on the form? A: I forgot `|as_crispy_field`
  - Why is the image in the entry viewer not working?
  - Backup images
  - https

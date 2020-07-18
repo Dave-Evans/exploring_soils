@@ -24,7 +24,7 @@ class GroundcoverForm(forms.ModelForm):
             ),
          required=False
         )
-     
+    # cover_crop_interseeded = forms.NullBooleanField(label='Was the cover crop interseeded')
     fgcc_value = forms.DecimalField(
         widget = forms.TextInput(attrs={'readonly':'readonly'}),
         label ='Fractional Green Canopy Cover',
@@ -42,7 +42,8 @@ class GroundcoverForm(forms.ModelForm):
                 # }
             # ),
         # )
-        label="Location",
+        label="Click on the map where the photo was taken",
+        help_text="To reset the location, click 'Delete all features' and click a different location",
         widget=geo_forms.OSMWidget(
             attrs={
                 # 'map_width': 650,
@@ -64,9 +65,12 @@ class GroundcoverForm(forms.ModelForm):
             'cover_crop_species_4',
             'cover_crop_planting_date',
             'cover_crop_planting_rate',
+            'cover_crop_interseeded',
             'crop_prior',
+            'crop_posterior',
             'seeding_method',
             'cover_crop_termination_date',
+            'photo_taken_date',
             'image',
             'collectionpoint',
             'fgcc_value',
