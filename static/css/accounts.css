@@ -14,3 +14,11 @@ body {
 .logo a:active {
   text-decoration: none;
 }
+
+.left {
+    float: left
+}
+
+.right {
+    float: right
+}

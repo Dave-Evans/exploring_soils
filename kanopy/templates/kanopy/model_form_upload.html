@@ -12,6 +12,7 @@
   <script type="text/javascript" src="{% static "js/fgcc.js" %}"></script>
 {% endblock %}
 
+
 {% block content %}
 <head>
     {{ form.media }}
@@ -44,9 +45,23 @@
                     Check the photo for any odd rocks, shadows or other non-plant or soil material.
                     Then submit with the data below!
                  <br/>
-                Good photo example:                         Bad photo example:
+                 
+                <table width="100%">
+                    <tr>
+                        <th>Example good photo</th>
+                        <th>Example poor photo</th>
+                    </tr>
+                    <tr>
+                        <td width="50%"><img width="250" height="250" src="{% static 'img/cover_crop_good_image.jpg' %}"/></td>
+                        <td width="50%"><img width="250" height="250" src="{% static 'img/cover_crop_poor_image.jpg' %}"/></td>
+                    </tr>
+                <table>                 
+                 <!-- <span id="image_row">    -->
+                        <!-- <img class="left" width="250" height="250" src="{% static 'img/cover_crop_good_image.jpg' %}"/> -->
+                        <!-- <img class="right" width="250" height="250" src="{% static 'img/cover_crop_poor_image.jpg' %}"/> -->
+                <!-- </span> -->
                 <br/>
-                Questions? Contact Anna Cates, catesa@umn.edu. 
+                Questions? Contact Anna Cates, <a href="mailto:catesa@umn.edu">catesa@umn.edu</a>. 
             
             </p>
             <form method="post" enctype="multipart/form-data">
@@ -194,13 +209,7 @@
           $('#id_fgcc_value').val(value);
         };
     
-    $('#test_button').on('click', function(e) {
-
-        updateFGCCval(76);
-
-    });      
 </script>
-    // Creating date selectors
      <script>
     $(function () {
       $("#id_cover_crop_planting_date").datepicker({
