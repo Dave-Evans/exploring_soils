@@ -22,3 +22,19 @@ body {
 .right {
     float: right
 }
+
+    
+.logobox {
+    width: 100%;
+    height: 20px;
+}
+
+
+.logoimg {
+  display: block;
+  max-width:100px;
+  max-height:50px;
+  width: auto;
+  height: auto;
+  border: 2px solid white;
+}

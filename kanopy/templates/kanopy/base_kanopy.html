@@ -9,8 +9,10 @@
 {% block body %}
   <div class="container">
     <h1 class="text-center logo my-4">
-        <img class="left" src="{% static 'img/mosh_logo.png' %}"/>
-        <img class="right" src="{% static 'img/vertMrnM.gif' %}"/>
+        <!-- <div class="logobox"> -->
+            <img class="left logoimg" src="{% static 'img/mosh_logo.png' %}"/>
+        <!-- </div> -->
+        <img class="right logoimg" src="{% static 'img/vertMrnM.gif' %}"/>
     </h1>
     <h1 class="text-center logo my-4">
         <a href="{% url 'home' %}">Green CovR</a>
