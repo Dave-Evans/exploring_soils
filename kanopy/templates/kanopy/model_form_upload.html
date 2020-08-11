@@ -25,7 +25,7 @@
         <div class="card-body">
           <h3 class="card-title">Upload a photo</h3>
             <p>
-            Thank you for submitting a cover crop ground cover photo to the MN Office for Soil Health (MOSH) Green CovR database. 
+            Thank you for submitting a cover crop ground cover photo to the MN Office for Soil Health (MOSH, <a href="mosh.umn.edu">mosh.umn.edu</a>) Green CovR database. 
             The app was developed in the Wilson Lab for manure management and water quality.
             MOSH will use this data anonymously to evaluate how successful cover crops are when planted in different contexts.
             Please give us as much information as possible about the field where photos are taken in order to interpret the data correctly.
@@ -42,7 +42,9 @@
                 <br/>
                 <b>How:</b> Hold your camera 4-5’ off the ground, far enough away from your body to avoid your shoes in the frame.
                     Keep it as horizontal as possible.
+                    Stand with the sun in front of you so you don’t create a shadow in the photo.
                     Check the photo for any odd rocks, shadows or other non-plant or soil material.
+                    
                     Then submit with the data below!
                  <br/>
                  
@@ -72,6 +74,11 @@
                     </div>
                 </div>
                 <div class="form-row">
+                    <div class="form-group col-md-4 mb-0">
+                        {{ form.collectionpoint|as_crispy_field }}
+                    </div>
+                </div>                
+                <div class="form-row">
                     <div class="form-group col-md-4 mb-0">    
                         {{ form.cover_crop_species_1|as_crispy_field }}
                     </div>
@@ -99,13 +106,15 @@
                     <div class="form-group col-md-4 mb-0">
                         {{ form.seeding_method|as_crispy_field }}
                     </div>
-                    <div class="form-group col-md-2 mb-0">
+                    <div class="form-group col-md-6 mb-0">
                         {{ form.cover_crop_interseeded|as_crispy_field }}
                     </div>
+                </div>   
+                <div class="form-row">
                     <div class="form-group col-md-4 mb-0">
                         {{ form.cover_crop_termination_date|as_crispy_field }}                        
                     </div>                    
-                </div>    
+                </div>                   
                 <div class="form-row">
 
                     <div class="form-group col-md-4 mb-0">
@@ -127,28 +136,24 @@
                         {{ form.fgcc_value|as_crispy_field }}    
                     </div>                    
                 </div>    
-                <div class="form-row">
-                    <div class="form-group col-md-4 mb-0">
-                        {{ form.collectionpoint|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-4 mb-0">
-                        {{ form.contact_email|as_crispy_field }}
-                    </div>
-                </div>                
+
                 <div class="form-row">
                     <div class="form-group col-md-8 mb-0">
                         {{ form.comments|as_crispy_field }}
                     </div>
                 </div>                
+                <div class="form-row">
+                    <div class="form-group col-md-8 mb-0">
+                        {{ form.contact_email|as_crispy_field }}
+                    </div>
+                </div>                                
                 <button type="submit" class="btn btn-primary">Upload</button>
 
                 
             </form>
         </div>
         <div class="card-footer text-muted text-center">
-          Questions? See our references <a href="#">page</a>
+          Dave Evans built this website in collaboration with MOSH and the Wilson Lab, which developed the Green CovR algorithm.
         </div>
         
       </div>

@@ -15,6 +15,13 @@ class GroundcoverForm(forms.ModelForm):
     cover_crop_species_3 = forms.ChoiceField(label = "Add'l cover crop species", choices = CoverCrops.choices, required=False, initial = '')
     cover_crop_species_4 = forms.ChoiceField(label = "Add'l cover crop species", choices = CoverCrops.choices, required=False, initial = '')
     
+    cover_crop_termination_date = forms.DateField(required=False)
+    contact_email = forms.EmailField(
+        label = "Contact email",
+        help_text="We may be in touch with questions about your photo, and you will receive a statewide summary of cover crop data for the year you submitted a photo.",
+        required=False
+    )
+    
     comments = forms.CharField(
         widget=forms.TextInput(
             attrs={
