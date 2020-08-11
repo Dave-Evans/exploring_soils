@@ -51,6 +51,11 @@ class CashCrops(models.TextChoices):
 
 class Groundcoverdoc(models.Model):
     
+    location_name = models.CharField(
+        max_length=250,
+        blank=True
+    )
+    
     collectionpoint = geo_models.PointField(verbose_name="Collection Point", null=True)
     
     photo_taken_date = models.DateField(null=False)

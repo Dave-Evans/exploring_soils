@@ -7,7 +7,7 @@ from kanopy.models import Groundcoverdoc, CoverCrops, SeedingMethod, CashCrops
 class GroundcoverForm(forms.ModelForm):
 
 
-    locname = forms.CharField(label = 'Location name', help_text='to differentiate multiple photos from the same field')
+    location_name = forms.CharField(label = 'Location name', help_text='to differentiate multiple photos from the same field')
     
     # Only one is required
     cover_crop_species_1 = forms.ChoiceField(label = 'Cover crop species', choices = CoverCrops.choices, required=True)
@@ -65,7 +65,7 @@ class GroundcoverForm(forms.ModelForm):
     class Meta:
         model = Groundcoverdoc
         fields = (
-            'locname', 
+            'location_name', 
             'cover_crop_species_1',
             'cover_crop_species_2',
             'cover_crop_species_3',
