@@ -1,6 +1,7 @@
 from django.db import models
 from djgeojson.fields import PointField
 from django.contrib.gis.db import models as geo_models
+from exploring_soils.storage_backends import PrivateMediaStorage
 
 class CoverCrops(models.TextChoices):
     '''Different Cover crops from which to choose'''
@@ -53,7 +54,7 @@ class Groundcoverdoc(models.Model):
     collectionpoint = geo_models.PointField(verbose_name="Collection Point", null=True)
     
     photo_taken_date = models.DateField(null=False)
-    image = models.ImageField(upload_to='documents/')
+    image = models.ImageField(storage=PrivateMediaStorage())
     uploaded_at = models.DateTimeField(auto_now_add=True)
     fgcc_value = models.DecimalField(max_digits=10, decimal_places=7, blank=True)
     

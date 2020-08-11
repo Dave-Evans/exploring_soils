@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     
     'leaflet',
     'djgeojson',    
+    'storages',
 
     ## For authenticating users
     'accounts',
@@ -180,4 +181,26 @@ LEAFLET_CONFIG = {
     # 'MIN_ZOOM': 3,
     # 'MAX_ZOOM': 18,
 }
+
+## Storage Config
+
+AWS_DEFAULT_ACL = None # try private?
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+# AWS_STATIC_LOCATION = 'static'
+# STATICFILES_STORAGE = 'mysite.storage_backends.StaticStorage'
+# STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
+
+AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
+DEFAULT_FILE_STORAGE = 'exploring_soils.storage_backends.PublicMediaStorage'
+
+AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
+PRIVATE_FILE_STORAGE = 'exploring_soils.storage_backends.PrivateMediaStorage'
 
