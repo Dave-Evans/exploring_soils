@@ -60,6 +60,7 @@ urlpatterns = [
     
     # Kanopy app
     url(r'^kanopy$', kanopy_views.kanopy_home, name='kanopy_home'),
+    url(r'^kanopy_thanks$', kanopy_views.kanopy_thanks, name='kanopy_thanks'),
     url(r'^kanopy_table$', kanopy_views.kanopy_table, name='kanopy_table'),
     url(r'^kanopy_upload$', kanopy_views.model_form_upload, name='kanopy_upload'),
     # url(r'^kanopy_sample$', kanopy_views.sample_point_form_upload, name='kanopy_sample'),

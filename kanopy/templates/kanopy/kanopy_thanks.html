@@ -1,0 +1,29 @@
+{% extends 'kanopy/base_kanopy.html' %}
+
+{% block title %}Welcome to Green CovR{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Your submission was successful! </h3>
+            <p>
+            Thank you for submitting data to MOSH
+            If you have more photos to submit, return to the submission page <a href="{% url 'kanopy_upload' %}">here</a>. 
+            Or visit the <a href="mosh.umn.edu">Minnesota Office for Soil Health web page.</a>
+            
+            </p>
+          <!-- <form method="post" novalidate> -->
+            <!-- {% csrf_token %} -->
+            <!-- {% include 'includes/form.html' %} -->
+            <!-- <button type="submit" class="btn btn-primary btn-block">Create an account</button> -->
+          <!-- </form> -->
+        </div>
+        <div class="card-footer text-muted text-center">
+          Dave Evans built this website in collaboration with MOSH and the Wilson Lab, which developed the Green CovR algorithm.
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

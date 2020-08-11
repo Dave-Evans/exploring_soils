@@ -81,7 +81,7 @@ class Groundcoverdoc(models.Model):
     
     cover_crop_planting_date = models.DateField()
     
-    cover_crop_termination_date = models.DateField(blank=True)
+    cover_crop_termination_date = models.DateField(null=True)
     
     cover_crop_planting_rate = models.FloatField(help_text = 'in pounds per acre')
     

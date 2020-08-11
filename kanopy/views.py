@@ -19,6 +19,11 @@ def kanopy_table(request):
 def kanopy_home(request):
 
     return render(request, 'kanopy/kanopy_home.html')
+    
+def kanopy_thanks(request):
+
+    return render(request, 'kanopy/kanopy_thanks.html')
+    
 
 def model_form_upload(request):
     if request.method == 'POST':
@@ -33,7 +38,7 @@ def model_form_upload(request):
             # new_point.long = new_point.collection_point.coords[0]
             # new_point.lat = new_point.collection_point.coords[1]
             
-            return redirect('kanopy_upload')
+            return redirect('kanopy_thanks')
     else:
         form = GroundcoverForm()
         
