@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
 from django_tables2 import RequestConfig
 from kanopy.forms import GroundcoverForm
 from kanopy.models import Groundcoverdoc
@@ -11,12 +12,14 @@ from kanopy.tables import (
 
 
 # @method_decorator(login_required, name='dispatch')
+# class GroundcoverDeleteView(PermissionRequiredMixin, DeleteView):
 class GroundcoverDeleteView(DeleteView):
 
     model = Groundcoverdoc    
     success_url = reverse_lazy('kanopy_table')
 
-
+@login_required
+@permission_required('kanopy.can_view_submissions', raise_exception=True)
 def kanopy_table(request):
     """List Kanopy entries"""
 

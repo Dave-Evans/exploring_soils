@@ -2,22 +2,32 @@
 
 ## TODO
 
- - ** COMPLETED ** Change from base.html so that it looks different from the rest of the site
+ - Figure out email capability for password reset
+ - Export data function
+    - For now, raw dump, but should provide filtering in the future
  - Change App name
- - Image browsing feature for Anna
-    - Use modal to view images?
+ - Rework names for better consistency
+        - groundcoverdoc to greencover_submission
+        - urls
+ - Map view of submissions
+ - Use modal to view images?
+ - Model work:
+    - County lookup from point
+    - split out lattitude and longitude from point field
+ - https
+ - Help text?
+ - Verify that it is clear when errors occur
+ - cover crop 1 should not allow nulls, but the rest should. Can I do this and still use all the same `choices` object?
+ - Permissions:
+    - use built in permissions
+    - alter table view so 'update' and 'delete' only show based on permissions
+ - Extract form to separate template
+ - build in 'Logged in as' to footer
+ - ** COMPLETED ** Good vs Bad examples
+ - ** COMPLETED ** Why is the label option for `collectionpoint` not showing up on the form? A: I forgot `|as_crispy_field`
  - ** COMPLETED ** Date picker
  - ** COMPLETED ** Integrate FGCC: https://github.com/fgcc-app/fgcc-app.github.io
  - ** COMPLETED ** Add necessary fields
  - ** COMPLETED **Add email field, not required
- - Model work:
-    - County lookup from point
-    - split out lattitude and longitude from point field
- - ** COMPLETED ** Why is the label option for `collectionpoint` not showing up on the form? A: I forgot `|as_crispy_field`
- - Why is the image in the entry viewer not working?
- - Backup images
- - https
- - Good vs Bad examples
- - Help text?
- - Verify that it is clear when errors occur
- - cover crop 1 should not allow nulls, but the rest should. Can I do this and still use all the same `choices` object?
+ - ** COMPLETED ** Image browsing feature for Anna
+ - ** COMPLETED ** Change from base.html so that it looks different from the rest of the site

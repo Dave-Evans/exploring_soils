@@ -113,3 +113,8 @@ class Groundcoverdoc(models.Model):
     comments = models.TextField(blank=True)
 
     contact_email = models.EmailField(blank=True)
+
+
+    class Meta:
+        
+        permissions = (("can_view_submissions", "Can view submissions"),)  
