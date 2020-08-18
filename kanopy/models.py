@@ -14,7 +14,7 @@ class CoverCrops(models.TextChoices):
     COWPEAS = 'COWPEAS', 'Cowpeas (Vigna unguiculata)'
     CRIMSON_CLOVER = 'CRIMSON_CLOVER', 'Crimson Clover (Trifolium incarnatum)'
     HAIRY_VETCH = 'HAIRY_VETCH', 'Hairy Vetch (Vicia villosa)'
-    MUSTARDS = 'MUSTARDS', 'Mustartds (Brassicaceae)'
+    MUSTARDS = 'MUSTARDS', 'Mustards (Brassicaceae)'
     OATS = 'OATS', 'Oats (Avena sativa)'
     PENNYCRESS = 'PENNYCRESS', 'Pennycress (Thlaspi arvense)'
     RADISH = 'RADISH', 'Radish (Raphanus sativus)'

@@ -2,14 +2,17 @@
 
 ## TODO
 
- - Figure out email capability for password reset
  - Export data function
     - For now, raw dump, but should provide filtering in the future
+ - Extract form to separate template
+ - build in 'Logged in as' to footer    
+ - Map view of submissions    
+ - Figure out email capability for password reset
  - Change App name
  - Rework names for better consistency
         - groundcoverdoc to greencover_submission
         - urls
- - Map view of submissions
+ 
  - Use modal to view images?
  - Model work:
     - County lookup from point
@@ -21,8 +24,7 @@
  - Permissions:
     - use built in permissions
     - alter table view so 'update' and 'delete' only show based on permissions
- - Extract form to separate template
- - build in 'Logged in as' to footer
+
  - ** COMPLETED ** Good vs Bad examples
  - ** COMPLETED ** Why is the label option for `collectionpoint` not showing up on the form? A: I forgot `|as_crispy_field`
  - ** COMPLETED ** Date picker
