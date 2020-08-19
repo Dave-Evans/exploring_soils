@@ -4,6 +4,7 @@ from django.views.generic import TemplateView, CreateView, UpdateView, DeleteVie
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
 from django_tables2 import RequestConfig
+import djqscsv
 from kanopy.forms import GroundcoverForm
 from kanopy.models import Groundcoverdoc
 from kanopy.tables import (
@@ -17,6 +18,11 @@ class GroundcoverDeleteView(DeleteView):
 
     model = Groundcoverdoc    
     success_url = reverse_lazy('kanopy_table')
+
+def kanopy_download(request):
+
+    qs = Groundcoverdoc.objects.all()
+    return djqscsv.render_to_csv_response(qs)
 
 @login_required
 @permission_required('kanopy.can_view_submissions', raise_exception=True)
