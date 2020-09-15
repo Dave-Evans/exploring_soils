@@ -17,7 +17,7 @@ class KanopyTable(tables.Table):
         template_name = "django_tables2/bootstrap.html"
         attrs = {"class": "table table-hover"}
         
-    # edit = TemplateColumn(template_name='kanopy/update_column.html')
+    edit = TemplateColumn(template_name='kanopy/update_column.html')
     delete = TemplateColumn(template_name='kanopy/delete_column.html')
 
 

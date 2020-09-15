@@ -2,8 +2,6 @@
 
 ## TODO
 
- - Export data function
-    - For now, raw dump, but should provide filtering in the future
  - Extract form to separate template
  - build in 'Logged in as' to footer    
  - Map view of submissions    
@@ -12,7 +10,7 @@
  - Rework names for better consistency
         - groundcoverdoc to greencover_submission
         - urls
- 
+ - provide filtering for exporting data
  - Use modal to view images?
  - Model work:
     - County lookup from point
@@ -24,7 +22,10 @@
  - Permissions:
     - use built in permissions
     - alter table view so 'update' and 'delete' only show based on permissions
+ - Add in toggle for satelite view, django leaflet?
+ - Show uploads from the current session
 
+ - ** COMPLETED ** Export data function
  - ** COMPLETED ** Good vs Bad examples
  - ** COMPLETED ** Why is the label option for `collectionpoint` not showing up on the form? A: I forgot `|as_crispy_field`
  - ** COMPLETED ** Date picker

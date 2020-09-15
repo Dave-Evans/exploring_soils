@@ -18,6 +18,12 @@ class GroundcoverDeleteView(DeleteView):
 
     model = Groundcoverdoc    
     success_url = reverse_lazy('kanopy_table')
+    
+class GroundcoverUpdateView(UpdateView):
+
+    model = Groundcoverdoc    
+    form_class = GroundcoverForm
+    template_name = 'kanopy/kanopy_update_form.html'
 
 def kanopy_download(request):
 

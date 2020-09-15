@@ -61,6 +61,7 @@ urlpatterns = [
     # Kanopy app
     url(r'^kanopy$', kanopy_views.kanopy_home, name='kanopy_home'),
     url(r'^kanopy/delete/(?P<pk>\d+)/', kanopy_views.GroundcoverDeleteView.as_view(), name='groundcover_delete'),
+    path('groundcover_update/<int:pk>/', kanopy_views.GroundcoverUpdateView.as_view(), name='groundcover_update'),
     url(r'^kanopy_thanks$', kanopy_views.kanopy_thanks, name='kanopy_thanks'),
     url(r'^kanopy_table$', kanopy_views.kanopy_table, name='kanopy_table'),
     url(r'^kanopy_upload$', kanopy_views.model_form_upload, name='kanopy_upload'),
