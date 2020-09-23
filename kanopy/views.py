@@ -24,6 +24,7 @@ class GroundcoverUpdateView(UpdateView):
     model = Groundcoverdoc    
     form_class = GroundcoverForm
     template_name = 'kanopy/kanopy_update_form.html'
+    success_url = reverse_lazy('kanopy_table')
 
 def kanopy_download(request):
 
