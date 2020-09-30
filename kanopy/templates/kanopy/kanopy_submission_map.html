@@ -1,0 +1,81 @@
+{% extends 'kanopy/base_kanopy.html' %}
+
+{% block title %}Welcome to Green CovR{% endblock %}
+
+{% load render_table from django_tables2 %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+ <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Map of submissions</h3>
+            <div class="col-md-10">
+                <div id="mapid" style="height:500px" ></div>
+            </div>
+        </div>
+        <div class="card-footer text-muted text-center">
+          Questions? See our references <a href="#">page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>  
+<script>
+    var map = L.map('mapid').setView([44.67, -93.17], 7);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo( map );
+     
+    function onEachFeature(feature, layer) {
+		var popupContent = "<dl><dt>Location name</dt> <dd>" + feature.properties.location_name + "</dd>" +
+				"<dt>Date uploaded</dt> <dd>" + feature.properties.photo_taken_date + "</dd>" +
+                "<dt>Cover crop</dt> <dd>" + feature.properties.cover_crop_species_1 + "</dd>" +
+                "<dt>Photo</dt> <dd>"  + '<img src="' + feature.properties.image_url + '" width="250" height="250">' + "</dd>"
+                + "</dl>";
+
+		if (feature.properties && feature.properties.popupContent) {
+			popupContent += feature.properties.popupContent;
+		}
+
+		layer.bindPopup(popupContent);
+	}
+    
+    var geojsonMarkerOptions = {
+        radius: 8,
+        fillColor: "#ff0000",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+    
+    <!-- var soilsLayer = [{"id": 24, "type": "Feature", "geometry": {"type": "Point", "coordinates": [-90.1153564453125, 45.8196120107612]}, "properties": {"image": "uly.JPG", "comments": "", "crop_prior": "", "fgcc_value": 9e-05, "uploaded_at": "2020-08-11T02:19:48.903221+00:00", "contact_email": "", "location_name": "", "crop_posterior": "", "seeding_method": "MANURE_SLURRY", "photo_taken_date": "2020-08-03", "cover_crop_species_1": "CAMELINA", "cover_crop_species_2": "None", "cover_crop_species_3": "None", "cover_crop_species_4": "None", "cover_crop_interseeded": null, "cover_crop_planting_date": "2020-08-12", "cover_crop_planting_rate": 4, "cover_crop_termination_date": null}}, {"id": 25, "type": "Feature", "geometry": {"type": "Point", "coordinates": [-93.4222412109375, 45.102995448533]}, "properties": {"image": "yawn_IOUn9wK.JPG", "comments": "", "crop_prior": "", "fgcc_value": 0.01555, "uploaded_at": "2020-08-11T18:17:35.848416+00:00", "contact_email": "test@email.com", "location_name": "Is location here?", "crop_posterior": "", "seeding_method": "MANURE_SLURRY", "photo_taken_date": "2020-08-18", "cover_crop_species_1": "CRIMSON_CLOVER", "cover_crop_species_2": "None", "cover_crop_species_3": "None", "cover_crop_species_4": "None", "cover_crop_interseeded": null, "cover_crop_planting_date": "2020-08-13", "cover_crop_planting_rate": 8, "cover_crop_termination_date": null}}, {"id": 26, "type": "Feature", "geometry": {"type": "Point", "coordinates": [-92.5361251831054, 44.4812222077111]}, "properties": {"image": "uly.JPG", "comments": "", "crop_prior": "", "fgcc_value": 9e-05, "uploaded_at": "2020-09-28T12:28:04.060554+00:00", "contact_email": "", "location_name": "test map - goodhue county, south of redwing a bit", "crop_posterior": "", "seeding_method": "BROADCAST_INCORPORATION", "photo_taken_date": "2020-09-08", "cover_crop_species_1": "ALFALFA", "cover_crop_species_2": "None", "cover_crop_species_3": "None", "cover_crop_species_4": "None", "cover_crop_interseeded": null, "cover_crop_planting_date": "2020-09-01", "cover_crop_planting_rate": 1, "cover_crop_termination_date": null}}] -->
+    
+    var dataurl = '/kanopy_submissions_json';
+    
+    
+    var soilsLayer;
+    var soilsCircle = $.getJSON(dataurl, function(data) {
+        soilsLayer = data;
+        L.geoJSON(data, {
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, geojsonMarkerOptions);
+            },
+
+		    onEachFeature: onEachFeature
+        }).addTo(map);
+     });
+
+</script> 
+{% endblock %}

@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.http import JsonResponse
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db import connection
 from django_tables2 import RequestConfig
 import djqscsv
 from kanopy.forms import GroundcoverForm
@@ -49,6 +51,48 @@ def kanopy_thanks(request):
 
     return render(request, 'kanopy/kanopy_thanks.html')
     
+@permission_required('kanopy.can_view_submissions', raise_exception=True)
+def kanopy_submission_map(request):
+    docs = Groundcoverdoc.objects.all() 
+    return render(request, 'kanopy/kanopy_submission_map.html', {'docs': docs})
+    
+def kanopy_submissions_json(request):
+    
+    # from django.db import connection
+
+    def get_submissions_json():
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT jsonb_build_object(
+                    'type',     'FeatureCollection',
+                    'features', jsonb_agg(features.feature)
+                )
+                FROM (
+                  SELECT jsonb_build_object(
+                    'type',       'Feature',
+                    'id',         id,
+                    'geometry',   ST_AsGeoJSON(collectionpoint)::jsonb,
+                    'properties', to_jsonb(inputs) - 'id' - 'collectionpoint'
+                  ) AS feature
+                  FROM (SELECT * FROM kanopy_groundcoverdoc) inputs) features;
+            """)
+            rows = cursor.fetchone()
+
+        return rows
+        
+    data = get_submissions_json()
+    # retrieve signed url for accessing private s3 images
+    # There is probably a better way to do this but while there aren't many
+    #   submissions this is fine.
+    for feat in data[0]['features']:
+        id = feat['id']
+        
+        submission_object = Groundcoverdoc.objects.get(pk = id)
+        feat['properties']['image_url'] = submission_object.image.url
+    
+    
+    return JsonResponse(list(data), safe=False)
+
 
 def model_form_upload(request):
     if request.method == 'POST':
