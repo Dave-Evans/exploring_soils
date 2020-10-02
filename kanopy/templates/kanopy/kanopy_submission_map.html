@@ -66,16 +66,26 @@
     
     
     var soilsLayer;
+    var soilsPoints = [];
     var soilsCircle = $.getJSON(dataurl, function(data) {
         soilsLayer = data;
         L.geoJSON(data, {
             pointToLayer: function (feature, latlng) {
+                soilsPoints.push(latlng);
                 return L.circleMarker(latlng, geojsonMarkerOptions);
             },
-
+            
+            
 		    onEachFeature: onEachFeature
         }).addTo(map);
+        map.fitBounds( soilsPoints );
      });
-
+     
+     
+    
 </script> 
+
+
+    
+
 {% endblock %}
