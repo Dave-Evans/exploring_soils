@@ -14,6 +14,32 @@
             Or visit the <a href="mosh.umn.edu">Minnesota Office for Soil Health web page.</a>
             
             </p>
+            
+            <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Uploaded at</th>
+                  <th>Image</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for submission in request.session.submissions %}
+                  <tr>
+                    <td>{{ submission.location_name }}</td>
+                    <td>{{ submission.uploaded_at }}</td>
+                    <td><img src="{{ submission.image_url }}" width="250" height="250"> </td>
+                    
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="3">You have not uploaded any photos or metadata yet.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>            
+        </div>
           <!-- <form method="post" novalidate> -->
             <!-- {% csrf_token %} -->
             <!-- {% include 'includes/form.html' %} -->
