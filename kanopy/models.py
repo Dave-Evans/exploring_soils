@@ -23,6 +23,7 @@ class CoverCrops(models.TextChoices):
     SUNN_HEMP = 'SUNN_HEMP', 'Sunn Hemp (Crotalaria juncea)'
     TURNIP = 'TURNIP', 'Turnip (Brassica rapa var. rapa)'
     WHITE_CLOVER = 'WHITE_CLOVER', 'White Clover (Trifolium repens)'
+    WINTER_TRITICALE = 'WINTER TRITICALE', 'Winter Triticale (Triticosecale sp.)'       
     OTHER = 'OTHER', 'Other'
     
     
@@ -36,17 +37,17 @@ class SeedingMethod(models.TextChoices):
     OTHER = 'OTHER', 'Other'
     
 class CashCrops(models.TextChoices):
-   '''Different cash crops'''
-   CORN = 'CORN', 'Corn'
-   CORN_SILAGE = 'CORN_SILAGE', 'Corn silage'
-   SOY_BEANS = 'SOY_BEANS', 'Soy beans'
-   SMALL_GRAIN = 'SMALL_GRAIN', 'Small grain'
-   CANNING_CROP = 'CANNING_CROP', 'Canning crop'
-   POTATOES = 'POTATOES', 'Potatoes'
-   DRY_BEANS = 'DRY_BEANS', 'Dry beans'
-   SUGAR_BEETS = 'SUGAR_BEETS', 'Sugar beets'
-   PREVENT_PLANT = 'PREVENT_PLANT', 'Prevent plant'
-   OTHER = 'OTHER', 'Other'
+    '''Different cash crops'''
+    CORN = 'CORN', 'Corn'
+    CORN_SILAGE = 'CORN_SILAGE', 'Corn silage'
+    SOY_BEANS = 'SOY_BEANS', 'Soy beans'
+    SMALL_GRAIN = 'SMALL_GRAIN', 'Small grain'
+    CANNING_CROP = 'CANNING_CROP', 'Canning crop'
+    POTATOES = 'POTATOES', 'Potatoes'
+    DRY_BEANS = 'DRY_BEANS', 'Dry beans'
+    SUGAR_BEETS = 'SUGAR_BEETS', 'Sugar beets'
+    PREVENT_PLANT = 'PREVENT_PLANT', 'Prevent plant'
+    OTHER = 'OTHER', 'Other'
    
 
 class Groundcoverdoc(models.Model):
