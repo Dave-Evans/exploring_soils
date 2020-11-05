@@ -29,6 +29,12 @@
       <div class="card">
         <div class="card-body">
           <h3 class="card-title">Upload a photo</h3>
+          
+            {% if request.session.submissions|length > 0 %}
+                <a href="{% url "kanopy_thanks" %}">
+                    View previous uploads
+                </a>
+            {% endif %}
             <p>
             Thank you for submitting a cover crop ground cover photo to the MN Office for Soil Health (<a href="mosh.umn.edu">MOSH</a>) Green CovR database. 
             The app was developed in the Wilson Lab for manure management and water quality.

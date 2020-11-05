@@ -105,12 +105,14 @@ def model_form_upload(request):
             vals = {
                 "pk":                    new_point.id,
                 "location_name":  new_point.location_name,
-                "uploaded_at":      new_point.uploaded_at.strftime("%m-%d-%Y"),
+                "uploaded_at":      new_point.uploaded_at.strftime("%c"),
                 "image":               new_point.image.name,
                 "image_url":          new_point.image.url
                 }
+                
             if request.session.get('submissions', False):
                 # Refreshing the signed urls for previously uploaded images
+                #   Best would be to see if the signed url had already expired, but unsure how to precisely do that.
                 for sub in request.session['submissions']:
                     submission_object = Groundcoverdoc.objects.get(pk = sub['pk'])
                     sub['image_url'] = submission_object.image.url
