@@ -25,13 +25,13 @@ resource "aws_instance" "webserver" {
 
 ######## Elastic IP ########
 
-resource "aws_eip" "elastic_ip" {
-  instance = aws_instance.webserver.id
-  vpc      = true
-  tags = {
-    Name = "Sandbox Permanent IP"
-  } 
-}
+# resource "aws_eip" "elastic_ip" {
+#   instance = aws_instance.webserver.id
+#   vpc      = true
+#   tags = {
+#     Name = "Sandbox Permanent IP"
+#   } 
+# }
 
 ######## S3 ############
 
@@ -142,8 +142,4 @@ EOF
 
 output "ip" {
   value = aws_instance.webserver.public_ip
-}
-
-output "el_pub_ip" {
-  value = aws_eip.elastic_ip.public_ip
 }
