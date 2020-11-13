@@ -1,0 +1,59 @@
+
+- hosts: all
+  remote_user: ubuntu
+  become: True
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+  - name: Update apt-get repo and cache
+    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+  - name: Install software
+    apt:
+      name: ['awscli', 'python3-pip', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev']
+      state: present
+    tags: install
+  
+  - name: Install Psycopg2
+    pip:
+      name: psycopg2
+
+  - name: Ensure the PostgreSQL service is running
+    service: name=postgresql state=started enabled=yes
+
+  - name: Ensure database is created
+    become_user: postgres
+    postgresql_db: name={{ db_name }}
+              encoding='UTF-8'
+              lc_collate='en_US.UTF-8'
+              lc_ctype='en_US.UTF-8'
+              template='template0'
+              state=present
+
+  - name: Ensure user has access to the database
+    become_user: postgres  
+    postgresql_user: db={{ db_name }}
+                name={{ db_user }}
+                password={{ db_password }}
+                priv=ALL
+                state=present
+  
+  - name: Adds postgis extension to the database
+    become_user: postgres
+    community.general.postgresql_ext:
+      name: postgis
+      db: "{{ db_name }}"
+
+  - name: Ensure user does not have unnecessary privileges
+    become_user: postgres
+    postgresql_user: name={{ db_user }}
+                role_attr_flags=NOSUPERUSER,NOCREATEDB
+                state=present
+    notify:
+    - Restart postgres
+
+
+  handlers:
+    - name: Restart postgres
+      service: name=postgresql state=restarted

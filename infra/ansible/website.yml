@@ -1,0 +1,87 @@
+
+- hosts: all
+  remote_user: ubuntu
+  become: True
+
+  tasks:
+
+  - name: Update apt-get repo and cache
+    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+  - name: Install software
+    apt:
+      name: ['awscli', 'python3-pip', 'python3-venv', 'gdal-bin', 'apache2', 'libapache2-mod-wsgi-py3', 'git', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev']
+      state: present
+    tags: install
+
+  - name: Copy the code from repository
+    git:
+      repo: "https://github.com/Dave-Evans/exploring_soils.git"
+      force: yes
+      dest: /home/ubuntu/exploring_soils
+
+  - name: Install Python modules
+    pip:
+      requirements: /home/ubuntu/exploring_soils/requirements.txt
+      virtualenv: /home/ubuntu/exploring_soils/myvenv
+      virtualenv_command: /usr/bin/python3.6 -m venv
+
+  - name: Move apache config file
+    copy:
+      src: /home/ubuntu/exploring_soils/deployment/000-default.conf
+      dest: /etc/apache2/sites-available/000-default.conf
+      remote_src: yes      
+
+
+  - name: Move env file
+    copy:
+      src: /home/daveevans/Documents/exploring_soils/infra/test.env
+      dest: /home/ubuntu/exploring_soils/.env
+      remote_src: no      
+
+  - name: Create a directory if it does not exist
+    file:
+      path: /home/ubuntu/exploring_soils/data
+      state: directory
+      mode: '0755'
+
+  # This will be pulling from an S3 bucket
+  - name: Move backup db dump file
+    copy:
+      src: /home/daveevans/Documents/exploring_soils/data/dump.json
+      dest: /home/ubuntu/exploring_soils/data/dump.json
+      remote_src: no
+
+  # Remove old migrations, create fresh, and load data
+  # Should be run **ONLY** on one machine
+  - name: Run a script to delete old migrations and recreate and then load data
+    script: build_and_load_db.sh
+    args:
+      creates: /home/ubuntu/exploring_soils/migrations_are_complete
+    notify:
+    - Restart apache
+
+  # What is cron doing with the user? How much does this matter?
+  - name: Ensure a job that runs at 01:42 GMT. Creates an entry like "0 5,2 * * ls -alh > /dev/null"
+    cron:
+      name: "Set up DB backup"
+      minute: "38"
+      hour: "2"
+      user: root
+      job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./deployment/helper.sh dumpdb; bash ./deployment/helper.sh bkup ./data/dump.json"
+
+
+  - name: Change directory permissions
+    file:
+      path: /home/ubuntu/exploring_soils
+      state: directory
+      group: www-data
+    notify:
+    - Restart apache
+
+  handlers:
+    - name: Restart apache
+      service: name=apache2 state=restarted
+
+
+
