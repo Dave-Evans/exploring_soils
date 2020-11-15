@@ -1,22 +1,17 @@
-variable "region" {
+variable "aws_s3_region_name" {
     default = "us-east-2"
 }
 
-variable "aws_access_key" {
+variable "aws_access_key_id" {
     description = "AWS Access Key"
 }
 
-variable "aws_secret_key" {
+variable "aws_secret_access_key" {
     description = "AWS Access Key"
 }
 
-variable "bucketname" {
+variable "aws_storage_bucket_name" {
     description = "The name of the primary app bucket"
-}
-
-variable "image_id" {
-  type = string
-  description = "The id of the AMI"
 }
 
 variable "key_name" {

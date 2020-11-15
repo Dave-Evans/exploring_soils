@@ -32,10 +32,10 @@
       dest: /etc/apache2/sites-available/000-default.conf
       remote_src: yes      
 
-
+  # Variabalize the env file
   - name: Move env file
     copy:
-      src: /home/daveevans/Documents/exploring_soils/infra/test.env
+      src: /home/daveevans/Documents/exploring_soils/test.env
       dest: /home/ubuntu/exploring_soils/.env
       remote_src: no      
 

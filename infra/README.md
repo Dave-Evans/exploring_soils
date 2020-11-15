@@ -17,8 +17,22 @@ I have yet to build in the elastic ip address and I would also like to add at "D
 I would like to better understand what it would look like to build this out for a multi machine setup. 
 In a situation where there are two webservers, a load balancers and a database server, how is the networking configured?
 
+### Protecting resources
+
+It seems there is no great method in Terraform for protecting resources from destruction.
+It's possible to add a lifecycle tag and use `prevent_destroy` or some such, but this just throws an error when tearing down.
+I would like to have the S3 bucket and the Elastic IP kept from being destroyed. 
+The S3 bucket will have content in it and so it won't be deleted.
+But the IP address will. 
+My thinking is that for all non-production uses of this code, no elastic ip address will be used; it will be skipped.
+However, for prod use, I will merely attach the elastic IP address, which I will just have created manually.
+Considerations:
+I will need an if statements in the Terraform code, if prod (in variables?) then use IP address, if not then forget it.
+I am going to leave this undone for now and proceed with assuming that we aren't going to use an elastic ip.
+
 ### References
 
+[For booleans](https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9)
 [This](https://www.youtube.com/watch?v=UleogrJkZn0) was a helpful example.
 I haven't yet explored [this](https://github.com/28mm/awesome-terraform) but it seems to be a comprehensive list of resources.
 Multiple server configuration [here](https://medium.com/@dhelios/terraform-by-examples-part-1-ef3e3be7b88b)
@@ -47,9 +61,9 @@ I need to look into Dynamic inventory.
 These ansible files require a file at `./ansible/vars/main.yml` which would look like this:
 ```yaml
 ---
-db_user: db_user_name
-db_name: database_name
-db_password: mycoolpassword
+database_user: db_user_name
+database_name: database_name
+database_pass: mycoolpassword
 ```
 
 It also requires `./ansible/hosts` file, looking like:

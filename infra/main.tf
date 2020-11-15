@@ -2,16 +2,16 @@
 
 provider "aws" {
     profile     = "default"
-    region     = var.region
+    region     = var.aws_s3_region_name
     version = "~> 3.10"
-    access_key = var.aws_access_key
-    secret_key = var.aws_secret_key
+    access_key = var.aws_access_key_id
+    secret_key = var.aws_secret_access_key
 }
 
 ######## EC2 ############
 
 resource "aws_instance" "webserver" {
-    ami                  = var.image_id
+    ami                  = "ami-0e82959d4ed12de3f"
     instance_type        = "t2.micro"
     key_name             = var.key_name
     iam_instance_profile = aws_iam_instance_profile.ec2_s3_profile.name
@@ -36,7 +36,7 @@ resource "aws_instance" "webserver" {
 ######## S3 ############
 
 resource "aws_s3_bucket" "greencover_sandbox" {
-  bucket = var.bucketname
+  bucket = var.aws_storage_bucket_name
   acl    = "private"
   tags = {
     Name        = "Sandbox Bucket"
@@ -128,8 +128,8 @@ resource "aws_iam_role_policy" "ec2_s3_policy" {
         ],
       "Effect": "Allow",
       "Resource": [
-                "arn:aws:s3:::${var.bucketname}",
-                "arn:aws:s3:::${var.bucketname}/*"
+                "arn:aws:s3:::${var.aws_storage_bucket_name}",
+                "arn:aws:s3:::${var.aws_storage_bucket_name}/*"
             ]
     }
   ]
