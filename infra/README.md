@@ -88,14 +88,13 @@ Querying output variables
  - What the hell is `become`? [Check here](http://docs.ansible.com/ansible/latest/user_guide/become.html)
 
 
-```sh
-# Added community with 
-# ansible-galaxy collection install community.general
-echo "$(terraform output el_pub_ip) ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/sandbox1.pem" > hosts
+## Workflow
 
-ansible-playbook -i hosts database.yml
-# must be run after db is setup
-ansible-playbook -i hosts website.yml
-ansible-playbook -i hosts update.yml
-```
-
+The bash script `helper.sh` is used to run Terraform and Ansible within one program.
+It allows us maintain only one config file, the `.env` file, which is used by `decouple` within the Django application.
+See the example file `.env.example` for what this should look like.
+If you aren't going to use the default named environment file, `.env`, then specify the path to your env file with `-f ../test.env`.
+The helper program first generates the Terraform and Ansible variable files using
+`./helper.sh create_vars`.
+Then, it calls the Terraform code, `./helper.sh spinup_infra`.
+After this, provision and configure the infrastructure with Ansible using `./helper.sh deploy`.

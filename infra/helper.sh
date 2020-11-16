@@ -123,6 +123,10 @@ pullip () {
 top_level=$(git rev-parse --show-toplevel)
 # Branch name
 branchname=$(git symbolic-ref --short HEAD)
+# Default .env file
+env_file="$top_level/.env"
+# Default virtual env
+myvenv_dir="$top_level/myvenv"
 
 # Actions 
 # infra: terraform
@@ -138,18 +142,41 @@ branchname=$(git symbolic-ref --short HEAD)
 # - run ansible
 
 
-myvenv_dir="$top_level/myvenv"
-key_file=""
-
-# Environment file, change to arg
-## How?
-env_file="$top_level/test.env"
 
 # Terraform variables file, assume it doesn't exist and replace
 #   prompt for deletion in future?
 tfvars=$top_level/infra/terraform.tfvars
 ansvars=$top_level/infra/ansible/vars/main.yml
 anshosts=$top_level/infra/ansible/hosts
+
+create_tf_vars () {
+
+    if [ -f "$tfvars" ]; then
+        WARNING "$tfvars already exists."
+        echo "This will be overwritten. Enter 'yes' to proceed"
+        read resp
+        if [ "$resp" != 'yes' ]; then
+            echo $resp
+            exit 1
+        fi
+        rm $tfvars
+    fi
+
+    INFO "Creating Terraform variables file: $tfvars"
+    for _var in aws_storage_bucket_name key_name aws_access_key_id aws_secret_access_key; do
+        eval "$_var=$(extract_envvar $_var)"
+        eval "_val=\${$_var}"
+        if [ -z "$_val" ]; then
+            ERROR "need to specify '$_var' in $env_file"
+            # echo "need to specify '$_var' in $env_file"
+        else
+            DEBUG "$_var: $_val"
+            # echo "$_var: $_val"
+            echo "$_var = \"$_val\"" >> $tfvars
+        fi
+    done
+
+}
 
 create_ansible_vars() {
 
@@ -186,6 +213,17 @@ create_ansible_vars() {
 
 }
 
+spinup_infra () {
+    
+    INFO "Creating infrastructure..."
+    terraform apply
+
+    INFO "Extracting IP Address"
+    ipaddress=$( pullip )
+    sed -i "s/ALLOWED_HOSTS=.*/ALLOWED_HOSTS=$ipaddress/g" $env_file
+
+}
+
 create_ansible_hostsfile () {
 
     # Deletes hosts by default
@@ -211,46 +249,6 @@ provision_deploy () {
     ansible-playbook -i ./ansible/hosts ./ansible/update.yml
 }
 
-create_tf_vars () {
-
-    if [ -f "$tfvars" ]; then
-        WARNING "$tfvars already exists."
-        echo "This will be overwritten. Enter 'yes' to proceed"
-        read resp
-        if [ "$resp" != 'yes' ]; then
-            echo $resp
-            exit 1
-        fi
-        rm $tfvars
-    fi
-
-    INFO "Creating Terraform variables file: $tfvars"
-    for _var in aws_storage_bucket_name key_name aws_access_key_id aws_secret_access_key; do
-        eval "$_var=$(extract_envvar $_var)"
-        eval "_val=\${$_var}"
-        if [ -z "$_val" ]; then
-            ERROR "need to specify '$_var' in $env_file"
-            # echo "need to specify '$_var' in $env_file"
-        else
-            DEBUG "$_var: $_val"
-            # echo "$_var: $_val"
-            echo "$_var = \"$_val\"" >> $tfvars
-        fi
-    done
-
-}
-
-spinup_infra () {
-    
-    INFO "Creating infrastructure..."
-    terraform apply
-
-    INFO "Extracting IP Address"
-    ipaddress=$( pullip )
-    sed -i "s/ALLOWED_HOSTS=.*/ALLOWED_HOSTS=$ipaddress/g" $env_file
-
-}
-
 scp_to_server() {
     # first arg is src
     # second is dst
@@ -264,71 +262,74 @@ dump_db() {
     python $top_level/manage.py dumpdata --indent 4 --natural-primary --natural-foreign --traceback > ./data/dump.json
     deactivate
 }
-        
-case "$1" in
+while [ -n "$1" ]; do
+    case "$1" in
 
-    create_vars)
-        # Create Terraform vars file
-        create_tf_vars
-        # Create Ansible vars file
-        create_ansible_vars
-        ;;
-    spinup_infra)
-        spinup_infra
-        # Populate hosts
-        create_ansible_hostsfile        
-        ;;
-    teardown)
-        terraform destroy
-        ;;
-    deploy)
+        -f) # Catch the option for a different environment file
+            if [ ! -f $2 ]; then
+                echo "Option -b specifies an alternate env file."
+                echo "$2 is not a file"
+                exit 1
+            fi
+            echo "Resetting default environment file to $2"
+            env_file="$2"
 
-        # Run Ansible
-        provision_deploy
-        ;;
-    opensite)
-        ipaddress=$( pullip )
-        python -mwebbrowser http://$ipaddress
-        ;;
-    ssh)
-        ipaddress=$( pullip )
-        key_name=$(extract_envvar key_name)
-        INFO "ssh'ing into server at $ipaddress"
-        ssh -i "~/.ssh/$key_name.pem" ubuntu@$ipaddress
-        ;;      
-    maintenance)
-        INFO "Restarting instance..."
-        ipaddress=$(pull_ipaddress $out_describe ip)
-        remote_maintenance $key_file $ipaddress restart
-        aws ec2 wait instance-running --instance-ids $instance_id
-        INFO "Additional commands"
-        INFO "Additional commands."
-        WARNING "Additional commands."
-        ;;
-    setcron)
-        croncmd="cd $top_level; bash ./deployment/helper.sh dumpdb; bash ./deployment/helper.sh bkup ./data/dump.json"
-        cronjob="42 01 * * * $croncmd"
-        INFO "Creating cronjob:"
-        INFO "$cronjob"
-        ( crontab -l | grep -v -F "$croncmd" ; echo "$cronjob" ) | crontab -
-        ;;
-    dumpdb)
-        INFO "Dumping database to ./data/dump.json"
-        dump_db
-        ;;
-    bkup)
-        bucket=$(extract_envvar AWS_STORAGE_BUCKET_NAME)
-        folder="db"
-        file=$(basename -- "$2")
-        INFO "Copying $2'"
-        INFO "To 's3://$bucket/$folder/$file'"
-        aws s3 cp "$2" "s3://$bucket/$folder/$file"
-        ;;
-    *)
-        ERROR "Usage: bash helper.sh spinup|opensite|ssh|setcron|bkup"
-        exit 1        
-        ;;
-esac
+            shift
+            ;;        
+        create_vars)
+            # Create Terraform vars file
+            create_tf_vars
+            # Create Ansible vars file
+            create_ansible_vars
+            ;;
+        spinup_infra)
+            spinup_infra
+            # Here: if prod attach elastic ip address
+            # Grab that ip and add to env file and use in hosts
+            #   Add a switch to pullip function, if prod then use elastic ip
+            # Populate hosts
+            create_ansible_hostsfile        
+            ;;
+        deploy)
+            # Run Ansible
+            provision_deploy
+            ;;
+        teardown)
+            terraform destroy
+            ;;            
+        opensite)
+            ipaddress=$( pullip )
+            python -mwebbrowser http://$ipaddress
+            ;;
+        ssh)
+            ipaddress=$( pullip )
+            key_name=$(extract_envvar key_name)
+            INFO "ssh'ing into server at $ipaddress"
+            ssh -i "~/.ssh/$key_name.pem" ubuntu@$ipaddress
+            ;;      
+        maintenance)
+            ansible-playbook -i ./ansible/hosts ./ansible/update.yml
+            ;;
+        dumpdb)
+            INFO "Dumping database to ./data/dump.json"
+            dump_db
+            ;;
+        bkup)
+            bucket=$(extract_envvar AWS_STORAGE_BUCKET_NAME)
+            folder="db"
+            file=$(basename -- "$2")
+            INFO "Copying $2'"
+            INFO "To 's3://$bucket/$folder/$file'"
+            aws s3 cp "$2" "s3://$bucket/$folder/$file"
+            shift
+            ;;
+        *)
+            ERROR "Usage: bash helper.sh create_vars|spinup_infra|teardown|deploy|ssh|opensite|dumpdb|bkup"
+            exit 1        
+            ;;
+    esac
+    shift
+done
 
 
 
