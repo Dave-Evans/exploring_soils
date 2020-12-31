@@ -4,9 +4,12 @@ from django.http import JsonResponse
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
+from rest_framework import serializers
+from rest_framework.renderers import JSONRenderer
 from django.db import connection
 from django_tables2 import RequestConfig
 import djqscsv
+import json
 from kanopy.forms import GroundcoverForm
 from kanopy.models import Groundcoverdoc
 from kanopy.tables import (
@@ -148,6 +151,33 @@ class MapView(TemplateView):
     def get_context(self, **kwargs):
         context = {'samplepoint': SamplepointForm()}
         return context
+
+
+class DocSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Groundcoverdoc
+        fields = '__all__'
+
+
+@permission_required('kanopy.can_view_submissions', raise_exception=True)
+def kanopy_submissions(request):
+    # Get queryset
+    docs = Groundcoverdoc.objects.all()
+
+    # Serialize entire queryset to Python native data type
+    result = DocSerializer(docs, many=True)
+
+    sjdocs = JSONRenderer().render(result.data)
+
+    # Serialize into a json representation, which is a string
+    #   Passing this to the template and using the 'safe' keyword
+    #   allows the browser to see this as a JSON object, ex:
+    # var sjdocs = {{ sjdocs|safe }};
+    # sjdocs = serializers.serialize("json", docs)
+    
+    return render(request, 'kanopy/thumbs_kanopy_submissions.html', 
+        {'docs': docs, "sjdocs": sjdocs.decode('UTF-8')})
 
 def sample_point_form_upload(request):
     if request.method == 'POST':

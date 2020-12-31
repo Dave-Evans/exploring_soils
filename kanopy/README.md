@@ -2,9 +2,17 @@
 
 ## TODO
 
+ - Show uploads from the current session
+   - Mostly complete, but all kinks not worked out
+ - Add a navigation page for admin
+   - Admin
+   - Map view of results
+   - Table view of results
+   - https://umbracofreelancer.uk/blog/post/create-thumbnails-using-javascript/
+ - Make the list of cover crops and cash crops editable
  - Extract form to separate template
  - build in 'Logged in as' to footer    
- - Map view of submissions    
+ - **COMPLETE** Map view of submissions
  - Figure out email capability for password reset
  - Change App name
  - Rework names for better consistency
@@ -23,7 +31,7 @@
     - use built in permissions
     - alter table view so 'update' and 'delete' only show based on permissions
  - Add in toggle for satelite view, django leaflet?
- - Show uploads from the current session
+
 
  - ** COMPLETED ** Export data function
  - ** COMPLETED ** Good vs Bad examples
