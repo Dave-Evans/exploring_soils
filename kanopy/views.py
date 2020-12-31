@@ -160,3 +160,8 @@ def sample_point_form_upload(request):
     return render(request, 'kanopy/geo_sample_template.html', {
         'form': form
     })
+
+
+def datalook_20201230(request):
+
+    return render(request, 'kanopy/green_covr_data_look_20201230.html')

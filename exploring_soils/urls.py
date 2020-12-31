@@ -68,6 +68,7 @@ urlpatterns = [
     url(r'^kanopy_table$', kanopy_views.kanopy_table, name='kanopy_table'),
     url(r'^kanopy_upload$', kanopy_views.model_form_upload, name='kanopy_upload'),
     url(r'^kanopy_download$', kanopy_views.kanopy_download, name='kanopy_download'),
+    url(r'^kanopy/datalook/20201230$', kanopy_views.datalook_20201230, name='datalook_20201230'),
     # url(r'^kanopy_sample$', kanopy_views.sample_point_form_upload, name='kanopy_sample'),
     # url(r'^kanopy_sample$', kanopy_views.addPointOnMap, name='kanopy_sample'),
     # url(r'^kanopy_sample$', kanopy_views.MapView.as_view(), name='kanopy_sample'),
