@@ -142,9 +142,6 @@ def model_form_upload(request):
         })
 
 
-        
-    
-
 class MapView(TemplateView):
     template_name = 'kanopy/geo_sample_template.html'
 
@@ -159,12 +156,57 @@ class DocSerializer(serializers.ModelSerializer):
         model = Groundcoverdoc
         fields = '__all__'
 
+def get_submission_freq():
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+        with minmaxdate as (
+            select Date(min(uploaded_at)) as dt_min_upload, Date(max(uploaded_at)) as dt_max_upload
+            from kanopy_groundcoverdoc
+        ), alldays as (
+            select generate_series(dt_min_upload, dt_max_upload, interval '1 day')::date as dt_seq
+            from minmaxdate
+        ), upldfreq as (
+            select Date(uploaded_at) dt_uploaded, count(*) as num_uploads
+            from kanopy_groundcoverdoc
+            group by dt_uploaded
+            order by dt_uploaded
+        ), rslt as (
+            select
+                dt_seq
+                , num_uploads
+            from alldays
+            left join upldfreq
+            on alldays.dt_seq = dt_uploaded
+            order by dt_seq
+            )
+        select jsonb_build_object( 'dt_seq', dt_seq, 'num_uploads', num_uploads)
+        from rslt       
+        """)
+        rows = cursor.fetchall()
+    
+    return rows
+
+def kanopy_sub_graph(request):
+
+    # query for frequence of uploades by date
+    submission_freq = get_submission_freq()
+    # Pulling just the first obj so not a list of 1 length tuples
+    submission_freq = [i[0] for i in submission_freq]
+    return render(request, 'kanopy/submission_barchart.html', 
+        {'freq': json.dumps(submission_freq)})
 
 @permission_required('kanopy.can_view_submissions', raise_exception=True)
 def kanopy_submissions(request):
+
+    # query for frequence of uploades by date
+    submission_freq = get_submission_freq()
+    # Pulling just the first obj so not a list of 1 length tuples
+    submission_freq = [i[0] for i in submission_freq]
+
     # Get queryset
     docs = Groundcoverdoc.objects.all()
-
+    # Groundcoverdoc.objects.annotate(date_uploaded = Cast('uploaded_at', DateField())).values("date_uploaded").annotate(total=Count("date_uploaded"))
     # Serialize entire queryset to Python native data type
     result = DocSerializer(docs, many=True)
 
@@ -176,8 +218,9 @@ def kanopy_submissions(request):
     # var sjdocs = {{ sjdocs|safe }};
     # sjdocs = serializers.serialize("json", docs)
     
-    return render(request, 'kanopy/thumbs_kanopy_submissions.html', 
-        {'docs': docs, "sjdocs": sjdocs.decode('UTF-8')})
+    return render(request, 'kanopy/kanopy_submissions.html', 
+        {'freq': json.dumps(submission_freq), "sjdocs": sjdocs.decode('UTF-8')})
+
 
 def sample_point_form_upload(request):
     if request.method == 'POST':

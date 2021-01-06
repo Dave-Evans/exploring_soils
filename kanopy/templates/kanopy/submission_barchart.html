@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<!-- https://bl.ocks.org/d3noob/8952219 -->
+<head>
+	<style>
+
+	.axis {
+	  font: 10px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+  }
+  
+  .bar {
+      fill: steelblue;
+  }
+
+  .highlight {
+      fill: orange;
+  }  
+
+	</style>
+</head>
+
+<body>
+	
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
+<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
+
+<script>
+  var data = JSON.parse('{{ freq|escapejs }}');
+
+  var margin = {top: 20, right: 20, bottom: 70, left: 40},
+      width = 500 - margin.left - margin.right,
+      height = 200 - margin.top - margin.bottom;
+
+  // Parse the date / time
+  var	parseDate = d3.timeParse("%Y-%m-%d");
+  var formatDate = d3.timeFormat("%B %d, %Y");
+
+  var x = d3.scaleBand().range([0, width], .05);
+  var y = d3.scaleLinear().range([height, 0]);
+
+  var yAxis = d3.axisLeft()
+      .scale(y)
+      .ticks(3);
+
+  var svg = d3.select("body").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", 
+            "translate(" + margin.left + "," + margin.top + ")");
+  var eventData;
+  var mouseEvent;
+  // d3.csv("total_mileage.csv").then(function(data) {
+  data.forEach(function(d) {
+      d.date = parseDate(d.dt_seq);
+      d.value = +d.num_uploads;
+  });
+
+  x.domain(data.map(function(d) { return d.date; }));
+  y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+    // Defining xAxis here so that we can
+    //  set tick values...before scales?
+    var xAxis = d3.axisBottom()
+      .tickFormat(d3.timeFormat('%b %d'))
+      //.ticks(d3.timeDay.every(100))
+      .tickValues(x.domain().filter(function(d,i){ return !(i%15)}))   
+      .scale(x);
+    
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .selectAll("text")  
+              .style("text-anchor", "end")
+              .attr("dx", "-.8em")
+              .attr("dy", ".15em")
+              .attr("transform", "rotate(-15)" );          
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+      .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end");
+    
+    svg.append("g")
+        .selectAll("bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", "bar")  
+        .on("mouseover", onMouseOver) //Add listener for the mouseover event
+        .on("mouseout", onMouseOut)   //Add listener for the mouseout event      
+        .attr("x", function(d) { return x(d.date); })
+        .attr("width", x.bandwidth())
+        .attr("y", function(d) { return y(d.value); })
+        .attr("height", function(d) { return height - y(d.value); });
+
+    //mouseover event handler function
+    // Updating for v6
+    //function onMouseOver(d, i) {
+    function onMouseOver(event, d) {
+        eventData = event;
+        mouseEvent = d;
+        
+        d3.select(this).attr('class', 'highlight');
+        svg.append("text")
+          .attr('class', 'val') 
+          .attr('x', function() {
+              return x(d.date);
+          })
+          .attr('y', function() {
+              return y(d.value) - 15;
+          })
+          .text(function() {
+              return [ formatDate(d.date) + ": " + d.value + " uploads"];  // Value of the text
+          });
+    }
+
+    //mouseout event handler function
+    //mouseover event handler function
+    // Updating for v6
+    //function onMouseOut(d, i) {
+    function onMouseOut(event, d) {
+        // use the text label class to remove label on mouseout
+        d3.select(this).attr('class', 'bar');
+        d3.select(this)
+          .transition()     // adds animation
+          .duration(400)
+          .attr('width', x.bandwidth())
+          .attr("y", function(d) { return y(d.value); })
+          .attr("height", function(d) { return height - y(d.value); });
+
+        d3.selectAll('.val')
+          .remove()
+    }
+  // });
+
+  
+</script>
+
+</body>
