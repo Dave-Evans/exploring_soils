@@ -96,7 +96,7 @@
       // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
       .extent( [ [0,0], [width,height] ] ) 
       // Each time the brush selection changes, trigger the 'updateDates' function
-      .on("end", updateDates) 
+      .on("end", updateDates);
 
     // Defining xAxis here so that we can
     //  set tick values...before scales?
@@ -138,9 +138,13 @@
         .attr("height", function(d) { return height - y(d.value); });
 
         // Add the brushing
+    var dummyend = data[ data.length - 1 ]['date'];
+    var dummystrt = data[ data.length - 10 ]['date'];
+         
     svg.append("g")
        .attr("class", "brush")
-       .call(brush);
+       .call(brush)
+       .call(brush.move, [x(dummystrt), x(dummyend)]);
 
     //mouseover event handler function
     // Updating for v6
@@ -184,12 +188,23 @@
     function updateDates({selection: extent}) {
       
       console.log(extent);
+      if (extent === null) {
+        return;
+      }      
       var selected_start = x.invert(extent[0]);
       var selected_end = x.invert(extent[1]);
       console.log("Start: ", selected_start);
       console.log("End: ", selected_end);
-      $("#start_date").val( selected_start);
-      $("#end_date").val( selected_end);
+
+      // For debugging
+      $("#start_date").val( selected_start );
+      $("#end_date").val( selected_end );
+
+      start_upload_date = selected_start;
+      end_upload_date = selected_end;
+      if (typeof filterCards != "undefined") {
+        filterCards(start_upload_date, end_upload_date);
+      }
     }
 
     // Graph title
@@ -204,13 +219,13 @@
 </script>
 <script>
     
+
     var end_upload_date = new Date( Date.now() );
     var start_upload_date = new Date( Date.now() );
     start_upload_date.setMonth( start_upload_date.getMonth() - 2 );
-    // var start_upload_date = new Date('2020-12-01')
 
-    $("#start_date").val( start_upload_date);
-    $("#end_date").val( end_upload_date);
+    $("#start_date").val( start_upload_date );
+    $("#end_date").val( end_upload_date );
 
     // Change to date selector
     $(document).ready(function () {
@@ -218,27 +233,28 @@
         start_upload_date = new Date( $("#start_date").val() );
       });
       $("#end_date").change(function() {
-        console.log("Before: " + end_upload_date)
         end_upload_date = new Date( $("#end_date").val() );
-        console.log("After: " + end_upload_date)
       });
 
 
       $("#filter").click(function () {
           
-          filterCards()
+          filterCards(start_upload_date, end_upload_date);
 
       });       
     });
 
-    function filterCards() {
+    function filterCards(dt_start, dt_end) {
+      console.log("Running filterCards");
+      console.log("dt_start: " + dt_start);
+      console.log("dt_end: " + dt_end);
       for (i=0; i<sjdocs.length; i++){
         var id = sjdocs[i].id;
         var uploaded_at = new Date(sjdocs[i].uploaded_at);
         var planting_date = new Date(sjdocs[i].cover_crop_planting_date);
         
         // If uploaded between start and end then show
-        if (uploaded_at >= start_upload_date && uploaded_at <= end_upload_date){
+        if (uploaded_at >= dt_start && uploaded_at <= dt_end){
           // console.log("Show sub-" + sjdocs[i].id);
           $("#sub-" + sjdocs[i].id).show();
         } else {
@@ -323,7 +339,7 @@
     };
     showSubmissions();
     draw();
-    filterCards();  
+    filterCards(start_upload_date, end_upload_date);  
 
 </script> 
 

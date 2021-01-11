@@ -129,9 +129,14 @@
         .attr("height", function(d) { return height - y(d.value); });
 
         // Add the brushing
+    var end_upload_date = new Date( Date.now() );
+    var start_upload_date = new Date( Date.now() );
+    start_upload_date.setMonth( start_upload_date.getMonth() - 2 );
+
     svg.append("g")
        .attr("class", "brush")
-       .call(brush);
+       .call(brush)
+       .call(brush.move, [200, 300]);
 
     //mouseover event handler function
     // Updating for v6
@@ -173,8 +178,11 @@
     }
 
     function updateDates({selection: extent}) {
-      
+
       console.log(extent);
+      if (extent === null) {
+        return;
+      }      
       var selected_start = x.invert(extent[0]);
       var selected_end = x.invert(extent[1]);
       console.log("Start: ", selected_start);
