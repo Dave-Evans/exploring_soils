@@ -161,7 +161,7 @@ def get_submission_freq():
     with connection.cursor() as cursor:
         cursor.execute("""
         with minmaxdate as (
-            select Date(min(uploaded_at)) as dt_min_upload, Date(max(uploaded_at)) as dt_max_upload
+            select Date(min(uploaded_at)) as dt_min_upload, Date(max(uploaded_at)) + 1 as dt_max_upload
             from kanopy_groundcoverdoc
         ), alldays as (
             select generate_series(dt_min_upload, dt_max_upload, interval '1 day')::date as dt_seq
