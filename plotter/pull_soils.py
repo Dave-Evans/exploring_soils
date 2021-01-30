@@ -7,45 +7,59 @@ import requests
 import pandas as pd
 import time
 import json
-# llx = '-89.43162918090822'
-# lly = '43.20730290757446'
-# urx = '-89.42708015441896'
-# ury = '43.21355862573447'
+import tempfile
+
+# # TODO:
+#  - refactor pull_soils
+#  - change from working with "lowerleft" and 'upperright' points to work with 
+#     min and max x and y
+#  - build button and point collection within new javascript
+#  - loading notice?
+#  - error handling and notification brought forward to front end
 
 
-# lly = 43.20642705583016
-# llx = -89.43643569946289
-# ury = 43.22081445495995
-# urx = -89.42193031311037
+# llx = -90.53421020507814
+# lly = 43.089826720152914
+# urx = -90.46932220458984
+# ury = 43.13331170781402
 
 
-
-
+# Order for soil data access api is 
+# 'minx, miny, maxx, maxy'
 def retrieve_and_process_soils(llx, lly, urx, ury):
     print("Beginning retrieve and processing...")
     url = "https://sdmdataaccess.nrcs.usda.gov/Spatial/SDMNAD83Geographic.wfs?Service=WFS&Version=1.0.0&Request=GetFeature&Typename=MapunitPoly&BBOX={llx},{lly},{urx},{ury}"
     ## Containing query for pulling tabular data
     fl_q = "./sda_query_min.sql"
-    file_name = os.path.join(dir_tmp_dat, "temp_soils_geom_{llx}_{lly}_{urx}_{ury}.gml".\
-        format(llx = round(float(llx), 5),
-            lly = round(float(lly), 5),
-            urx = round(float(urx), 5),
-            ury = round(float(ury), 5)
-        )
-    )
-    file_name_json = file_name.replace('gml', 'geojson')
+    # dir_tmp_dat = "./tmp_data"
+    # if not os.path.exists(dir_tmp_dat):
+    #     os.mkdir(dir_tmp_dat)
+    # file_name = os.path.join(dir_tmp_dat, "temp_soils_geom_{llx}_{lly}_{urx}_{ury}.gml".\
+    #     format(llx = round(float(llx), 5),
+    #         lly = round(float(lly), 5),
+    #         urx = round(float(urx), 5),
+    #         ury = round(float(ury), 5)
+    #     )
+    # )
+    file_name = tempfile.NamedTemporaryFile(delete=False, suffix=".gml")
+
+    print(file_name.name)
+    file_name_json = file_name.name.replace('gml', 'geojson')
     print("Downloading geometry...")
-    dir_tmp_dat = "./tmp_data"
-    if not os.path.exists(dir_tmp_dat):
-        os.mkdir(dir_tmp_dat)
-    with urllib.request.urlopen(url.format(llx = llx, lly=lly, urx = urx, ury = ury)) as response, open(file_name, 'wb') as out_file:
+    url_geom = url.format(llx = llx, lly=lly, urx = urx, ury = ury)
+    print(url_geom)
+    # with urllib.request.urlopen(url_geom) as response, open(file_name, 'wb') as out_file:
+    #     data = response.read() # a `bytes` object
+    #     out_file.write(data)
+    with urllib.request.urlopen(url_geom) as response:
         data = response.read() # a `bytes` object
-        out_file.write(data)
+        file_name.write(data)
+    file_name.close()
     print("Geometry downloaded.")
     mukeys = []
 
-    print("Pulling mukeys from {}".format(os.path.abspath(file_name)))
-    with fiona.open(file_name) as ds:
+    print("Pulling mukeys from {}".format(file_name.name))
+    with fiona.open(file_name.name) as ds:
 
         for rec in ds:
             mukeys.append(str(rec['properties']['mukey']))
@@ -59,7 +73,7 @@ def retrieve_and_process_soils(llx, lly, urx, ury):
     ## Read in query
 
     # with open(fl_q, 'rt') as f:
-    #     q = f.read()
+    #     query_sda = f.read()
 
     q = query_sda.format(mukeys = "','".join(mukeys))
 
@@ -135,10 +149,6 @@ def retrieve_and_process_soils(llx, lly, urx, ury):
     ## dat_mu_co = dat.loc[~dat.duplicated(mu_co_cols), mu_co_cols]
     dat_mu_co = dat_mu_co[idx]
 
-
-
-
-
     dat_mu_co = dat_mu_co.reset_index()
 
     dat_mu_co = dat_mu_co.set_index("mukey")
@@ -158,7 +168,7 @@ def retrieve_and_process_soils(llx, lly, urx, ury):
     print("Processing time:", time.time() - strt_proc)
     # http://toblerity.org/fiona/manual.html#writing-vector-data
     strt_write = time.time()
-    with fiona.open(file_name, 'r') as ds:
+    with fiona.open(file_name.name, 'r') as ds:
         src_crs = ds.crs
         dst_drvr = "GeoJSON"
         dst_schema = ds.schema.copy()
