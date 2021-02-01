@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^edit_study/(?P<pk>\d+)$', plotter_views.edit_study, name='edit_study'),
     url(r'^studies/$', plotter_views.studies, name='studies'),
     url(r'^explore_soils/$', plotter_views.explore_soils, name='explore_soils'),
-    url(r'^pull_soils/(?P<lly>-?\d+\.\d+)/(?P<llx>-?\d+\.\d+)/(?P<ury>-?\d+\.\d+)/(?P<urx>-?\d+\.\d+)/$', plotter_views.pull_soils, name='pull_soils'),
+    url(r'^pull_soils/(?P<miny>-?\d+\.\d+)/(?P<minx>-?\d+\.\d+)/(?P<maxy>-?\d+\.\d+)/(?P<maxx>-?\d+\.\d+)/$', plotter_views.pull_soils, name='pull_soils'),
     url(r'^studies/(?P<pk>\d+)/add_rep/$', plotter_views.add_rep, name='add_rep'),
     url(r'^studies/(?P<pk>\d+)/retrieve_existing_reps/$', plotter_views.retrieve_existing_reps, name='retrieve_existing_reps'),
 

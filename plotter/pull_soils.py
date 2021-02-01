@@ -8,6 +8,7 @@ import pandas as pd
 import time
 import json
 import tempfile
+from io import BytesIO
 
 # # TODO:
 #  - refactor pull_soils
@@ -17,6 +18,11 @@ import tempfile
 #  - build button and point collection within new javascript
 #  - loading notice?
 #  - error handling and notification brought forward to front end
+#  - XML processing for getting mukeys
+
+#  # Enhancement:
+#   - Add option for comppct weight aggregation of properties
+#   - Color?
 
 # # Order for soil data access api is 
 # # 'minx, miny, maxx, maxy'
@@ -49,11 +55,10 @@ def retrieve_mukeys(tmpfl_gml_name):
     '''
     mukeys = []
 
-    print("Pulling mukeys from {}".format(tmpfl_gml_name))
     with fiona.open(tmpfl_gml_name) as ds:
         for rec in ds:
             mukeys.append(str(rec['properties']['mukey']))
-    print("Mukeys pulled.")
+
     mukeys = set(mukeys)
     return mukeys
 
@@ -114,13 +119,9 @@ def download_tabular(mukeys):
 
     return rslt_json
 
-
 def process_tabular_data(rslt_json, tmpfl_gml_name):
     '''Takes json tabular data at horizon level, aggregates to mapunit level
     '''
-    # Lame ass conversion: read in as gml, write out as json
-    # The json file name
-    tmpfl_json_name = tmpfl_gml_name.replace('gml', 'geojson')
     
     strt_proc = time.time()
     ## Grab header, first list
@@ -138,11 +139,9 @@ def process_tabular_data(rslt_json, tmpfl_gml_name):
         'awc_r', 'ecec_r', 'ph']
     
     for col in num_cols:
-        print("Converting", col)
+        # Convert to numeric
         dat[col] = pd.to_numeric(dat[col], errors = 'coerce')
 
-    ## dat is currently at a horizon level
-    ##  first take to a component level
 
     # Columns mapunit and component level columns
     #   Add taxomony here if interested
@@ -194,19 +193,16 @@ def process_tabular_data(rslt_json, tmpfl_gml_name):
     
     # Find the component with greatest comp percentage and 
     #  use that to select that component to represent the mapunit.
-    #  
-    # dat[dat.mukey == 'mukey'][ ['mukey','cokey', 'comppct_r']]
-     
     idx_comppct_r = dat_mu_co.groupby(['mukey'])['comppct_r'].transform(max) == dat_mu_co['comppct_r']
     dat_mu_co = dat_mu_co[idx_comppct_r]
 
-    # Break ties based on the lower cokey value
+    # Break ties based on the lower cokey ID
     idx_tiebreaker = dat_mu_co.groupby(['mukey']).cumcount() == 0
     dat_mu_co = dat_mu_co[idx_tiebreaker]
 
     dat_mu_co = dat_mu_co.reset_index()
-
     dat_mu_co = dat_mu_co.set_index("mukey")
+
     # Build schema for json
     cls = []
     for i in range(len(dat_mu_co.columns.tolist())):
@@ -219,11 +215,16 @@ def process_tabular_data(rslt_json, tmpfl_gml_name):
 
         cls.append( [cl_nm, cl_typ ] )
 
-    ## Flip to json
+    # Change all NaN to None for JSON compatibility
+    dat_mu_co = dat_mu_co.where(pd.notnull(dat_mu_co), None)
+
+    # Change to Dict
     dat_mu_co = dat_mu_co.to_dict(orient='index')
-    print("Processing time:", time.time() - strt_proc)
+
+    # In memory file to avoid writing to disk (doesn't actually save time)
+    dst_json_obj = BytesIO()    
     # http://toblerity.org/fiona/manual.html#writing-vector-data
-    strt_write = time.time()
+
     with fiona.open(tmpfl_gml_name, 'r') as ds:
         src_crs = ds.crs
         dst_drvr = "GeoJSON"
@@ -232,7 +233,7 @@ def process_tabular_data(rslt_json, tmpfl_gml_name):
             dst_schema['properties'][cl[0]] = cl[1]
 
         with fiona.open(
-                tmpfl_json_name, 'w',
+                dst_json_obj, 'w',
                 crs=src_crs,
                 driver=dst_drvr,
                 schema=dst_schema,
@@ -240,34 +241,22 @@ def process_tabular_data(rslt_json, tmpfl_gml_name):
             for rec in ds:
                 mky = str(rec['properties']['mukey'])
                 for cl in cls:
-                    if pd.isnull(dat_mu_co[mky][cl[0]]):
-                            rec['properties'][cl[0]] = None
-                    else:
-                        rec['properties'][cl[0]] = dat_mu_co[mky][cl[0]]
-                print("\tWriting record...")
+                    rec['properties'][cl[0]] = dat_mu_co[mky][cl[0]]
                 dst.write(rec)    
-    print("Writing out time:", time.time() - strt_write)
     
-    return tmpfl_json_name
+    dst_json_obj.seek(0)
+    json_soils = json.load(dst_json_obj)
+
+    return json_soils
 
 
-def return_soils_json(minx, miny, maxx, maxy):
-    # fl_nm = retrieve_and_process_soils(llx, lly, urx, ury)
-    # fl_nm = os.path.join(dir_tmp_dat, "temp_soils_geom_-91.1503_42.43372_-91.11803_42.44791.geojson")
-    bbox = {
-        "minx" : minx,
-        "miny" : miny,
-        "maxx" : maxx,
-        "maxy" : maxy
-    }
+def return_soils_json(bbox):
 
     tmpfl_gml_name = download_geometry(bbox)
     list_mukeys = retrieve_mukeys(tmpfl_gml_name)
     rslt_json = download_tabular(list_mukeys)
-    tmpfl_json_name = process_tabular_data(rslt_json, tmpfl_gml_name)
 
-    with open(tmpfl_json_name, "rt") as f:
-        json_soils = json.load(f)
+    json_soils = process_tabular_data(rslt_json, tmpfl_gml_name)
 
     return json_soils
 

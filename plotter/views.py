@@ -55,10 +55,17 @@ def explore_soils(request):
 
     return render(request, 'explore_soils.html')
 
-def pull_soils(request, lly, llx, ury, urx):
+def pull_soils(request, miny, minx, maxy, maxx):
     '''For downloading and processing soils data
     Note the actual function call has X,Y, while the view is lat, long'''
-    json_soils = return_soils_json(llx, lly, urx, ury)
+    bbox = {
+        "minx" : minx,
+        "miny" : miny,
+        "maxx" : maxx,
+        "maxy" : maxy
+    }
+    # json_soils = return_soils_json(llx, lly, urx, ury)
+    json_soils = return_soils_json(bbox)
     return JsonResponse(json_soils, safe=True)
 
 def add_rep(request, pk):
