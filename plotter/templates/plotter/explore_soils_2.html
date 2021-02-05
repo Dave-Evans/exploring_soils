@@ -1,0 +1,542 @@
+{% load static %}
+<!DOCTYPE html>
+<!-- http://bl.ocks.org/shimizu/c0fed43b3e35e4613116e699fb6c8bb4 -->
+<!-- Maybe for check boxes?
+http://bl.ocks.org/mastersigat/fd6e38ce173e992280d68f4f3fb39996 -->
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title></title>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
+<style>
+/* http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 */
+.tooltip {	
+    position: absolute;			
+    text-align: center;
+    max-width: 350;
+    /* width: 60px; */
+    height: 50px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 5px;			
+    pointer-events: none;			
+}
+
+.custom-control{
+  
+  font-size: 14px;
+  border-radius: 5px;			
+  padding: 4px;			
+  border: 2px solid rgba(0,0,0,0.2);	
+}
+
+path:hover {
+  fill: brown;
+  fill-opacity: .7;
+}
+
+html, body {
+    padding: 0px;
+    margin: 0px;
+}
+    
+html, body, #map {
+    width: 100%;
+    height: 100%;
+}
+.tick line {
+    stroke-dasharray: 2 2 ;
+    stroke: #ccc;
+}
+
+/* svg path */
+.leaflet-overlay-pane svg path{
+    pointer-events: auto;
+}
+
+
+</style>
+
+</head>
+
+<body>
+    <!-- <div class="slidecontainer">
+        <p>Select a Depth: <span id="depth_value"></span></p>
+        <input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider">     
+    </div> -->
+    
+    <!-- <div>Select a Soil P'custom-control'roperty to View
+        <br>
+        <select id="PropertySelection">          
+            <option value="drainagecl">Drainage Class</option>
+            <option value="sandtotal_r">Sand Percentage</option>
+            <option value="silttotal_r">Silt Percentage</option>
+            <option value="claytotal_r">Clay Percentage</option>
+            <option value="om_r">Organic Matter</option>
+            <option value="dbovendry_r">Bulk Density</option>
+            <option value="ksat_r">Saturated Conductivity</option>
+            <option value="awc_r">Available Water Capacity</option>
+            <option value="ph">pH</option>
+        </select>
+    </div> -->
+    
+<div id="map"></div>    
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js" integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ==" crossorigin="anonymous"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script src="{% static 'js/Map.SelectArea.js' %}"></script>
+<script>
+    
+    var map //leaflet obj
+    
+    // d3.json("soilstestdataoriginal.geojson",main);
+    // /pull_soils/43.09289799954859/-90.06699085235596/43.10978728318576/-90.04703521728517/
+    // d3.json("/pull_soils/-90.06699085235596/43.09289799954859/-90.04703521728517/43.10978728318576/", main);
+    addLmaps();
+
+    function main(data) {
+        addLmaps();
+        drawFeatures(data);
+    }
+    var tstobj;
+    function addLmaps() {
+        //Leaflet
+        
+        map = L.map('map', {
+          selectArea: true // will enable it by default
+        }).setView([43.0928979995　, -90.0669908523], 13);
+        
+        map.on('areaselected', (e) => {
+          tstobj = e.bounds;
+          console.log(e.bounds.toBBoxString()); // min(lon), min(lat), max(lon), max(lat)
+          var dataurl = "/pull_soils/" + e.bounds.toBBoxString().replaceAll(",", "/");
+          console.log(calcArea(e.bounds));
+          if (calcArea(e.bounds) > 50){
+            console.log("Area too large.")
+          } else {
+            d3.json(dataurl, drawFeatures);
+          };
+
+          
+
+        });
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+    
+        //Leaflet
+        L.svg({clickable:true}).addTo(map);	
+        
+        // Custom control for legend
+        L.Control.lgnd = L.Control.extend({
+            onAdd: function(map) {
+
+                var legenddiv = L.DomUtil.create('div', 'custom-control');
+                // legenddiv.style.maxWidth = '260px';
+                legenddiv.style.width = '260px';
+                legenddiv.style.height = '200px';
+                legenddiv.style.background = 'white';
+                legenddiv.id = "legend";
+                legenddiv.innerHTML = "<p>Legend</p>"
+
+                return legenddiv;
+            },
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+        });
+        L.control.lgnd = function(opts) {
+            return new L.Control.lgnd(opts);
+        }
+        L.control.lgnd({ position: 'topright' }).addTo(map);
+
+        // Custom control for controls
+        L.Control.cntrlpanel = L.Control.extend({
+            onAdd: function(map) {
+
+                var controlsdiv = L.DomUtil.create('div', 'custom-control');
+                controlsdiv.style.width = '240px';
+                controlsdiv.style.height = '200px';
+                controlsdiv.style.background = 'white';
+                controlsdiv.id = "controls";
+                controlsdiv.innerHTML = '<div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider"></div><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="drainagecl">Drainage Class</option><option value="sandtotal_r">Sand Percentage</option><option value="silttotal_r">Silt Percentage</option><option value="claytotal_r">Clay Percentage</option><option value="om_r">Organic Matter</option><option value="dbovendry_r">Bulk Density</option><option value="ksat_r">Saturated Conductivity</option><option value="awc_r">Available Water Capacity</option><option value="ph">pH</option></select>';
+                // controlsdiv.innerHTML = '<div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider"></div>'
+                // controlsdiv.firstChild.onmousedown = L.DomEvent.stopPropagation;
+                $(controlsdiv).mousedown(function () {
+                    map.dragging.disable();
+                });
+                $(document).mouseup(function () {
+                    map.dragging.enable();
+                    //Only show the slider timestamp while using the slider
+                });
+
+                return controlsdiv;
+            },
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+        });
+        L.control.cntrlpanel = function(opts) {
+            return new L.Control.cntrlpanel(opts);
+        }
+        L.control.cntrlpanel({ position: 'topleft' }).addTo(map);
+        manageDepthSlider();       
+    }
+    
+    //To take the d3 object and project for leaflet
+    function projectPoint(x, y) {
+        var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+        this.stream.point(point.x, point.y);
+    }
+
+    var div = d3.select("body").append("div")	
+      .attr("class", "tooltip")				
+      .style("opacity", 0)
+      .style("z-index", "999");
+  
+
+    function drawFeatures(data) {
+        var svg = d3.select("#map").select("svg")
+            .attr("pointer-events", "auto");
+        
+        var g = svg.select("g")
+        
+        var transform = d3.geoTransform({point: projectPoint});
+        var path = d3.geoPath().projection(transform)
+    
+        var featureElement = g.selectAll("path")
+            .data(data.features)
+            .enter()
+            .append("path")
+            .attr("stroke", "gray")
+            .attr("fill", "green")
+            .attr("fill-opacity", 0.9)
+            .on("click", function(d){
+                d3.select(this).attr("fill", "red")
+            })
+            .on("mouseover", function(d) {		
+              div.transition()		
+                  .duration(200)		
+                  .style("opacity", .9);
+                  // .style("fill", "brown")
+                  // .style("fill-opacity", .7);
+              div.html(formatTooltipInfo(d))	
+                  .style("left", (d3.event.pageX) + "px")		
+                  .style("top", (d3.event.pageY - 70) + "px");	
+            })					
+            .on("mouseout", function(d) {		
+                div.transition()		
+                    .duration(500)		
+                    .style("opacity", 0);	
+            });
+
+        map.on("moveend", update);
+        
+        update();
+        createNullLgend();
+        updateScaleFill();
+
+        function update() {	
+            featureElement.attr("d", path);
+        };
+    };
+
+
+    // Scale and color for each property
+    var colorScheme = d3.schemeOranges[6];
+    // colorScheme.unshift("#eee");
+    var colorScale = d3.scaleThreshold()
+        // .domain([1, 6, 11, 26, 101, 1001])
+        .domain([1, 3, 6, 11, 20, 30])
+        .range(colorScheme);
+
+    // For texture properties
+    var textureScale = d3.scaleSequential()
+      .domain([0, 100])
+      // .domain(d3.extent(geojson1.features, d => d.properties['claytotal_r_0cm']))
+      .interpolator(d3.interpolateYlOrBr);
+
+    // For OM
+    var orgmatScale = d3.scaleSequential()
+      .domain([0, 8])
+      .interpolator(d3.interpolateGreys);      
+
+    // For AWC
+    var awcScale = d3.scaleSequential()
+      .domain([0, 0.3])
+      .interpolator(d3.interpolateBlues);      
+
+    // For pH
+    var phScale = d3.scaleSequential()
+      .domain([4, 10])
+      .interpolator(d3.interpolateBrBG);            
+
+    // Db
+    var dbovendryScale = d3.scaleSequential()
+      .domain([1, 1.8])
+      .interpolator(d3.interpolateYlGnBu); 
+
+    // Ksat
+    var ksatScale = d3.scaleSequential()
+      .domain([0, 200])
+      .interpolator(d3.interpolateYlGn);
+
+    // Drainage Class
+    // Very poorly drained !!!!!!!!!! ADD new color for very poorly drained
+    // Poorly drained              
+    // Somewhat poorly drained     
+    // Moderately well drained
+    // Well drained    
+    // Somewhat excessively drained
+    // Excessively drained 
+    var drainScale = d3.scaleOrdinal()
+      .domain(["Very poorly drained", "Poorly drained",
+        "Somewhat poorly drained",
+        "Moderately well drained",
+        "Well drained", 
+        "Somewhat excessively drained",
+        "Excessively drained"])
+      .range([ "#000004", "#000004", "#420a68", "#932667",
+      "#dd513a", "#fca50a", "#fcffa4"]);
+
+    // We gather the depth and property from a slider and dropdown
+    //  These are then used to build a string which corresponds to 
+    //  a field in the geojson
+
+    function manageDepthSlider () { 
+      var DepthSlider = document.getElementById("DepthSlider");
+      var span_selected_soil_depth = document.getElementById("depth_value");
+      span_selected_soil_depth.innerHTML = depthSnapper(DepthSlider.value);
+
+      // Store and display selected soil depth
+      DepthSlider.oninput = function() {
+        span_selected_soil_depth.innerHTML = depthSnapper(this.value);
+        
+        updateScaleFill();
+      };
+    };
+    // Make dropdown to select soil property
+    // Build property X depth string
+    // Call updateScale and Fill function
+    $('body').on('change', '#PropertySelection', function() {
+
+      updateScaleFill();
+    });
+
+
+    function buildPropertyDepthString(){
+      var selected_soil_property = $('#PropertySelection').val();
+
+      var selected_soil_depth = document.getElementById("depth_value").innerHTML;
+
+      var selected_soil_property_and_depth = selected_soil_property + "_" + selected_soil_depth + "cm";
+      
+      // For the case(s?) when it is not a depth property.
+      if (selected_soil_property == "drainagecl"){
+        selected_soil_property_and_depth = "drainagecl";
+      };
+      
+      return selected_soil_property_and_depth;
+
+    };
+
+    
+
+    function depthSnapper(input_depth) {
+      if ((0 <= input_depth) & (input_depth < 5))
+        return 0;
+      else if ((5 <= input_depth) & (input_depth < 15))
+        return 10;
+      else if ((15 <= input_depth) & (input_depth < 25))
+        return 20;
+        else if ((25 <= input_depth) & (input_depth < 35))
+        return 30;          
+      else if ((35 <= input_depth) & (input_depth < 45))
+        return 40;
+      else if ((45 <= input_depth) & (input_depth < 62))
+        return 50;          
+       else if ((62 <= input_depth) & (input_depth < 82))
+        return 75;      
+      else if (82 <= input_depth)
+        return 100;                                  
+    };
+
+    function createNullLgend(){
+      removeLegend(".nullLegend");
+      var svg = d3.select("#legend")
+          .append("svg")
+          .style("width", 100)
+          .style("height", 100);
+          
+      //var svg = d3.select("#custom-control-panel").select("svg");
+      
+      // For representing nulls in the legend. 
+      // We just add this legend first and build a 
+      //  legend based on the data after.
+      var nullOrdScale = d3.scaleOrdinal()
+          .domain(["Null"])
+          .range([ "#ccc" ]);
+
+      svg.append("g")
+          .attr("class", "nullLegend")
+          .attr("transform", "translate(20,10)");
+
+      var nullValLegend = d3.legendColor()
+          .shapeWidth(30)
+          .cells(1)
+          // .orient("horizontal")
+          .scale(nullOrdScale);
+
+      svg.select("g.nullLegend")
+          .call(nullValLegend);
+
+      
+  };
+
+  function updateScaleFill(){
+    // https://stackoverflow.com/questions/21760687/d3-js-choropleth-map-change-color-scheme-on-selection
+    var selected_soil_property_and_depth = buildPropertyDepthString();
+
+    console.log(selected_soil_property_and_depth);
+    var selected_soil_property = $('#PropertySelection').val();
+    switch (selected_soil_property){
+      case 'awc_r':
+        colorScale = awcScale;
+        break;
+      case 'sandtotal_r':
+        colorScale = textureScale;
+        break;
+      case 'silttotal_r':
+        colorScale = textureScale;
+        break;
+      case 'claytotal_r':
+        colorScale = textureScale;
+        break;            
+      case 'om_r':
+        colorScale = orgmatScale;
+        break;
+      case 'ksat_r':
+        colorScale = ksatScale;
+        break; 
+      case 'dbovendry_r':
+        colorScale = dbovendryScale;
+        break;
+      case 'ph':
+        colorScale = phScale;
+        break;
+      case 'drainagecl':
+        colorScale = drainScale;
+        break;
+    };
+
+  d3.selectAll("path")
+    .style("fill", function (d) {
+      var value = d.properties[selected_soil_property_and_depth];
+      // console.log( value );
+        // return colorScale( value )
+      if (value) {
+        return colorScale(value);
+      } else {
+        return "#ccc"
+      } 
+    });
+
+    updateLegend(colorScale);
+
+  };
+    
+  function removeLegend(legendClassName){
+    d3.select(legendClassName).remove();
+  }
+
+  function updateLegend(myscale) {
+
+      removeLegend('.legendSoil'); 
+      // var svg = d3.select("#legend")
+      //     .append("svg")
+      var svg = d3.select("#legend svg");
+      svg.append("g")
+          .attr("class", "legendSoil")
+          .attr("transform", "translate(20,30)");
+
+      var legendSoil = d3.legendColor()
+          .shapeWidth(30)
+          .cells(6)
+          // .orient("horizontal")
+          .scale(myscale) 
+          // .shapePadding(4)
+
+      svg.select(".legendSoil")
+          .call(legendSoil);
+
+  };
+  
+  function formatTooltipInfo(d){
+    // Add depth?
+    var selected_soil_property_and_depth = buildPropertyDepthString();
+    var pretty_prop = $('#PropertySelection option:selected').text();
+    var info = d.properties.compname + ", mukey: " + d.properties.mukey +
+              ";<br/>" + 
+              pretty_prop + ": " + d.properties[selected_soil_property_and_depth];
+    return info;
+  };  
+
+
+  function calcArea(bbox){
+      // Calculate the distance between the northern points
+      // And the Western points
+      // And multiply
+      var height = calcDistance(
+        bbox.getNorthEast().lng, 
+        bbox.getNorthEast().lat,
+        bbox.getSouthEast().lng, 
+        bbox.getSouthEast().lat
+      );
+      var width = calcDistance(
+        bbox.getNorthEast().lng, 
+        bbox.getNorthEast().lat,
+        bbox.getNorthWest().lng, 
+        bbox.getNorthWest().lat
+      );
+      // Convert to square kilometers
+      var area_km2 = (height * width) / 1000000;
+      return area_km2;
+      
+  };
+
+  
+  function calcDistance(lon1, lat1, lon2, lat2){
+    //http://edwilliams.org/avform.htm#Dist
+    // //JFK
+    // var lat1 = 40.64722066081409
+    // var lon1 = -73.7594181762822
+    // //LAX
+    // var lat2 = 33.944213999999995
+    // var lon2 = -118.396568
+    // Take coords in decimal degrees
+    // Convert to radians
+    var lon1_r = (lon1 * Math.PI)/180;
+    var lat1_r = (lat1 * Math.PI)/180;
+    var lon2_r = (lon2 * Math.PI)/180;
+    var lat2_r = (lat2 * Math.PI)/180;
+    // Calc distance in radians
+    var dist_r = 2*Math.asin(Math.sqrt( Math.pow((Math.sin((lat1_r-lat2_r)/2)), 2) + 
+        Math.cos(lat1_r)*Math.cos(lat2_r)* Math.pow( (Math.sin((lon1_r-lon2_r)/2)), 2) ));
+    // Convert to nautical miles
+    var dist_nm = dist_r*180*60/Math.PI;
+    // Convert to meters
+    var dist_m = dist_nm * 1852;
+    return dist_m;
+  }
+
+    
+</script>    
+</body>
+</html>
+

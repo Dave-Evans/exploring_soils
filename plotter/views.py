@@ -53,9 +53,9 @@ def studies(request):
 
 def explore_soils(request):
 
-    return render(request, 'explore_soils.html')
+    return render(request, 'plotter/explore_soils_2.html')
 
-def pull_soils(request, miny, minx, maxy, maxx):
+def pull_soils(request, minx, miny, maxx, maxy):
     '''For downloading and processing soils data
     Note the actual function call has X,Y, while the view is lat, long'''
     bbox = {

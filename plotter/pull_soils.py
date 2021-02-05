@@ -38,7 +38,7 @@ def download_geometry(bbox):
     returns the filename of the geometry gml'''
     url_template = "https://sdmdataaccess.nrcs.usda.gov/Spatial/SDMNAD83Geographic.wfs?Service=WFS&Version=1.0.0&Request=GetFeature&Typename=MapunitPoly&BBOX={minx},{miny},{maxx},{maxy}"
     url_geom = url_template.format_map(bbox)
-
+    urllib.request.Request(url_geom)
     with urllib.request.urlopen(url_geom) as response:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".gml") as tmpfl_gml:
             
