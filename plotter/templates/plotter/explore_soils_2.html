@@ -91,6 +91,8 @@ html, body, #map {
 <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
 <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 <script src="{% static 'js/Map.SelectArea.js' %}"></script>
+<script src="{% static 'js/L.Control.Window.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/L.Control.Window.css' %}" />
 <script>
     
     var map //leaflet obj
@@ -111,15 +113,23 @@ html, body, #map {
         
         map = L.map('map', {
           selectArea: true // will enable it by default
-        }).setView([43.0928979995　, -90.0669908523], 13);
-        
+        }).setView([43.0928979995　, -90.0669908523], 7);
+                
         map.on('areaselected', (e) => {
           tstobj = e.bounds;
           console.log(e.bounds.toBBoxString()); // min(lon), min(lat), max(lon), max(lat)
           var dataurl = "/pull_soils/" + e.bounds.toBBoxString().replaceAll(",", "/");
           console.log(calcArea(e.bounds));
-          if (calcArea(e.bounds) > 50){
+          if (calcArea(e.bounds) >= 50){
             console.log("Area too large.")
+            var notice = "You have selected an area that is " + Math.round(calcArea(e.bounds)) + " square meters. ";
+            
+            L.control.window(map,
+              {
+                title:'Select smaller area',
+                content: notice + 'The area you have selected is too large, please select an area that is smaller than 50 square kilometers.',
+                visible: true
+              })
           } else {
             d3.json(dataurl, drawFeatures);
           };
@@ -134,27 +144,27 @@ html, body, #map {
         L.svg({clickable:true}).addTo(map);	
         
         // // Custom control for info box
-        L.Control.info = L.Control.extend({
-            onAdd: function(map) {
+        // L.Control.info = L.Control.extend({
+        //     onAdd: function(map) {
 
-                var infodiv = L.DomUtil.create('div', 'custom-control');
-                // infodiv.style.maxWidth = '260px';
-                infodiv.style.width = '260px';
-                infodiv.style.height = '200px';
-                infodiv.style.background = 'white';
-                infodiv.id = "info";
-                infodiv.innerHTML = "<p>Welcome!<br/>Hold control, click and drag an area to view the soils at depth. The area must be less than 50 square kilometers.</p>"
+        //         var infodiv = L.DomUtil.create('div', 'custom-control');
+        //         // infodiv.style.maxWidth = '260px';
+        //         infodiv.style.width = '260px';
+        //         infodiv.style.height = '200px';
+        //         infodiv.style.background = 'white';
+        //         infodiv.id = "info";
+        //         infodiv.innerHTML = "<p>Welcome!<br/>Hold control, click and drag an area to view the soils at depth. The area must be less than 50 square kilometers.</p>"
 
-                return infodiv;
-            },
-            onRemove: function(map) {
-                // Nothing to do here
-            }
-        });
-        L.control.info = function(opts) {
-            return new L.Control.info(opts);
-        }
-        L.control.info({ position: 'topright' }).addTo(map);
+        //         return infodiv;
+        //     },
+        //     onRemove: function(map) {
+        //         // Nothing to do here
+        //     }
+        // });
+        // L.control.info = function(opts) {
+        //     return new L.Control.info(opts);
+        // }
+        // L.control.info({ position: 'topright' }).addTo(map);
 
         // Custom control for controls
         L.Control.cntrlpanel = L.Control.extend({
@@ -187,6 +197,13 @@ html, body, #map {
         }
         L.control.cntrlpanel({ position: 'topleft' }).addTo(map);
         manageDepthSlider();       
+
+        var winOpts = L.control.window(map,
+          {
+            title:'Welcome to Exploring Soils at Depth',
+            content:'To begin, hold control and click and drag to select an area on the map. You must select an area less than 50 square kilometers. It may take up to 30 seconds or more to load the data. Once the data has loaded, you can select a soil property and a depth from the left-hand panel.',
+            visible: true
+          })
     }
     // map.selectArea.setCtrlKey(true);
     // box-zoom will be disabled and you can
@@ -486,9 +503,14 @@ html, body, #map {
     // Add depth?
     var selected_soil_property_and_depth = buildPropertyDepthString();
     var pretty_prop = $('#PropertySelection option:selected').text();
-    var info = d.properties.compname + ", mukey: " + d.properties.mukey +
-              ";<br/>" + 
-              pretty_prop + ": " + d.properties[selected_soil_property_and_depth];
+    var depth = document.getElementById("depth_value").innerHTML;
+    var info = "<b>" + d.properties.compname + "</b>" + ":<br/>";//", mukey: " + d.properties.mukey +
+    if (selected_soil_property_and_depth != "drainagecl"){
+        info = info + pretty_prop + " at " + depth + "cm: " + d.properties[selected_soil_property_and_depth]
+      } else {
+        info = info + pretty_prop + ": " + d.properties[selected_soil_property_and_depth]
+    };
+
     return info;
   };  
 
