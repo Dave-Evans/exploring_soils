@@ -110,11 +110,30 @@ html, body, #map {
     var tstobj;
     function addLmaps() {
         //Leaflet
-        
+        mapLink =
+            '<a href="http://www.esri.com/">Esri</a>';
+        wholink =
+            'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+        var satelite = L.tileLayer(
+            'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; '+mapLink+', '+wholink,
+            maxZoom: 18,
+            });        
+        var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        });            
+        var baseMaps = {
+              "Satelite": satelite,
+              "Streets, landmarks, etc": osm
+          };
+          
         map = L.map('map', {
-          selectArea: true // will enable it by default
+          selectArea: true, // will enable it by default
+          layers : satelite
         }).setView([43.0928979995　, -90.0669908523], 7);
-                
+
+        L.control.layers(baseMaps).addTo(map);
+
         map.on('areaselected', (e) => {
           tstobj = e.bounds;
           console.log(e.bounds.toBBoxString()); // min(lon), min(lat), max(lon), max(lat)
@@ -136,10 +155,11 @@ html, body, #map {
 
         });
 
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        }).addTo(map);
-    
+        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        //     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        // }).addTo(map);
+
+
         //Leaflet
         L.svg({clickable:true}).addTo(map);	
         
