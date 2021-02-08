@@ -132,6 +132,9 @@ html, body, #map {
           layers : satelite
         }).setView([43.0928979995　, -90.0669908523], 7);
 
+        // Shift key enables selection
+        map.selectArea.setShiftKey(true)
+
         L.control.layers(baseMaps).addTo(map);
 
         map.on('areaselected', (e) => {
@@ -221,7 +224,7 @@ html, body, #map {
         var winOpts = L.control.window(map,
           {
             title:'Welcome to Exploring Soils at Depth',
-            content:'To begin, hold control and click and drag to select an area on the map. You must select an area less than 50 square kilometers. It may take up to 30 seconds or more to load the data. Once the data has loaded, you can select a soil property and a depth from the left-hand panel.',
+            content:'To begin, hold shift and click and drag to select an area on the map. You must select an area less than 50 square kilometers. It may take up to 30 seconds or more to load the data. Once the data has loaded, you can select a soil property and a depth from the left-hand panel.',
             visible: true
           })
     }
