@@ -149,10 +149,11 @@ html, body, #map {
             L.control.window(map,
               {
                 title:'Select smaller area',
-                content: notice + 'The area you have selected is too large, please select an area that is smaller than 50 square kilometers.',
+                content: notice + 'The area you have selected is too large; please select an area that is smaller than 50 square kilometers.',
                 visible: true
               })
           } else {
+
             d3.json(dataurl, drawFeatures);
           };
 
@@ -228,6 +229,29 @@ html, body, #map {
             visible: true
           })
     }
+
+    function testWFS(){
+      var isItWorking = true;
+      function isWorking(data){
+        // console.log(data);
+        if (data == null){
+          L.control.window(map,
+          {
+            title:'WFS Error',
+            content: "The Soil Data Access Web Feature Service seems to be down, that means this utility won't work. Sorry, try back later.",
+            visible: true
+          })
+        }    
+      };
+
+      var testdataurl = "/pull_soils/-89.96581792831421/42.97046838045784/-89.96559798717499/42.9706175368188/"
+      // Doesn't work, in Canada
+      // var testdataurl = "/pull_soils/-90.85882186889648/49.2468536316726/-90.84251403808595/49.25324068292132/"
+
+      d3.json(testdataurl, isWorking);
+
+    }
+    
     // map.selectArea.setCtrlKey(true);
     // box-zoom will be disabled and you can
     // start selecting with Shift key pressed
