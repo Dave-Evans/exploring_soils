@@ -220,6 +220,8 @@ html, body, #map {
             return new L.Control.cntrlpanel(opts);
         }
         L.control.cntrlpanel({ position: 'topleft' }).addTo(map);
+        // Scale bar
+        L.control.scale().addTo(map);
         manageDepthSlider();       
 
         var winOpts = L.control.window(map,
@@ -230,6 +232,8 @@ html, body, #map {
           })
         testWFS();
     }
+
+
 
     function testWFS(){
       var isItWorking = true;
