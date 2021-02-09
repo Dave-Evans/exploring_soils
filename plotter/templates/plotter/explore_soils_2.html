@@ -156,7 +156,7 @@ html, body, #map {
 
             d3.json(dataurl, drawFeatures);
           };
-
+          
         });
 
         // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -228,6 +228,7 @@ html, body, #map {
             content:'To begin, hold shift and click and drag to select an area on the map. You must select an area less than 50 square kilometers. It may take up to 30 seconds or more to load the data. Once the data has loaded, you can select a soil property and a depth from the left-hand panel.',
             visible: true
           })
+        testWFS();
     }
 
     function testWFS(){
@@ -250,7 +251,7 @@ html, body, #map {
 
       d3.json(testdataurl, isWorking);
 
-    }
+    };
     
     // map.selectArea.setCtrlKey(true);
     // box-zoom will be disabled and you can
