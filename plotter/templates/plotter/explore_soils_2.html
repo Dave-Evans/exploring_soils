@@ -95,7 +95,7 @@ html, body, #map {
 <link rel="stylesheet" href="{% static 'css/L.Control.Window.css' %}" />
 <script>
     
-    var map //leaflet obj
+    var map; //leaflet obj
     
     // d3.json("soilstestdataoriginal.geojson",main);
     // /pull_soils/43.09289799954859/-90.06699085235596/43.10978728318576/-90.04703521728517/
@@ -199,7 +199,7 @@ html, body, #map {
                 controlsdiv.style.height = '450px';
                 controlsdiv.style.background = 'white';
                 controlsdiv.id = "controls";
-                controlsdiv.innerHTML = '<div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider"></div><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="drainagecl">Drainage Class</option><option value="sandtotal_r">Sand Percentage</option><option value="silttotal_r">Silt Percentage</option><option value="claytotal_r">Clay Percentage</option><option value="om_r">Organic Matter</option><option value="dbovendry_r">Bulk Density</option><option value="ksat_r">Saturated Conductivity</option><option value="awc_r">Available Water Capacity</option><option value="ph">pH</option></select><div id="legend"></div>';
+                controlsdiv.innerHTML = '<button id="info-button">Info</button><div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider"></div><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="drainagecl">Drainage Class</option><option value="sandtotal_r">Sand Percentage</option><option value="silttotal_r">Silt Percentage</option><option value="claytotal_r">Clay Percentage</option><option value="om_r">Organic Matter</option><option value="dbovendry_r">Bulk Density</option><option value="ksat_r">Saturated Conductivity</option><option value="awc_r">Available Water Capacity</option><option value="ph">pH</option></select><div id="legend"></div>';
                 // controlsdiv.innerHTML = '<div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider"></div>'
                 // controlsdiv.firstChild.onmousedown = L.DomEvent.stopPropagation;
                 $(controlsdiv).mousedown(function () {
@@ -224,18 +224,13 @@ html, body, #map {
         L.control.scale().addTo(map);
         manageDepthSlider();       
 
-        var winOpts = L.control.window(map,
-          {
-            title:'Welcome to Exploring Soils at Depth',
-            content:'To begin, hold shift and click and drag to select an area on the map. You must select an area less than 50 square kilometers. It may take up to 30 seconds or more to load the data. Once the data has loaded, you can select a soil property and a depth from the left-hand panel.',
-            visible: true
-          })
-        testWFS();
+
+        welcomeAndTestWFS();
     }
 
 
 
-    function testWFS(){
+    function welcomeAndTestWFS(){
       var isItWorking = true;
       function isWorking(data){
         // console.log(data);
@@ -244,6 +239,13 @@ html, body, #map {
           {
             title:'WFS Error',
             content: "The Soil Data Access Web Feature Service seems to be down, that means this utility won't work. Sorry, try back later.",
+            visible: true
+          })
+        } else {
+          var winOpts = L.control.window(map,
+          {
+            title:'Welcome to Exploring Soils at Depth',
+            content:'To begin, hold shift and click and drag to select an area on the map. You must select an area less than 50 square kilometers. It may take up to 30 seconds or more to load the data. Once the data has loaded, you can select a soil property and a depth from the left-hand panel.',
             visible: true
           })
         }    
@@ -394,14 +396,25 @@ html, body, #map {
         updateScaleFill();
       };
     };
-    // Make dropdown to select soil property
-    // Build property X depth string
-    // Call updateScale and Fill function
-    $('body').on('change', '#PropertySelection', function() {
 
+    // Call updateScale when everything is loaded. Seemed to be an issue where
+    //  the on change would try to be attached before the leaflet control containing 
+    //  the dropdown and slider were located was created
+    $('body').on('change', '#PropertySelection', function() {
       updateScaleFill();
     });
+    $('body').on('click', '#info-button', function() {
+      showInfoWindow();
+    });
 
+    function showInfoWindow(){
+      var winInfo = L.control.window(map,
+          {
+            title:'About Exploring Soils at Depth',
+            content:'This is a project aimed at making it easier to visualize Natural Resources Conservation Services (NRCS) SSURGO soil data around the United States. It allows one to select an area on a map and see different soil properties at that location. It is built using the NRCS fantastic <a href="https://sdmdataaccess.sc.egov.usda.gov/WebServiceHelp.aspx">Soil Data Access service</a>.<br/> After selecting an area of interest, the polygons shown correspond to map units. Each map unit is generally comprised of one or more soil components, which generally corresonds to a soil series. These soil components are spatially undifferentied within the soil series; different soil series within a mapunit cannot be placed on a map. Only one component was chosen for display within this applicationl the selected component was determined by finding the component with the greatest percent composition within the map unit. In the case of a tie, one component was selected by choosing the component with the smaller component identifier (the smaller cokey).',
+            visible: true
+          })      
+    }
 
     function buildPropertyDepthString(){
       var selected_soil_property = $('#PropertySelection').val();

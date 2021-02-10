@@ -36,7 +36,7 @@ from io import BytesIO
 def download_geometry(bbox):
     '''Takes bbox, a dict of minx, miny, maxx, maxy
     returns the filename of the geometry gml'''
-    url_template = "https://sdmdataaccess.nrcs.usda.gov/Spatial/SDMNAD83Geographic.wfs?Service=WFS&Version=1.0.0&Request=GetFeature&Typename=MapunitPoly&BBOX={minx},{miny},{maxx},{maxy}"
+    url_template = "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMNAD83Geographic.wfs?Service=WFS&Version=1.0.0&Request=GetFeature&Typename=MapunitPoly&BBOX={minx},{miny},{maxx},{maxy}"
     url_geom = url_template.format_map(bbox)
     urllib.request.Request(url_geom)
     with urllib.request.urlopen(url_geom) as response:
