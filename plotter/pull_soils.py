@@ -1,25 +1,13 @@
-
-import urllib.request
 import os
-import fiona
-## For tabular data
 import requests
-import pandas as pd
-import time
 import json
-import tempfile
-from io import BytesIO
+import pandas as pd
+import geopandas
+from shapely import wkt
 
 # # TODO:
-#  - refactor pull_soils
-    #     - avoid writing files with file-like objects?
-#  - change from working with "lowerleft" and 'upperright' points to work with 
-#     min and max x and y
-#  - build button and point collection within new javascript
 #  - loading notice?
 #  - error handling and notification brought forward to front end
-#  - XML processing for getting mukeys
-
 #  # Enhancement:
 #   - Add option for comppct weight aggregation of properties
 #   - Color?
@@ -27,47 +15,46 @@ from io import BytesIO
 # # Order for soil data access api is 
 # # 'minx, miny, maxx, maxy'
 # bbox = {
-#     "minx" : -90.53421020507814,
-#     "miny" : 43.089826720152914,
-#     "maxx" : -90.46932220458984,
-#     "maxy" : 43.13331170781402
+#     "minx" : -90.07982254028322,
+#     "miny" : 43.083432950692654,
+#     "maxx" : -90.03913879394533,
+#     "maxy" : 43.1078134515295
 # }
 
 def download_geometry(bbox):
     '''Takes bbox, a dict of minx, miny, maxx, maxy
-    returns the filename of the geometry gml'''
-    url_template = "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMNAD83Geographic.wfs?Service=WFS&Version=1.0.0&Request=GetFeature&Typename=MapunitPoly&BBOX={minx},{miny},{maxx},{maxy}"
-    url_geom = url_template.format_map(bbox)
-    urllib.request.Request(url_geom)
-    with urllib.request.urlopen(url_geom) as response:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".gml") as tmpfl_gml:
-            
-            data = response.read() # a `bytes` object
-            tmpfl_gml.write(data)
-
-    return tmpfl_gml.name
-    
-
-def retrieve_mukeys(tmpfl_gml_name):
-    '''Pull mukeys from geometry
-    This should be replaced with an xml parse
-    which pulls the mukeys before its written out in download_geometry
+    returns the dict of the geometry with mukey and wkt'''
+    '''Download tabular data'''
+    url_base = "https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest"
+    query_sda_geom = '''
+        SELECT
+            poly.mukey
+            , poly.mupolygongeo as geom
+        FROM            mupolygon as poly
+        WHERE geometry::STGeomFromText('POLYGON((
+            {minx} {miny}, 
+            {minx} {maxy}, 
+            {maxx} {maxy},
+            {maxx} {miny},
+            {minx} {miny}))', 4326).STIntersects(poly.mupolygongeo) = 1
+        ORDER BY poly.mukey
     '''
-    mukeys = []
 
-    with fiona.open(tmpfl_gml_name) as ds:
-        for rec in ds:
-            mukeys.append(str(rec['properties']['mukey']))
+    q = query_sda_geom.format_map(bbox)
+    
+    ## Build payload
+    payload = {"query":q, "format":"JSON+COLUMNNAME"}
+    
+    r = requests.post(url_base, data = payload)
+    rslt_json_geom = r.json()
 
-    mukeys = set(mukeys)
-    return mukeys
+    return rslt_json_geom
 
 
-def download_tabular(mukeys):
+def download_tabular(bbox):
     '''Download tabular data'''
     url_base = "https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest"
     query_sda = '''
-
         SELECT
             mu.musym
             , mu.muname
@@ -99,17 +86,28 @@ def download_tabular(mukeys):
             , ch.awc_r
             , ch.ecec_r
             , coalesce(ch.ph1to1h2o_r, ch.ph01mcacl2_r) as ph
-        FROM        mapunit mu
+        FROM (
+            SELECT DISTINCT mukey
+            FROM mupolygon as poly
+            WHERE geometry::STGeomFromText('POLYGON((
+                {minx} {miny}, 
+                {minx} {maxy}, 
+                {maxx} {maxy},
+                {maxx} {miny},
+                {minx} {miny}))', 4326).STIntersects(poly.mupolygongeo) = 1  
+
+        ) as poly
+        LEFT OUTER JOIN mapunit mu
+        ON              poly.mukey = mu.mukey
         LEFT OUTER JOIN component c
         ON              c.mukey = mu.mukey
         LEFT OUTER JOIN chorizon ch
         ON              ch.cokey = c.cokey
-        WHERE mu.mukey IN
-            ( '{mukeys}' )
         ORDER BY museq, comppct_r DESC, compname, hzdept_r
+
     '''
 
-    q = query_sda.format(mukeys = "','".join(mukeys))
+    q = query_sda.format_map(bbox)
     
     ## Build payload
     payload = {"query":q, "format":"JSON+COLUMNNAME"}
@@ -119,15 +117,14 @@ def download_tabular(mukeys):
 
     return rslt_json
 
-def process_tabular_data(rslt_json, tmpfl_gml_name):
+def process_tabular(rslt_json_tabl):
     '''Takes json tabular data at horizon level, aggregates to mapunit level
     '''
-    
-    strt_proc = time.time()
+
     ## Grab header, first list
-    header = rslt_json['Table'][0]
+    header = rslt_json_tabl['Table'][0]
     ## Grab tabular data, the rest
-    content = rslt_json['Table'][1:]
+    content = rslt_json_tabl['Table'][1:]
     dat = pd.DataFrame(content)
     dat.columns = header
     
@@ -188,9 +185,8 @@ def process_tabular_data(rslt_json, tmpfl_gml_name):
             how="left",
             left_index=True,
             right_index=True,
-            )
+        )
         
-    
     # Find the component with greatest comp percentage and 
     #  use that to select that component to represent the mapunit.
     idx_comppct_r = dat_mu_co.groupby(['mukey'])['comppct_r'].transform(max) == dat_mu_co['comppct_r']
@@ -203,60 +199,46 @@ def process_tabular_data(rslt_json, tmpfl_gml_name):
     dat_mu_co = dat_mu_co.reset_index()
     dat_mu_co = dat_mu_co.set_index("mukey")
 
-    # Build schema for json
-    cls = []
-    for i in range(len(dat_mu_co.columns.tolist())):
-        cl_nm = dat_mu_co.columns[i]
-        cl_typ = dat_mu_co.dtypes[i].name
-        if cl_typ == 'object':
-            cl_typ = "str"
-        elif cl_typ == 'float64':
-            cl_typ = 'float'
-
-        cls.append( [cl_nm, cl_typ ] )
-
     # Change all NaN to None for JSON compatibility
     dat_mu_co = dat_mu_co.where(pd.notnull(dat_mu_co), None)
 
-    # Change to Dict
-    dat_mu_co = dat_mu_co.to_dict(orient='index')
+    return dat_mu_co
 
-    # In memory file to avoid writing to disk (doesn't actually save time)
-    dst_json_obj = BytesIO()    
-    # http://toblerity.org/fiona/manual.html#writing-vector-data
 
-    with fiona.open(tmpfl_gml_name, 'r') as ds:
-        src_crs = ds.crs
-        dst_drvr = "GeoJSON"
-        dst_schema = ds.schema.copy()
-        for cl in cls:
-            dst_schema['properties'][cl[0]] = cl[1]
+def marry_tabl_and_geom(rslt_json_geom, soils_df_tabl):
+    '''Takes a json containing geometry and mukey from download_geometry
+    and a pandas dataframe from process_tabular
+    returns a geojson
+    '''
 
-        with fiona.open(
-                dst_json_obj, 'w',
-                crs=src_crs,
-                driver=dst_drvr,
-                schema=dst_schema,
-                ) as dst:
-            for rec in ds:
-                mky = str(rec['properties']['mukey'])
-                for cl in cls:
-                    rec['properties'][cl[0]] = dat_mu_co[mky][cl[0]]
-                dst.write(rec)    
-    
-    dst_json_obj.seek(0)
-    json_soils = json.load(dst_json_obj)
+    df = pd.DataFrame(rslt_json_geom['Table'][1:], columns=rslt_json_geom['Table'][0])
+    df['Coordinates'] = df['geom'].apply(wkt.loads)
+    df = df.set_index("mukey")
 
+    df_full = df.merge(
+        soils_df_tabl,
+        left_index=True,
+        right_index=True)
+    df_full = geopandas.GeoDataFrame(df_full, geometry='Coordinates')
+
+    # Convert geopands dataframe to GeoJSON string, then convert back to dict
+    json_soils = json.loads(df_full.to_json())
     return json_soils
 
 
 def return_soils_json(bbox):
 
-    tmpfl_gml_name = download_geometry(bbox)
-    list_mukeys = retrieve_mukeys(tmpfl_gml_name)
-    rslt_json = download_tabular(list_mukeys)
+    # Downloads geometry
+    rslt_json_geom = download_geometry(bbox)
+    
+    # Downloads tabular
+    rslt_json_tabl = download_tabular(bbox)
 
-    json_soils = process_tabular_data(rslt_json, tmpfl_gml_name)
+    # Processes tabular data from horizon level to mapunit
+    soils_df_tabl = process_tabular(rslt_json_tabl)
+
+    # Marries the tabular to the geometry, returning a json
+    json_soils = marry_tabl_and_geom(rslt_json_geom, soils_df_tabl)
 
     return json_soils
 

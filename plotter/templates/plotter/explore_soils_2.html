@@ -275,8 +275,9 @@ html, body, #map {
       .style("opacity", 0)
       .style("z-index", "999");
   
-
+    var thedata;
     function drawFeatures(data) {
+        thedata = data;
         var svg = d3.select("#map").select("svg")
             .attr("pointer-events", "auto");
         
