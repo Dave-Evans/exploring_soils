@@ -199,7 +199,7 @@ html, body, #map {
                 controlsdiv.style.height = '450px';
                 controlsdiv.style.background = 'white';
                 controlsdiv.id = "controls";
-                controlsdiv.innerHTML = '<button id="info-button">Info</button><div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="200" value="0" class="slider" id="DepthSlider"></div><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="drainagecl">Drainage Class</option><option value="sandtotal_r">Sand Percentage</option><option value="silttotal_r">Silt Percentage</option><option value="claytotal_r">Clay Percentage</option><option value="om_r">Organic Matter</option><option value="dbovendry_r">Bulk Density</option><option value="ksat_r">Saturated Conductivity</option><option value="awc_r">Available Water Capacity</option><option value="ph">pH</option></select><div id="legend"><svg width="250px" height="200px"></svg></div>';
+                controlsdiv.innerHTML = '<button id="info-button">Info</button><button id="dwnld-button">Download selected data</button><div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="200" value="0" class="slider" id="DepthSlider"></div><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="drainagecl">Drainage Class</option><option value="sandtotal_r">Sand Percentage</option><option value="silttotal_r">Silt Percentage</option><option value="claytotal_r">Clay Percentage</option><option value="om_r">Organic Matter</option><option value="dbovendry_r">Bulk Density</option><option value="ksat_r">Saturated Conductivity</option><option value="awc_r">Available Water Capacity</option><option value="ph">pH</option></select><div id="legend"><svg width="250px" height="200px"></svg></div>';
                 // controlsdiv.innerHTML = '<div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider"></div>'
                 // controlsdiv.firstChild.onmousedown = L.DomEvent.stopPropagation;
                 $(controlsdiv).mousedown(function () {
@@ -226,6 +226,7 @@ html, body, #map {
 
 
         welcomeAndTestWFS();
+        disableDownload();
     }
 
 
@@ -258,7 +259,9 @@ html, body, #map {
       d3.json(testdataurl, isWorking);
 
     };
-    
+
+
+
     // map.selectArea.setCtrlKey(true);
     // box-zoom will be disabled and you can
     // start selecting with Shift key pressed
@@ -278,6 +281,7 @@ html, body, #map {
     var thedata;
     function drawFeatures(data) {
         thedata = data;
+        enableDownload();
         var svg = d3.select("#map").select("svg")
             .attr("pointer-events", "auto");
         
@@ -381,10 +385,27 @@ html, body, #map {
       .range([ "#000004", "#000004", "#420a68", "#932667",
       "#dd513a", "#fca50a", "#fcffa4"]);
 
+
+    function downloadTextFile(text, name) {
+      const a = document.createElement('a');
+      const type = name.split(".").pop();
+      a.href = URL.createObjectURL( new Blob([text], { type:`text/${type === "txt" ? "plain" : type}` }) );
+      a.download = name;
+      a.click();
+    }
+
+    function disableDownload(){
+      var button = document.getElementById("dwnld-button");
+      button.disabled = true;
+    };
+    function enableDownload(){
+      var button = document.getElementById("dwnld-button");
+      button.disabled = false;
+    };    
+
     // We gather the depth and property from a slider and dropdown
     //  These are then used to build a string which corresponds to 
-    //  a field in the geojson
-
+    //  a field in the geojson    
     function manageDepthSlider () { 
       var DepthSlider = document.getElementById("DepthSlider");
       var span_selected_soil_depth = document.getElementById("depth_value");
@@ -409,11 +430,16 @@ html, body, #map {
       showInfoWindow();
     });
 
+    $('body').on('click', '#dwnld-button', function() {
+      downloadTextFile(JSON.stringify(thedata), 'soilsdata.json');
+    });
+
+
     function showInfoWindow(){
       var winInfo = L.control.window(map,
           {
             title:'About Exploring Soils at Depth',
-            content:'This is a project aimed at making it easier to visualize Natural Resources Conservation Services (NRCS) SSURGO soil data around the United States. It allows one to select an area on a map and see different soil properties at that location. It is built using the NRCS fantastic <a href="https://sdmdataaccess.sc.egov.usda.gov/WebServiceHelp.aspx">Soil Data Access service</a>.<br/> After selecting an area of interest, the polygons shown correspond to map units. Each map unit is generally comprised of one or more soil components, which generally corresonds to a soil series. These soil components are spatially undifferentied within the soil series; different soil series within a mapunit cannot be placed on a map. Only one component was chosen for display within this applicationl the selected component was determined by finding the component with the greatest percent composition within the map unit. In the case of a tie, one component was selected by choosing the component with the smaller component identifier (the smaller cokey).',
+            content:'This is a project aimed at making it easier to visualize Natural Resources Conservation Services (NRCS) SSURGO soil data around the United States. It allows one to select an area on a map and see different soil properties at that location. It is built using the NRCS fantastic <a href="https://sdmdataaccess.sc.egov.usda.gov/WebServiceHelp.aspx">Soil Data Access service</a>.<br/> After selecting an area of interest, the polygons shown correspond to map units. Each map unit is generally comprised of one or more soil components, which generally corresonds to a soil series. These soil components are spatially undifferentiated within the soil mapunits; different soil series within a mapunit cannot be placed on a map. Only one component was chosen for display within this application; the selected component was determined by finding the component with the greatest percent composition within the map unit. In the case of a tie, one component was selected by choosing the component with the smaller component identifier (the smaller cokey).',
             visible: true
           })      
     }
