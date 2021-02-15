@@ -195,7 +195,7 @@ html, body, #map {
             onAdd: function(map) {
 
                 var controlsdiv = L.DomUtil.create('div', 'custom-control');
-                controlsdiv.style.width = '240px';
+                controlsdiv.style.width = '250px';
                 controlsdiv.style.height = '450px';
                 controlsdiv.style.background = 'white';
                 controlsdiv.id = "controls";
@@ -489,9 +489,7 @@ html, body, #map {
           .scale(nullOrdScale);
 
       svg.select("g.nullLegend")
-          .call(nullValLegend);
-
-      
+          .call(nullValLegend);      
   };
 
   function updateScaleFill(){
