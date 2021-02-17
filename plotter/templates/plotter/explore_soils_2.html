@@ -368,22 +368,27 @@ html, body, #map {
       .interpolator(d3.interpolateYlGn);
 
     // Drainage Class
-    // Very poorly drained !!!!!!!!!! ADD new color for very poorly drained
-    // Poorly drained              
-    // Somewhat poorly drained     
-    // Moderately well drained
-    // Well drained    
-    // Somewhat excessively drained
-    // Excessively drained 
-    var drainScale = d3.scaleOrdinal()
-      .domain(["Very poorly drained", "Poorly drained",
+    var drainageClasses = ["Subaqueous", 
+        "Very poorly drained",
+        "Poorly drained",
         "Somewhat poorly drained",
         "Moderately well drained",
         "Well drained", 
         "Somewhat excessively drained",
-        "Excessively drained"])
-      .range([ "#000004", "#000004", "#420a68", "#932667",
-      "#dd513a", "#fca50a", "#fcffa4"]);
+        "Excessively drained"]
+    
+    var setupDrainScale = d3.scaleSequential()
+      .domain([1, drainageClasses.length])
+      .interpolator(d3.interpolateTurbo);
+    
+    var drainageClassColors = []
+    for (i = 1; i <= drainageClasses.length; i ++){
+      drainageClassColors.push( setupDrainScale(i) )
+    }
+
+    var drainScale = d3.scaleOrdinal()
+      .domain(drainageClasses)
+      .range(drainageClassColors);
 
 
     function downloadTextFile(text, name) {
