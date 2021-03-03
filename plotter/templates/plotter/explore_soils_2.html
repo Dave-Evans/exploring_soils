@@ -133,7 +133,7 @@ html, body, #map {
         }).setView([43.0928979995　, -90.0669908523], 7);
 
         // Shift key enables selection
-        map.selectArea.setShiftKey(true)
+        map.selectArea.setShiftKey(true);
 
         L.control.layers(baseMaps).addTo(map);
 
@@ -144,7 +144,7 @@ html, body, #map {
           console.log(calcArea(e.bounds));
           if (calcArea(e.bounds) >= 50){
             console.log("Area too large.")
-            var notice = "You have selected an area that is " + Math.round(calcArea(e.bounds)) + " square meters. ";
+            var notice = "You have selected an area that is " + Math.round(calcArea(e.bounds)) + " square kilometers. ";
             
             L.control.window(map,
               {
@@ -199,7 +199,7 @@ html, body, #map {
                 controlsdiv.style.height = '450px';
                 controlsdiv.style.background = 'white';
                 controlsdiv.id = "controls";
-                controlsdiv.innerHTML = '<button id="info-button">Info</button><button id="dwnld-button">Download selected data</button><div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="200" value="0" class="slider" id="DepthSlider"></div><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="drainagecl">Drainage Class</option><option value="sandtotal_r">Sand Percentage</option><option value="silttotal_r">Silt Percentage</option><option value="claytotal_r">Clay Percentage</option><option value="om_r">Organic Matter</option><option value="dbovendry_r">Bulk Density</option><option value="ksat_r">Saturated Conductivity</option><option value="awc_r">Available Water Capacity</option><option value="ph">pH</option></select><div id="legend"><svg width="260px" height="200px"></svg></div>';
+                controlsdiv.innerHTML = '<button id="info-button">Info</button><button id="dwnld-button">Download selected data</button><div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="200" value="0" class="slider" id="DepthSlider"></div><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="sandtotal_r">Sand Percentage</option><option value="silttotal_r">Silt Percentage</option><option value="claytotal_r">Clay Percentage</option><option value="drainagecl">Drainage Class</option><option value="om_r">Organic Matter</option><option value="dbovendry_r">Bulk Density</option><option value="ksat_r">Saturated Conductivity</option><option value="awc_r">Available Water Capacity</option><option value="ph">pH</option></select><div id="legend"><svg width="260px" height="250px"></svg></div>';
                 // controlsdiv.innerHTML = '<div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider"></div>'
                 // controlsdiv.firstChild.onmousedown = L.DomEvent.stopPropagation;
                 $(controlsdiv).mousedown(function () {
@@ -258,14 +258,7 @@ html, body, #map {
 
       d3.json(testdataurl, isWorking);
 
-    };
-
-
-
-    // map.selectArea.setCtrlKey(true);
-    // box-zoom will be disabled and you can
-    // start selecting with Shift key pressed
-    // map.selectArea.setCtrlKey(true);              
+    };      
     
     //To take the d3 object and project for leaflet
     function projectPoint(x, y) {
@@ -328,55 +321,44 @@ html, body, #map {
     };
 
 
-    // Scale and color for each property
-    var colorScheme = d3.schemeOranges[6];
-    // colorScheme.unshift("#eee");
-    var colorScale = d3.scaleThreshold()
-        // .domain([1, 6, 11, 26, 101, 1001])
-        .domain([1, 3, 6, 11, 20, 30])
-        .range(colorScheme);
+    var sandScale = d3.scaleThreshold()
+      .domain([7, 16, 25, 34, 39, 45, 61, 83])
+      .range(d3.schemeOrRd[9]);
 
-    // For texture properties
-    // Clay
-    // [ 5.,  8., 12., 15., 20., 23., 27., 30., 39.]
-    // Silt
-    // [ 9., 18., 24., 32., 37., 40., 46., 54., 64.]
-    // Sand
-    // 
-    var textureScale = d3.scaleSequential()
-      .domain([0, 100])
-      // .domain(d3.extent(geojson1.features, d => d.properties['claytotal_r_0cm']))
-      .interpolator(d3.interpolateYlOrBr);
 
-    // For OM, scale _based_ on deciles, 
-    // [0.3, 0.3, 0.4, 0.6, 0.8, 1.3, 2. , 3. , 4.8]
+    var siltScale = d3.scaleThreshold()
+      .domain([9, 18, 24, 32, 39, 46, 54, 64])
+      .range(d3.schemeYlOrBr[9]);
+      
+      
+    var clayScale = d3.scaleThreshold()
+      .domain([5, 8, 12, 15, 20, 23, 27, 35])
+      .range(d3.schemeYlOrRd[9]);
+
+    // For OM, scale _based_ on deciles, using cividis
     var orgmatScale = d3.scaleThreshold()
-      .domain([0.35, 0.6, 0.8, 1.3, 2 , 3 , 4.8, 10])
-      .range(d3.schemeGreys[9]);
-
-    // var orgmatScale = d3.scaleSequential()
-    //   .domain([0, 8])
-    //   .interpolator(d3.interpolateGreys);      
+      .domain([0.3, 0.4, 0.6, 0.8, 1.3, 2 , 3 , 4.8, 10])
+      .range(['#e5cf52', '#c8b866', '#aea371','#948e77','#7d7c78','#666970','#4f576c','#35456c','#083370','#00224e']);
 
     // For AWC
-    var awcScale = d3.scaleSequential()
-      .domain([0, 0.3])
-      .interpolator(d3.interpolateBlues);      
+    var awcScale = d3.scaleThreshold()
+      .domain([0.08, 0.11, 0.13, 0.15, 0.16, 0.17, 0.19, 0.21])
+      .range(d3.schemeBlues[9]);      
 
-    // For pH
-    var phScale = d3.scaleSequential()
-      .domain([4, 10])
-      .interpolator(d3.interpolateBrBG);            
+    // For pH         
+    var phScale = d3.scaleThreshold()
+      .domain([5, 5.3, 5.8, 6.2, 6.6, 7.0, 7.3, 7.9, 8.2])
+      .range(d3.schemeBrBG[10]);       
 
     // Db
-    var dbovendryScale = d3.scaleSequential()
-      .domain([1, 1.8])
-      .interpolator(d3.interpolateYlGnBu); 
+    var dbovendryScale = d3.scaleThreshold()
+      .domain([1.39, 1.47, 1.52, 1.56, 1.6, 1.64, 1.69, 1.77])
+      .range(d3.schemeYlGnBu[9]); 
 
-    // Ksat
-    var ksatScale = d3.scaleSequential()
-      .domain([0, 200])
-      .interpolator(d3.interpolateYlGn);
+    // Ksat   
+    var ksatScale = d3.scaleThreshold()
+      .domain([1, 3, 6, 9, 22, 28, 92, 705])
+      .range(d3.schemeYlGn[9]);
 
     // Drainage Class
     var drainageClasses = ["Subaqueous", 
@@ -401,7 +383,7 @@ html, body, #map {
       .domain(drainageClasses)
       .range(drainageClassColors);
 
-
+    /*For downloading the data*/
     function downloadTextFile(text, name) {
       const a = document.createElement('a');
       const type = name.split(".").pop();
@@ -544,15 +526,19 @@ html, body, #map {
     switch (selected_soil_property){
       case 'awc_r':
         colorScale = awcScale;
+        is_threshold_scale = true;
         break;
       case 'sandtotal_r':
-        colorScale = textureScale;
+        colorScale = sandScale;
+        is_threshold_scale = true;
         break;
       case 'silttotal_r':
-        colorScale = textureScale;
+        colorScale = siltScale;
+        is_threshold_scale = true;
         break;
       case 'claytotal_r':
-        colorScale = textureScale;
+        colorScale = clayScale;
+        is_threshold_scale = true;        
         break;            
       case 'om_r':
         colorScale = orgmatScale;
@@ -560,12 +546,15 @@ html, body, #map {
         break;
       case 'ksat_r':
         colorScale = ksatScale;
+        is_threshold_scale = true;        
         break; 
       case 'dbovendry_r':
         colorScale = dbovendryScale;
+        is_threshold_scale = true;
         break;
       case 'ph':
         colorScale = phScale;
+        is_threshold_scale = true;
         break;
       case 'drainagecl':
         colorScale = drainScale;
@@ -613,6 +602,7 @@ html, body, #map {
 
       if (threshold){
         legendSoil.labels(d3.legendHelpers.thresholdLabels)
+        legendSoil.labelFormat(d3.format(".2f"))
       }
 
       svg.select(".legendSoil")
