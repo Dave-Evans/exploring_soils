@@ -7,7 +7,7 @@ http://bl.ocks.org/mastersigat/fd6e38ce173e992280d68f4f3fb39996 -->
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-<title></title>
+<title>Soils in Depth</title>
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
 <style>
 /* http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 */
@@ -57,33 +57,13 @@ html, body, #map {
     pointer-events: auto;
 }
 
-
 </style>
 
 </head>
 
 <body>
-    <!-- <div class="slidecontainer">
-        <p>Select a Depth: <span id="depth_value"></span></p>
-        <input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider">     
-    </div> -->
     
-    <!-- <div>Select a Soil P'custom-control'roperty to View
-        <br>
-        <select id="PropertySelection">          
-            <option value="drainagecl">Drainage Class</option>
-            <option value="sandtotal_r">Sand Percentage</option>
-            <option value="silttotal_r">Silt Percentage</option>
-            <option value="claytotal_r">Clay Percentage</option>
-            <option value="om_r">Organic Matter</option>
-            <option value="dbovendry_r">Bulk Density</option>
-            <option value="ksat_r">Saturated Conductivity</option>
-            <option value="awc_r">Available Water Capacity</option>
-            <option value="ph">pH</option>
-        </select>
-    </div> -->
-    
-<div id="map"></div>    
+  <div id="map"></div>    
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
@@ -92,6 +72,8 @@ html, body, #map {
 <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 <script src="{% static 'js/Map.SelectArea.js' %}"></script>
 <script src="{% static 'js/L.Control.Window.js' %}"></script>
+<script src="{% static 'js/spin.min.js' %}" charset="utf-8"></script>
+<script src="{% static 'js/leaflet.spin.min.js' %}" charset="utf-8"></script>
 <link rel="stylesheet" href="{% static 'css/L.Control.Window.css' %}" />
 <script>
     
@@ -107,7 +89,7 @@ html, body, #map {
         addLmaps();
         drawFeatures(data);
     }
-    var tstobj;
+    
     function addLmaps() {
         //Leaflet
         mapLink =
@@ -138,7 +120,7 @@ html, body, #map {
         L.control.layers(baseMaps).addTo(map);
 
         map.on('areaselected', (e) => {
-          tstobj = e.bounds;
+          
           console.log(e.bounds.toBBoxString()); // min(lon), min(lat), max(lon), max(lat)
           var dataurl = "/pull_soils/" + e.bounds.toBBoxString().replaceAll(",", "/");
           console.log(calcArea(e.bounds));
@@ -153,7 +135,7 @@ html, body, #map {
                 visible: true
               })
           } else {
-
+            map.spin(true);
             d3.json(dataurl, drawFeatures);
           };
           
@@ -318,6 +300,7 @@ html, body, #map {
         function update() {	
             featureElement.attr("d", path);
         };
+        map.spin(false);
     };
 
 
