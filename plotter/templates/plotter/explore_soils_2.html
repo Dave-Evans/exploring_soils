@@ -79,10 +79,6 @@ html, body, #map {
     
     var map; //leaflet obj
     
-    // d3.json("soilstestdataoriginal.geojson",main);
-    // /pull_soils/43.09289799954859/-90.06699085235596/43.10978728318576/-90.04703521728517/
-    // d3.json("/pull_soils/-90.06699085235596/43.09289799954859/-90.04703521728517/43.10978728318576/", main);
-    // https://github.com/mapshakers/leaflet-control-window
     addLmaps();
 
     function main(data) {
@@ -141,36 +137,9 @@ html, body, #map {
           
         });
 
-        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        //     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        // }).addTo(map);
-
 
         //Leaflet
         L.svg({clickable:true}).addTo(map);	
-        
-        // // Custom control for info box
-        // L.Control.info = L.Control.extend({
-        //     onAdd: function(map) {
-
-        //         var infodiv = L.DomUtil.create('div', 'custom-control');
-        //         // infodiv.style.maxWidth = '260px';
-        //         infodiv.style.width = '260px';
-        //         infodiv.style.height = '200px';
-        //         infodiv.style.background = 'white';
-        //         infodiv.id = "info";
-        //         infodiv.innerHTML = "<p>Welcome!<br/>Hold control, click and drag an area to view the soils at depth. The area must be less than 50 square kilometers.</p>"
-
-        //         return infodiv;
-        //     },
-        //     onRemove: function(map) {
-        //         // Nothing to do here
-        //     }
-        // });
-        // L.control.info = function(opts) {
-        //     return new L.Control.info(opts);
-        // }
-        // L.control.info({ position: 'topright' }).addTo(map);
 
         // Custom control for controls
         L.Control.cntrlpanel = L.Control.extend({
@@ -182,14 +151,11 @@ html, body, #map {
                 controlsdiv.style.background = 'white';
                 controlsdiv.id = "controls";
                 controlsdiv.innerHTML = '<button id="info-button">Info</button><button id="dwnld-button">Download selected data</button><div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="200" value="0" class="slider" id="DepthSlider"></div><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="sandtotal_r">Sand Percentage</option><option value="silttotal_r">Silt Percentage</option><option value="claytotal_r">Clay Percentage</option><option value="drainagecl">Drainage Class</option><option value="om_r">Organic Matter</option><option value="dbovendry_r">Bulk Density</option><option value="ksat_r">Saturated Conductivity</option><option value="awc_r">Available Water Capacity</option><option value="ph">pH</option></select><div id="legend"><svg width="260px" height="250px"></svg></div>';
-                // controlsdiv.innerHTML = '<div class="slidecontainer"><p>Select a Depth: <span id="depth_value"></span></p><input type="range" min="0" max="100" value="0" class="slider" id="DepthSlider"></div>'
-                // controlsdiv.firstChild.onmousedown = L.DomEvent.stopPropagation;
                 $(controlsdiv).mousedown(function () {
                     map.dragging.disable();
                 });
                 $(document).mouseup(function () {
                     map.dragging.enable();
-                    //Only show the slider timestamp while using the slider
                 });
 
                 return controlsdiv;
@@ -205,8 +171,6 @@ html, body, #map {
         // Scale bar
         L.control.scale().addTo(map);
         manageDepthSlider();       
-
-
         welcomeAndTestWFS();
         disableDownload();
     }
@@ -248,7 +212,7 @@ html, body, #map {
         this.stream.point(point.x, point.y);
     };
 
-    var div = d3.select("body").append("div")	
+    var ttdiv = d3.select("body").append("div")	
       .attr("class", "tooltip")				
       .style("opacity", 0)
       .style("z-index", "999");
@@ -276,17 +240,17 @@ html, body, #map {
                 d3.select(this).attr("fill", "red")
             })
             .on("mouseover", function(d) {		
-              div.transition()		
+              ttdiv.transition()		
                   .duration(200)		
                   .style("opacity", .9);
                   // .style("fill", "brown")
                   // .style("fill-opacity", .7);
-              div.html(formatTooltipInfo(d))	
+              ttdiv.html(formatTooltipInfo(d))	
                   .style("left", (d3.event.pageX) + "px")		
                   .style("top", (d3.event.pageY - 70) + "px");	
             })					
             .on("mouseout", function(d) {		
-                div.transition()		
+                ttdiv.transition()		
                     .duration(500)		
                     .style("opacity", 0);	
             });
@@ -441,7 +405,6 @@ html, body, #map {
 
     };
 
-    
 
     function depthSnapper(input_depth) {
       if ((0 <= input_depth) & (input_depth < 5))
@@ -470,34 +433,6 @@ html, body, #map {
         return 200;                      
     };
 
-    function createNullLgend(){
-      removeLegend(".nullLegend");
-      // var svg = d3.select("#legend")
-      //     .append("svg")
-      //     .style("width", 250)
-      //     .style("height", 200);
-      
-        var svg = d3.select("#legend svg");
-      // For representing nulls in the legend. 
-      // We just add this legend first and build a 
-      //  legend based on the data after.
-      var nullOrdScale = d3.scaleOrdinal()
-          .domain(["Null"])
-          .range([ "#ccc" ]);
-
-      svg.append("g")
-          .attr("class", "nullLegend")
-          .attr("transform", "translate(20,10)");
-
-      var nullValLegend = d3.legendColor()
-          .shapeWidth(30)
-          .cells(1)
-          // .orient("horizontal")
-          .scale(nullOrdScale);
-
-      svg.select("g.nullLegend")
-          .call(nullValLegend);      
-  };
 
   function updateScaleFill(){
     // https://stackoverflow.com/questions/21760687/d3-js-choropleth-map-change-color-scheme-on-selection
@@ -506,10 +441,12 @@ html, body, #map {
     console.log(selected_soil_property_and_depth);
     var selected_soil_property = $('#PropertySelection').val();
     var is_threshold_scale = false;
+    var needs_two_decimals = false;
     switch (selected_soil_property){
       case 'awc_r':
         colorScale = awcScale;
         is_threshold_scale = true;
+        needs_two_decimals = true;
         break;
       case 'sandtotal_r':
         colorScale = sandScale;
@@ -534,6 +471,7 @@ html, body, #map {
       case 'dbovendry_r':
         colorScale = dbovendryScale;
         is_threshold_scale = true;
+        needs_two_decimals = true;
         break;
       case 'ph':
         colorScale = phScale;
@@ -556,7 +494,7 @@ html, body, #map {
       } 
     });
     
-    updateLegend(colorScale, is_threshold_scale);
+    updateLegend(colorScale, is_threshold_scale, needs_two_decimals);
 
   };
     
@@ -564,11 +502,10 @@ html, body, #map {
     d3.select(legendClassName).remove();
   }
 
-  function updateLegend(myscale, threshold=false) {
+  function updateLegend(myscale, threshold=false, twodecimals=false) {
 
       removeLegend('.legendSoil'); 
-      // var svg = d3.select("#legend")
-      //     .append("svg")
+
       var svg = d3.select("#legend svg");
       
       svg.append("g")
@@ -585,6 +522,8 @@ html, body, #map {
 
       if (threshold){
         legendSoil.labels(d3.legendHelpers.thresholdLabels)
+      }
+      if (twodecimals){
         legendSoil.labelFormat(d3.format(".2f"))
       }
 
@@ -592,7 +531,32 @@ html, body, #map {
           .call(legendSoil);
 
   };
-  
+
+  // For representing nulls in the legend. 
+  // We just add this legend first and build a 
+  //  legend based on the data after.
+  function createNullLgend(){
+
+      removeLegend(".nullLegend");
+
+      var svg = d3.select("#legend svg");
+      var nullOrdScale = d3.scaleOrdinal()
+          .domain(["Null"])
+          .range([ "#ccc" ]);
+
+      svg.append("g")
+          .attr("class", "nullLegend")
+          .attr("transform", "translate(20,10)");
+
+      var nullValLegend = d3.legendColor()
+          .shapeWidth(30)
+          .cells(1)
+          .scale(nullOrdScale);
+
+      svg.select("g.nullLegend")
+          .call(nullValLegend);      
+  };  
+
   function formatTooltipInfo(d){
     // Add depth?
     var selected_soil_property_and_depth = buildPropertyDepthString();
