@@ -51,7 +51,7 @@ def studies(request):
     studies = Study.objects.all()
     return render(request, 'studies_home.html', {'studies': studies})
 
-def explore_soils(request):
+def soils_in_depth(request):
 
     return render(request, 'plotter/explore_soils_2.html')
 
