@@ -99,10 +99,22 @@ html, body, #map {
             });        
         var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        });            
+        });
+        
+        var hillshade_color = L.tileLayer.wms('http://ows.mundialis.de/services/service?', {
+            layers: 'SRTM30-Colored-Hillshade',
+            attribution: "mundialis"
+        });
+        var hillshade = L.tileLayer.wms('http://ows.mundialis.de/services/service?', {
+            layers: 'SRTM30-Hillshade',
+            attribution: "mundialis"
+        });        
+
         var baseMaps = {
               "Satelite": satelite,
-              "Streets, landmarks, etc": osm
+              "Streets, landmarks, etc": osm,
+              "Hillshade": hillshade,
+              "Colored Hillshade": hillshade_color
           };
           
         map = L.map('map', {

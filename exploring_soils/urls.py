@@ -32,7 +32,8 @@ from kanopy import views as kanopy_views
 
 
 urlpatterns = [
-    url(r'^$', views.BoardListView.as_view(), name='home'),
+    
+
     url(r'^new_study/$', plotter_views.new_study, name='new_study'),
     url(r'^edit_study/(?P<pk>\d+)$', plotter_views.edit_study, name='edit_study'),
     url(r'^studies/$', plotter_views.studies, name='studies'),
@@ -76,6 +77,7 @@ urlpatterns = [
     
 
     # Books app
+    url(r'^$', books_views.home, name="home"),
     url(r'^books/$', books_views.book_list, name="book_list"),
     url(r'^books/create/$', books_views.book_create, name='book_create'),
     url(r'^books/(?P<pk>\d+)/update/$', books_views.book_update, name='book_update'),
@@ -106,6 +108,7 @@ urlpatterns = [
     url(r'^settings/account/$', accounts_views.UserUpdateView.as_view(), name='my_account'),
         
     # Boards 
+    url(r'^boards$', views.BoardListView.as_view(), name='home_boards'),
     url(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/posts/(?P<post_pk>\d+)/edit/$',
         views.PostUpdateView.as_view(), name='edit_post'),
     url(r'^new_post/$', views.NewPostView.as_view(), name='new_post'),
