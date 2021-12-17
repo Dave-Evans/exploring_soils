@@ -12,7 +12,7 @@
 
   - name: Install software
     apt:
-      name: ['awscli', 'python3-pip', 'python-pip', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev']
+      name: ['awscli', 'python3-pip', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev']
       state: present
     tags: install
   
@@ -42,7 +42,7 @@
   
   - name: Adds postgis extension to the database
     become_user: postgres
-    community.general.postgresql_ext:
+    community.postgresql.postgresql_ext:
       name: postgis
       db: "{{ database_name }}"
 
