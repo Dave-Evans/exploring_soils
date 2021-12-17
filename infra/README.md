@@ -7,7 +7,7 @@ I am not currently using anything specific to tie these two systems together, at
 ## Terraform
 
 Terraform is an infrastructure as code software which allows us to create resources in the cloud in a reusable, code-based way.
-Terraform uses a decrlaritive language, whereby we write up a list of what we want created in the cloud, and Terraform creates it.
+Terraform uses a declaritive language, whereby we write up a list of what we want created in the cloud, and Terraform creates it.
 
 The project in question is a very simple one and so the Terraform code necessary is not much.
 Did we have to use Terraform here? No, but I wanted the chance to try to get more familiar.
@@ -43,6 +43,16 @@ Useful for variable defintion and SSL certs [here](https://medium.com/modern-sta
 Ansible is a provisioning and configuration management software.
 I am using this to do all the setup on the server. 
 Since I'm on a single machine I could just use bash scripts and nest them inside a `remote-exec` tag in Terraform, but that seemed too boring.
+To setup Ansible on Ubuntu, I ran the following to get the most up-to-date version:
+```shell
+sudo apt update
+sudo apt install software-properties-common
+sudo apt-add-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
+# For postgres extensions
+ansible-galaxy collection install community.general
+ansible-galaxy collection install community.postgresql
+```
 
 I have setup the Ansible playbooks as if there is a database server as well as a web server, though its all on one for now. 
 There are clever ways to have everything run through roles and so things can be executed with a single Ansible call, but I have not done that.
@@ -98,3 +108,35 @@ The helper program first generates the Terraform and Ansible variable files usin
 `./helper.sh create_vars`.
 Then, it calls the Terraform code, `./helper.sh spinup_infra`.
 After this, provision and configure the infrastructure with Ansible using `./helper.sh deploy`.
+Check to see if database and user are created:
+```shell
+sudo su - postgres
+psql
+# list databases
+\l
+# list tables
+\dt
+# list users (roles)
+\du
+```
+
+### For setup on new machine
+
+0. Install ansible
+1. Clone project
+2. Create virtual env and activate
+3. pip install requirements
+4. Install postgres and run the following ansible
+
+
+The Ansible scripts can be used to setup the software needed to run the website locally.
+To install the necessary database software `./ansible/hosts` is not necessary, but the database playbook should have 
+```
+- hosts: localhost
+  connection: local
+```
+Then to install the software use:
+`ansible-playbook ./ansible/database.yml --ask-become-pass`
+
+5. `python manage.py migrate`
+ and then `python manage.py createsuperuser`
