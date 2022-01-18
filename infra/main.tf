@@ -11,7 +11,7 @@ provider "aws" {
 ######## EC2 ############
 
 resource "aws_instance" "webserver" {
-    ami                  = "ami-0e82959d4ed12de3f"
+    ami                  = "ami-0fb653ca2d3203ac1"
     instance_type        = "t2.micro"
     key_name             = var.key_name
     iam_instance_profile = aws_iam_instance_profile.ec2_s3_profile.name

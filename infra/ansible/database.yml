@@ -1,7 +1,6 @@
 
-- hosts: localhost
-  connection: local
-  # remote_user: ubuntu
+- hosts: all
+  remote_user: ubuntu
   become: True
   vars_files:
     - vars/main.yml
@@ -12,7 +11,7 @@
 
   - name: Install software
     apt:
-      name: ['awscli', 'python3-pip', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev']
+      name: ['awscli', 'python3-pip', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev', 'acl']
       state: present
     tags: install
   

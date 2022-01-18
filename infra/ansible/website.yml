@@ -19,12 +19,13 @@
       repo: "https://github.com/Dave-Evans/exploring_soils.git"
       force: yes
       dest: /home/ubuntu/exploring_soils
+      version: feat/django4
 
   - name: Install Python modules
     pip:
       requirements: /home/ubuntu/exploring_soils/requirements.txt
       virtualenv: /home/ubuntu/exploring_soils/myvenv
-      virtualenv_command: /usr/bin/python3.6 -m venv
+      virtualenv_command: /usr/bin/python -m venv
 
   - name: Move apache config file
     copy:
@@ -35,7 +36,7 @@
   # Variabalize the env file
   - name: Move env file
     copy:
-      src: /home/daveevans/Documents/exploring_soils/test.env
+      src: ../../.env
       dest: /home/ubuntu/exploring_soils/.env
       remote_src: no      
 
@@ -48,7 +49,7 @@
   # This will be pulling from an S3 bucket
   - name: Move backup db dump file
     copy:
-      src: /home/daveevans/Documents/exploring_soils/data/dump.json
+      src: ../../data/dump.json
       dest: /home/ubuntu/exploring_soils/data/dump.json
       remote_src: no
 
