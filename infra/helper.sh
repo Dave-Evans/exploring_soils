@@ -202,7 +202,7 @@ create_ansible_vars() {
     fi
 
     INFO "Creating Ansible variables file: $ansvars"
-    for _var in database_user database_name database_pass key_name; do
+    for _var in database_user database_name database_pass key_name branch; do
         eval "$_var=$(extract_envvar $_var)"
         eval "_val=\${$_var}"
         if [ -z "$_val" ]; then

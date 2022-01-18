@@ -2,6 +2,8 @@
 - hosts: all
   remote_user: ubuntu
   become: True
+  vars_files:
+    - vars/main.yml  
 
   tasks:
 
@@ -19,13 +21,13 @@
       repo: "https://github.com/Dave-Evans/exploring_soils.git"
       force: yes
       dest: /home/ubuntu/exploring_soils
-      version: feat/django4
+      version: "{{ branch }}"
 
   - name: Install Python modules
     pip:
       requirements: /home/ubuntu/exploring_soils/requirements.txt
       virtualenv: /home/ubuntu/exploring_soils/myvenv
-      virtualenv_command: /usr/bin/python -m venv
+      virtualenv_command: /usr/bin/python3 -m venv
 
   - name: Move apache config file
     copy:
