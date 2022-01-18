@@ -116,7 +116,7 @@ extract_envvar () {
 # Making a wrapper around terraform output ip
 # in case future versions of this don't use terraform for ip
 pullip () {
-    terraform output ip
+    sed -e 's/^"//' -e 's/"$//' <<< $(terraform output ip)
 }
 
 # Directory
@@ -170,6 +170,10 @@ create_tf_vars () {
             ERROR "need to specify '$_var' in $env_file"
             # echo "need to specify '$_var' in $env_file"
         else
+            if [ "$_var" == "key_name" ]; then
+                _val=$(echo "$_val" | cut -f 1 -d '.')
+            fi        
+            
             DEBUG "$_var: $_val"
             # echo "$_var: $_val"
             echo "$_var = \"$_val\"" >> $tfvars
@@ -240,8 +244,16 @@ create_ansible_hostsfile () {
 }
 
 provision_deploy () {
+    
+    INFO "Extracting IP Address"
+    ipaddress=$( pullip )
+    sed -i "s/ALLOWED_HOSTS=.*/ALLOWED_HOSTS=$ipaddress/g" $env_file
+    create_ansible_hostsfile
+
+
     INFO "Provisioning database components"
     ansible-playbook -i ./ansible/hosts ./ansible/database.yml
+    
     # must be run after db is setup
     INFO "Provisioning web components and deploying application"
     ansible-playbook -i ./ansible/hosts ./ansible/website.yml
