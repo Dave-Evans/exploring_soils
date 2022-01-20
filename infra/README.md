@@ -30,6 +30,8 @@ Considerations:
 I will need an if statements in the Terraform code, if prod (in variables?) then use IP address, if not then forget it.
 I am going to leave this undone for now and proceed with assuming that we aren't going to use an elastic ip.
 
+TODO: make greencover user able to spin this up
+
 ### References
 
 [For booleans](https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9)
@@ -104,12 +106,14 @@ The bash script `helper.sh` is used to run Terraform and Ansible within one prog
 It allows us maintain only one config file, the `.env` file, which is used by `decouple` within the Django application.
 See the example file `.env.example` for what this should look like.
 If you aren't going to use the default named environment file, `.env`, then specify the path to your env file with `-f ../test.env`.
+Make sure that `DEPLOYED` is set to `True`.
 The helper program first generates the Terraform and Ansible variable files using
 `./helper.sh create_vars`.
 Then, it calls the Terraform code, `./helper.sh spinup_infra`.
 After this, provision and configure the infrastructure with Ansible using `./helper.sh deploy`.
 Check to see if database and user are created:
 ```shell
+
 sudo su - postgres
 psql
 # list databases
@@ -131,10 +135,17 @@ psql
 
 The Ansible scripts can be used to setup the software needed to run the website locally.
 To install the necessary database software `./ansible/hosts` is not necessary, but the database playbook should have 
-```
+
+```yaml
 - hosts: localhost
   connection: local
 ```
+Otherwise it should look like
+```yaml
+- hosts: all
+  remote_user: ubuntu
+```
+
 Then to install the software use:
 `ansible-playbook ./ansible/database.yml --ask-become-pass`
 
