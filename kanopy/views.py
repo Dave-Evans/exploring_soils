@@ -165,3 +165,7 @@ def sample_point_form_upload(request):
 def datalook_20201230(request):
 
     return render(request, 'kanopy/green_covr_data_look_20201230.html')
+
+def datalook_2020_21(request):
+
+    return render(request, 'kanopy/green_covr_data_look_2020_21.html')

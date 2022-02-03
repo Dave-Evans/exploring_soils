@@ -64,6 +64,7 @@ urlpatterns = [
     re_path(r'^kanopy$', kanopy_views.kanopy_home, name='kanopy_home'),
     re_path(r'^kanopy/delete/(?P<pk>\d+)/', kanopy_views.GroundcoverDeleteView.as_view(), name='groundcover_delete'),
     path('groundcover_update/<int:pk>/', kanopy_views.GroundcoverUpdateView.as_view(), name='groundcover_update'),
+
     re_path(r'^kanopy_thanks$', kanopy_views.kanopy_thanks, name='kanopy_thanks'),
     re_path(r'^kanopy_map$', kanopy_views.kanopy_submission_map, name='kanopy_submission_map'),
     re_path(r'^kanopy_submissions_json$', kanopy_views.kanopy_submissions_json, name='kanopy_submissions_json'),
@@ -71,9 +72,11 @@ urlpatterns = [
     re_path(r'^kanopy_upload$', kanopy_views.model_form_upload, name='kanopy_upload'),
     re_path(r'^kanopy_download$', kanopy_views.kanopy_download, name='kanopy_download'),
     re_path(r'^kanopy/datalook/20201230$', kanopy_views.datalook_20201230, name='datalook_20201230'),
+    re_path(r'^kanopy/datalook/2020_21$', kanopy_views.datalook_2020_21, name='datalook_2020_21'),        
     # re_path(r'^kanopy_sample$', kanopy_views.sample_point_form_upload, name='kanopy_sample'),
     # re_path(r'^kanopy_sample$', kanopy_views.addPointOnMap, name='kanopy_sample'),
     # re_path(r'^kanopy_sample$', kanopy_views.MapView.as_view(), name='kanopy_sample'),
+
     
     
 
