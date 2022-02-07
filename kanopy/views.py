@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import connection
 from django_tables2 import RequestConfig
 import djqscsv
+import json
 from kanopy.forms import GroundcoverForm
 from kanopy.models import Groundcoverdoc
 from kanopy.tables import (
@@ -77,21 +78,21 @@ def kanopy_submissions_json(request):
                   FROM (SELECT * FROM kanopy_groundcoverdoc) inputs) features;
             """)
             rows = cursor.fetchone()
-
-        return rows
+            data = json.loads(rows[0])
+        return data
         
     data = get_submissions_json()
     # retrieve signed url for accessing private s3 images
     # There is probably a better way to do this but while there aren't many
     #   submissions this is fine.
-    for feat in data[0]['features']:
+    for feat in data['features']:
         id = feat['id']
         
         submission_object = Groundcoverdoc.objects.get(pk = id)
         feat['properties']['image_url'] = submission_object.image.url
     
     
-    return JsonResponse(list(data), safe=False)
+    return JsonResponse(list(data['features']), safe=False)
 
 
 def model_form_upload(request):
