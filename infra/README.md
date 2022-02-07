@@ -39,6 +39,8 @@ TODO: make greencover user able to spin this up
 I haven't yet explored [this](https://github.com/28mm/awesome-terraform) but it seems to be a comprehensive list of resources.
 Multiple server configuration [here](https://medium.com/@dhelios/terraform-by-examples-part-1-ef3e3be7b88b)
 Useful for variable defintion and SSL certs [here](https://medium.com/modern-stack/5-minute-static-ssl-website-in-aws-with-terraform-76819a12d412)
+[For different environments](https://betterprogramming.pub/managing-multiple-environments-in-terraform-5b389da3a2ef)
+
 
 ## Ansible
 
@@ -123,6 +125,10 @@ psql
 # list users (roles)
 \du
 ```
+
+For prod, manually dis and reassociated the elastic ip address to the new instance. 
+Then run `terraform refresh`.
+Then update `.env` with the new elastic ip and domain name and restart.
 
 ### For setup on new machine
 

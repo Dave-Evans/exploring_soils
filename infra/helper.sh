@@ -327,7 +327,7 @@ while [ -n "$1" ]; do
             dump_db
             ;;
         bkup)
-            bucket=$(extract_envvar AWS_STORAGE_BUCKET_NAME)
+            bucket=$(extract_envvar AWS_BACKUP_BUCKET_NAME)
             folder="db"
             file=$(basename -- "$2")
             INFO "Copying $2'"

@@ -14,8 +14,13 @@ variable "aws_storage_bucket_name" {
     description = "The name of the primary app bucket"
 }
 
+variable "aws_backup_bucket_name" {
+    description = "The name of the bucket to backup the db"
+}
+
 variable "key_name" {
   type = string
   description = "Name of the private key"
 }
+
 

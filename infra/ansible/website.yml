@@ -71,7 +71,7 @@
       minute: "38"
       hour: "2"
       user: root
-      job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./deployment/helper.sh dumpdb; bash ./deployment/helper.sh bkup ./data/dump.json"
+      job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./infra/helper.sh dumpdb; bash ./infra/helper.sh bkup ./data/dump.json"
 
 
   - name: Change directory permissions
