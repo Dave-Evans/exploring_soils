@@ -224,7 +224,7 @@ spinup_infra () {
 
     INFO "Extracting IP Address"
     ipaddress=$( pullip )
-    sed -i "s/ALLOWED_HOSTS=.*/ALLOWED_HOSTS=$ipaddress/g" $env_file
+    sed -i "s/ALLOWED_HOSTS=.*/ALLOWED_HOSTS=$ipaddress,evansgeospatial.com/g" $env_file
 
 }
 

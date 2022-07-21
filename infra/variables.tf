@@ -1,3 +1,16 @@
+variable "project_name" {
+  type        = map
+  description = "Name of the project."
+  default     = {
+    dev  = "davemike-dev"
+    prod = "davemike-prod"
+  }
+}
+
+variable "env" {
+  description = "env: dev or prod"
+}
+
 variable "aws_s3_region_name" {
     default = "us-east-2"
 }

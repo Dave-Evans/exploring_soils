@@ -18,7 +18,7 @@ resource "aws_instance" "webserver" {
     security_groups      = [aws_security_group.davemike_allow_http_ssh.name]
     # user_data            = file("./provision.sh")
     tags = {
-        Name = "Sandbox"
+        Name = "webserver-${lookup(var.project_name, var.env)}"
     }
     
 }
