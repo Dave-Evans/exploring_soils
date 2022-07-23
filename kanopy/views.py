@@ -37,6 +37,7 @@ class GroundcoverUpdateView(UpdateView):
     success_url = reverse_lazy("kanopy_table")
 
 
+@permission_required("kanopy.can_view_submissions", raise_exception=True)
 def kanopy_download(request):
 
     qs = Groundcoverdoc.objects.all()
@@ -70,6 +71,7 @@ def kanopy_submission_map(request):
     return render(request, "kanopy/kanopy_submission_map.html", {"docs": docs})
 
 
+@permission_required("kanopy.can_view_submissions", raise_exception=True)
 def kanopy_submissions_json(request):
 
     # from django.db import connection
@@ -166,3 +168,9 @@ def datalook_20201230(request):
 def datalook_2020_21(request):
 
     return render(request, "kanopy/green_covr_data_look_2020_21.html")
+
+
+def kanopy_redirect(request):
+    """For redirecting to Green Covr urls"""
+    response = redirect("/green_covr")
+    return response

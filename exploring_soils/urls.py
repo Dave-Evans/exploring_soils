@@ -21,6 +21,8 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.views.generic import RedirectView
+
 from accounts import views as accounts_views
 from boards import views
 from plotter import views as plotter_views
@@ -87,7 +89,11 @@ urlpatterns = [
     ),
     re_path(r"^logout/$", auth_views.LogoutView.as_view(), name="logout"),
     # Kanopy app
-    re_path(r"^kanopy$", kanopy_views.kanopy_home, name="kanopy_home"),
+    re_path(r"^green_covr$", kanopy_views.kanopy_home, name="kanopy_home"),
+    re_path(
+        r"^kanopy/$",
+        RedirectView.as_view(pattern_name="kanopy_home", permanent=False),
+    ),
     re_path(
         r"^kanopy/delete/(?P<pk>\d+)/",
         kanopy_views.GroundcoverDeleteView.as_view(),
@@ -98,29 +104,61 @@ urlpatterns = [
         kanopy_views.GroundcoverUpdateView.as_view(),
         name="groundcover_update",
     ),
-    re_path(r"^kanopy_thanks$", kanopy_views.kanopy_thanks, name="kanopy_thanks"),
+    re_path(r"^green_covr_thanks$", kanopy_views.kanopy_thanks, name="kanopy_thanks"),
     re_path(
-        r"^kanopy_map$",
+        r"^kanopy_thanks/$",
+        RedirectView.as_view(pattern_name="kanopy_thanks", permanent=True),
+    ),
+    re_path(
+        r"^green_covr_map$",
         kanopy_views.kanopy_submission_map,
-        name="kanopy_submission_map",
+        name="green_covr_submission_map",
+    ),
+    re_path(
+        r"^kanopy_map/$",
+        RedirectView.as_view(pattern_name="green_covr_submission_map", permanent=False),
     ),
     re_path(
         r"^kanopy_submissions_json$",
         kanopy_views.kanopy_submissions_json,
         name="kanopy_submissions_json",
     ),
-    re_path(r"^kanopy_table$", kanopy_views.kanopy_table, name="kanopy_table"),
-    re_path(r"^kanopy_upload$", kanopy_views.model_form_upload, name="kanopy_upload"),
-    re_path(r"^kanopy_download$", kanopy_views.kanopy_download, name="kanopy_download"),
+    re_path(r"^green_covr_table$", kanopy_views.kanopy_table, name="kanopy_table"),
     re_path(
-        r"^kanopy/datalook/20201230$",
+        r"^kanopy_table/$",
+        RedirectView.as_view(pattern_name="kanopy_table", permanent=False),
+    ),
+    re_path(
+        r"^green_covr_upload$", kanopy_views.model_form_upload, name="kanopy_upload"
+    ),
+    re_path(
+        r"^kanopy_upload/$",
+        RedirectView.as_view(pattern_name="kanopy_upload", permanent=False),
+    ),
+    re_path(
+        r"^green_covr_download$", kanopy_views.kanopy_download, name="kanopy_download"
+    ),
+    re_path(
+        r"^kanopy_download/$",
+        RedirectView.as_view(pattern_name="kanopy_download", permanent=False),
+    ),
+    re_path(
+        r"^green_covr/datalook/20201230$",
         kanopy_views.datalook_20201230,
         name="datalook_20201230",
     ),
     re_path(
-        r"^kanopy/datalook/2020_21$",
+        r"^kanopy/datalook/20201230/$",
+        RedirectView.as_view(pattern_name="datalook_20201230", permanent=False),
+    ),
+    re_path(
+        r"^green_covr/datalook/2020_21$",
         kanopy_views.datalook_2020_21,
         name="datalook_2020_21",
+    ),
+    re_path(
+        r"^kanopy/datalook/2020_21/$",
+        RedirectView.as_view(pattern_name="datalook_2020_21", permanent=False),
     ),
     # Books app
     re_path(r"^$", books_views.home, name="home"),
