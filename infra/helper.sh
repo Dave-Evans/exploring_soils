@@ -163,7 +163,7 @@ create_tf_vars () {
     fi
 
     INFO "Creating Terraform variables file: $tfvars"
-    for _var in aws_storage_bucket_name key_name aws_access_key_id aws_secret_access_key; do
+    for _var in key_name aws_access_key_id aws_secret_access_key env; do
         eval "$_var=$(extract_envvar $_var)"
         eval "_val=\${$_var}"
         if [ -z "$_val" ]; then
@@ -202,7 +202,7 @@ create_ansible_vars() {
     fi
 
     INFO "Creating Ansible variables file: $ansvars"
-    for _var in database_user database_name database_pass key_name branch; do
+    for _var in database_user database_name database_pass key_name; do
         eval "$_var=$(extract_envvar $_var)"
         eval "_val=\${$_var}"
         if [ -z "$_val" ]; then
@@ -214,6 +214,8 @@ create_ansible_vars() {
             echo "$_var: $_val" >> $ansvars
         fi
     done
+    # Pull directly from current branch
+    echo "branch: $branchname" >> $ansvars
 
 }
 
@@ -341,6 +343,7 @@ while [ -n "$1" ]; do
             ;;
     esac
     shift
+    
 done
 
 
