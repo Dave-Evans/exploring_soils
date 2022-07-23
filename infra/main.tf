@@ -1,26 +1,35 @@
 
 
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+  }
+}
+
+# Configure the AWS Provider
 provider "aws" {
-    profile     = "default"
-    region     = var.aws_s3_region_name
-    version = "~> 3.10"
-    access_key = var.aws_access_key_id
-    secret_key = var.aws_secret_access_key
+  profile    = "default"
+  region     = var.aws_s3_region_name
+  access_key = var.aws_access_key_id
+  secret_key = var.aws_secret_access_key
 }
 
 ######## EC2 ############
 
 resource "aws_instance" "webserver" {
-    ami                  = "ami-0fb653ca2d3203ac1"
-    instance_type        = "t2.micro"
-    key_name             = var.key_name
-    iam_instance_profile = aws_iam_instance_profile.ec2_s3_profile.name
-    security_groups      = [aws_security_group.davemike_allow_http_ssh.name]
-    # user_data            = file("./provision.sh")
-    tags = {
-        Name = "webserver-${lookup(var.project_name, var.env)}"
-    }
-    
+  ami                  = "ami-0fb653ca2d3203ac1"
+  instance_type        = "t2.micro"
+  key_name             = var.key_name
+  iam_instance_profile = aws_iam_instance_profile.ec2_s3_profile.name
+  security_groups      = [aws_security_group.davemike_allow_http_ssh.name]
+  # user_data            = file("./provision.sh")
+  tags = {
+    Name = "webserver-${lookup(var.project_name, var.env)}"
+  }
+
 }
 
 ######## Elastic IP ########
@@ -36,18 +45,19 @@ resource "aws_instance" "webserver" {
 ######## S3 ############
 
 resource "aws_s3_bucket" "greencover_sandbox" {
-  bucket = var.aws_storage_bucket_name
+  # bucket = var.aws_storage_bucket_name
+  bucket = lookup(var.aws_storage_bucket_name, var.env)
   acl    = "private"
   tags = {
-    Name        = "Sandbox Bucket"
-    Environment = "Dev"
+    Name        = "Bucket for storage"
+    Environment = var.env
   }
 }
 
 ######## Security Group ############
 
 resource "aws_security_group" "davemike_allow_http_ssh" {
-  name        = "davemike_allow_http_ssh"
+  name        = "davemike_allow_http_ssh_${var.env}"
   description = "Allow HTTP in and out and SSH in"
 
   ingress {
@@ -57,7 +67,7 @@ resource "aws_security_group" "davemike_allow_http_ssh" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  
+
   ingress {
     description = "SSH"
     from_port   = 22
@@ -83,7 +93,7 @@ resource "aws_security_group" "davemike_allow_http_ssh" {
 ######## Role, Policy, Instance Profile ############
 
 resource "aws_iam_role" "ec2_s3_role" {
-  name = "ec2_s3_role" 
+  name               = "ec2_s3_role_${var.env}"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -102,14 +112,14 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "ec2_s3_profile" {
-  name = "ec2_s3_profile"
+  name = "ec2_s3_profile_${var.env}"
   role = aws_iam_role.ec2_s3_role.name
 }
 
 
 resource "aws_iam_role_policy" "ec2_s3_policy" {
-  name = "ec2_s3_policy"
-  role = aws_iam_role.ec2_s3_role.id
+  name   = "ec2_s3_policy_${var.env}"
+  role   = aws_iam_role.ec2_s3_role.id
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -128,10 +138,10 @@ resource "aws_iam_role_policy" "ec2_s3_policy" {
         ],
       "Effect": "Allow",
       "Resource": [
-                "arn:aws:s3:::${var.aws_storage_bucket_name}",
-                "arn:aws:s3:::${var.aws_storage_bucket_name}/*",
-                "arn:aws:s3:::${var.aws_backup_bucket_name}",
-                "arn:aws:s3:::${var.aws_backup_bucket_name}/*"                
+                "arn:aws:s3:::${lookup(var.aws_storage_bucket_name, var.env)}",
+                "arn:aws:s3:::${lookup(var.aws_storage_bucket_name, var.env)}/*",
+                "arn:aws:s3:::${lookup(var.aws_backup_bucket_name, var.env)}",
+                "arn:aws:s3:::${lookup(var.aws_backup_bucket_name, var.env)}/*"                
             ]
     }
   ]

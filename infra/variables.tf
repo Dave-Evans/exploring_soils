@@ -1,7 +1,7 @@
 variable "project_name" {
-  type        = map
+  type        = map(any)
   description = "Name of the project."
-  default     = {
+  default = {
     dev  = "davemike-dev"
     prod = "davemike-prod"
   }
@@ -12,27 +12,36 @@ variable "env" {
 }
 
 variable "aws_s3_region_name" {
-    default = "us-east-2"
+  default = "us-east-2"
 }
 
 variable "aws_access_key_id" {
-    description = "AWS Access Key"
+  description = "AWS Access Key"
 }
 
 variable "aws_secret_access_key" {
-    description = "AWS Access Key"
+  description = "AWS Access Key"
 }
 
 variable "aws_storage_bucket_name" {
-    description = "The name of the primary app bucket"
+  description = "The name of the primary app bucket"
+  default = {
+    dev  = "greencover-photos-dev"
+    prod = "greencover-photos"
+  }
 }
 
 variable "aws_backup_bucket_name" {
-    description = "The name of the bucket to backup the db"
+  type        = map(any)
+  description = "The name of the bucket to backup the db"
+  default = {
+    dev  = "davemike-backup-dev"
+    prod = "davemike-backup"
+  }
 }
 
 variable "key_name" {
-  type = string
+  type        = string
   description = "Name of the private key"
 }
 
