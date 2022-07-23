@@ -90,9 +90,10 @@
 
 
   function getStyle(d) {
+    // return d > 0.9 ? { fillColor: '#00441B', opacity: 0, fillOpacity: 0 } :
     return d > 0.9 ? { fillColor: '#00441B', opacity: 0, fillOpacity: 0 } :
-      d > 0.8 ? { fillColor: '#00682A', opacity: 0, fillOpacity: 0 } :
-        d > 0.7 ? { fillColor: '#1B843F', opacity: 0, fillOpacity: 0 } :
+      d > 0.8 ? { fillColor: '#00682A' } :
+        d > 0.7 ? { fillColor: '#1B843F' } :
           d > 0.6 ? { fillColor: '#37A055' } :
             d > 0.5 ? { fillColor: '#5DB86A' } :
               d > 0.4 ? { fillColor: '#88CD86' } :
