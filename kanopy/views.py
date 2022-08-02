@@ -116,6 +116,8 @@ def model_form_upload(request):
         form = GroundcoverForm(request.POST, request.FILES)
         if form.is_valid():
             new_point = form.save()
+            new_point.populate_gdd()
+            new_point.save()
             # Submission object is a list of each uploaded point
             # If there is no submissions object then create it
             # else create it
