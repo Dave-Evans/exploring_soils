@@ -179,7 +179,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         map.fitBounds(soilsPoints);
         geojsonObject.eachLayer(function (layer) {
             layer.setStyle(getStyle(layer.feature.properties.fgcc_value))
-            // console.log(layer.feature.properties['fgcc_value'])
+            updateLegend(fgccScale)
         })
     });
 
@@ -187,9 +187,11 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
     function updateStyle(property) {
         geojsonObject.eachLayer(function (layer) {
             if (property == "gdd") {
-                layer.setStyle(getGDDColor(layer.feature.properties[property]))
+                layer.setStyle({ fillColor: gddScale(layer.feature.properties.gdd) })
+                updateLegend(gddScale)
             } else if (property == "fgcc_value") {
-                layer.setStyle(getFGCCColor(layer.feature.properties[property]))
+                layer.setStyle({ fillColor: fgccScale(layer.feature.properties.fgcc_value) })
+                updateLegend(fgccScale)
             }
         })
     }
@@ -236,7 +238,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
 
     var gddScale = d3.scaleThreshold()
         .domain([500, 1000, 1500, 2000, 3000, 4000, 5000])
-        .range(d3.schemeOrRd[7]);
+        .range(d3.schemeOrRd[8]);
 
 
     var fgccScale = d3.scaleThreshold()
@@ -248,7 +250,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         d3.select(legendClassName).remove();
     }
 
-    function updateLegend(myscale, threshold = false, twodecimals = false) {
+    function updateLegend(myscale, threshold = true, twodecimals = false) {
 
         removeLegend('.legendSoil');
 
@@ -272,7 +274,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         if (twodecimals) {
             legendSoil.labelFormat(d3.format(".2f"))
         }
-        console.log("got here!");
+
         svg.select(".legendSoil")
             .call(legendSoil);
 
