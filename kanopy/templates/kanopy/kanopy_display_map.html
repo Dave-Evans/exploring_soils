@@ -82,20 +82,16 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         layers: 'SRTM30-Colored-Hillshade',
         attribution: "mundialis"
     });
-    var hillshade = L.tileLayer.wms('http://ows.mundialis.de/services/service?', {
-        layers: 'SRTM30-Hillshade',
-        attribution: "mundialis"
-    });
+
 
     var baseMaps = {
         "Satelite": satelite,
         "Streets, landmarks, etc": osm,
-        "Hillshade": hillshade,
         "Colored Hillshade": hillshade_color
     };
 
     var map = L.map('mapid', {
-        layers: satelite
+        layers: osm
     }).setView([44.67, -93.17], 10);
 
     L.control.layers(baseMaps).addTo(map);
@@ -136,9 +132,9 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
 
 
     function onEachFeature(feature, layer) {
-        var popupContent = "<dl><dt>Location name</dt> <dd>" + feature.properties.location_name + "</dd>" +
-            "<dt>Cover crop</dt> <dd>" + feature.properties.cover_crop_species_1 + "</dd>" +
+        var popupContent = "<dt>Cover crop</dt> <dd>" + feature.properties.cover_crop_species_1 + "</dd>" +
             "<dt>FGCC value</dt> <dd>" + feature.properties.fgcc_value + "</dd>" +
+            "<dt>Planting date</dt> <dd>" + feature.properties.cover_crop_planting_date + "</dd>" +
             "<dt>Cumulative growing degree days</dt> <dd>" + feature.properties.gdd + "</dd>" +
             "<dt>Photo</dt> <dd>" + '<img src="' + feature.properties.image_url + '" width="250" height="250">' + "</dd>"
             + "</dl>";
@@ -159,8 +155,6 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         fillOpacity: 0.8
     };
 
-    // <!-- var soilsLayer = [{"id": 24, "type": "Feature", "geometry": {"type": "Point", "coordinates": [-90.1153564453125, 45.8196120107612]}, "properties": {"image": "uly.JPG", "comments": "", "crop_prior": "", "fgcc_value": 9e-05, "uploaded_at": "2020-08-11T02:19:48.903221+00:00", "contact_email": "", "location_name": "", "crop_posterior": "", "seeding_method": "MANURE_SLURRY", "photo_taken_date": "2020-08-03", "cover_crop_species_1": "CAMELINA", "cover_crop_species_2": "None", "cover_crop_species_3": "None", "cover_crop_species_4": "None", "cover_crop_interseeded": null, "cover_crop_planting_date": "2020-08-12", "cover_crop_planting_rate": 4, "cover_crop_termination_date": null}}, {"id": 25, "type": "Feature", "geometry": {"type": "Point", "coordinates": [-93.4222412109375, 45.102995448533]}, "properties": {"image": "yawn_IOUn9wK.JPG", "comments": "", "crop_prior": "", "fgcc_value": 0.01555, "uploaded_at": "2020-08-11T18:17:35.848416+00:00", "contact_email": "test@email.com", "location_name": "Is location here?", "crop_posterior": "", "seeding_method": "MANURE_SLURRY", "photo_taken_date": "2020-08-18", "cover_crop_species_1": "CRIMSON_CLOVER", "cover_crop_species_2": "None", "cover_crop_species_3": "None", "cover_crop_species_4": "None", "cover_crop_interseeded": null, "cover_crop_planting_date": "2020-08-13", "cover_crop_planting_rate": 8, "cover_crop_termination_date": null}}, {"id": 26, "type": "Feature", "geometry": {"type": "Point", "coordinates": [-92.5361251831054, 44.4812222077111]}, "properties": {"image": "uly.JPG", "comments": "", "crop_prior": "", "fgcc_value": 9e-05, "uploaded_at": "2020-09-28T12:28:04.060554+00:00", "contact_email": "", "location_name": "test map - goodhue county, south of redwing a bit", "crop_posterior": "", "seeding_method": "BROADCAST_INCORPORATION", "photo_taken_date": "2020-09-08", "cover_crop_species_1": "ALFALFA", "cover_crop_species_2": "None", "cover_crop_species_3": "None", "cover_crop_species_4": "None", "cover_crop_interseeded": null, "cover_crop_planting_date": "2020-09-01", "cover_crop_planting_rate": 1, "cover_crop_termination_date": null}}] -->
-
     var dataurl = '/kanopy_submissions_json';
 
     var geojsonObject;
@@ -178,7 +172,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         }).addTo(map);
         map.fitBounds(soilsPoints);
         geojsonObject.eachLayer(function (layer) {
-            layer.setStyle(getStyle(layer.feature.properties.fgcc_value))
+            layer.setStyle({ fillColor: fgccScale(layer.feature.properties.fgcc_value) })
             updateLegend(fgccScale)
         })
     });
@@ -197,44 +191,6 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
     }
 
     //Maybe this: https://github.com/timwis/leaflet-choropleth
-
-    function getStyle(d) {
-        return d > 0.9 ? { fillColor: '#00441B', opacity: 0, fillOpacity: 0 } :
-            d > 0.8 ? { fillColor: '#00682A' } :
-                d > 0.7 ? { fillColor: '#1B843F' } :
-                    d > 0.6 ? { fillColor: '#37A055' } :
-                        d > 0.5 ? { fillColor: '#5DB86A' } :
-                            d > 0.4 ? { fillColor: '#88CD86' } :
-                                d > 0.3 ? { fillColor: '#ADDEA7' } :
-                                    { fillColor: '#CDEBC7' };
-    }
-
-
-    function getFGCCColor(d) {
-        return d > 0.9 ? { fillColor: '#00441B', opacity: 0, fillOpacity: 0 } :
-            d > 0.8 ? { fillColor: '#00682A' } :
-                d > 0.7 ? { fillColor: '#1B843F' } :
-                    d > 0.6 ? { fillColor: '#37A055' } :
-                        d > 0.5 ? { fillColor: '#5DB86A' } :
-                            d > 0.4 ? { fillColor: '#88CD86' } :
-                                d > 0.3 ? { fillColor: '#ADDEA7' } :
-                                    { fillColor: '#CDEBC7' };
-    }
-
-
-    function getGDDColor(d) {
-        return d > 9000 ? { fillColor: '#7f0000', opacity: 0, fillOpacity: 0 } :
-            d > 5000 ? { fillColor: '#b30000' } :
-                d > 4000 ? { fillColor: '#d7301f' } :
-                    d > 3000 ? { fillColor: '#ef6548' } :
-                        d > 2000 ? { fillColor: '#fc8d59' } :
-                            d > 1500 ? { fillColor: '#fdbb84' } :
-                                d > 1000 ? { fillColor: '#fdd49e' } :
-                                    d > 500 ? { fillColor: '#fee8c8' } :
-                                        d > 0 ? { fillColor: '#fff7ec' } :
-                                            { fillColor: '#bdbdbd' };
-    }
-
 
     var gddScale = d3.scaleThreshold()
         .domain([500, 1000, 1500, 2000, 3000, 4000, 5000])
