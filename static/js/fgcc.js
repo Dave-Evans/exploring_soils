@@ -1,3 +1,4 @@
+// https://fgcc-app.github.io/
 class FGCC {
   constructor(input, output) {
     this.input = input;
