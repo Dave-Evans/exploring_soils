@@ -131,7 +131,7 @@ def retrieve_station_data(stationid, start_date, end_date):
 # Calculate growing degree days
 
 
-def calc_gdd(doc, base_number=32, upper_thresh=90):
+def calc_gdd(doc, base_number=40, upper_thresh=86):
 
     # Verify planting date is before photo date
     if doc.photo_taken_date <= doc.cover_crop_planting_date:
@@ -169,14 +169,16 @@ def calc_gdd(doc, base_number=32, upper_thresh=90):
         else:
             break
 
+    # If greater than 86, set to 86
     df_station_data.avg_temp = df_station_data.avg_temp.where(
-        df_station_data.avg_temp < 70, 100
+        df_station_data.avg_temp < 86, 86
     )
 
     gdd = df_station_data.avg_temp - base_number
 
-    gdd.where(gdd > 0, 0, inplace=True)
+    # Where greater or equal to 0 keep; otherwise replace with 0
+    gdd.where(gdd >= 0, 0, inplace=True)
 
-    cumulative_gdd = gdd.cumsum().iloc[len(gdd) - 1]
+    cumulative_gdd = gdd.sum()
 
     return cumulative_gdd
