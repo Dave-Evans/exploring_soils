@@ -66,6 +66,12 @@ def kanopy_thanks(request):
 
 
 @permission_required("kanopy.can_view_submissions", raise_exception=True)
+def kanopy_graph(request):
+    docs = Groundcoverdoc.objects.all()
+    return render(request, "kanopy/kanopy_graph_bydate.html", {"docs": docs})
+
+
+@permission_required("kanopy.can_view_submissions", raise_exception=True)
 def kanopy_submission_map(request):
     docs = Groundcoverdoc.objects.all()
     return render(request, "kanopy/kanopy_submission_map.html", {"docs": docs})

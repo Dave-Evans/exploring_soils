@@ -110,6 +110,11 @@ urlpatterns = [
         RedirectView.as_view(pattern_name="kanopy_thanks", permanent=True),
     ),
     re_path(
+        r"^green_covr_graph$",
+        kanopy_views.kanopy_graph,
+        name="green_covr_graph",
+    ),
+    re_path(
         r"^green_covr_map$",
         kanopy_views.kanopy_submission_map,
         name="green_covr_submission_map",
