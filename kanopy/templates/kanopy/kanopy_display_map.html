@@ -137,7 +137,9 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
     function onEachFeature(feature, layer) {
         var popupContent = "<dt>Cover crop</dt> <dd>" + feature.properties.cover_crop_species_1 + "</dd>" +
             "<dt>Percent Green Canopy Cover</dt> <dd>" + pct_formatter(feature.properties.fgcc_value) + "</dd>" +
+            "<dt>Previous crop</dt> <dd>" + feature.properties.cash_crop_planted_prior + "</dd>" +
             "<dt>Planting date</dt> <dd>" + feature.properties.cover_crop_planting_date + "</dd>" +
+            "<dt>Date of photo</dt> <dd>" + feature.properties.photo_taken_date + "</dd>" +
             "<dt>Cumulative growing degree days</dt> <dd>" + feature.properties.gdd + "</dd>" +
             "<dt>Photo</dt> <dd>" + '<img src="' + feature.properties.image_url + '" width="250" height="250">' + "</dd>"
             + "</dl>";
