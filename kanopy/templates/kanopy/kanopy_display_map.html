@@ -89,9 +89,10 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         "Streets, landmarks, etc": osm,
         "Colored Hillshade": hillshade_color
     };
-
+    var max_zoom = 15;
     var map = L.map('mapid', {
-        layers: osm
+        layers: osm,
+        maxZoom: max_zoom
     }).setView([44.67, -93.17], 10);
 
     L.control.layers(baseMaps).addTo(map);
@@ -105,7 +106,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             controlsdiv.style.height = '450px';
             controlsdiv.style.background = 'white';
             controlsdiv.id = "controls";
-            controlsdiv.innerHTML = '<button id="info-button">Info</button><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">FGCC</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="250px"></svg></div>';
+            controlsdiv.innerHTML = '<button id="info-button">Info</button><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">FGCC</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="250px"></svg></div><p>Select property</p><select id="ZoomSelection" class="ZoomSelect"><option value="15">15</option><option value="14">14</option><option value="13">13</option><option value="12">12</option><option value="11">11</option><option value="10">10</option></select>';
 
 
             $(controlsdiv).mousedown(function () {
@@ -242,6 +243,11 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
     $('body').on('change', '#PropertySelection', function () {
         var selected_property = $('#PropertySelection').val();
         updateStyle(selected_property);
+    });
+
+    $('body').on('change', '#ZoomSelection', function () {
+        var selected_zoom = $('#ZoomSelection').val();
+        map.setMaxZoom(parseInt(selected_zoom))
     });
 
     $('body').on('click', '#info-button', function () {
