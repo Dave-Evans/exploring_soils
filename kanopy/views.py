@@ -78,6 +78,12 @@ def kanopy_submission_map(request):
 
 
 @permission_required("kanopy.can_view_submissions", raise_exception=True)
+def kanopy_display_map(request):
+    docs = Groundcoverdoc.objects.all()
+    return render(request, "kanopy/kanopy_display_map.html", {"docs": docs})
+
+
+@permission_required("kanopy.can_view_submissions", raise_exception=True)
 def kanopy_submissions_json(request):
 
     # from django.db import connection

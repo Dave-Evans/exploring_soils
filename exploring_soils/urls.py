@@ -116,7 +116,7 @@ urlpatterns = [
     ),
     re_path(
         r"^green_covr_map$",
-        kanopy_views.kanopy_submission_map,
+        kanopy_views.kanopy_display_map,
         name="green_covr_submission_map",
     ),
     re_path(
