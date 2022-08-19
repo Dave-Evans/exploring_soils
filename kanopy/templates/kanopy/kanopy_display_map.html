@@ -108,7 +108,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             controlsdiv.style.height = '450px';
             controlsdiv.style.background = 'white';
             controlsdiv.id = "controls";
-            controlsdiv.innerHTML = '<img width="200" height="100" src="/static/img/MoshStacked_maroon.png"/><br><br><button id="info-button">Info</button><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">Percent Green Canopy</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="250px"></svg></div><p>Select max zoom</p><select id="ZoomSelection" class="ZoomSelect"><option value="15">15</option><option value="14">14</option><option value="13">13</option><option value="12">12</option><option value="11">11</option><option value="10">10</option></select>';
+            controlsdiv.innerHTML = '<img width="200" height="100" src="/static/img/MoshStacked_maroon.png"/><br><br><button id="info-button">Info</button><h5>Select property</h5><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">Percent Green Canopy</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="250px"></svg></div><p>Select max zoom</p><select id="ZoomSelection" class="ZoomSelect"><option value="15">15</option><option value="14">14</option><option value="13">13</option><option value="12">12</option><option value="11">11</option><option value="10">10</option></select>';
 
 
             $(controlsdiv).mousedown(function () {
@@ -135,14 +135,30 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
 
 
     function onEachFeature(feature, layer) {
-        var popupContent = "<dt>Cover crop</dt> <dd>" + feature.properties.cover_crop_species_1 + "</dd>" +
+
+        var raw_cov_crops = [
+            feature.properties.cover_crop_species_1,
+            feature.properties.cover_crop_species_2,
+            feature.properties.cover_crop_species_3,
+            feature.properties.cover_crop_species_4,
+        ]
+
+        var cov_crops = [];
+        for (let i = 0; i < raw_cov_crops.length; i++) {
+            if (raw_cov_crops[i] != "None") {
+                cov_crops.push(raw_cov_crops[i].toLowerCase().replace("_", " "))
+            }
+        }
+
+
+        var popupContent = "<dl>" + "<dt>Cover crop</dt> <dd>" + cov_crops.join(", ") + "</dd>" +
             "<dt>Percent Green Canopy Cover</dt> <dd>" + pct_formatter(feature.properties.fgcc_value) + "</dd>" +
-            "<dt>Previous crop</dt> <dd>" + feature.properties.cash_crop_planted_prior + "</dd>" +
+            "<dt>Previous crop</dt> <dd>" + feature.properties.crop_prior.toLowerCase().replace("_", " ") + "</dd>" +
             "<dt>Planting date</dt> <dd>" + feature.properties.cover_crop_planting_date + "</dd>" +
             "<dt>Date of photo</dt> <dd>" + feature.properties.photo_taken_date + "</dd>" +
             "<dt>Cumulative growing degree days</dt> <dd>" + feature.properties.gdd + "</dd>" +
             "<dt>Photo</dt> <dd>" + '<img src="' + feature.properties.image_url + '" width="250" height="250">' + "</dd>"
-            + "</dl>";
+            + "</dl>" + "The points here are not the actual collection points.";
 
         if (feature.properties && feature.properties.popupContent) {
             popupContent += feature.properties.popupContent;
