@@ -108,7 +108,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             controlsdiv.style.height = '450px';
             controlsdiv.style.background = 'white';
             controlsdiv.id = "controls";
-            controlsdiv.innerHTML = '<img width="200" height="100" src="/static/img/MoshStacked_maroon.png"/><br><br><button id="info-button">Info</button><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">Percent Green Canopy</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="250px"></svg></div><p>Select property</p><select id="ZoomSelection" class="ZoomSelect"><option value="15">15</option><option value="14">14</option><option value="13">13</option><option value="12">12</option><option value="11">11</option><option value="10">10</option></select>';
+            controlsdiv.innerHTML = '<img width="200" height="100" src="/static/img/MoshStacked_maroon.png"/><br><br><button id="info-button">Info</button><p>Select property</p><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">Percent Green Canopy</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="250px"></svg></div><p>Select max zoom</p><select id="ZoomSelection" class="ZoomSelect"><option value="15">15</option><option value="14">14</option><option value="13">13</option><option value="12">12</option><option value="11">11</option><option value="10">10</option></select>';
 
 
             $(controlsdiv).mousedown(function () {
@@ -178,7 +178,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         map.fitBounds(soilsPoints);
         geojsonObject.eachLayer(function (layer) {
             layer.setStyle({ fillColor: fgccScale(layer.feature.properties.fgcc_value) })
-            updateLegend(fgccScale)
+            updateLegend(fgccScale, pct = true)
         })
     });
 
@@ -187,10 +187,10 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         geojsonObject.eachLayer(function (layer) {
             if (property == "gdd") {
                 layer.setStyle({ fillColor: gddScale(layer.feature.properties.gdd) })
-                updateLegend(gddScale)
+                updateLegend(gddScale, pct = false)
             } else if (property == "fgcc_value") {
                 layer.setStyle({ fillColor: fgccScale(layer.feature.properties.fgcc_value) })
-                updateLegend(fgccScale)
+                updateLegend(fgccScale, pct = true)
             }
         })
     }
@@ -211,7 +211,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         d3.select(legendClassName).remove();
     }
 
-    function updateLegend(myscale, threshold = true, twodecimals = false) {
+    function updateLegend(myscale, pct = true) {
 
         removeLegend('.legendSoil');
 
@@ -227,14 +227,17 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             .cells(6)
             // .orient("horizontal")
             .scale(myscale)
-            .labelFormat(d3.format(".0%"))
+
         // .shapePadding(4)
 
-        if (threshold) {
-            legendSoil.labels(d3.legendHelpers.thresholdLabels)
-        }
-        if (twodecimals) {
-            legendSoil.labelFormat(d3.format(".2f"))
+        legendSoil.labels(d3.legendHelpers.thresholdLabels)
+
+
+        if (pct) {
+            legendSoil.labelFormat(d3.format(".0%"))
+        } else {
+            legendSoil.labelFormat(d3.format(".0f"))
+
         }
 
         svg.select(".legendSoil")
