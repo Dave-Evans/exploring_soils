@@ -9,7 +9,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-  <meta name="author" content="Anna Cates, catesa@umn.edu" />
+  <meta name="author" content="Evans Geospatial" />
 
   <meta name="date" content="2022-09-01" />
 
@@ -192,14 +192,15 @@
 
 
 
-
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 </head>
 
 <body>
   <!-- Load d3.js -->
   <script src="https://d3js.org/d3.v4.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
-
+  <script src="http://code.jquery.com/jquery.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
   <div class="container-fluid main-container">
 
     <div class="fluid-row" id="header">
@@ -218,7 +219,7 @@
         I want to examine the relationship between cover crop planting date and % ground cover.</p>
       <div class="figure" style="text-align: center">
         <label>
-          X Axis
+          Set X Axis
           <select id="xFactor" class="group-select">
             <option value="gdd" selected>Growing degree days</option>
             <option value="cover_crop_planting_date">Planting date</option>
@@ -235,11 +236,15 @@
           </select>
         </label><br>
 
-        <div id="my_dataviz"></div>
+        <div class="row">
+          <div class="col-md-2" id="legend"></div>
+          <div class="col-md-8" id="my_dataviz"></div>
+        </div>
 
-        <div id="legend"></div>
+
       </div>
-      <p>style="background-color:green" Here's the basic relationship: % ground cover by planting date. The relationship
+      <p>style="background-color:green" Here's the basic relationship: % ground cover by planting date. The
+        relationship
         between planting date and
         coverage is pretty clear, but there's a number of complicating factors: location, whether CCs were
         interseeded,and what crops they followed.</p>
@@ -254,25 +259,35 @@
       <p>
       </p>
       <p>Looking at just the means of interseeding vs not, that there's no consistent advantage or disadvantage to
-        interseeding. This probably reflects the various conditions and methods of seeding for both interseeded and non.
-        Also, note that in most cases there's much fewer interseeded fields, so it's not a perfect comparison of the two
+        interseeding. This probably reflects the various conditions and methods of seeding for both interseeded and
+        non.
+        Also, note that in most cases there's much fewer interseeded fields, so it's not a perfect comparison of the
+        two
         methods.</p>
-      <p>Both figures show that in every county, there's a fair amount of variation, with no strong regional trends. For
-        the four counties with more than 10 data points, Becker averaged 33% ground cover, East Ottertail 26%, Faribault
+      <p>Both figures show that in every county, there's a fair amount of variation, with no strong regional trends.
+        For
+        the four counties with more than 10 data points, Becker averaged 33% ground cover, East Ottertail 26%,
+        Faribault
         23%, and Mower 31%.</p>
     </div>
     <div id="effect-of-cover-crop-species" class="section level2">
       <h2>Effect of cover crop species</h2>
       <p>The question of cover crop species is a bit more complicated, as many of these winter-killed cover crops were
-        mixes of multiple species. We collected up to 4 species included in mixes, but did not include estimates of what
-        the proportion of each species was seeded or emerged. So there's a limit to how much we can say about the effect
+        mixes of multiple species. We collected up to 4 species included in mixes, but did not include estimates of
+        what
+        the proportion of each species was seeded or emerged. So there's a limit to how much we can say about the
+        effect
         of species here.</p>
-      <p>Focusing on the grass species, as they are usually dominant, below I've graphed the mean % green cover of mixes
-        which included oats, cereal rye, or annual rye. A few fields in EOT included both oats and cereal rye, but most
+      <p>Focusing on the grass species, as they are usually dominant, below I've graphed the mean % green cover of
+        mixes
+        which included oats, cereal rye, or annual rye. A few fields in EOT included both oats and cereal rye, but
+        most
         fields included only one of these grasses.</p>
       <p> Cover crop species also doesn't explain all the
-        variability, although oats have maybe a slight advantage in Faribault county. The &quot;other&quot; data points
-        include several spring wheat fields in Becker county, which appears to be a good option there, and a few winter
+        variability, although oats have maybe a slight advantage in Faribault county. The &quot;other&quot; data
+        points
+        include several spring wheat fields in Becker county, which appears to be a good option there, and a few
+        winter
         triticale.</p>
       <p>To test whether that relationship between planting date and ground cover holds, I graphed each grass species
         separately.</p>
@@ -282,8 +297,10 @@
     </div>
     <div id="effect-of-prior-crop" class="section level2">
       <h2>Effect of Prior Crop</h2>
-      <p>The crop previous to the cover crop is obviously what determines planting date to a large extent. Below you can
-        see confirmation of our expectations that early harvested crops like small grains, canning crops, and dry beans
+      <p>The crop previous to the cover crop is obviously what determines planting date to a large extent. Below you
+        can
+        see confirmation of our expectations that early harvested crops like small grains, canning crops, and dry
+        beans
         tend to allow for more cover crop growth.</p>
       <p></p>
     </div>
@@ -292,7 +309,8 @@
       <p>I expect to see at least 100 more photos in spring 2020. At that point, maybe we'll see the relationship
         between planting date and coverage strengthen for the overwintering species like cereal rye. Since most of the
         winter-killed species are planted early in the season, the exact timing might be less critical for the species
-        represented in this preliminary data set. With more data, we may also be able to establish a threshold for this
+        represented in this preliminary data set. With more data, we may also be able to establish a threshold for
+        this
         application to evaluate qualitative success of cover crops, for example, &lt;10% ground cover =
         &quot;Unsuccessful&quot;, 10-30% ground cover = &quot;Moderate success&quot;, 30-55% ground cover = &quot;Good
         success&quot;, and &gt;55% = &quot;Excellent establishment&quot;.</p>
@@ -307,7 +325,7 @@
 
     // set the dimensions and margins of the graph
     var margin = { top: 10, right: 30, bottom: 30, left: 25 },
-      width = 800 - margin.left - margin.right,
+      width = 700 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
@@ -482,36 +500,50 @@
         var scale;
         if (property == "gdd") {
           scale = xScaleLinear
+          scale.domain([0,
+            d3.max(filtered_data.map(function (child) {
+              return child.properties[property]
+            })
+            )
+          ]
+          );
         } else if (property == "cover_crop_planting_rate") {
           scale = xScaleLinear
+          scale.domain(
+            d3.extent(filtered_data.map(function (child) {
+              return child.properties[property]
+            })
+            )
+          );
         } else if (property == "cover_crop_planting_date") {
           scale = xScaleTime
+          scale.domain(
+            d3.extent(filtered_data.map(function (child) {
+              return child.properties[property]
+            })
+            )
+          );
         }
-        scale.domain(
-          d3.extent(filtered_data.map(function (child) {
-            return child.properties[property]
-          })
-          )
-        );
+
 
         return [property, scale]
       }
       // Legend
       var svg_legend = d3.select("#legend")
         .append("svg")
-        .attr("width", 450)
-        .attr("height", 100)
+        .attr("width", 200)
+        .attr("height", 400)
 
 
 
       svg_legend.append("g")
         .attr("class", "legendSoil")
         .attr("transform", "translate(20,30)")
-        .style("height", 150);
+      // .style("height", 400);
 
       var legendSoil = d3.legendColor()
         .scale(colorScaleCoverCrop)
-        .orient("horizontal");
+      // .orient("horizontal");
 
       svg_legend.select(".legendSoil")
         .call(legendSoil);
