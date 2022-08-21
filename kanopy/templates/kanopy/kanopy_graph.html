@@ -186,6 +186,19 @@
     .tabset-dropdown>.nav-tabs>li {
       display: none;
     }
+
+    div.tooltip {
+      position: absolute;
+      text-align: center;
+      width: 100px;
+      height: 28px;
+      padding: 2px;
+      font: 12px sans-serif;
+      background: lightsteelblue;
+      border: 0px;
+      border-radius: 8px;
+      pointer-events: none;
+    }
   </style>
 
   <!-- code folding -->
@@ -243,7 +256,7 @@
 
 
       </div>
-      <p>style="background-color:green" Here's the basic relationship: % ground cover by planting date. The
+      <p>Here's the basic relationship: % ground cover by planting date. The
         relationship
         between planting date and
         coverage is pretty clear, but there's a number of complicating factors: location, whether CCs were
@@ -341,6 +354,10 @@
     //Read the data
     // d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv", function (data) {
     d3.json('/kanopy_submissions_json', function (data) {
+      // For tooltip
+      var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
       // Converting dates to times
       var dParserYmd = d3.timeParse("%Y-%m-%d")
@@ -415,6 +432,22 @@
           .attr("r", 3)
           .style("fill", function (d) { return colorScaleCoverCrop(d.properties.cover_crop_species_1); })
           .style("stroke", "#252525")
+        // .on("mouseover", function (d) {
+        //   div.transition()
+        //     .duration(200)
+        //     .style("opacity", .9);
+        //   div
+        //     .html(d.properties.cover_crop_species_1)
+        //     .style("left", (d3.event.pageX) + "px")
+        //     .style("top", (d3.event.pageY - 28) + "px");
+        // })
+        // .on("mouseout", function (d) {
+        //   div.transition()
+        //     .duration(500)
+        //     .style("opacity", 0);
+        // });
+
+
       }
 
       function updatePoints(data, property_and_scale) {
