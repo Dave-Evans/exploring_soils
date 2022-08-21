@@ -103,7 +103,31 @@ def kanopy_submissions_json(request):
                     'geometry',   ST_AsGeoJSON(collectionpoint)::jsonb,
                     'properties', to_jsonb(inputs) - 'id' - 'collectionpoint'
                   ) AS feature
-                  FROM (SELECT * FROM kanopy_groundcoverdoc) inputs) features;
+                  FROM (
+                    SELECT 
+                        geom.id
+                        , geom.photo_taken_date
+                        , geom.image
+                        , geom.uploaded_at
+                        , geom.fgcc_value
+                        , geom.cover_crop_species_1 
+                        , geom.cover_crop_species_2
+                        , geom.cover_crop_species_3 
+                        , geom.cover_crop_species_4
+                        , geom.cover_crop_planting_date 
+                        , geom.cover_crop_termination_date 
+                        , geom.cover_crop_planting_rate 
+                        , geom.crop_prior 
+                        , geom.crop_posterior 
+                        , geom.cover_crop_interseeded 
+                        , geom.gdd
+                        , ST_GeometryN(ST_GeneratePoints(geom.b_collectionpoint, 1), 1) as collectionpoint 
+                    FROM (
+                        select 
+                            *, ST_Buffer(collectionpoint, 0.02) as b_collectionpoint
+                            from kanopy_groundcoverdoc
+                        ) AS geom
+                    ) as inputs) features;
             """
             )
             rows = cursor.fetchone()
