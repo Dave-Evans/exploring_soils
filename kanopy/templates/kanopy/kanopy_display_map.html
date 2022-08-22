@@ -65,6 +65,8 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
 <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 <script>
 
+    
+
     var pct_formatter = d3.format(".1%");
 
     mapLink =
@@ -85,19 +87,61 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         attribution: "mundialis"
     });
 
-
     var baseMaps = {
         "Satelite": satelite,
         "Streets, landmarks, etc": osm,
         "Colored Hillshade": hillshade_color
     };
+
+
+
     var max_zoom = 15;
     var map = L.map('mapid', {
-        layers: osm,
+        layers: [osm],
         maxZoom: max_zoom
     }).setView([44.67, -93.17], 10);
 
-    L.control.layers(baseMaps).addTo(map);
+    map.createPane('pane_counties');
+    map.getPane('pane_counties').style.zIndex = 300;
+
+    var county_styling = {
+        fillColor: "#f0f0f0",
+        color: "#252525",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.2
+    };
+
+    function cntyPopup(feature, layer) {
+
+        var popupContent = "<dl><dt>" + feature.properties.countyname + " County</dt></dl>";
+
+        if (feature.properties && feature.properties.popupContent) {
+            popupContent += feature.properties.popupContent;
+        }
+
+        layer.bindPopup(popupContent);
+        }
+    var mn_counties_json_object;
+    var counties_layer = L.layerGroup();
+
+    var cnty_result = $.getJSON("/get_mn_counties", function (data) {
+            mn_counties_json_object = L.geoJSON(data, {
+                style: county_styling,
+                pane: "pane_counties",
+                onEachFeature: cntyPopup
+            }).addTo(counties_layer);
+        });
+
+
+
+    map.createPane('pane_collection_pts');
+    map.getPane('pane_collection_pts').style.zIndex = 650;
+
+
+
+    var layerControl = L.control.layers(baseMaps).addTo(map);
+    layerControl.addOverlay(counties_layer, "Counties")
 
     // Custom control for controls
     L.Control.cntrlpanel = L.Control.extend({
@@ -108,7 +152,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             controlsdiv.style.height = '450px';
             controlsdiv.style.background = 'white';
             controlsdiv.id = "controls";
-            controlsdiv.innerHTML = '<img width="200" height="100" src="/static/img/MoshStacked_maroon.png"/><br><br><h5>Select property</h5><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">Percent Green Canopy</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="200px"></svg></div><button id="info-button">Info</button>';
+            controlsdiv.innerHTML = '<img width="200" height="100" src="/static/img/MoshStacked_maroon.png"/><br><br><h5>Select property</h5><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">Percent Green Cover</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="200px"></svg></div><button id="info-button">Info</button>';
 
 
             $(controlsdiv).mousedown(function () {
@@ -152,13 +196,13 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
 
 
         var popupContent = "<dl>" + "<dt>Cover crop</dt> <dd>" + cov_crops.join(", ") + "</dd>" +
-            "<dt>Percent Green Canopy Cover</dt> <dd>" + pct_formatter(feature.properties.fgcc_value) + "</dd>" +
+            "<dt>Percent green cover</dt> <dd>" + pct_formatter(feature.properties.fgcc_value) + "</dd>" +
             "<dt>Previous crop</dt> <dd>" + feature.properties.crop_prior.toLowerCase().replace("_", " ") + "</dd>" +
             "<dt>Planting date</dt> <dd>" + feature.properties.cover_crop_planting_date + "</dd>" +
             "<dt>Date of photo</dt> <dd>" + feature.properties.photo_taken_date + "</dd>" +
             "<dt>Cumulative growing degree days</dt> <dd>" + feature.properties.gdd + "</dd>" +
             "<dt>Photo</dt> <dd>" + '<img src="' + feature.properties.image_url + '" width="250" height="250">' + "</dd>"
-            + "</dl>" + "*This point is not the actual location of the photo. Collection locations have obscured to protect landowners privacy.";
+            + "</dl>" + "*This point is not the actual location of the photo. Collection locations have been obscured to protect landowner's privacy.";
 
         if (feature.properties && feature.properties.popupContent) {
             popupContent += feature.properties.popupContent;
@@ -188,7 +232,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
                 soilsPoints.push(latlng);
                 return L.circleMarker(latlng, geojsonMarkerOptions);
             },
-
+            pane: "pane_collection_pts",
             onEachFeature: onEachFeature
         }).addTo(map);
         map.fitBounds(soilsPoints);
@@ -197,6 +241,8 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             updateLegend(fgccScale, pct = true)
         })
     });
+
+
 
 
     function updateStyle(property) {

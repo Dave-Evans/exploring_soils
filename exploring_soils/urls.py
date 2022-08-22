@@ -128,6 +128,16 @@ urlpatterns = [
         kanopy_views.kanopy_submissions_json,
         name="kanopy_submissions_json",
     ),
+    re_path(
+        r"^county_map$",
+        kanopy_views.county_map,
+        name="county_map",
+    ),
+    re_path(
+        r"^get_mn_counties$",
+        kanopy_views.get_mn_counties,
+        name="get_mn_counties",
+    ),
     re_path(r"^green_covr_table$", kanopy_views.kanopy_table, name="kanopy_table"),
     re_path(
         r"^kanopy_table/$",

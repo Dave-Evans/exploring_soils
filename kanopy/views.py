@@ -147,6 +147,61 @@ def kanopy_submissions_json(request):
     return JsonResponse(list(data["features"]), safe=False)
 
 
+def county_map(request):
+
+    return render(request, "kanopy/county_map.html")
+
+
+def get_mn_counties(request):
+
+    # from django.db import connection
+
+    def get_county_json():
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT jsonb_build_object(
+                    'type',     'FeatureCollection',
+                    'features', jsonb_agg(features.feature)
+                )
+                FROM (
+                  SELECT jsonb_build_object(
+                    'type',       'Feature',
+                    'id',         id,
+                    'geometry',   ST_AsGeoJSON(geom)::jsonb,
+                    'properties', to_jsonb(inputs) - 'geom' - 'id'
+                  ) AS feature
+                  FROM (
+                    SELECT 
+                            objectid as id 
+                            , countyname
+                            -- , simple_shape as geom
+                            -- , ST_Simplify(shape, 0.001) as geom
+                            , shape as geom
+                            from mn_counties
+                    ) as inputs
+                ) features;
+            """
+            )
+            rows = cursor.fetchone()
+            data = json.loads(rows[0])
+        return data
+
+    data = get_county_json()
+    # retrieve signed url for accessing private s3 images
+    # There is probably a better way to do this but while there aren't many
+    #   submissions this is fine.
+    # for feat in data["features"]:
+    #     id = feat["id"]
+
+    #     submission_object = Groundcoverdoc.objects.get(pk=id)
+    #     feat["properties"]["image_url"] = submission_object.image.url
+
+    # return JsonResponse(list(data["features"]), safe=False)
+
+    return JsonResponse(data, safe=False)
+
+
 def model_form_upload(request):
     if request.method == "POST":
         form = GroundcoverForm(request.POST, request.FILES)
