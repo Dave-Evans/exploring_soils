@@ -54,7 +54,8 @@
     notify:
     - Restart postgres
 
-
   handlers:
     - name: Restart postgres
       service: name=postgresql state=restarted
+
+   

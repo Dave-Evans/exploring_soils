@@ -163,7 +163,7 @@ create_tf_vars () {
     fi
 
     INFO "Creating Terraform variables file: $tfvars"
-    for _var in key_name aws_access_key_id aws_secret_access_key env; do
+    for _var in key_name aws_access_key_id aws_secret_access_key aws_backup_bucket_name aws_storage_bucket_name env; do
         eval "$_var=$(extract_envvar $_var)"
         eval "_val=\${$_var}"
         if [ -z "$_val" ]; then
@@ -202,7 +202,7 @@ create_ansible_vars() {
     fi
 
     INFO "Creating Ansible variables file: $ansvars"
-    for _var in database_user database_name database_pass key_name; do
+    for _var in database_user database_name database_pass key_name aws_backup_bucket_name; do
         eval "$_var=$(extract_envvar $_var)"
         eval "_val=\${$_var}"
         if [ -z "$_val" ]; then
@@ -217,6 +217,23 @@ create_ansible_vars() {
     # Pull directly from current branch
     echo "branch: $branchname" >> $ansvars
 
+}
+
+update_bucket_names () {
+    _var=env
+    eval "$_var=$(extract_envvar $_var)"
+    eval "_val=\${$_var}"    
+
+    bkup_bucket=$(extract_envvar AWS_BACKUP_BUCKET_NAME)
+    strg_bucket=$(extract_envvar AWS_STORAGE_BUCKET_NAME)
+
+    if [ $_var == 'prod' ]; then
+        sed -i "s/AWS_BACKUP_BUCKET_NAME=.*/AWS_BACKUP_BUCKET_NAME=$bkup_bucket/g" $env_file 
+        sed -i "s/AWS_STORAGE_BUCKET_NAME=.*/AWS_STROAGE_BUCKET_NAME=$strg_bucket/g" $env_file 
+    else
+        sed -i "s/AWS_BACKUP_BUCKET_NAME=.*/AWS_BACKUP_BUCKET_NAME=$bkup_bucket-$_val/g" $env_file 
+        sed -i "s/AWS_STORAGE_BUCKET_NAME=.*/AWS_STORAGE_BUCKET_NAME=$strg_bucket-$_val/g" $env_file 
+    fi
 }
 
 spinup_infra () {
@@ -289,7 +306,7 @@ while [ -n "$1" ]; do
             env_file="$2"
 
             shift
-            ;;        
+            ;;
         create_vars)
             # Create Terraform vars file
             create_tf_vars

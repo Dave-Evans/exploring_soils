@@ -25,19 +25,10 @@ variable "aws_secret_access_key" {
 
 variable "aws_storage_bucket_name" {
   description = "The name of the primary app bucket"
-  default = {
-    dev  = "greencover-photos-dev"
-    prod = "greencover-photos"
-  }
 }
 
 variable "aws_backup_bucket_name" {
-  type        = map(any)
   description = "The name of the bucket to backup the db"
-  default = {
-    dev  = "davemike-backup-dev"
-    prod = "davemike-backup"
-  }
 }
 
 variable "key_name" {

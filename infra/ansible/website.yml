@@ -29,6 +29,11 @@
       virtualenv: /home/ubuntu/exploring_soils/myvenv
       virtualenv_command: /usr/bin/python3 -m venv
 
+  - name: Run a script to download county data and load
+    script: load_county_data.sh {{ database_name }} {{ database_user }} {{ database_pass }} {{aws_backup_bucket_name}}
+    args:
+      creates: /home/ubuntu/exploring_soils/loaded_county_layer
+
   - name: Move apache config file
     copy:
       src: /home/ubuntu/exploring_soils/deployment/000-default.conf

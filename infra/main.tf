@@ -46,7 +46,7 @@ resource "aws_instance" "webserver" {
 
 resource "aws_s3_bucket" "greencover_sandbox" {
   # bucket = var.aws_storage_bucket_name
-  bucket = lookup(var.aws_storage_bucket_name, var.env)
+  bucket = var.aws_storage_bucket_name
   acl    = "private"
   tags = {
     Name        = "Bucket for storage"
@@ -138,10 +138,10 @@ resource "aws_iam_role_policy" "ec2_s3_policy" {
         ],
       "Effect": "Allow",
       "Resource": [
-                "arn:aws:s3:::${lookup(var.aws_storage_bucket_name, var.env)}",
-                "arn:aws:s3:::${lookup(var.aws_storage_bucket_name, var.env)}/*",
-                "arn:aws:s3:::${lookup(var.aws_backup_bucket_name, var.env)}",
-                "arn:aws:s3:::${lookup(var.aws_backup_bucket_name, var.env)}/*"                
+                "arn:aws:s3:::${var.aws_storage_bucket_name}",
+                "arn:aws:s3:::${var.aws_storage_bucket_name}/*",
+                "arn:aws:s3:::${var.aws_backup_bucket_name}",
+                "arn:aws:s3:::${var.aws_backup_bucket_name}/*"                
             ]
     }
   ]
