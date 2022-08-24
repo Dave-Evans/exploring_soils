@@ -121,6 +121,7 @@ def kanopy_submissions_json(request):
                         , geom.crop_posterior 
                         , geom.cover_crop_interseeded 
                         , geom.gdd
+                        , geom.county_name
                         , ST_GeometryN(ST_GeneratePoints(geom.b_collectionpoint, 1), 1) as collectionpoint 
                     FROM (
                         select 
@@ -208,6 +209,7 @@ def model_form_upload(request):
         if form.is_valid():
             new_point = form.save()
             new_point.populate_gdd()
+            new_point.populate_county()
             new_point.save()
             # Submission object is a list of each uploaded point
             # If there is no submissions object then create it

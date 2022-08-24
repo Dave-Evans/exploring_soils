@@ -123,9 +123,31 @@ class Groundcoverdoc(models.Model):
         null=True,
     )
 
+    county_name = models.CharField(
+        verbose_name="County of collection", max_length=50, null=True
+    )
+
     def populate_gdd(self):
 
         self.gdd = calc_gdd(self)
+
+    def populate_county(self):
+
+        from django.db import connection
+
+        id = self.id
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"""
+            select mc.countyname 
+            from kanopy_groundcoverdoc kg
+            left join mn_counties mc
+            on ST_Intersects(kg.collectionpoint, mc.shape)
+            where kg.id = {id}"""
+            )
+            row = cursor.fetchone()
+
+        self.county_name = row[0]
 
     class Meta:
 
