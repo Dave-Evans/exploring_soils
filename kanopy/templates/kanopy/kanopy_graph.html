@@ -368,27 +368,38 @@
       }
       submission_data = data;
 
-      var colorScaleCoverCrop = d3.scaleOrdinal()
+      var colorScaleCounty = d3.scaleOrdinal()
         .domain([
-          "ANNUAL_RYE",
-          "CEREAL_RYE",
-          "CRIMSON_CLOVER", "HAIRY_VETCH", "RED_CLOVER", "WHITE_CLOVER",
-          "OATS",
-          "OTHER", "SUDANGRASS",
-          "RADISH",
-          "SPRING_WHEAT",
-          "TURNIP",
-          "WINTER TRITICALE"])
+          "Clay",
+          "Becker",
+          "Otter Tail",
+          "Wadena",
+          "Stearns",
+
+          "Traverse",
+
+          "Pipestone",
+          "Olmsted",
+          "Winona",
+          "Faribault",
+          "Freeborn",
+          "Mower",
+
+        ])
         .range([
-          "#e41a1c",
-          "#377eb8",
-          "#4daf4a",
-          "#984ea3", "#984ea3", "#984ea3", "#984ea3",
-          "#ff7f00",
-          "#ffff33", "#ffff33",
-          "#a65628",
-          "#f781bf",
-          "#999999",
+          "#8c2d04",
+          "#d94801",          
+          "#f16913",
+          "#fd8d3c",
+          "#fdae6b",
+          "#feedde",
+
+          "#eff3ff",
+          "#c6dbef",
+          "#9ecae1",
+          "#6baed6",
+          "#3182bd",
+          "#08519c"
         ]);
 
       // Add X axis
@@ -430,7 +441,7 @@
           // .attr("cx", function (d) { return xScaleTime(d.properties.cover_crop_planting_date); })
           // .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
           .attr("r", 3)
-          .style("fill", function (d) { return colorScaleCoverCrop(d.properties.cover_crop_species_1); })
+          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
           .style("stroke", "#252525")
         // .on("mouseover", function (d) {
         //   div.transition()
@@ -479,6 +490,21 @@
       // - Interseeded
       // - Previous cash crop
       // 
+      var cnty_list = [
+          "Clay",
+          "Becker",
+          "Otter Tail",
+          "Wadena",
+          "Stearns",
+
+          "Traverse",
+
+          "Pipestone",
+          "Olmsted",
+          "Winona",
+          "Faribault",
+          "Freeborn",
+          "Mower"]
 
       function getFilteredData(data) {
 
@@ -575,7 +601,7 @@
       // .style("height", 400);
 
       var legendSoil = d3.legendColor()
-        .scale(colorScaleCoverCrop)
+        .scale(colorScaleCounty)
       // .orient("horizontal");
 
       svg_legend.select(".legendSoil")
