@@ -231,26 +231,46 @@
         each submitted more than 20 photos, Mower submitted 13, and there were a few from Olmsted, Traverse, and Winona.
         I want to examine the relationship between cover crop planting date and % ground cover.</p>
       <div class="figure" style="text-align: center">
-        <label>
-          Set X Axis
-          <select id="xFactor" class="group-select">
-            <option value="gdd" selected>Growing degree days</option>
-            <option value="cover_crop_planting_date">Planting date</option>
-            <option value="cover_crop_planting_rate">Planting rate</option>
-          </select>
-        </label>
-        <label>
-          Planting Date Year
-          <select id="select_planting_year" class="group-select">
-            <option value="9999" selected>All</option>
-            <option value="120">2020</option>
-            <option value="121">2021</option>
-            <option value="122">2022</option>
-          </select>
-        </label><br>
+
 
         <div class="row">
-          <div class="col-md-2" id="legend"></div>
+          <div class="col-md-2" id="legend">
+            <svg width="200px" height="250px"></svg>
+            <label>
+              Set X Axis
+              <select id="xFactor" class="group-select">
+                <option value="gdd" selected>Growing degree days</option>
+                <option value="cover_crop_planting_date">Planting date</option>
+                <option value="cover_crop_planting_rate">Planting rate</option>
+              </select>
+            </label>
+            <label>
+              County
+              <select id="select_county" class="group-select">
+                <option value="9999" selected>All</option>
+                <option value="Clay">Clay</option>
+                <option value="Becker">Becker</option>
+                <option value="Otter Tail">Otter Tail</option>
+                <option value="Wadena">Wadena</option>
+                <option value="Traverse">Traverse</option>
+                <option value="Pipestone">Pipestone</option>
+                <option value="Olmsted">Olmsted</option>
+                <option value="Winona">Winona</option>
+                <option value="Faribault">Faribault</option>
+                <option value="Freeborn">Freeborn</option>
+                <option value="Mower">Mower</option>
+              </select>
+            </label><br>
+            <label>
+              Planting Date Year
+              <select id="select_planting_year" class="group-select">
+                <option value="9999" selected>All</option>
+                <option value="120">2020</option>
+                <option value="121">2021</option>
+                <option value="122">2022</option>
+              </select>
+            </label><br>
+          </div>
           <div class="col-md-8" id="my_dataviz"></div>
         </div>
 
@@ -271,6 +291,24 @@
         interseeded, there's not much increase in ground cover with earlier seeding dates.</p>
       <p>
       </p>
+      <div class="figure" style="text-align: center">
+        <div class="row">
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-4" id="label_interseeded">
+            <label>Interseeded</label>
+          </div>
+          <div class="col-md-4" id="label_not_interseeded">
+            <label>Not Interseeded</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2" id="legend_interseeded"></div>
+          <div class="col-md-4" id="graph_interseeded"></div>
+          <div class="col-md-4" id="graph_not_interseeded"></div>
+        </div>
+      </div>
+
       <p>Looking at just the means of interseeding vs not, that there's no consistent advantage or disadvantage to
         interseeding. This probably reflects the various conditions and methods of seeding for both interseeded and
         non.
@@ -336,8 +374,32 @@
 
   <script>
 
-    // set the dimensions and margins of the graph
-    var margin = { top: 10, right: 30, bottom: 30, left: 25 },
+    var sdd_margin = { top: 10, right: 25, bottom: 30, left: 38 },
+      width = 275 - sdd_margin.left - sdd_margin.right,
+      height = 400 - sdd_margin.top - sdd_margin.bottom;
+
+    var not_sdd_margin = { top: 10, right: 25, bottom: 30, left: 38 },
+      width = 275 - not_sdd_margin.left - not_sdd_margin.right,
+      height = 400 - not_sdd_margin.top - not_sdd_margin.bottom;
+
+    // append the svg object to the body of the page
+    var sdd_svg = d3.select("#graph_interseeded")
+      .append("svg")
+      .attr("width", width + sdd_margin.left + sdd_margin.right)
+      .attr("height", height + sdd_margin.top + sdd_margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + sdd_margin.left + "," + sdd_margin.top + ")");
+
+    var not_sdd_svg = d3.select("#graph_not_interseeded")
+      .append("svg")
+      .attr("width", width + not_sdd_margin.left + not_sdd_margin.right)
+      .attr("height", height + not_sdd_margin.top + not_sdd_margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + not_sdd_margin.left + "," + not_sdd_margin.top + ")");
+
+    var margin = { top: 10, right: 30, bottom: 30, left: 35 },
       width = 700 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
@@ -350,9 +412,63 @@
       .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
+    var county2color = {
+      // Northern counties
+      Clay: "#8c2d04",
+      Becker: "#f16913",
+      Otter_Tail: "#d94801",
+      Wadena: "#fd8d3c",
+      Traverse: "#fdae6b",
+      // Southern counties
+      Pipestone: "#eff3ff",
+      Olmsted: "#c6dbef",
+      Winona: "#9ecae1",
+      Faribault: "#6baed6",
+      Freeborn: "#3182bd",
+      Mower: "#08519c"
+    }
+
+    var cnty_list = [
+      "Clay",
+      "Otter Tail",
+      "Becker",
+      "Wadena",
+      "Traverse",
+
+      "Pipestone",
+      "Olmsted",
+      "Winona",
+      "Faribault",
+      "Freeborn",
+      "Mower"]
+
+    var cntyColors = cnty_list.map(function (f) {
+      return f.replace("_", " ") in county2color ? county2color[f] : "brown"
+    });
+
+
+    var colorScaleCounty = d3.scaleOrdinal()
+      .domain([
+        // Northern counties
+        "Clay",
+        "Becker",
+        "Otter Tail",
+        "Wadena",
+
+        "Traverse",
+        // Southern counties
+        "Pipestone",
+        "Olmsted",
+        "Winona",
+        "Faribault",
+        "Freeborn",
+        "Mower"
+      ])
+      .range(cntyColors);
+
+
     var submission_data;
-    //Read the data
-    // d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv", function (data) {
+
     d3.json('/kanopy_submissions_json', function (data) {
       // For tooltip
       var div = d3.select("body").append("div")
@@ -368,39 +484,8 @@
       }
       submission_data = data;
 
-      var colorScaleCounty = d3.scaleOrdinal()
-        .domain([
-          "Clay",
-          "Becker",
-          "Otter Tail",
-          "Wadena",
-          "Stearns",
 
-          "Traverse",
 
-          "Pipestone",
-          "Olmsted",
-          "Winona",
-          "Faribault",
-          "Freeborn",
-          "Mower",
-
-        ])
-        .range([
-          "#8c2d04",
-          "#d94801",          
-          "#f16913",
-          "#fd8d3c",
-          "#fdae6b",
-          "#feedde",
-
-          "#eff3ff",
-          "#c6dbef",
-          "#9ecae1",
-          "#6baed6",
-          "#3182bd",
-          "#08519c"
-        ]);
 
       // Add X axis
       var xScaleLinear = d3.scaleLinear()
@@ -422,10 +507,71 @@
         .domain([0, 1])
         .range([height, 0]);
 
-      svg.append("g")
-        .call(d3.axisLeft(yScale))
-        .attr("class", "myYAxis");;
+      var yAxis = d3.axisLeft(yScale);
+      yAxis.ticks(10, ".0%")
 
+      svg.append("g")
+        .call(yAxis)
+        .attr("class", "myYAxis");
+
+      sdd_svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .attr("class", "myXAxis");
+
+      sdd_svg.append("g")
+        .call(yAxis)
+        .attr("class", "myYAxis");
+
+      not_sdd_svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .attr("class", "myXAxis");
+
+      not_sdd_svg.append("g")
+        .call(yAxis)
+        .attr("class", "myYAxis");
+
+
+      function sddEnterPoints(data, property_and_scale) {
+        property = "gdd"
+        scale = xScaleLinear
+
+        sdd_svg.append('g')
+          .selectAll("dot")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
+          .enter()
+          .append("circle")
+          .attr("cx", function (d) { return scale(d.properties[property]); })
+          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          // .attr("cx", function (d) { return xScaleTime(d.properties.cover_crop_planting_date); })
+          // .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          .attr("r", 3)
+          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+          .style("stroke", "#252525")
+
+      }
+
+      function notSddEnterPoints(data, property_and_scale) {
+        property = "gdd"
+        scale = xScaleLinear
+
+        not_sdd_svg.append('g')
+          .selectAll("dot")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
+          .enter()
+          .append("circle")
+          .attr("cx", function (d) { return scale(d.properties[property]); })
+          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          // .attr("cx", function (d) { return xScaleTime(d.properties.cover_crop_planting_date); })
+          // .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          .attr("r", 3)
+          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+          .style("stroke", "#252525")
+
+      }
+      sddEnterPoints(data, "pass")
+      notSddEnterPoints(data, "pass")
       // Add dots
       function enterPoints(data, property_and_scale) {
         var property = property_and_scale[0]
@@ -442,13 +588,13 @@
           // .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
           .attr("r", 3)
           .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
-          .style("stroke", "#252525")
+          .style("stroke", "#252525");
         // .on("mouseover", function (d) {
         //   div.transition()
         //     .duration(200)
         //     .style("opacity", .9);
         //   div
-        //     .html(d.properties.cover_crop_species_1)
+        //     .html(d.id + ": " + d.properties.county_name)
         //     .style("left", (d3.event.pageX) + "px")
         //     .style("top", (d3.event.pageY - 28) + "px");
         // })
@@ -469,6 +615,7 @@
           .transition().duration(1000)
           .attr("cx", function (d) { return scale(d.properties[property]); })
           .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
 
         svg.select(".myXAxis")
           .transition()
@@ -489,26 +636,12 @@
       // - Cover crop
       // - Interseeded
       // - Previous cash crop
-      // 
-      var cnty_list = [
-          "Clay",
-          "Becker",
-          "Otter Tail",
-          "Wadena",
-          "Stearns",
-
-          "Traverse",
-
-          "Pipestone",
-          "Olmsted",
-          "Winona",
-          "Faribault",
-          "Freeborn",
-          "Mower"]
 
       function getFilteredData(data) {
 
         var filtered_data = filterDataYear(data)
+
+        filtered_data = filterDataCounty(filtered_data)
 
         return filtered_data;
 
@@ -522,6 +655,19 @@
         }
         return data.filter(function (d) {
           return d.properties.cover_crop_planting_date.getYear() == year;
+        });
+
+      }
+
+      function filterDataCounty(data) {
+        // Reminder, won't be real year, 2020 == 120
+        var county = d3.select("#select_county").node().value
+        console.log(county + " County")
+        if (county == "9999") {
+          return data
+        }
+        return data.filter(function (d) {
+          return d.properties.county_name === county;
         });
 
       }
@@ -548,6 +694,13 @@
 
       d3.select("#xFactor").on("change", function () {
         console.log("Changed x to: " + this.value);
+
+        updateChart();
+
+      })
+
+      d3.select("#select_county").on("change", function () {
+        console.log("Changed county to: " + this.value);
 
         updateChart();
 
@@ -588,12 +741,11 @@
         return [property, scale]
       }
       // Legend
-      var svg_legend = d3.select("#legend")
-        .append("svg")
-        .attr("width", 200)
-        .attr("height", 400)
 
-
+      var svg_legend = d3.select("#legend svg")
+      // .append("svg")
+      // .attr("width", 200)
+      // .attr("height", 400)
 
       svg_legend.append("g")
         .attr("class", "legendSoil")
@@ -606,6 +758,23 @@
 
       svg_legend.select(".legendSoil")
         .call(legendSoil);
+
+      var sdd_svg_legend = d3.select("#legend_interseeded")
+        .append("svg")
+        .attr("width", 200)
+        .attr("height", 400)
+
+      sdd_svg_legend.append("g")
+        .attr("class", "legendSoilInterseeded")
+        .attr("transform", "translate(20,30)")
+      // .style("height", 400);
+
+      var legendSoilInterseeded = d3.legendColor()
+        .scale(colorScaleCounty)
+      // .orient("horizontal");
+
+      sdd_svg_legend.select(".legendSoilInterseeded")
+        .call(legendSoilInterseeded);
 
     })
 
