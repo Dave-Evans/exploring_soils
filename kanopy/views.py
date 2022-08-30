@@ -65,6 +65,11 @@ def kanopy_thanks(request):
     return render(request, "kanopy/kanopy_thanks.html")
 
 
+def green_covr_references(request):
+
+    return render(request, "kanopy/kanopy_references.html")
+
+
 @permission_required("kanopy.can_view_submissions", raise_exception=True)
 def kanopy_graph(request):
     docs = Groundcoverdoc.objects.all()

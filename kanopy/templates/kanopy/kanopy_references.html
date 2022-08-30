@@ -1,0 +1,50 @@
+{% extends 'kanopy/base_kanopy.html' %}
+
+{% block title %}Welcome to Green CovR{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">References</h3>
+                <h6>Growing degree days</h6>
+                <p>We calculated growing degree days for the cover crops in the Green Covr project using data from the
+                    <a href="https://mrcc.purdue.edu/data_serv/cli-dap.jsp">Midwestern Regional Climate Center </a> and
+                    their Climate Data Access Portal API.
+                    The latitude and longitude of each Green Covr collection was used to find the nearest climate
+                    station. Stations searched included those in Iowa, Minnesota, North Dakota, South Dakota, and
+                    Wisconsin.
+                    Hourly data for average air temperature was downloaded from the nearest station.
+                    If the nearest station had no temperature data or was missing more than 5% of the hourly records
+                    then this station was discarded and the next nearest station was used.
+                    <br>
+                    <br>
+                    The average temperature for each day was calculated from hourly records.
+                    The difference between the average temperature for each day and the base temperature was taken.
+                    The base temperature used in calculating the growing degree days was 40 degrees Fahrenheit and the
+                    upper threshold was set to 86.
+                    If a daily average exceeded 86 degrees then it was set to 86, and if the daily average was below 40,
+                    then no growing degree days were accumulated.
+                    The calculated growing degree days for each day were summed to provide a cumulative growing degree
+                    day value for the collection point.
+
+                </p>
+                <h6>Green canopy image analysis</h6>
+                <p>
+                    This project was inspired by the work of <a
+                        href="https://acsess.onlinelibrary.wiley.com/doi/full/10.2134/agronj15.0150">Patrignani and
+                        Ochsner (2015) </a>
+                    and makes use of the <a href="https://fgcc-app.github.io/">code library</a> released by that team.
+                    Default values given by that team were used for the green cover calculation.
+                </p>
+
+
+            </div>
+            <div class="card-footer text-muted text-center">
+                Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

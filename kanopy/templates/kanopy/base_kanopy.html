@@ -3,19 +3,19 @@
 {% load static %}
 
 {% block stylesheet %}
-  <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
 {% endblock %}
 
 {% block body %}
-  <div class="container">
-    <h1 class="text-center logo my-4">
-            <img class="left logoimg" src="{% static 'img/mosh_logo.png' %}"/>
-        <img class="right logoimg" src="{% static 'img/vertMrnM.gif' %}"/>
-    </h1>
-    <h1 class="text-center logo my-4">
-        <a href="{% url 'kanopy_upload' %}">Green CovR</a>
-    </h1>    
-    {% block content %}
-    {% endblock %}
-  </div>
+<div class="container">
+  <h1 class="text-center logo my-4">
+    <img class="left logoimg" src="{% static 'img/mosh_logo.png' %}" />
+    <img class="right logoimg" src="{% static 'img/vertMrnM.gif' %}" />
+  </h1>
+  <h1 class="text-center logo my-4">
+    <a href="{% url 'kanopy_home' %}">Green CovR</a>
+  </h1>
+  {% block content %}
+  {% endblock %}
+</div>
 {% endblock %}

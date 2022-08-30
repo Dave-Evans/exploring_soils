@@ -3,26 +3,32 @@
 {% block title %}Welcome to Green CovR{% endblock %}
 
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10 col-sm-12">
-      <div class="card">
-        <div class="card-body">
-          <h3 class="card-title">Upload a photo</h3>
-            <p>
-            This project aims to source photographs of groundcover and catologue the percent green of the site.
-            To upload your photo simply click the below!
-            Ready to upload your photo? <a href="{% url 'kanopy_upload' %}">Click here to begin.</a>
-            </p>
-          <!-- <form method="post" novalidate> -->
-            <!-- {% csrf_token %} -->
-            <!-- {% include 'includes/form.html' %} -->
-            <!-- <button type="submit" class="btn btn-primary btn-block">Create an account</button> -->
-          <!-- </form> -->
-        </div>
-        <div class="card-footer text-muted text-center">
-          Questions? See our references <a href="#">page</a>
-        </div>
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10 col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">Welcome</h3>
+        <h5>Upload a photo</h5>
+        <p>
+          This project aims to source photographs of groundcover and catologue the percent green of the site.
+          To upload your photo simply click the link below!
+          Ready to upload your photo? <a href="{% url 'kanopy_upload' %}">Click here to begin.</a>
+        </p>
+        <h5>Results</h5>
+        <p>
+          We have been looking over the data we have collected and would love to share it with you.
+        <ul>
+          <li><a href="{% url 'green_covr_submission_map' %}">View our submission map</a></li>
+          <li>Check out our <a href="{% url 'green_covr_graph' %}">report of the project data</a></li>
+        </ul>
+
+        </p>
+
+      </div>
+      <div class="card-footer text-muted text-center">
+        Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
       </div>
     </div>
   </div>
+</div>
 {% endblock %}
