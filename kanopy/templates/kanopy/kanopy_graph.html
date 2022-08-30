@@ -236,14 +236,14 @@
         <div class="row">
           <div class="col-md-2" id="legend">
             <svg width="200px" height="250px"></svg>
-            <label>
-              Set X Axis
-              <select id="xFactor" class="group-select">
-                <option value="gdd" selected>Growing degree days</option>
-                <option value="cover_crop_planting_date">Planting date</option>
-                <option value="cover_crop_planting_rate">Planting rate</option>
-              </select>
-            </label>
+
+
+          </div>
+          <div class="col-md-8" id="my_dataviz">
+          </div>
+        </div>
+        <div class="row" style="text-align: left;">
+          <div class=" col-md-3" id="filters">
             <label>
               County
               <select id="select_county" class="group-select">
@@ -260,7 +260,8 @@
                 <option value="Freeborn">Freeborn</option>
                 <option value="Mower">Mower</option>
               </select>
-            </label><br>
+            </label>
+
             <label>
               Planting Date Year
               <select id="select_planting_year" class="group-select">
@@ -269,9 +270,20 @@
                 <option value="121">2021</option>
                 <option value="122">2022</option>
               </select>
-            </label><br>
+            </label>
           </div>
-          <div class="col-md-8" id="my_dataviz"></div>
+          <div class="col-md-4" id="color_changer">
+          </div>
+          <div class="col-md-3" id="x_axis_changer">
+            <label>
+              Change X Axis
+              <select id="xFactor" class="group-select">
+                <option value="gdd" selected>Growing degree days</option>
+                <option value="cover_crop_planting_date">Planting date</option>
+                <option value="cover_crop_planting_rate">Planting rate</option>
+              </select>
+            </label>
+          </div>
         </div>
 
 
@@ -399,7 +411,7 @@
       .attr("transform",
         "translate(" + not_sdd_margin.left + "," + not_sdd_margin.top + ")");
 
-    var margin = { top: 10, right: 30, bottom: 30, left: 35 },
+    var margin = { top: 10, right: 30, bottom: 35, left: 50 },
       width = 700 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
@@ -512,7 +524,8 @@
 
       svg.append("g")
         .call(yAxis)
-        .attr("class", "myYAxis");
+        .attr("class", "myYAxis")
+
 
       sdd_svg.append("g")
         .attr("transform", "translate(0," + height + ")")
@@ -532,6 +545,19 @@
         .call(yAxis)
         .attr("class", "myYAxis");
 
+      svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Percent Green Cover");
+
+      svg.append("text")      // text label for the x axis
+        .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.bottom - 5) + ")")
+        .style("text-anchor", "middle")
+        .attr("class", "x_axis_label")
+        .text("");
 
       function sddEnterPoints(data, property_and_scale) {
         property = "gdd"
@@ -604,6 +630,10 @@
         //     .style("opacity", 0);
         // });
 
+        // svg.select('.x_axis_label')
+        //   .duration(750)
+        //   .text(property);
+
 
       }
 
@@ -620,6 +650,20 @@
         svg.select(".myXAxis")
           .transition()
           .call(d3.axisBottom(scale))
+
+        var pretty_property;
+        if (property == "gdd") {
+          pretty_property = "Growing degree days"
+        } else if (property == "cover_crop_planting_rate") {
+          pretty_property = "Cover crop planting rate (lbs/acre)"
+        } else if (property == "cover_crop_planting_date") {
+          pretty_property = "Cover crop planting date"
+        }
+        svg.select('.x_axis_label')
+          .transition().duration(1000)
+          .text(pretty_property);
+
+
 
       }
 
