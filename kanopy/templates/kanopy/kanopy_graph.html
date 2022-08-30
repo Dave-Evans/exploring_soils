@@ -268,7 +268,6 @@
                 <option value="9999" selected>All</option>
                 <option value="120">2020</option>
                 <option value="121">2021</option>
-                <option value="122">2022</option>
               </select>
             </label>
           </div>
@@ -318,6 +317,48 @@
           <div class="col-md-2" id="legend_interseeded"></div>
           <div class="col-md-4" id="graph_interseeded"></div>
           <div class="col-md-4" id="graph_not_interseeded"></div>
+        </div>
+        <div class="row" style="text-align: left;">
+          <div class=" col-md-3" id="filters">
+            <label>
+              County
+              <select id="select_county_sdd" class="group-select">
+                <option value="9999" selected>All</option>
+                <option value="Clay">Clay</option>
+                <option value="Becker">Becker</option>
+                <option value="Otter Tail">Otter Tail</option>
+                <option value="Wadena">Wadena</option>
+                <option value="Traverse">Traverse</option>
+                <option value="Pipestone">Pipestone</option>
+                <option value="Olmsted">Olmsted</option>
+                <option value="Winona">Winona</option>
+                <option value="Faribault">Faribault</option>
+                <option value="Freeborn">Freeborn</option>
+                <option value="Mower">Mower</option>
+              </select>
+            </label>
+
+            <label>
+              Planting Date Year
+              <select id="select_planting_year_sdd" class="group-select">
+                <option value="9999" selected>All</option>
+                <option value="120">2020</option>
+                <option value="121">2021</option>
+              </select>
+            </label>
+          </div>
+          <div class="col-md-4" id="color_changer">
+          </div>
+          <div class="col-md-3" id="x_axis_changer">
+            <label>
+              Change X Axis
+              <select id="xFactorSdd" class="group-select">
+                <option value="gdd" selected>Growing degree days</option>
+                <option value="cover_crop_planting_date">Planting date</option>
+                <option value="cover_crop_planting_rate">Planting rate</option>
+              </select>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -386,30 +427,26 @@
 
   <script>
 
-    var sdd_margin = { top: 10, right: 25, bottom: 30, left: 38 },
-      width = 275 - sdd_margin.left - sdd_margin.right,
-      height = 400 - sdd_margin.top - sdd_margin.bottom;
-
-    var not_sdd_margin = { top: 10, right: 25, bottom: 30, left: 38 },
-      width = 275 - not_sdd_margin.left - not_sdd_margin.right,
-      height = 400 - not_sdd_margin.top - not_sdd_margin.bottom;
+    var sdd_margin = { top: 10, right: 25, bottom: 45, left: 50 },
+      sdd_width = 300 - sdd_margin.left - sdd_margin.right,
+      sdd_height = 425 - sdd_margin.top - sdd_margin.bottom;
 
     // append the svg object to the body of the page
     var sdd_svg = d3.select("#graph_interseeded")
       .append("svg")
-      .attr("width", width + sdd_margin.left + sdd_margin.right)
-      .attr("height", height + sdd_margin.top + sdd_margin.bottom)
+      .attr("width", sdd_width + sdd_margin.left + sdd_margin.right)
+      .attr("height", sdd_height + sdd_margin.top + sdd_margin.bottom)
       .append("g")
       .attr("transform",
         "translate(" + sdd_margin.left + "," + sdd_margin.top + ")");
 
     var not_sdd_svg = d3.select("#graph_not_interseeded")
       .append("svg")
-      .attr("width", width + not_sdd_margin.left + not_sdd_margin.right)
-      .attr("height", height + not_sdd_margin.top + not_sdd_margin.bottom)
+      .attr("width", sdd_width + sdd_margin.left + sdd_margin.right)
+      .attr("height", sdd_height + sdd_margin.top + sdd_margin.bottom)
       .append("g")
       .attr("transform",
-        "translate(" + not_sdd_margin.left + "," + not_sdd_margin.top + ")");
+        "translate(" + sdd_margin.left + "," + sdd_margin.top + ")");
 
     var margin = { top: 10, right: 30, bottom: 35, left: 50 },
       width = 700 - margin.left - margin.right,
@@ -508,6 +545,16 @@
         .domain([new Date(2020, 4, 1), new Date(2022, 10, 1)])
         .range([0, width]);
 
+      var xSddScaleLinear = d3.scaleLinear()
+        .domain([0, 7000])
+        .range([0, sdd_width]);
+
+      var xSddScaleTime = d3.scaleTime()
+        .domain([new Date(2020, 4, 1), new Date(2022, 10, 1)])
+        .range([0, sdd_width]);
+
+
+
       var xAxis = d3.axisBottom(xScaleTime);
       svg.append("g")
         .attr("transform", "translate(0," + height + ")")
@@ -530,7 +577,7 @@
       sdd_svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis)
-        .attr("class", "myXAxis");
+        .attr("class", "sddMyXAxis");
 
       sdd_svg.append("g")
         .call(yAxis)
@@ -539,11 +586,19 @@
       not_sdd_svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis)
-        .attr("class", "myXAxis");
+        .attr("class", "sddMyXAxis");
 
       not_sdd_svg.append("g")
         .call(yAxis)
         .attr("class", "myYAxis");
+
+      sdd_svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Percent Green Cover");
 
       svg.append("text")
         .attr("transform", "rotate(-90)")
@@ -561,7 +616,7 @@
 
       function sddEnterPoints(data, property_and_scale) {
         property = "gdd"
-        scale = xScaleLinear
+        scale = xSddScaleLinear
 
         sdd_svg.append('g')
           .selectAll("dot")
@@ -570,17 +625,9 @@
           .append("circle")
           .attr("cx", function (d) { return scale(d.properties[property]); })
           .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
-          // .attr("cx", function (d) { return xScaleTime(d.properties.cover_crop_planting_date); })
-          // .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
           .attr("r", 3)
           .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
           .style("stroke", "#252525")
-
-      }
-
-      function notSddEnterPoints(data, property_and_scale) {
-        property = "gdd"
-        scale = xScaleLinear
 
         not_sdd_svg.append('g')
           .selectAll("dot")
@@ -589,15 +636,74 @@
           .append("circle")
           .attr("cx", function (d) { return scale(d.properties[property]); })
           .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
-          // .attr("cx", function (d) { return xScaleTime(d.properties.cover_crop_planting_date); })
-          // .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
           .attr("r", 3)
           .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
           .style("stroke", "#252525")
 
       }
-      sddEnterPoints(data, "pass")
-      notSddEnterPoints(data, "pass")
+      sddEnterPoints(data, getScaleAndProperty(data, true))
+      sddUpdatePoints(data, getScaleAndProperty(data, true))
+
+
+      function sddUpdatePoints(data, property_and_scale) {
+        var property = property_and_scale[0]
+        var scale = property_and_scale[1]
+
+        sdd_svg.selectAll("circle")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
+          .transition().duration(1000)
+          .attr("cx", function (d) { return scale(d.properties[property]); })
+          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+
+        sdd_svg.select(".sddMyXAxis")
+          .transition()
+          .call(d3.axisBottom(scale))
+          .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-65)");
+
+        not_sdd_svg.selectAll("circle")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
+          .transition().duration(1000)
+          .attr("cx", function (d) { return scale(d.properties[property]); })
+          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+
+        not_sdd_svg.select(".sddMyXAxis")
+          .transition()
+          .call(d3.axisBottom(scale))
+          .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-65)");
+
+        var pretty_property;
+        if (property == "gdd") {
+          pretty_property = "Growing degree days"
+        } else if (property == "cover_crop_planting_rate") {
+          pretty_property = "Cover crop planting rate (lbs/acre)"
+        } else if (property == "cover_crop_planting_date") {
+          pretty_property = "Cover crop planting date"
+        }
+
+      }
+
+      function sddExitPoints(data) {
+        sdd_svg.selectAll("circle")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
+          .exit()
+          .remove();
+
+        not_sdd_svg.selectAll("circle")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
+          .exit()
+          .remove();
+      }
+
       // Add dots
       function enterPoints(data, property_and_scale) {
         var property = property_and_scale[0]
@@ -610,8 +716,6 @@
           .append("circle")
           .attr("cx", function (d) { return scale(d.properties[property]); })
           .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
-          // .attr("cx", function (d) { return xScaleTime(d.properties.cover_crop_planting_date); })
-          // .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
           .attr("r", 3)
           .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
           .style("stroke", "#252525");
@@ -663,9 +767,9 @@
           .transition().duration(1000)
           .text(pretty_property);
 
-
-
       }
+
+
 
       function exitPoints(data) {
         svg.selectAll("circle")
@@ -681,19 +785,25 @@
       // - Interseeded
       // - Previous cash crop
 
-      function getFilteredData(data) {
+      function getFilteredData(data, sdd) {
 
-        var filtered_data = filterDataYear(data)
+        var filtered_data = filterDataYear(data, sdd)
 
-        filtered_data = filterDataCounty(filtered_data)
+        filtered_data = filterDataCounty(filtered_data, sdd)
 
         return filtered_data;
 
       }
 
-      function filterDataYear(data) {
+      function filterDataYear(data, sdd) {
         // Reminder, won't be real year, 2020 == 120
-        var year = d3.select("#select_planting_year").node().value
+        var selector;
+        if (sdd) {
+          selector = "#select_planting_year_sdd";
+        } else {
+          selector = "#select_planting_year";
+        }
+        var year = d3.select(selector).node().value
         if (year == 9999) {
           return data
         }
@@ -703,9 +813,15 @@
 
       }
 
-      function filterDataCounty(data) {
+      function filterDataCounty(data, sdd) {
         // Reminder, won't be real year, 2020 == 120
-        var county = d3.select("#select_county").node().value
+        var selector;
+        if (sdd) {
+          selector = "#select_county_sdd";
+        } else {
+          selector = "#select_county";
+        }
+        var county = d3.select(selector).node().value
         console.log(county + " County")
         if (county == "9999") {
           return data
@@ -719,43 +835,88 @@
       enterPoints(data, getScaleAndProperty(data))
       updatePoints(data, getScaleAndProperty(data))
 
-      function updateChart() {
+      function updateChart(sdd) {
         // https://stackoverflow.com/questions/39964570/how-to-filter-data-with-d3-js
-        var filtered_data = getFilteredData(data);
-        enterPoints(filtered_data, getScaleAndProperty(filtered_data));
-        updatePoints(filtered_data, getScaleAndProperty(filtered_data));
-        exitPoints(filtered_data, getScaleAndProperty(filtered_data));
 
-        console.log("No. of data points: " + filtered_data.length)
+        if (sdd) {
+          var filtered_data = getFilteredData(data, sdd);
+          sddEnterPoints(filtered_data, getScaleAndProperty(filtered_data, sdd));
+          sddUpdatePoints(filtered_data, getScaleAndProperty(filtered_data, sdd));
+          sddExitPoints(filtered_data, getScaleAndProperty(filtered_data, sdd));
+
+          console.log("No. of data points: " + filtered_data.length)
+
+        } else {
+          var filtered_data = getFilteredData(data);
+          enterPoints(filtered_data, getScaleAndProperty(filtered_data));
+          updatePoints(filtered_data, getScaleAndProperty(filtered_data));
+          exitPoints(filtered_data, getScaleAndProperty(filtered_data));
+
+          console.log("No. of data points: " + filtered_data.length)
+        }
+
+
       }
 
       d3.select("#select_planting_year").on("change", function () {
 
         console.log("Changed to: " + this.value)
-        updateChart();
+        updateChart(false);
 
       })
 
       d3.select("#xFactor").on("change", function () {
         console.log("Changed x to: " + this.value);
 
-        updateChart();
+        updateChart(false);
 
       })
 
       d3.select("#select_county").on("change", function () {
         console.log("Changed county to: " + this.value);
 
-        updateChart();
+        updateChart(false);
 
       })
 
-      function getScaleAndProperty(filtered_data) {
-        var property = d3.select("#xFactor").node().value
-        // var property = d3.select("#xFactor").property()
+      d3.select("#select_planting_year_sdd").on("change", function () {
+
+        console.log("Changed to: " + this.value)
+        updateChart(true);
+
+      })
+
+      d3.select("#xFactorSdd").on("change", function () {
+        console.log("Changed x to: " + this.value);
+
+        updateChart(true);
+
+      })
+
+      d3.select("#select_county_sdd").on("change", function () {
+        console.log("Changed county to: " + this.value);
+
+        updateChart(true);
+
+      })
+
+
+      function getScaleAndProperty(filtered_data, sdd) {
+        if (sdd) {
+          var property = d3.select("#xFactorSdd").node().value
+        } else {
+          var property = d3.select("#xFactor").node().value
+        }
+
+
         var scale;
         if (property == "gdd") {
-          scale = xScaleLinear
+          if (sdd) {
+            scale = xSddScaleLinear
+          } else {
+            scale = xScaleLinear
+          }
+
           scale.domain([0,
             d3.max(filtered_data.map(function (child) {
               return child.properties[property]
@@ -764,7 +925,12 @@
           ]
           );
         } else if (property == "cover_crop_planting_rate") {
-          scale = xScaleLinear
+          if (sdd) {
+            scale = xSddScaleLinear
+          } else {
+            scale = xScaleLinear
+          }
+
           scale.domain(
             d3.extent(filtered_data.map(function (child) {
               return child.properties[property]
@@ -772,7 +938,12 @@
             )
           );
         } else if (property == "cover_crop_planting_date") {
-          scale = xScaleTime
+          if (sdd) {
+            scale = xSddScaleTime
+          } else {
+            scale = xScaleTime
+          }
+
           scale.domain(
             d3.extent(filtered_data.map(function (child) {
               return child.properties[property]
@@ -780,7 +951,6 @@
             )
           );
         }
-
 
         return [property, scale]
       }
