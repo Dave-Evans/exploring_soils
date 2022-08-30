@@ -95,6 +95,11 @@ urlpatterns = [
         RedirectView.as_view(pattern_name="kanopy_home", permanent=False),
     ),
     re_path(
+        r"^green_covr_references$",
+        kanopy_views.green_covr_references,
+        name="green_covr_references",
+    ),
+    re_path(
         r"^kanopy/delete/(?P<pk>\d+)/",
         kanopy_views.GroundcoverDeleteView.as_view(),
         name="groundcover_delete",
