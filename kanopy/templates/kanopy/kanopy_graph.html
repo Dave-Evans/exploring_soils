@@ -190,9 +190,7 @@
     div.tooltip {
       position: absolute;
       text-align: center;
-      width: 100px;
-      height: 28px;
-      padding: 2px;
+      padding: 5px;
       font: 12px sans-serif;
       background: lightsteelblue;
       border: 0px;
@@ -275,7 +273,7 @@
           </div>
           <div class="col-md-3" id="x_axis_changer">
             <label>
-              Change X Axis
+              X Axis
               <select id="xFactor" class="group-select">
                 <option value="gdd" selected>Growing degree days</option>
                 <option value="cover_crop_planting_date">Planting date</option>
@@ -351,7 +349,7 @@
           </div>
           <div class="col-md-3" id="x_axis_changer">
             <label>
-              Change X Axis
+              X Axis
               <select id="xFactorSdd" class="group-select">
                 <option value="gdd" selected>Growing degree days</option>
                 <option value="cover_crop_planting_date">Planting date</option>
@@ -427,9 +425,9 @@
 
   <script>
 
-    var sdd_margin = { top: 10, right: 25, bottom: 45, left: 50 },
+    var sdd_margin = { top: 10, right: 25, bottom: 55, left: 50 },
       sdd_width = 300 - sdd_margin.left - sdd_margin.right,
-      sdd_height = 425 - sdd_margin.top - sdd_margin.bottom;
+      sdd_height = 450 - sdd_margin.top - sdd_margin.bottom;
 
     // append the svg object to the body of the page
     var sdd_svg = d3.select("#graph_interseeded")
@@ -448,9 +446,9 @@
       .attr("transform",
         "translate(" + sdd_margin.left + "," + sdd_margin.top + ")");
 
-    var margin = { top: 10, right: 30, bottom: 35, left: 50 },
+    var margin = { top: 10, right: 30, bottom: 55, left: 50 },
       width = 700 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom;
+      height = 450 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
     var svg = d3.select("#my_dataviz")
@@ -515,6 +513,23 @@
       ])
       .range(cntyColors);
 
+
+    function formatCoverCrops(feature) {
+      var raw_cov_crops = [
+        feature.properties.cover_crop_species_1,
+        feature.properties.cover_crop_species_2,
+        feature.properties.cover_crop_species_3,
+        feature.properties.cover_crop_species_4,
+      ]
+
+      var cov_crops = [];
+      for (let i = 0; i < raw_cov_crops.length; i++) {
+        if (raw_cov_crops[i] != "None") {
+          cov_crops.push(raw_cov_crops[i].toLowerCase().replace("_", " "))
+        }
+      }
+      return cov_crops.join(", ")
+    }
 
     var submission_data;
 
@@ -718,21 +733,21 @@
           .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
           .attr("r", 3)
           .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
-          .style("stroke", "#252525");
-        // .on("mouseover", function (d) {
-        //   div.transition()
-        //     .duration(200)
-        //     .style("opacity", .9);
-        //   div
-        //     .html(d.id + ": " + d.properties.county_name)
-        //     .style("left", (d3.event.pageX) + "px")
-        //     .style("top", (d3.event.pageY - 28) + "px");
-        // })
-        // .on("mouseout", function (d) {
-        //   div.transition()
-        //     .duration(500)
-        //     .style("opacity", 0);
-        // });
+          .style("stroke", "#252525")
+          .on("mouseover", function (d) {
+            div.transition()
+              .duration(200)
+              .style("opacity", .9);
+            div
+              .html(formatCoverCrops(d))
+              .style("left", (d3.event.pageX) + "px")
+              .style("top", (d3.event.pageY - 28) + "px");
+          })
+          .on("mouseout", function (d) {
+            div.transition()
+              .duration(500)
+              .style("opacity", 0);
+          });
 
         // svg.select('.x_axis_label')
         //   .duration(750)
@@ -754,6 +769,13 @@
         svg.select(".myXAxis")
           .transition()
           .call(d3.axisBottom(scale))
+          // .ticks(d3.timeFormat("%Y"))
+          .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-35)");
+
 
         var pretty_property;
         if (property == "gdd") {
@@ -790,6 +812,12 @@
         var filtered_data = filterDataYear(data, sdd)
 
         filtered_data = filterDataCounty(filtered_data, sdd)
+
+        if (sdd) {
+          filtered_data = filtered_data.filter(function (d) {
+            return d.properties.cover_crop_interseeded != null;
+          });
+        }
 
         return filtered_data;
 
