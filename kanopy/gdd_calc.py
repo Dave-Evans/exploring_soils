@@ -83,6 +83,7 @@ def retrieve_station_data(stationid, start_date, end_date):
     )
     headers = {"Accept": "application/json"}
 
+    reductions = "avg"
     payload = "start={start_date}&end={end_date}&elem={element}&interval={interval}&reduction={reduction}".format(
         start_date=start_date,
         end_date=end_date,
@@ -130,6 +131,8 @@ def retrieve_station_data(stationid, start_date, end_date):
 
 # Calculate growing degree days
 
+import datetime
+
 
 def calc_gdd(doc, base_number=40, upper_thresh=86):
 
@@ -139,6 +142,9 @@ def calc_gdd(doc, base_number=40, upper_thresh=86):
 
     df_collection = geopandas.GeoDataFrame(
         {
+            # "photo_taken_date": [datetime.date(2022, 6, 6)],
+            # "cover_crop_planting_date": [datetime.date(2021, 10, 4)],
+            # "geometry": [Point((-96.55012607574463, 45.8826454738681))],
             "photo_taken_date": [doc.photo_taken_date],
             "cover_crop_planting_date": [doc.cover_crop_planting_date],
             "geometry": [Point(doc.collectionpoint.coords)],
@@ -169,6 +175,10 @@ def calc_gdd(doc, base_number=40, upper_thresh=86):
         else:
             break
 
+    # If NA then set to 0 (this was screwing up the following where statement)
+    df_station_data.avg_temp = df_station_data.avg_temp.where(
+        ~geopandas.pd.isna(df_station_data.avg_temp), 0
+    )
     # If greater than 86, set to 86
     df_station_data.avg_temp = df_station_data.avg_temp.where(
         df_station_data.avg_temp < 86, 86
