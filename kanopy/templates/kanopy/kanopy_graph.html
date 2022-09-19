@@ -225,9 +225,21 @@
 
     <div id="data-collection" class="section level2">
       <h2>Data Collection</h2>
-      <p>In the fall of 2020, about 100 photos were submited from 7 counties. Becker, East Otter Tail, and Faribault
-        each submitted more than 20 photos, Mower submitted 13, and there were a few from Olmsted, Traverse, and Winona.
-        I want to examine the relationship between cover crop planting date and % ground cover.</p>
+      <p>Between fall 2020 and spring 2022, about 300 photos were submitted from 8 Soil and Water Conservation
+        Districts. East Otter Tail/Wadena, and Faribault each contributed more than 70 photos, Becker and Traverse over
+        30, and 10-20 each from Mower, Olmsted, Pipestone, and Winona. We estimated the % green cover using a <a
+          href="https://wilsonlab.cfans.umn.edu/lab-resources/greencovr-app">photo image analysis</a> which estimates
+        how much of a given photograph is in green. You can see the
+        individual photos by
+        clicking on those points on the <a href="{% url 'green_covr_submission_map' %}">map</a>.</p>
+
+      <p>Below, you can organize the data by planting date, total <a href="{% url 'green_covr_references' %}"> growing
+          degree days</a> (an estimate of how much good crop
+        growing weather the cover crop experienced), or seeding rate. We'd expect more green cover when planting date is
+        earlier, seeding rate is higher, or there are more growing degree days, but the data don't show this. Although
+        some crops with more time to grow did better, there's a lot of variability we can't explain. This might be due
+        to planting conditions (soil, weather, residue, planting method).
+      </p>
       <div class="figure" style="text-align: center">
 
 
@@ -241,63 +253,74 @@
           </div>
         </div>
         <div class="row" style="text-align: left;">
+          <div class=" col-md-3"><label>Filters</label></div>
+          <div class=" col-md-4"><label>Change color</label></div>
+          <div class=" col-md-3"><label>Change X axis</label></div>
+        </div>
+        <div class="row" style="text-align: left;">
           <div class=" col-md-3" id="filters">
-            <label>
-              County
-              <select id="select_county" class="group-select">
-                <option value="9999" selected>All</option>
-                <option value="Clay">Clay</option>
-                <option value="Becker">Becker</option>
-                <option value="Otter Tail">Otter Tail</option>
-                <option value="Wadena">Wadena</option>
-                <option value="Traverse">Traverse</option>
-                <option value="Pipestone">Pipestone</option>
-                <option value="Olmsted">Olmsted</option>
-                <option value="Winona">Winona</option>
-                <option value="Faribault">Faribault</option>
-                <option value="Freeborn">Freeborn</option>
-                <option value="Mower">Mower</option>
-              </select>
-            </label>
 
-            <label>
-              Planting Date Year
-              <select id="select_planting_year" class="group-select">
-                <option value="9999" selected>All</option>
-                <option value="120">2020</option>
-                <option value="121">2021</option>
-              </select>
-            </label>
+            County
+            <select id="select_county" class="group-select">
+              <option value="9999" selected>All</option>
+              <option value="Clay">Clay</option>
+              <option value="Becker">Becker</option>
+              <option value="Otter Tail">Otter Tail</option>
+              <option value="Wadena">Wadena</option>
+              <option value="Traverse">Traverse</option>
+              <option value="Pipestone">Pipestone</option>
+              <option value="Olmsted">Olmsted</option>
+              <option value="Winona">Winona</option>
+              <option value="Faribault">Faribault</option>
+              <option value="Freeborn">Freeborn</option>
+              <option value="Mower">Mower</option>
+            </select> <br>
+
+
+
+            Planting Date Year
+            <select id="select_planting_year" class="group-select">
+              <option value="9999" selected>All</option>
+              <option value="120">2020</option>
+              <option value="121">2021</option>
+            </select> <br>
+            <!-- Cover crop
+            <select id="select_color" class="group-select">
+              <option value="county" selected>County</option>
+              <option value="covercrop">Cover crop</option>
+            </select> <br>
+            -->
           </div>
           <div class="col-md-4" id="color_changer">
+            <select id="select_color" class="group-select">
+              <option value="county_name" selected>County</option>
+              <option value="cover_crop_group1">Cover crop</option>
+            </select> <br>
           </div>
           <div class="col-md-3" id="x_axis_changer">
-            <label>
-              X Axis
-              <select id="xFactor" class="group-select">
-                <option value="gdd" selected>Growing degree days</option>
-                <option value="cover_crop_planting_date">Planting date</option>
-                <option value="cover_crop_planting_rate">Planting rate</option>
-              </select>
-            </label>
+
+            <select id="xFactor" class="group-select">
+              <option value="gdd" selected>Growing degree days</option>
+              <option value="cover_crop_planting_date">Planting date</option>
+              <option value="cover_crop_planting_rate">Planting rate</option>
+            </select>
+
           </div>
         </div>
+        <br>
 
 
       </div>
-      <p>Here's the basic relationship: % ground cover by planting date. The
-        relationship
-        between planting date and
-        coverage is pretty clear, but there's a number of complicating factors: location, whether CCs were
-        interseeded,and what crops they followed.</p>
-      <p></p>
     </div>
     <div id="effect-of-interseeding" class="section level2">
-      <h2>Effect of interseeding</h2>
-      <p>The figures below show the effects of intereseeding and location.
-        Above, you can see that there's a the strong relationship
-        between planting date and coverage only when cover crops were not interseeded. When cover crops were
-        interseeded, there's not much increase in ground cover with earlier seeding dates.</p>
+
+      <h2>Interseeding</h2>
+      <p>For example, some of the cover crops were interseeded. You can see below that there were successful cover crops
+        with or without interseeding, and that planting date and growing degree days had a stronger effect on % green
+        cover when cover crops weren't interseeded.
+
+        Planting method….
+      </p>
       <p>
       </p>
       <div class="figure" style="text-align: center">
@@ -360,42 +383,17 @@
         </div>
       </div>
 
-      <p>Looking at just the means of interseeding vs not, that there's no consistent advantage or disadvantage to
-        interseeding. This probably reflects the various conditions and methods of seeding for both interseeded and
-        non.
-        Also, note that in most cases there's much fewer interseeded fields, so it's not a perfect comparison of the
-        two
-        methods.</p>
-      <p>Both figures show that in every county, there's a fair amount of variation, with no strong regional trends.
-        For
-        the four counties with more than 10 data points, Becker averaged 33% ground cover, East Ottertail 26%,
-        Faribault
-        23%, and Mower 31%.</p>
+
+
     </div>
     <div id="effect-of-cover-crop-species" class="section level2">
       <h2>Effect of cover crop species</h2>
-      <p>The question of cover crop species is a bit more complicated, as many of these winter-killed cover crops were
-        mixes of multiple species. We collected up to 4 species included in mixes, but did not include estimates of
-        what
-        the proportion of each species was seeded or emerged. So there's a limit to how much we can say about the
-        effect
-        of species here.</p>
-      <p>Focusing on the grass species, as they are usually dominant, below I've graphed the mean % green cover of
-        mixes
-        which included oats, cereal rye, or annual rye. A few fields in EOT included both oats and cereal rye, but
-        most
-        fields included only one of these grasses.</p>
-      <p> Cover crop species also doesn't explain all the
-        variability, although oats have maybe a slight advantage in Faribault county. The &quot;other&quot; data
-        points
-        include several spring wheat fields in Becker county, which appears to be a good option there, and a few
-        winter
-        triticale.</p>
-      <p>To test whether that relationship between planting date and ground cover holds, I graphed each grass species
-        separately.</p>
-      <p> The relationship looks strongest for cereal rye, which,
-        if you'll notice, is planted over the shortest window of just six weeks. It also seems to hold true for oats,
-        but we probably don't have enough data for annual ryegrass.</p>
+      <p>The question of cover crop species is a bit complicated, as many of these winter-killed cover crops were mixes
+        of multiple species. We collected up to 4 species included in mixes, but did not include estimates of what the
+        proportion of each species was seeded or emerged. So there's a limit to how much we can say about the effect of
+        species here.
+      </p>
+
     </div>
     <div id="effect-of-prior-crop" class="section level2">
       <h2>Effect of Prior Crop</h2>
@@ -425,9 +423,9 @@
 
   <script>
 
-    var sdd_margin = { top: 10, right: 25, bottom: 55, left: 50 },
+    var sdd_margin = { top: 10, right: 25, bottom: 50, left: 50 },
       sdd_width = 300 - sdd_margin.left - sdd_margin.right,
-      sdd_height = 450 - sdd_margin.top - sdd_margin.bottom;
+      sdd_height = 500 - sdd_margin.top - sdd_margin.bottom;
 
     // append the svg object to the body of the page
     var sdd_svg = d3.select("#graph_interseeded")
@@ -458,6 +456,84 @@
       .append("g")
       .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
+
+    var crop2color = {
+      Annual_ryegrass_mix: '#8DD3C7',
+      Brassica_mix: '#FFFFB3',
+      Cereal_Rye: '#BEBADA',
+      Cereal_Rye_mix: '#FB8072',
+      Cereal_RyefslashBrassica: '#80B1D3',
+      Cereal_RyefslashLegume: '#FDB462',
+      Cereal_RyefslashTriticale: '#B3DE69',
+      LegumefslashBrassica_mix: '#FCCDE5',
+      OatsfslashOat_mix: '#D9D9D9',
+      Other: '#BC80BD',
+      Spring_WheatfslashSpring_Wheat_mix: '#CCEBC5',
+      Triticale: '#FFED6F'
+    }
+
+    var crop_category_list = [
+      "Annual ryegrass mix",
+      "Brassica mix",
+      "Cereal Rye",
+      "Cereal Rye mix",
+      "Cereal Rye/Brassica",
+      "Cereal Rye/Legume",
+      "Cereal Rye/Triticale",
+      "Legume/Brassica mix",
+      "Oats/Oat mix",
+      "Spring Wheat mix",
+      "Triticale",
+      "Other"
+    ]
+
+    var cropColors = crop_category_list.map(function (f) {
+      return f.replaceAll(" ", "_").replaceAll("/", "fslash") in crop2color ? crop2color[f.replaceAll(" ", "_").replaceAll("/", "fslash")] : "brown"
+    });
+
+    var colorScaleCrops = d3.scaleOrdinal()
+      .domain([
+        "Annual ryegrass mix",
+        "Brassica mix",
+        "Cereal Rye",
+        "Cereal Rye mix",
+        "Cereal Rye/Brassica",
+        "Cereal Rye/Legume",
+        "Cereal Rye/Triticale",
+        "Legume/Brassica mix",
+        "Oats/Oat mix",
+        "Spring Wheat mix",
+        "Triticale",
+        "Other"
+      ])
+      .range(cropColors);
+
+    // Used to return a color for a given id
+    function coverCropItemizer(id) {
+      var crop2id = {
+        Annual_ryegrass_mix: [63, 60, 124, 102, 70, 311, 203, 129, 156, 91, 250, 20, 92, 64, 42, 41, 43],
+        Brassica_mix: [249, 263, 254, 221],
+        Cereal_Rye: [86, 87, 88, 131, 130, 191, 183, 184, 187, 186, 173, 98, 126, 285, 96, 97, 169, 155, 189, 188, 310, 308, 266, 171, 170, 165, 160, 218, 271, 148, 127, 277, 275, 274, 147, 146, 227, 59, 143, 85, 291, 229, 298, 241, 232, 145, 35, 34, 293, 54, 136, 55, 137, 253, 320, 252, 319, 317, 256, 321, 318, 122, 212, 280, 281, 132, 282, 278, 151, 134, 133, 196, 195, 209, 208, 313, 199, 316, 315, 314, 167, 33],
+        Cereal_Rye_mix: [312, 276, 172, 150, 153, 139, 290, 140, 135, 211, 201, 202, 192, 292, 231, 294, 142, 119, 118, 44, 32, 38],
+        Cereal_RyefslashBrassica: [283, 163, 128, 90, 89, 190, 94, 300, 322, 204, 304, 305, 205, 200, 194, 193, 109, 154, 81, 164, 284, 219, 77, 159, 78, 84, 177, 79, 176, 180, 157, 76, 56, 270, 181, 62, 80, 182, 269, 273, 225, 82, 222, 272, 247, 244, 108, 234, 69, 65],
+        Cereal_RyefslashLegume: [217, 162, 267, 268, 245, 299, 61, 138, 47, 210],
+        Cereal_RyefslashTriticale: [166, 158, 174, 237, 296, 238, 295, 309, 307, 306, 288, 287, 289, 302, 303, 301],
+        LegumefslashBrassica_mix: [51, 141, 74, 161, 185, 48, 144, 264, 297, 240],
+        OatsfslashOat_mix: [23, 216, 120, 213, 95, 24, 233, 123, 50, 243, 49, 228, 242, 31, 121, 207, 52, 45, 46, 21, 25, 26, 40, 99, 36, 37, 239, 261, 251, 117, 116, 214, 115, 68, 215, 73, 72, 75, 57, 29, 246, 53, 39, 30, 260, 262, 28, 27, 152, 22, 236, 230],
+        Other: [100, 197, 198, 226, 224],
+        Spring_Wheat_mix: [235, 248, 106, 105, 114, 113, 111, 103, 112, 107, 110, 258],
+        Triticale: [66, 71, 125, 286, 93, 178, 179, 220, 83, 58, 67, 175, 149, 223, 168, 279, 259]
+      }
+
+      for (let crop in crop2id) {
+        if (crop2id.hasOwnProperty(crop)) {
+          var ids = crop2id[crop];
+          if (ids.includes(id)) {
+            return crop.replaceAll("fslash", "/").replaceAll("_", " ")
+          }
+        }
+      }
+    }
 
     var county2color = {
       // Northern counties
@@ -545,6 +621,9 @@
         data[i].properties.cover_crop_planting_date = dParserYmd(data[i].properties.cover_crop_planting_date)
         data[i].properties.cover_crop_termination_date = dParserYmd(data[i].properties.cover_crop_termination_date)
         data[i].properties.photo_taken_date = dParserYmd(data[i].properties.photo_taken_date)
+
+        data[i].properties.cover_crop_group1 = coverCropItemizer(data[i].id)
+
       }
       submission_data = data;
 
@@ -630,8 +709,8 @@
         .text("");
 
       function sddEnterPoints(data, property_and_scale) {
-        property = "gdd"
-        scale = xSddScaleLinear
+        var property = property_and_scale[0]
+        var scale = property_and_scale[1]
 
         sdd_svg.append('g')
           .selectAll("dot")
@@ -723,7 +802,8 @@
       function enterPoints(data, property_and_scale) {
         var property = property_and_scale[0]
         var scale = property_and_scale[1]
-
+        var color_property = property_and_scale[2]
+        var color_scale = property_and_scale[3]
         svg.append('g')
           .selectAll("dot")
           .data(data)
@@ -732,7 +812,8 @@
           .attr("cx", function (d) { return scale(d.properties[property]); })
           .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
           .attr("r", 3)
-          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+
+          .style("fill", function (d) { return color_scale((d.properties[color_property])); })
           .style("stroke", "#252525")
           .on("mouseover", function (d) {
             div.transition()
@@ -759,12 +840,14 @@
       function updatePoints(data, property_and_scale) {
         var property = property_and_scale[0]
         var scale = property_and_scale[1]
+        var color_property = property_and_scale[2]
+        var color_scale = property_and_scale[3]
         svg.selectAll("circle")
           .data(data)
           .transition().duration(1000)
           .attr("cx", function (d) { return scale(d.properties[property]); })
           .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
-          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+          .style("fill", function (d) { return color_scale((d.properties[color_property])); })
 
         svg.select(".myXAxis")
           .transition()
@@ -788,6 +871,8 @@
         svg.select('.x_axis_label')
           .transition().duration(1000)
           .text(pretty_property);
+
+        updateLegend(color_scale)
 
       }
 
@@ -900,6 +985,14 @@
 
       })
 
+
+      d3.select("#select_color").on("change", function () {
+        console.log("Changed color to: " + this.value);
+
+        updateChart(false);
+
+      })
+
       d3.select("#select_county").on("change", function () {
         console.log("Changed county to: " + this.value);
 
@@ -932,10 +1025,18 @@
       function getScaleAndProperty(filtered_data, sdd) {
         if (sdd) {
           var property = d3.select("#xFactorSdd").node().value
+
         } else {
           var property = d3.select("#xFactor").node().value
+          var color_property = d3.select("#select_color").node().value
         }
 
+        var color_scale;
+        if (color_property == "county_name") {
+          color_scale = colorScaleCounty;
+        } else if (color_property == "cover_crop_group1") {
+          color_scale = colorScaleCrops;
+        }
 
         var scale;
         if (property == "gdd") {
@@ -980,26 +1081,26 @@
           );
         }
 
-        return [property, scale]
+        return [property, scale, color_property, color_scale]
       }
+
       // Legend
+      function updateLegend(scale) {
+        // d3.select(legendClassName).remove();
+        var svg_legend = d3.select("#legend svg")
 
-      var svg_legend = d3.select("#legend svg")
-      // .append("svg")
-      // .attr("width", 200)
-      // .attr("height", 400)
+        svg_legend.append("g")
+          .attr("class", "legendSoil")
+          .attr("transform", "translate(20,30)")
+        // .style("height", 400);
 
-      svg_legend.append("g")
-        .attr("class", "legendSoil")
-        .attr("transform", "translate(20,30)")
-      // .style("height", 400);
+        var legendSoil = d3.legendColor()
+          .scale(scale)
+        // .orient("horizontal");
 
-      var legendSoil = d3.legendColor()
-        .scale(colorScaleCounty)
-      // .orient("horizontal");
-
-      svg_legend.select(".legendSoil")
-        .call(legendSoil);
+        svg_legend.select(".legendSoil")
+          .call(legendSoil);
+      }
 
       var sdd_svg_legend = d3.select("#legend_interseeded")
         .append("svg")
@@ -1018,7 +1119,12 @@
       sdd_svg_legend.select(".legendSoilInterseeded")
         .call(legendSoilInterseeded);
 
+
+
     })
+
+
+
 
 
   </script>
