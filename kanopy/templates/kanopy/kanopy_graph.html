@@ -457,29 +457,40 @@
       .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
+
+
+
+
+
+
+
+
+
+
+
     var crop2color = {
-      Annual_ryegrass_mix: '#8DD3C7',
-      Brassica_mix: '#FFFFB3',
-      Cereal_Rye: '#BEBADA',
-      Cereal_Rye_mix: '#FB8072',
-      Cereal_RyefslashBrassica: '#80B1D3',
-      Cereal_RyefslashLegume: '#FDB462',
-      Cereal_RyefslashTriticale: '#B3DE69',
-      LegumefslashBrassica_mix: '#FCCDE5',
-      OatsfslashOat_mix: '#D9D9D9',
-      Other: '#BC80BD',
-      Spring_WheatfslashSpring_Wheat_mix: '#CCEBC5',
-      Triticale: '#FFED6F'
+      Cereal_Rye: '#fdd0a2',
+      Cereal_Rye_mix: '#fdae6b',
+      Cereal_RyefslashBrassica: '#fd8d3c',
+      Cereal_RyefslashLegume: '#e6550d',
+      Cereal_RyefslashTriticale: '#a63603',
+      Annual_ryegrass_mix: '#f781bf',
+      Brassica_mix: '#e41a1c',
+      LegumefslashBrassica_mix: '#377eb8',
+      OatsfslashOat_mix: '#4daf4a',
+      Spring_Wheat_mix: '#984ea3',
+      Triticale: '#ffff33',
+      Other: '#D9D9D9',
     }
 
     var crop_category_list = [
-      "Annual ryegrass mix",
-      "Brassica mix",
       "Cereal Rye",
       "Cereal Rye mix",
       "Cereal Rye/Brassica",
       "Cereal Rye/Legume",
       "Cereal Rye/Triticale",
+      "Annual ryegrass mix",
+      "Brassica mix",
       "Legume/Brassica mix",
       "Oats/Oat mix",
       "Spring Wheat mix",
@@ -492,20 +503,9 @@
     });
 
     var colorScaleCrops = d3.scaleOrdinal()
-      .domain([
-        "Annual ryegrass mix",
-        "Brassica mix",
-        "Cereal Rye",
-        "Cereal Rye mix",
-        "Cereal Rye/Brassica",
-        "Cereal Rye/Legume",
-        "Cereal Rye/Triticale",
-        "Legume/Brassica mix",
-        "Oats/Oat mix",
-        "Spring Wheat mix",
-        "Triticale",
-        "Other"
-      ])
+      .domain(
+        crop_category_list
+      )
       .range(cropColors);
 
     // Used to return a color for a given id
@@ -537,56 +537,45 @@
 
     var county2color = {
       // Northern counties
-      Clay: "#8c2d04",
-      Becker: "#f16913",
-      Otter_Tail: "#d94801",
-      Wadena: "#fd8d3c",
-      Traverse: "#fdae6b",
+      Clay: "#6baed6",
+      Otter_Tail: "#08519c",
+      Becker: "#3182BD",
+
+      Wadena: "#9ecae1",
+      Traverse: "#c6dbef",
       // Southern counties
-      Pipestone: "#eff3ff",
-      Olmsted: "#c6dbef",
-      Winona: "#9ecae1",
-      Faribault: "#6baed6",
-      Freeborn: "#3182bd",
-      Mower: "#08519c"
+      Pipestone: "#fef0d9",
+      Olmsted: "#fdae6b",
+      Winona: "#fd8d3c",
+      Faribault: "#d94801",
+      Freeborn: "#f16913",
+      Mower: "#8c2d04"
     }
 
     var cnty_list = [
-      "Clay",
+      // Northern counties
       "Otter Tail",
       "Becker",
+      "Clay",
       "Wadena",
       "Traverse",
-
+      // Southern counties
       "Pipestone",
       "Olmsted",
       "Winona",
-      "Faribault",
       "Freeborn",
+      "Faribault",
       "Mower"]
 
     var cntyColors = cnty_list.map(function (f) {
-      return f.replace("_", " ") in county2color ? county2color[f] : "brown"
+      return f.replace(" ", "_") in county2color ? county2color[f] : "brown"
     });
 
 
     var colorScaleCounty = d3.scaleOrdinal()
-      .domain([
-        // Northern counties
-        "Clay",
-        "Becker",
-        "Otter Tail",
-        "Wadena",
-
-        "Traverse",
-        // Southern counties
-        "Pipestone",
-        "Olmsted",
-        "Winona",
-        "Faribault",
-        "Freeborn",
-        "Mower"
-      ])
+      .domain(
+        cnty_list
+      )
       .range(cntyColors);
 
 
@@ -818,7 +807,8 @@
           .on("mouseover", function (d) {
             div.transition()
               .duration(200)
-              .style("opacity", .9);
+              .style("opacity", .9)
+              .attr("r", 5);
             div
               .html(formatCoverCrops(d))
               .style("left", (d3.event.pageX) + "px")
@@ -827,6 +817,7 @@
           .on("mouseout", function (d) {
             div.transition()
               .duration(500)
+              .attr("r", 3)
               .style("opacity", 0);
           });
 
