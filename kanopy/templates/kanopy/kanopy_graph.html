@@ -579,6 +579,33 @@
       .range(cntyColors);
 
 
+
+    var seeding2symbol = {
+      "DRILL": d3.symbol().type(d3.symbolSquare)(),
+      "BROADCAST": d3.symbol().type(d3.symbolTriangle)(),
+      "BROADCAST_INCORPORATION": d3.symbol().type(d3.symbolCross)(),
+      "AERIAL": d3.symbol().type(d3.symbolStar)(),
+      "MANURE_SLURRY": d3.symbol().type(d3.symbolDiamond)(),
+      "OTHER": d3.symbol().type(d3.symbolCircle)()
+    }
+
+    var listSeedingMethods = [
+      "DRILL",
+      "BROADCAST",
+      "BROADCAST_INCORPORATION",
+      "AERIAL",
+      "MANURE_SLURRY",
+      "OTHER"
+    ]
+
+    var seedingMethodsMap = listSeedingMethods.map(function (f) {
+      return f in seeding2symbol ? seeding2symbol[f] : d3.symbol().type(d3.symbolWye)
+    })
+
+    var seedingSymbolScale = d3.scaleOrdinal()
+      .domain(listSeedingMethods)
+      .range(seedingMethodsMap);
+
     function formatCoverCrops(feature) {
       var raw_cov_crops = [
         feature.properties.cover_crop_species_1,
@@ -702,24 +729,28 @@
         var scale = property_and_scale[1]
 
         sdd_svg.append('g')
-          .selectAll("dot")
+          .selectAll("path")
           .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
           .enter()
-          .append("circle")
-          .attr("cx", function (d) { return scale(d.properties[property]); })
-          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
-          .attr("r", 3)
+          .append("path")
+          .attr("class", "point")
+          .attr("d", function (d) {
+            return seedingSymbolScale(d.properties.seeding_method)
+          })
+          .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
           .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
           .style("stroke", "#252525")
 
         not_sdd_svg.append('g')
-          .selectAll("dot")
+          .selectAll("path")
           .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
           .enter()
-          .append("circle")
-          .attr("cx", function (d) { return scale(d.properties[property]); })
-          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
-          .attr("r", 3)
+          .append("path")
+          .attr("class", "point")
+          .attr("d", function (d) {
+            return seedingSymbolScale(d.properties.seeding_method)
+          })
+          .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
           .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
           .style("stroke", "#252525")
 
@@ -732,11 +763,13 @@
         var property = property_and_scale[0]
         var scale = property_and_scale[1]
 
-        sdd_svg.selectAll("circle")
+        sdd_svg.selectAll(".point")
           .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
           .transition().duration(1000)
-          .attr("cx", function (d) { return scale(d.properties[property]); })
-          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          .attr("d", function (d) {
+            return seedingSymbolScale(d.properties.seeding_method)
+          })
+          .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
           .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
 
         sdd_svg.select(".sddMyXAxis")
@@ -748,11 +781,13 @@
           .attr("dy", ".15em")
           .attr("transform", "rotate(-65)");
 
-        not_sdd_svg.selectAll("circle")
+        not_sdd_svg.selectAll(".point")
           .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
           .transition().duration(1000)
-          .attr("cx", function (d) { return scale(d.properties[property]); })
-          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          .attr("d", function (d) {
+            return seedingSymbolScale(d.properties.seeding_method)
+          })
+          .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
           .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
 
         not_sdd_svg.select(".sddMyXAxis")
@@ -776,12 +811,12 @@
       }
 
       function sddExitPoints(data) {
-        sdd_svg.selectAll("circle")
+        sdd_svg.selectAll(".point")
           .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
           .exit()
           .remove();
 
-        not_sdd_svg.selectAll("circle")
+        not_sdd_svg.selectAll(".point")
           .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
           .exit()
           .remove();
@@ -1110,6 +1145,39 @@
       sdd_svg_legend.select(".legendSoilInterseeded")
         .call(legendSoilInterseeded);
 
+      // Legend for seeding method
+
+      // var svg_symbol = d3.select("#legend_interseeded")
+      //   .append("svg")
+      //   .attr("width", 300)
+      //   .attr("height", 400)
+      var seedingSymbolScale_pretty = d3.scaleOrdinal()
+        .domain([
+          "Drill",
+          "Broadcast",
+          "Broadcast w/incorporation",
+          "Aerial",
+          "Manure slurry",
+          "Other"
+        ])
+        .range([
+          d3.symbol().type(d3.symbolSquare)(),
+          d3.symbol().type(d3.symbolTriangle)(),
+          d3.symbol().type(d3.symbolCross)(),
+          d3.symbol().type(d3.symbolStar)(),
+          d3.symbol().type(d3.symbolDiamond)(),
+          d3.symbol().type(d3.symbolCircle)()
+        ]);
+
+      sdd_svg_legend.append("g")
+        .attr("class", "legendSymbol")
+        .attr("transform", "translate(10, 250)");
+
+      var legendPath = d3.legendSymbol()
+        .scale(seedingSymbolScale_pretty)
+        .labelWrap(30)
+      sdd_svg_legend.select(".legendSymbol")
+        .call(legendPath);
 
 
     })

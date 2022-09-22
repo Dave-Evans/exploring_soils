@@ -125,6 +125,7 @@ def kanopy_submissions_json(request):
                         , geom.crop_prior 
                         , geom.crop_posterior 
                         , geom.cover_crop_interseeded 
+                        , geom.seeding_method
                         , geom.gdd
                         , geom.county_name
                         , ST_GeometryN(ST_GeneratePoints(geom.b_collectionpoint, 1), 1) as collectionpoint 
