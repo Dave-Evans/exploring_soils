@@ -246,8 +246,6 @@
         <div class="row">
           <div class="col-md-2" id="legend">
             <svg width="200px" height="250px"></svg>
-
-
           </div>
           <div class="col-md-8" id="my_dataviz">
           </div>
@@ -284,12 +282,6 @@
               <option value="120">2020</option>
               <option value="121">2021</option>
             </select> <br>
-            <!-- Cover crop
-            <select id="select_color" class="group-select">
-              <option value="county" selected>County</option>
-              <option value="covercrop">Cover crop</option>
-            </select> <br>
-            -->
           </div>
           <div class="col-md-4" id="color_changer">
             <select id="select_color" class="group-select">
@@ -334,58 +326,70 @@
             <label>Not Interseeded</label>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-2" id="legend_interseeded"></div>
+        <div class="row" style="text-align: left;">
+          <div class="col-md-2" id="legend_interseeded">
+            <svg width="200px" height="400px"></svg>
+          </div>
           <div class="col-md-4" id="graph_interseeded"></div>
           <div class="col-md-4" id="graph_not_interseeded"></div>
         </div>
         <div class="row" style="text-align: left;">
-          <div class=" col-md-3" id="filters">
-            <label>
-              County
-              <select id="select_county_sdd" class="group-select">
-                <option value="9999" selected>All</option>
-                <option value="Clay">Clay</option>
-                <option value="Becker">Becker</option>
-                <option value="Otter Tail">Otter Tail</option>
-                <option value="Wadena">Wadena</option>
-                <option value="Traverse">Traverse</option>
-                <option value="Pipestone">Pipestone</option>
-                <option value="Olmsted">Olmsted</option>
-                <option value="Winona">Winona</option>
-                <option value="Faribault">Faribault</option>
-                <option value="Freeborn">Freeborn</option>
-                <option value="Mower">Mower</option>
-              </select>
-            </label>
+          <div class="col-md-3"><label>Filters</label></div>
+          <div class="col-md-4"><label>Change color</label></div>
+          <div class="col-md-3"><label style="text-align: left;">Change X axis</label></div>
+        </div>
+        <div class="row" style="text-align: left;">
+          <div class="col-md-3" id="filters">
 
-            <label>
-              Planting Date Year
-              <select id="select_planting_year_sdd" class="group-select">
-                <option value="9999" selected>All</option>
-                <option value="120">2020</option>
-                <option value="121">2021</option>
-              </select>
-            </label>
+            County
+            <select id="select_county_sdd" class="group-select">
+              <option value="9999" selected>All</option>
+              <option value="Clay">Clay</option>
+              <option value="Becker">Becker</option>
+              <option value="Otter Tail">Otter Tail</option>
+              <option value="Wadena">Wadena</option>
+              <option value="Traverse">Traverse</option>
+              <option value="Pipestone">Pipestone</option>
+              <option value="Olmsted">Olmsted</option>
+              <option value="Winona">Winona</option>
+              <option value="Faribault">Faribault</option>
+              <option value="Freeborn">Freeborn</option>
+              <option value="Mower">Mower</option>
+            </select>
+            <br>
+
+
+
+            Planting Date Year
+            <select id="select_planting_year_sdd" class="group-select">
+              <option value="9999" selected>All</option>
+              <option value="120">2020</option>
+              <option value="121">2021</option>
+            </select>
+
           </div>
-          <div class="col-md-4" id="color_changer">
+          <div class="col-md-3" id="color_changer">
+            <select id="select_color_sdd" class="group-select">
+              <option value="county_name" selected>County</option>
+              <option value="cover_crop_group1">Cover crop</option>
+              <option value="crop_prior">Cash crop prior</option>
+            </select>
           </div>
+
           <div class="col-md-3" id="x_axis_changer">
-            <label>
-              X Axis
-              <select id="xFactorSdd" class="group-select">
-                <option value="gdd" selected>Growing degree days</option>
-                <option value="cover_crop_planting_date">Planting date</option>
-                <option value="cover_crop_planting_rate">Planting rate</option>
-              </select>
-            </label>
+
+            <select id="xFactorSdd" class="group-select">
+              <option value="gdd" selected>Growing degree days</option>
+              <option value="cover_crop_planting_date">Planting date</option>
+              <option value="cover_crop_planting_rate">Planting rate</option>
+            </select>
+
           </div>
         </div>
       </div>
-
-
-
     </div>
+
+
     <div id="effect-of-cover-crop-species" class="section level2">
       <h2>Effect of cover crop species</h2>
       <p>The question of cover crop species is a bit complicated, as many of these winter-killed cover crops were mixes
@@ -457,16 +461,38 @@
       .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
+    var priorcrop2color = {
+      CORN: "#7fc97f",
+      CORN_SILAGE: "#beaed4",
+      SOY_BEANS: "#fdc086",
+      SMALL_GRAIN: "#ffff99",
+      CANNING_CROP: "#386cb0",
+      PREVENT_PLANT: "#f0027f",
+      DRY_BEANS: "#bf5b17",
+      OTHER: "#666666"
+    }
 
 
+    var priorcrop_list = [
+      "Corn",
+      "Corn silage",
+      "Soy beans",
+      "Small grain",
+      "Canning crop",
+      "Prevent plant",
+      "Dry beans",
+      "Other"
+    ]
 
+    var priorcropColors = priorcrop_list.map(function (f) {
+      return f.toUpperCase().replace(" ", "_") in priorcrop2color ? priorcrop2color[f.toUpperCase().replace(" ", "_")] : "#666666"
+    });
 
-
-
-
-
-
-
+    var colorScalePriorCrops = d3.scaleOrdinal()
+      .domain(
+        priorcrop_list
+      )
+      .range(priorcropColors);
 
     var crop2color = {
       Cereal_Rye: '#fdd0a2',
@@ -640,6 +666,11 @@
 
         data[i].properties.cover_crop_group1 = coverCropItemizer(data[i].id)
 
+        if (data[i].properties.crop_prior.length == 0) {
+          data[i].properties.crop_prior = "Other"
+        }
+        data[i].properties.crop_prior = data[i].properties.crop_prior[0] + data[i].properties.crop_prior.substring(1).toLowerCase().replace("_", " ")
+
       }
       submission_data = data;
 
@@ -727,6 +758,8 @@
       function sddEnterPoints(data, property_and_scale) {
         var property = property_and_scale[0]
         var scale = property_and_scale[1]
+        var color_property = property_and_scale[2]
+        var color_scale = property_and_scale[3]
 
         sdd_svg.append('g')
           .selectAll("path")
@@ -738,7 +771,7 @@
             return seedingSymbolScale(d.properties.seeding_method)
           })
           .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
-          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+          .style("fill", function (d) { return color_scale(d.properties[color_property]); })
           .style("stroke", "#252525")
 
         not_sdd_svg.append('g')
@@ -751,7 +784,7 @@
             return seedingSymbolScale(d.properties.seeding_method)
           })
           .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
-          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+          .style("fill", function (d) { return color_scale(d.properties[color_property]); })
           .style("stroke", "#252525")
 
       }
@@ -762,6 +795,8 @@
       function sddUpdatePoints(data, property_and_scale) {
         var property = property_and_scale[0]
         var scale = property_and_scale[1]
+        var color_property = property_and_scale[2]
+        var color_scale = property_and_scale[3]
 
         sdd_svg.selectAll(".point")
           .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
@@ -770,7 +805,7 @@
             return seedingSymbolScale(d.properties.seeding_method)
           })
           .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
-          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+          .style("fill", function (d) { return color_scale(d.properties[color_property]); })
 
         sdd_svg.select(".sddMyXAxis")
           .transition()
@@ -788,7 +823,7 @@
             return seedingSymbolScale(d.properties.seeding_method)
           })
           .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
-          .style("fill", function (d) { return colorScaleCounty(d.properties.county_name); })
+          .style("fill", function (d) { return color_scale(d.properties[color_property]); })
 
         not_sdd_svg.select(".sddMyXAxis")
           .transition()
@@ -807,7 +842,7 @@
         } else if (property == "cover_crop_planting_date") {
           pretty_property = "Cover crop planting date"
         }
-
+        updateSddLegend(color_scale)
       }
 
       function sddExitPoints(data) {
@@ -828,6 +863,7 @@
         var scale = property_and_scale[1]
         var color_property = property_and_scale[2]
         var color_scale = property_and_scale[3]
+
         svg.append('g')
           .selectAll("dot")
           .data(data)
@@ -1047,11 +1083,18 @@
 
       })
 
+      d3.select("#select_color_sdd").on("change", function () {
+        console.log("Changed sdd color to: " + this.value);
+
+        updateChart(true);
+
+      })
+
 
       function getScaleAndProperty(filtered_data, sdd) {
         if (sdd) {
           var property = d3.select("#xFactorSdd").node().value
-
+          var color_property = d3.select("#select_color_sdd").node().value
         } else {
           var property = d3.select("#xFactor").node().value
           var color_property = d3.select("#select_color").node().value
@@ -1062,6 +1105,8 @@
           color_scale = colorScaleCounty;
         } else if (color_property == "cover_crop_group1") {
           color_scale = colorScaleCrops;
+        } else if (color_property == "crop_prior") {
+          color_scale = colorScalePriorCrops
         }
 
         var scale;
@@ -1128,57 +1173,52 @@
           .call(legendSoil);
       }
 
-      var sdd_svg_legend = d3.select("#legend_interseeded")
-        .append("svg")
-        .attr("width", 200)
-        .attr("height", 400)
+      function updateSddLegend(scale) {
 
-      sdd_svg_legend.append("g")
-        .attr("class", "legendSoilInterseeded")
-        .attr("transform", "translate(20,30)")
-      // .style("height", 400);
+        var sdd_svg_legend = d3.select("#legend_interseeded svg")
 
-      var legendSoilInterseeded = d3.legendColor()
-        .scale(colorScaleCounty)
-      // .orient("horizontal");
 
-      sdd_svg_legend.select(".legendSoilInterseeded")
-        .call(legendSoilInterseeded);
+        sdd_svg_legend.append("g")
+          .attr("class", "legendSoilInterseeded")
+          .attr("transform", "translate(7 , 175)")
+        // .style("height", 400);
 
-      // Legend for seeding method
+        var legendSoilInterseeded = d3.legendColor()
+          .scale(scale)
+        // .orient("horizontal");
 
-      // var svg_symbol = d3.select("#legend_interseeded")
-      //   .append("svg")
-      //   .attr("width", 300)
-      //   .attr("height", 400)
-      var seedingSymbolScale_pretty = d3.scaleOrdinal()
-        .domain([
-          "Drill",
-          "Broadcast",
-          "Broadcast w/incorporation",
-          "Aerial",
-          "Manure slurry",
-          "Other"
-        ])
-        .range([
-          d3.symbol().type(d3.symbolSquare)(),
-          d3.symbol().type(d3.symbolTriangle)(),
-          d3.symbol().type(d3.symbolCross)(),
-          d3.symbol().type(d3.symbolStar)(),
-          d3.symbol().type(d3.symbolDiamond)(),
-          d3.symbol().type(d3.symbolCircle)()
-        ]);
+        sdd_svg_legend.select(".legendSoilInterseeded")
+          .call(legendSoilInterseeded);
 
-      sdd_svg_legend.append("g")
-        .attr("class", "legendSymbol")
-        .attr("transform", "translate(10, 250)");
+        // Legend for seeding method
+        var seedingSymbolScale_pretty = d3.scaleOrdinal()
+          .domain([
+            "Drill",
+            "Broadcast",
+            "Broadcast w/incorporation",
+            "Aerial",
+            "Manure slurry",
+            "Other"
+          ])
+          .range([
+            d3.symbol().type(d3.symbolSquare)(),
+            d3.symbol().type(d3.symbolTriangle)(),
+            d3.symbol().type(d3.symbolCross)(),
+            d3.symbol().type(d3.symbolStar)(),
+            d3.symbol().type(d3.symbolDiamond)(),
+            d3.symbol().type(d3.symbolCircle)()
+          ]);
 
-      var legendPath = d3.legendSymbol()
-        .scale(seedingSymbolScale_pretty)
-        .labelWrap(30)
-      sdd_svg_legend.select(".legendSymbol")
-        .call(legendPath);
+        sdd_svg_legend.append("g")
+          .attr("class", "legendSymbol")
+          .attr("transform", "translate(10, 30)");
 
+        var legendPath = d3.legendSymbol()
+          .scale(seedingSymbolScale_pretty)
+          .labelWrap(30)
+        sdd_svg_legend.select(".legendSymbol")
+          .call(legendPath);
+      }
 
     })
 
