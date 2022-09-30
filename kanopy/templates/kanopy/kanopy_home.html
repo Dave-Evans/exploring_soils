@@ -1,5 +1,5 @@
 {% extends 'kanopy/base_kanopy.html' %}
-
+{% load static %}
 {% block title %}Welcome to Green CovR{% endblock %}
 
 {% block content %}
@@ -8,9 +8,50 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">Welcome</h3>
-        <h5>Upload a photo</h5>
+        <p>This project investigates the greenness of the canopy cover of cover crops.</p>
+        <div class="card-deck">
+
+          <div class="card">
+            <a href="{% url 'kanopy_upload' %}">
+              <img class="card-img-top" width="200" height="200" src="{% static 'img/cover_crop_good_image.jpg' %}"
+                alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">Upload a photo</h5>
+                <p class="card-text">To upload your photo and data click here.
+                </p>
+
+              </div>
+            </a>
+          </div>
+
+          <div class="card">
+            <a href="{% url 'green_covr_submission_map' %}">
+              <img class="card-img-top" width="200" height="200" src="{% static 'img/map_screenshot.png' %}"
+                alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">View map</h5>
+                <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+
+              </div>
+            </a>
+          </div>
+          <div class="card">
+            <a href="{% url 'green_covr_graph' %}">
+              <img class="card-img-top" height="200" style="border:10px solid white;"
+                src="{% static 'img/graph_screenshot6.png' %}" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">Explore data</h5>
+                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
+                  content. This card has even longer content than the first to show that equal height action.</p>
+
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- <h5>Upload a photo</h5>
         <p>
-          This project aims to source photographs of groundcover and catologue the percent green of the site.
+         
           To upload your photo simply click the link below!
           Ready to upload your photo? <a href="{% url 'kanopy_upload' %}">Click here to begin.</a>
         </p>
@@ -22,12 +63,12 @@
           <li>Check out our <a href="{% url 'green_covr_graph' %}">report of the project data</a></li>
         </ul>
 
-        </p>
+        </p> -->
 
       </div>
-      <div class="card-footer text-muted text-center">
+      <!-- <div class="card-footer text-muted text-center">
         Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>
