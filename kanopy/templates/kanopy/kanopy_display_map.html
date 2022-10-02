@@ -130,6 +130,8 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             pane: "pane_counties",
             onEachFeature: cntyPopup
         }).addTo(counties_layer);
+        map.addLayer(mn_counties_json_object)
+
     });
 
 
@@ -151,7 +153,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             controlsdiv.style.height = '450px';
             controlsdiv.style.background = 'white';
             controlsdiv.id = "controls";
-            controlsdiv.innerHTML = '<img width="200" height="100" src="/static/img/MoshStacked_maroon.png"/><br><br><h5>Select property</h5><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">Percent Green Cover</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="200px"></svg></div><button id="info-button">Info</button>';
+            controlsdiv.innerHTML = '<img width="200" height="100" src="/static/img/MoshStacked_maroon.png"/><br><br><h5>Select property</h5><select id="PropertySelection" class="PropSelector"><option value="fgcc_value">Percent Green Cover</option><option value="gdd">Growing degree days</option></select><div id="legend"><svg width="260px" height="200px"></svg></div><button id="info-button">Info</button><br><button ><a href="{% url 'green_covr_graph' %}">Go to report</button></a>';
 
 
             $(controlsdiv).mousedown(function () {
@@ -259,7 +261,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
     //Maybe this: https://github.com/timwis/leaflet-choropleth
 
     var gddScale = d3.scaleThreshold()
-        .domain([500, 1000, 1500, 2000, 3000, 4000, 5000])
+        .domain([500, 1000, 1500, 2000, 2500, 3000, 4000])
         .range(d3.schemeOrRd[8]);
 
 
@@ -327,7 +329,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         var winInfo = L.control.window(map,
             {
                 title: 'MOSH Cover crop growth data project',
-                content: 'Click on data points to view the amount of green cover produced by cover crops. See analysis of these data and details about the project at <a href="https://mosh.umn.edu">mosh.umn.edu</a>',
+                content: 'Click on data points to view the amount of green cover produced by cover crops. To view other basemaps or toggle the county boundaries, use the menu in the upper righthand counter. See analysis of these data and details about the project at <a href="https://mosh.umn.edu">mosh.umn.edu</a>',
                 visible: true
             })
     }
