@@ -695,7 +695,8 @@
         data[i].properties.cover_crop_planting_date_flat = cov_crop_planting_date
 
       }
-      data = data.filter(function (d) { return d.properties.cover_crop_planting_date == 2020 })
+      // Hack to limit the graphs to just 2020 and 2021 (years flattened so just need  == 2020)
+      data = data.filter(function (d) { return d.properties.cover_crop_planting_date_flat.getFullYear() == 2020 })
       submission_data = data;
 
 
