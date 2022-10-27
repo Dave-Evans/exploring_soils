@@ -286,7 +286,7 @@
           <div class="col-md-4" id="color_changer">
             <select id="select_color" class="group-select">
               <option value="county_name" selected>County</option>
-              <option value="cover_crop_group1">Cover crop</option>
+              <option value="cover_crop_group1">Cover crop species</option>
               <option value="crop_prior">Cash crop prior</option>
             </select> <br>
           </div>
@@ -294,7 +294,7 @@
 
             <select id="xFactor" class="group-select">
               <option value="gdd" selected>Growing degree days</option>
-              <option value="cover_crop_planting_date">Planting date</option>
+              <option value="cover_crop_planting_date_flat">Planting date</option>
               <option value="cover_crop_planting_rate">Planting rate</option>
             </select>
 
@@ -372,7 +372,7 @@
           <div class="col-md-3" id="color_changer">
             <select id="select_color_sdd" class="group-select">
               <option value="county_name" selected>County</option>
-              <option value="cover_crop_group1">Cover crop</option>
+              <option value="cover_crop_group1">Cover crop species</option>
               <option value="crop_prior">Cash crop prior</option>
             </select>
           </div>
@@ -381,7 +381,7 @@
 
             <select id="xFactorSdd" class="group-select">
               <option value="gdd" selected>Growing degree days</option>
-              <option value="cover_crop_planting_date">Planting date</option>
+              <option value="cover_crop_planting_date_flat">Planting date</option>
               <option value="cover_crop_planting_rate">Planting rate</option>
             </select>
 
@@ -430,7 +430,7 @@
 
     var sdd_margin = { top: 10, right: 25, bottom: 50, left: 50 },
       sdd_width = 300 - sdd_margin.left - sdd_margin.right,
-      sdd_height = 450 - sdd_margin.top - sdd_margin.bottom;
+      sdd_height = 470 - sdd_margin.top - sdd_margin.bottom;
 
     // append the svg object to the body of the page
     var sdd_svg = d3.select("#graph_interseeded")
@@ -519,7 +519,7 @@
       "Annual ryegrass mix",
       "Brassica mix",
       "Legume/Brassica mix",
-      "Oats/Oat mix",
+      "Oats or Oat mix",
       "Spring Wheat mix",
       "Triticale",
       "Other"
@@ -546,7 +546,7 @@
         Cereal_RyefslashLegume: [217, 162, 267, 268, 245, 299, 61, 138, 47, 210],
         Cereal_RyefslashTriticale: [166, 158, 174, 237, 296, 238, 295, 309, 307, 306, 288, 287, 289, 302, 303, 301],
         LegumefslashBrassica_mix: [51, 141, 74, 161, 185, 48, 144, 264, 297, 240],
-        OatsfslashOat_mix: [23, 216, 120, 213, 95, 24, 233, 123, 50, 243, 49, 228, 242, 31, 121, 207, 52, 45, 46, 21, 25, 26, 40, 99, 36, 37, 239, 261, 251, 117, 116, 214, 115, 68, 215, 73, 72, 75, 57, 29, 246, 53, 39, 30, 260, 262, 28, 27, 152, 22, 236, 230],
+        Oats_or_Oat_mix: [23, 216, 120, 213, 95, 24, 233, 123, 50, 243, 49, 228, 242, 31, 121, 207, 52, 45, 46, 21, 25, 26, 40, 99, 36, 37, 239, 261, 251, 117, 116, 214, 115, 68, 215, 73, 72, 75, 57, 29, 246, 53, 39, 30, 260, 262, 28, 27, 152, 22, 236, 230],
         Other: [100, 197, 198, 226, 224],
         Spring_Wheat_mix: [235, 248, 106, 105, 114, 113, 111, 103, 112, 107, 110, 258],
         Triticale: [66, 71, 125, 286, 93, 178, 179, 220, 83, 58, 67, 175, 149, 223, 168, 279, 259]
@@ -661,16 +661,37 @@
       // Converting dates to times
       var dParserYmd = d3.timeParse("%Y-%m-%d")
       for (let i = 0; i < data.length; i++) {
+        // Convert these to dates
         data[i].properties.cover_crop_planting_date = dParserYmd(data[i].properties.cover_crop_planting_date)
         data[i].properties.cover_crop_termination_date = dParserYmd(data[i].properties.cover_crop_termination_date)
         data[i].properties.photo_taken_date = dParserYmd(data[i].properties.photo_taken_date)
 
+        // Code the covercrops
         data[i].properties.cover_crop_group1 = coverCropItemizer(data[i].id)
 
+        // Coding prior crops with null as Other
         if (data[i].properties.crop_prior.length == 0) {
           data[i].properties.crop_prior = "Other"
         }
+        // Formatting for pretty display
         data[i].properties.crop_prior = data[i].properties.crop_prior[0] + data[i].properties.crop_prior.substring(1).toLowerCase().replace("_", " ")
+
+        // Converting planting dates to be all same year for 
+        //   overlapping display
+
+        var cov_crop_planting_date = new Date();
+        cov_crop_planting_date.setFullYear(data[i].properties.cover_crop_planting_date.getFullYear())
+        cov_crop_planting_date.setMonth(data[i].properties.cover_crop_planting_date.getMonth())
+        cov_crop_planting_date.setDate(data[i].properties.cover_crop_planting_date.getDate())
+        //data[i].properties.cover_crop_planting_date_flat;
+        console.log("Planting date before: " + cov_crop_planting_date)
+        if (cov_crop_planting_date.getFullYear() == 2021) {
+
+          cov_crop_planting_date.setFullYear(cov_crop_planting_date.getFullYear() - 1);
+
+        }
+        console.log("Planting date after: " + cov_crop_planting_date)
+        data[i].properties.cover_crop_planting_date_flat = cov_crop_planting_date
 
       }
       submission_data = data;
@@ -741,6 +762,18 @@
         .attr("dy", "1em")
         .style("text-anchor", "middle")
         .text("Percent Green Cover");
+
+      sdd_svg.append("text")      // text label for the x axis
+        .attr("transform", "translate(" + (sdd_width / 2) + " ," + (sdd_height + sdd_margin.bottom - 5) + ")")
+        .style("text-anchor", "middle")
+        .attr("class", "sdd_x_axis_label")
+        .text("");
+
+      not_sdd_svg.append("text")      // text label for the x axis
+        .attr("transform", "translate(" + (sdd_width / 2) + " ," + (sdd_height + sdd_margin.bottom - 5) + ")")
+        .style("text-anchor", "middle")
+        .attr("class", "not_sdd_x_axis_label")
+        .text("");
 
       svg.append("text")
         .attr("transform", "rotate(-90)")
@@ -815,7 +848,7 @@
           .style("text-anchor", "end")
           .attr("dx", "-.8em")
           .attr("dy", ".15em")
-          .attr("transform", "rotate(-65)");
+          .attr("transform", "rotate(-45)");
 
         not_sdd_svg.selectAll(".point")
           .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
@@ -833,16 +866,28 @@
           .style("text-anchor", "end")
           .attr("dx", "-.8em")
           .attr("dy", ".15em")
-          .attr("transform", "rotate(-65)");
+          .attr("transform", "rotate(-45)");
 
         var pretty_property;
         if (property == "gdd") {
           pretty_property = "Growing degree days"
         } else if (property == "cover_crop_planting_rate") {
           pretty_property = "Cover crop planting rate (lbs/acre)"
-        } else if (property == "cover_crop_planting_date") {
+        } else if (property == "cover_crop_planting_date_flat") {
           pretty_property = "Cover crop planting date"
         }
+        console.log("From sddUpdatePoints:")
+        console.log("   property = " + property)
+        console.log("   pretty_property = " + pretty_property)
+
+        sdd_svg.select('.sdd_x_axis_label')
+          .transition().duration(1000)
+          .text(pretty_property);
+
+        not_sdd_svg.select('.not_sdd_x_axis_label')
+          .transition().duration(1000)
+          .text(pretty_property);
+
         updateSddLegend(color_scale)
       }
 
@@ -893,10 +938,6 @@
               .style("opacity", 0);
           });
 
-        // svg.select('.x_axis_label')
-        //   .duration(750)
-        //   .text(property);
-
 
       }
 
@@ -920,7 +961,7 @@
           .style("text-anchor", "end")
           .attr("dx", "-.8em")
           .attr("dy", ".15em")
-          .attr("transform", "rotate(-35)");
+          .attr("transform", "rotate(-25)");
 
 
         var pretty_property;
@@ -928,7 +969,7 @@
           pretty_property = "Growing degree days"
         } else if (property == "cover_crop_planting_rate") {
           pretty_property = "Cover crop planting rate (lbs/acre)"
-        } else if (property == "cover_crop_planting_date") {
+        } else if (property == "cover_crop_planting_date_flat") {
           pretty_property = "Cover crop planting date"
         }
         svg.select('.x_axis_label')
@@ -938,8 +979,6 @@
         updateLegend(color_scale)
 
       }
-
-
 
       function exitPoints(data) {
         svg.selectAll("circle")
@@ -1138,7 +1177,7 @@
             })
             )
           );
-        } else if (property == "cover_crop_planting_date") {
+        } else if ((property == "cover_crop_planting_date") || (property == "cover_crop_planting_date_flat")) {
           if (sdd) {
             scale = xSddScaleTime
           } else {
