@@ -70,18 +70,21 @@ def green_covr_references(request):
     return render(request, "kanopy/kanopy_references.html")
 
 
+@login_required
 @permission_required("kanopy.can_view_submissions", raise_exception=True)
 def kanopy_graph(request):
     docs = Groundcoverdoc.objects.all()
     return render(request, "kanopy/kanopy_graph.html", {"docs": docs})
 
 
+@login_required
 @permission_required("kanopy.can_view_submissions", raise_exception=True)
 def kanopy_submission_map(request):
     docs = Groundcoverdoc.objects.all()
     return render(request, "kanopy/kanopy_submission_map.html", {"docs": docs})
 
 
+@login_required
 @permission_required("kanopy.can_view_submissions", raise_exception=True)
 def kanopy_display_map(request):
     docs = Groundcoverdoc.objects.all()
