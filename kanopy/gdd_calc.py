@@ -110,7 +110,7 @@ def retrieve_station_data(stationid, start_date, end_date):
     df.AVA = geopandas.pd.to_numeric(df.AVA, errors="coerce")
 
     prop_missing = df.AVA.isna().sum() / len(df)
-    print(f"{round(prop_missing,3) *100} missing")
+    # print(f"{round(prop_missing,3) *100} missing")
 
     if prop_missing > 0.05:
         return None
