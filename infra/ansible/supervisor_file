@@ -1,0 +1,7 @@
+[program:exploring_soils]
+command=/home/exploring_soils/gunicorn_start
+user=ubuntu
+autostart=true
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/home/exploring_soils/logs/gunicorn.log
