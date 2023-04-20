@@ -66,30 +66,30 @@
     script: build_and_load_db.sh
     args:
       creates: /home/ubuntu/exploring_soils/migrations_are_complete
-    notify:
-    - Restart apache
+    # notify:
+    # - Restart apache
 
   # What is cron doing with the user? How much does this matter?
-  - name: Ensure a job that runs at 01:42 GMT. Creates an entry like "0 5,2 * * ls -alh > /dev/null"
-    cron:
-      name: "Set up DB backup"
-      minute: "38"
-      hour: "2"
-      user: root
-      job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./infra/helper.sh dumpdb; bash ./infra/helper.sh bkup ./data/dump.json"
+  # - name: Ensure a job that runs at 01:42 GMT. Creates an entry like "0 5,2 * * ls -alh > /dev/null"
+  #   cron:
+  #     name: "Set up DB backup"
+  #     minute: "38"
+  #     hour: "2"
+  #     user: root
+  #     job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./infra/helper.sh dumpdb; bash ./infra/helper.sh bkup ./data/dump.json"
 
 
-  - name: Change directory permissions
-    file:
-      path: /home/ubuntu/exploring_soils
-      state: directory
-      group: www-data
-    notify:
-    - Restart apache
+  # - name: Change directory permissions
+  #   file:
+  #     path: /home/ubuntu/exploring_soils
+  #     state: directory
+  #     group: www-data
+  #   notify:
+  #   - Restart apache
 
-  handlers:
-    - name: Restart apache
-      service: name=apache2 state=restarted
+  # handlers:
+  #   - name: Restart apache
+  #     service: name=apache2 state=restarted
 
 
 
