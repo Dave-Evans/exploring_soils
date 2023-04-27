@@ -1,19 +1,19 @@
 upstream app_server {
-    server unix:/home/exploring_soils/run/gunicorn.sock fail_timeout=0;
+    server unix:/home/ubuntu/exploring_soils/run/gunicorn.sock fail_timeout=0;
 }
 
 server {
     listen 80;
-    server_name evansgeospatial.com;  # here can also be the IP address of the server
+    server_name 18.188.230.21;  # here can also be the IP address of the server
 
     keepalive_timeout 5;
     client_max_body_size 4G;
 
-    access_log /home/exploring_soils/logs/nginx-access.log;
-    error_log /home/exploring_soils/logs/nginx-error.log;
+    access_log /home/ubuntu/exploring_soils/logs/nginx-access.log;
+    error_log /home/ubuntu/exploring_soils/logs/nginx-error.log;
 
     location /static/ {
-        alias /home/exploring_soils/static/;
+        alias /home/ubuntu/exploring_soils/static/;
     }
 
     # checks for static file, if not found proxy to app

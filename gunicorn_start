@@ -1,22 +1,22 @@
 #!/bin/bash
 
-NAME="evansgeospatial"
-DIR=/home/exploring_soils/exploring_soils
+NAME="exploring_soils"
+DIR=/home/ubuntu/exploring_soils
 USER=ubuntu
 GROUP=ubuntu
 WORKERS=3
-BIND=unix:/home/exploring_soils/run/gunicorn.sock
+BIND=unix:/home/ubuntu/exploring_soils/run/gunicorn.sock
 DJANGO_SETTINGS_MODULE=exploring_soils.settings
 DJANGO_WSGI_MODULE=exploring_soils.wsgi
-LOG_LEVEL=error
+LOG_LEVEL=debug
 
 cd $DIR
-source ../myvenv/bin/activate
+source ./myvenv/bin/activate
 
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DIR:$PYTHONPATH
 
-exec ../myvenv/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+exec ./myvenv/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
   --name $NAME \
   --workers $WORKERS \
   --user=$USER \
