@@ -47,7 +47,7 @@
       dest: /home/ubuntu/exploring_soils/.env
       remote_src: no      
 
-  - name: Create a directory if it does not exist
+  - name: Create data directory if it does not exist
     file:
       path: /home/ubuntu/exploring_soils/data
       state: directory
@@ -86,8 +86,21 @@
 
   - name: Move supervisor conf.d file
     copy:
-      src: /home/ubuntu/exploring_soils/ansible/supervisor_file
+      src: /home/ubuntu/exploring_soils/infra/ansible/supervisor_file
       dest: /etc/supervisor/conf.d/exploring_soils.conf
+      remote_src: yes
+
+  - name: Create logs directory if it does not exist
+    file:
+      path: /home/ubuntu/exploring_soils/logs
+      state: directory
+      mode: '0755'
+
+  - name: Create run directory if it does not exist
+    file:
+      path: /home/ubuntu/exploring_soils/run
+      state: directory
+      mode: '0755'
 
   - name: Reread supervisor configuration file
     community.general.supervisorctl:
@@ -101,12 +114,13 @@
 
   # Nginx
   - name: Populate Nginx config file with ip address
-    shell: sed -i "s/server_name.*/server_name {{ ip }}/g" /home/ubuntu/exploring_soils/ansible/nginx_config
+    shell: sed -i "s/server_name.*/server_name {{ ip }}/g" /home/ubuntu/exploring_soils/infra/ansible/nginx_config
 
   - name: Move nginx config file
     copy:
-      src: /home/ubuntu/exploring_soils/ansible/nginx_config
+      src: /home/ubuntu/exploring_soils/infra/ansible/nginx_config
       dest: /etc/nginx/sites-available/exploring_soils
+      remote_src: yes
 
   - name: Create a symbolic link from Nginx sites avail to sites enabled
     ansible.builtin.file:
@@ -121,13 +135,13 @@
       service: name=nginx state=restarted
 
   # What is cron doing with the user? How much does this matter?
-  # - name: Ensure a job that runs at 01:42 GMT. Creates an entry like "0 5,2 * * ls -alh > /dev/null"
-  #   cron:
-  #     name: "Set up DB backup"
-  #     minute: "38"
-  #     hour: "2"
-  #     user: root
-  #     job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./infra/helper.sh dumpdb; bash ./infra/helper.sh bkup ./data/dump.json"
+  - name: Ensure a job that runs at 01:42 GMT. Creates an entry like "0 5,2 * * ls -alh > /dev/null"
+    cron:
+      name: "Set up DB backup"
+      minute: "38"
+      hour: "2"
+      user: root
+      job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./infra/helper.sh dumpdb; bash ./infra/helper.sh bkup ./data/dump.json"
 
 
   # - name: Change directory permissions
@@ -138,9 +152,9 @@
   #   notify:
   #   - Restart apache
 
-  handlers:
-    - name: Restart apache
-      service: name=apache2 state=restarted
+  # handlers:
+  #   - name: Restart apache
+  #     service: name=apache2 state=restarted
 
 
 
