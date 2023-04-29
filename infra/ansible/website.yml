@@ -69,6 +69,57 @@
     # notify:
     # - Restart apache
 
+  # Gunicorn
+  - name: Changing permissions of gunicorn by adding "u+x"
+    file: dest=/home/ubuntu/exploring_soils/gunicorn_start mode=u+x
+
+  # Supervisor
+  - name: Make sure supervisor service unit is enabled
+    ansible.builtin.systemd:
+      enabled: true
+      name: supervisor
+
+  - name: Make sure supervisor service unit is started
+    ansible.builtin.systemd:
+      state: started
+      name: supervisor
+
+  - name: Move supervisor conf.d file
+    copy:
+      src: /home/ubuntu/exploring_soils/ansible/supervisor_file
+      dest: /etc/supervisor/conf.d/exploring_soils.conf
+
+  - name: Reread supervisor configuration file
+    community.general.supervisorctl:
+      name: exploring_soils
+      state: present
+
+  - name: Update supervisor for exploring soils
+    community.general.supervisorctl:
+      name: exploring_soils
+      state: restarted    
+
+  # Nginx
+  - name: Populate Nginx config file with ip address
+    shell: sed -i "s/server_name.*/server_name {{ ip }}/g" /home/ubuntu/exploring_soils/ansible/nginx_config
+
+  - name: Move nginx config file
+    copy:
+      src: /home/ubuntu/exploring_soils/ansible/nginx_config
+      dest: /etc/nginx/sites-available/exploring_soils
+
+  - name: Create a symbolic link from Nginx sites avail to sites enabled
+    ansible.builtin.file:
+      src: /etc/nginx/sites-available/exploring_soils
+      dest: /etc/nginx/sites-enabled/exploring_soils
+      state: link
+    notify:
+    - Restart Nginx
+
+  handlers:
+    - name: Restart Nginx
+      service: name=nginx state=restarted
+
   # What is cron doing with the user? How much does this matter?
   # - name: Ensure a job that runs at 01:42 GMT. Creates an entry like "0 5,2 * * ls -alh > /dev/null"
   #   cron:
@@ -87,9 +138,9 @@
   #   notify:
   #   - Restart apache
 
-  # handlers:
-  #   - name: Restart apache
-  #     service: name=apache2 state=restarted
+  handlers:
+    - name: Restart apache
+      service: name=apache2 state=restarted
 
 
 

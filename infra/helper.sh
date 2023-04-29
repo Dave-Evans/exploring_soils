@@ -260,6 +260,9 @@ create_ansible_hostsfile () {
     INFO "Creating hosts file"
     # Create hosts
     echo "$( pullip ) ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/$(extract_envvar key_name).pem" > $anshosts    
+    # Adds ip to ansible variables to edit nginx config
+    ipaddress=$( pullip )
+    echo "ip: $ipaddress" >> $ansvars
 }
 
 provision_deploy () {
