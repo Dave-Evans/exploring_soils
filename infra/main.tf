@@ -21,7 +21,7 @@ provider "aws" {
 
 resource "aws_instance" "webserver" {
   ami                  = "ami-0fb653ca2d3203ac1"
-  instance_type        = "t2.micro"
+  instance_type        = "t3a.micro"
   key_name             = var.key_name
   iam_instance_profile = aws_iam_instance_profile.ec2_s3_profile.name
   security_groups      = [aws_security_group.davemike_allow_http_ssh.name]

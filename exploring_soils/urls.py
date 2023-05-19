@@ -14,20 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import re_path
+from django.urls import re_path, path, include
 from django.contrib.auth import views as auth_views
-from django.urls import path
 
 from django.conf import settings
 from django.conf.urls.static import static
-
-from django.views.generic import RedirectView
 
 from accounts import views as accounts_views
 from boards import views
 from plotter import views as plotter_views
 from books import views as books_views
-from bikemileage import views as mileage_views
+
 from bikemileage.views import (
     CustomMileageListView,
     MileageCreateView,
@@ -40,31 +37,15 @@ from bikemileage.views import (
     BicycleUpdateView,
     BicycleDeleteView,
 )
-from kanopy import views as kanopy_views
+
 
 
 urlpatterns = [
-    re_path(r"^new_study/$", plotter_views.new_study, name="new_study"),
-    re_path(r"^edit_study/(?P<pk>\d+)$", plotter_views.edit_study, name="edit_study"),
-    re_path(r"^studies/$", plotter_views.studies, name="studies"),
-    re_path(r"^explore_soils/$", plotter_views.soils_in_depth, name="explore_soils"),
-    re_path(r"^soils_in_depth/$", plotter_views.soils_in_depth, name="soils_in_depth"),
-    re_path(
-        r"^pull_soils/(?P<minx>-?\d+\.\d+)/(?P<miny>-?\d+\.\d+)/(?P<maxx>-?\d+\.\d+)/(?P<maxy>-?\d+\.\d+)/$",
-        plotter_views.pull_soils,
-        name="pull_soils",
-    ),
-    re_path(r"^studies/(?P<pk>\d+)/add_rep/$", plotter_views.add_rep, name="add_rep"),
-    re_path(
-        r"^studies/(?P<pk>\d+)/retrieve_existing_reps/$",
-        plotter_views.retrieve_existing_reps,
-        name="retrieve_existing_reps",
-    ),
-    re_path(
-        r"^studies/get_rep/(?P<pk>\d+)/(?P<lly>-?\d+\.\d+)/(?P<llx>-?\d+\.\d+)/(?P<uly>-?\d+\.\d+)/(?P<ulx>-?\d+\.\d+)/$",
-        plotter_views.get_plots,
-        name="get_plots",
-    ),
+    # For soils in depth
+    path("", include("plotter.urls")), 
+
+    # Kanopy app
+    path("", include("kanopy.urls")),    
     # bikemileage App
     # re_path(r'^mileage/$',mileage_views.mileage_list, name='mileage_list' ),
     path("custom_mileage", CustomMileageListView.as_view(), name="custom_mileage"),
@@ -88,98 +69,7 @@ urlpatterns = [
         name="login",
     ),
     re_path(r"^logout/$", auth_views.LogoutView.as_view(), name="logout"),
-    # Kanopy app
-    re_path(r"^green_covr$", kanopy_views.kanopy_home, name="kanopy_home"),
-    re_path(
-        r"^kanopy/$",
-        RedirectView.as_view(pattern_name="kanopy_home", permanent=False),
-    ),
-    re_path(
-        r"^green_covr_references$",
-        kanopy_views.green_covr_references,
-        name="green_covr_references",
-    ),
-    re_path(
-        r"^kanopy/delete/(?P<pk>\d+)/",
-        kanopy_views.GroundcoverDeleteView.as_view(),
-        name="groundcover_delete",
-    ),
-    path(
-        "groundcover_update/<int:pk>/",
-        kanopy_views.GroundcoverUpdateView.as_view(),
-        name="groundcover_update",
-    ),
-    re_path(r"^green_covr_thanks$", kanopy_views.kanopy_thanks, name="kanopy_thanks"),
-    re_path(
-        r"^kanopy_thanks/$",
-        RedirectView.as_view(pattern_name="kanopy_thanks", permanent=True),
-    ),
-    re_path(
-        r"^green_covr_graph$",
-        kanopy_views.kanopy_graph,
-        name="green_covr_graph",
-    ),
-    re_path(
-        r"^green_covr_map$",
-        kanopy_views.kanopy_display_map,
-        name="green_covr_submission_map",
-    ),
-    re_path(
-        r"^kanopy_map/$",
-        RedirectView.as_view(pattern_name="green_covr_submission_map", permanent=False),
-    ),
-    re_path(
-        r"^kanopy_submissions_json$",
-        kanopy_views.kanopy_submissions_json,
-        name="kanopy_submissions_json",
-    ),
-    re_path(
-        r"^county_map$",
-        kanopy_views.county_map,
-        name="county_map",
-    ),
-    re_path(
-        r"^get_mn_counties$",
-        kanopy_views.get_mn_counties,
-        name="get_mn_counties",
-    ),
-    re_path(r"^green_covr_table$", kanopy_views.kanopy_table, name="kanopy_table"),
-    re_path(
-        r"^kanopy_table/$",
-        RedirectView.as_view(pattern_name="kanopy_table", permanent=False),
-    ),
-    re_path(
-        r"^green_covr_upload$", kanopy_views.model_form_upload, name="kanopy_upload"
-    ),
-    re_path(
-        r"^kanopy_upload/$",
-        RedirectView.as_view(pattern_name="kanopy_upload", permanent=False),
-    ),
-    re_path(
-        r"^green_covr_download$", kanopy_views.kanopy_download, name="kanopy_download"
-    ),
-    re_path(
-        r"^kanopy_download/$",
-        RedirectView.as_view(pattern_name="kanopy_download", permanent=False),
-    ),
-    re_path(
-        r"^green_covr/datalook/20201230$",
-        kanopy_views.datalook_20201230,
-        name="datalook_20201230",
-    ),
-    re_path(
-        r"^kanopy/datalook/20201230/$",
-        RedirectView.as_view(pattern_name="datalook_20201230", permanent=False),
-    ),
-    re_path(
-        r"^green_covr/datalook/2020_21$",
-        kanopy_views.datalook_2020_21,
-        name="datalook_2020_21",
-    ),
-    re_path(
-        r"^kanopy/datalook/2020_21/$",
-        RedirectView.as_view(pattern_name="datalook_2020_21", permanent=False),
-    ),
+
     # Books app
     re_path(r"^$", books_views.home, name="home"),
     re_path(r"^books/$", books_views.book_list, name="book_list"),
@@ -219,8 +109,8 @@ urlpatterns = [
         ),
         name="password_reset_done",
     ),
-    re_path(
-        r"^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$",
+    path(
+        r"reset/<uidb64>/<token>/",
         auth_views.PasswordResetConfirmView.as_view(
             template_name="password_reset_confirm.html"
         ),

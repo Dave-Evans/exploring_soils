@@ -24,13 +24,13 @@ from kanopy.tables import (
 # @method_decorator(login_required, name='dispatch')
 # class GroundcoverDeleteView(PermissionRequiredMixin, DeleteView):
 class GroundcoverDeleteView(DeleteView):
-
+    permission_required = "kanopy.can_view_submissions"
     model = Groundcoverdoc
     success_url = reverse_lazy("kanopy_table")
 
 
-class GroundcoverUpdateView(UpdateView):
-
+class GroundcoverUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = "kanopy.can_view_submissions"
     model = Groundcoverdoc
     form_class = GroundcoverForm
     template_name = "kanopy/kanopy_update_form.html"
@@ -39,7 +39,6 @@ class GroundcoverUpdateView(UpdateView):
 
 @permission_required("kanopy.can_view_submissions", raise_exception=True)
 def kanopy_download(request):
-
     qs = Groundcoverdoc.objects.all()
     return djqscsv.render_to_csv_response(qs)
 
@@ -56,17 +55,14 @@ def kanopy_table(request):
 
 
 def kanopy_home(request):
-
     return render(request, "kanopy/kanopy_home.html")
 
 
 def kanopy_thanks(request):
-
     return render(request, "kanopy/kanopy_thanks.html")
 
 
 def green_covr_references(request):
-
     return render(request, "kanopy/kanopy_references.html")
 
 
@@ -86,7 +82,6 @@ def kanopy_display_map(request):
 
 
 def kanopy_submissions_json(request):
-
     # from django.db import connection
 
     def get_submissions_json():
@@ -151,12 +146,10 @@ def kanopy_submissions_json(request):
 
 
 def county_map(request):
-
     return render(request, "kanopy/county_map.html")
 
 
 def get_mn_counties(request):
-
     # from django.db import connection
 
     def get_county_json():
@@ -258,12 +251,10 @@ def model_form_upload(request):
 
 
 def datalook_20201230(request):
-
     return render(request, "kanopy/green_covr_data_look_20201230.html")
 
 
 def datalook_2020_21(request):
-
     return render(request, "kanopy/green_covr_data_look_2020_21.html")
 
 

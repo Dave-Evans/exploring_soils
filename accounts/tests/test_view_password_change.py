@@ -106,4 +106,4 @@ class InvalidPasswordChangeTests(PasswordChangeTestCase):
         sure we have the latest data.
         '''
         self.user.refresh_from_db()
-self.assertTrue(self.user.check_password('old_password'))
+        self.assertTrue(self.user.check_password('old_password'))
