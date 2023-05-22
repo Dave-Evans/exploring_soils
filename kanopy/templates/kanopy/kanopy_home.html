@@ -48,23 +48,20 @@
             </a>
           </div>
         </div>
+        {% if perms.kanopy.can_view_submissions %}
+        <br>
+        <div class="card">
 
-        <!-- <h5>Upload a photo</h5>
-        <p>
-         
-          To upload your photo simply click the link below!
-          Ready to upload your photo? <a href="{% url 'kanopy_upload' %}">Click here to begin.</a>
-        </p>
-        <h5>Results</h5>
-        <p>
-          We have been looking over the data we have collected and would love to share it with you.
-        <ul>
-          <li><a href="{% url 'green_covr_submission_map' %}">View our submission map</a></li>
-          <li>Check out our <a href="{% url 'green_covr_graph' %}">report of the project data</a></li>
-        </ul>
-
-        </p> -->
-
+          <div class="card-header">
+            Welcome, {{ user.username }}
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">View Uploads Table</h5>
+            <p class="card-text">To view, edit, and delete uploaded cover crop documentation, click below.</p>
+            <a href="{% url 'kanopy_table' %}" class="btn btn-primary">Go to table</a>
+          </div>
+        </div>
+        {% endif %}
       </div>
       <div class="card-footer text-muted text-center">
         Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
