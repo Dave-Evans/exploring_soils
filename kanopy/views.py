@@ -22,8 +22,7 @@ from kanopy.tables import (
 
 
 # @method_decorator(login_required, name='dispatch')
-# class GroundcoverDeleteView(PermissionRequiredMixin, DeleteView):
-class GroundcoverDeleteView(DeleteView):
+class GroundcoverDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = "kanopy.can_view_submissions"
     model = Groundcoverdoc
     success_url = reverse_lazy("kanopy_table")
