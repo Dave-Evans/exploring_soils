@@ -39,13 +39,13 @@ from bikemileage.views import (
 )
 
 
-
 urlpatterns = [
     # For soils in depth
-    path("", include("plotter.urls")), 
-
+    path("", include("plotter.urls")),
     # Kanopy app
-    path("", include("kanopy.urls")),    
+    path("", include("kanopy.urls")),
+    # wisccc app
+    path("", include("wisccc.urls")),
     # bikemileage App
     # re_path(r'^mileage/$',mileage_views.mileage_list, name='mileage_list' ),
     path("custom_mileage", CustomMileageListView.as_view(), name="custom_mileage"),
@@ -69,7 +69,6 @@ urlpatterns = [
         name="login",
     ),
     re_path(r"^logout/$", auth_views.LogoutView.as_view(), name="logout"),
-
     # Books app
     re_path(r"^$", books_views.home, name="home"),
     re_path(r"^books/$", books_views.book_list, name="book_list"),

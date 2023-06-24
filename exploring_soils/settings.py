@@ -63,8 +63,10 @@ INSTALLED_APPS = [
     "books",
     ## custom app
     "bikemileage",
-    ##
+    ## Kanopy
     "kanopy",
+    ## Wisconsin Cover crop citizen science
+    "wisccc",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -163,7 +165,6 @@ LOGOUT_REDIRECT_URL = "home"
 LOGIN_REDIRECT_URL = "home"
 
 
-
 LEAFLET_CONFIG = {
     "SPATIAL_EXTENT": (-96.6, 43.0, -90, 48.5),
     "TILES": "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -205,12 +206,14 @@ PRIVATE_FILE_STORAGE = "exploring_soils.storage_backends.PrivateMediaStorage"
 # EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 #
 
-EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = config('EMAIL_HOST', default = '')
-EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default = '')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default = '')
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
+)
+EMAIL_HOST = config("EMAIL_HOST", default="")
+EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 
-DEFAULT_FROM_EMAIL = 'Evans Geospatial <noreply@evansgeospatial.com>'
-EMAIL_SUBJECT_PREFIX = '[Evans Geospatial] '
+DEFAULT_FROM_EMAIL = "Evans Geospatial <noreply@evansgeospatial.com>"
+EMAIL_SUBJECT_PREFIX = "[Evans Geospatial] "
