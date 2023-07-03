@@ -65,6 +65,7 @@ def wisc_cc_static_data(request):
                   FROM (
                     SELECT 
                             geom.id
+                            , geom.year
                             , geom.county
                             , geom.years_experience
                             , geom.zipcode
@@ -103,7 +104,7 @@ def wisc_cc_static_data(request):
                         FROM (
                             select 
                                 *, ST_Buffer(ST_SetSRID(ST_MakePoint(site_lon, site_lat), 4326), 0.02) as b_collectionpoint
-                                from wisc_cc_2022 wc
+                                from wisc_cc wc
                             ) AS geom
                     ) as inputs) features;
             """
