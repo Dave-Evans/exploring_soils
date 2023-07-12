@@ -4,6 +4,10 @@ import json
 from django.http import JsonResponse
 
 
+def wisc_cc_graph(request):
+    return render(request, "wisccc/wisc_cc_graph.html")
+
+
 def wisc_cc_map(request):
     return render(request, "wisccc/wisc_cc_map.html")
 
@@ -71,6 +75,7 @@ def wisc_cc_static_data(request):
                             geom.id
                             , geom.year
                             , geom.county
+                            , geom.county_single
                             , geom.years_experience
                             , geom.zipcode
                             , geom.previous_crop

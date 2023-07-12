@@ -17,6 +17,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"
         integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ=="
         crossorigin="anonymous"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+    <script src="{% static 'js/L.Control.Window.js' %}"></script>
+    <script type="text/javascript" src='{% static "js/wisccc_legend.js" %}'></script>
     <!-- <link rel="stylesheet" href="css/style.css" type="text/css" /> -->
     <style>
         /* body */
@@ -151,14 +155,12 @@
     </style>
 
     <!-- Used for  show/collapse panel functions -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
 
 
     <title>{% block title %}Wisconsin Citizen Science Cover Crop Map{% endblock %}</title>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
-    <script src="{% static 'js/L.Control.Window.js' %}"></script>
 
     <style>
         /*#map{ width: 900px; height: 1000px; }*/
@@ -275,10 +277,11 @@
             <div class="col-xs-12" id="map"></div>
         </div>
     </div>
+    <script></script>
     <script>
 
         mapLink =
-            '<a href="http://www.esri.com/">Esri</a>';
+            ' <a href="http://www.esri.com/">Esri</a>';
         wholink =
             'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
         var satelite = L.tileLayer(
@@ -438,21 +441,21 @@
                 }
             }
 
-            pop_select_box("SpeciesFilter", "cc_species")
-            pop_select_box("YearFilter", "year");
-            pop_select_box("SeedingFilter", "cc_seeding_method");
-            pop_select_box("SoilTextFilter", "dominant_soil_texture");
+            pop_select_box(soilsLayer, "SpeciesFilter", "cc_species")
+            pop_select_box(soilsLayer, "YearFilter", "year");
+            pop_select_box(soilsLayer, "SeedingFilter", "cc_seeding_method");
+            pop_select_box(soilsLayer, "SoilTextFilter", "dominant_soil_texture");
 
             filterer();
             addLayerToMap();
         });
 
         // for populating select boxes
-        var pop_select_box = function (id_selector, field_name) {
+        var pop_select_box = function (geojson_data, id_selector, field_name) {
             var all_instances = [];
-            for (item in soilsLayer) {
+            for (item in geojson_data) {
 
-                all_instances.push(soilsLayer[item]['properties'][field_name])
+                all_instances.push(geojson_data[item]['properties'][field_name])
 
             }
             const uniq_instances = [...new Set(all_instances)];
@@ -462,7 +465,7 @@
             newOption.value = "All";
             filt.add(newOption);
             uniq_instances.forEach(function (item) {
-                console.log(item)
+                // console.log(item)
                 if (item === null) { return }
                 var newOption = document.createElement("option");
                 newOption.text = item.toString();
@@ -586,174 +589,11 @@
             })
         }
 
-        var plantingMonths = [
-            "February",
-            "March",
-            "April",
-            "May",
 
-            "June",
-            "July",
-            "August",
-            "September",
 
-            "October",
-            "November"
-        ]
-        var plantingMonthColors = [
-            "#ffffd9",
-            "#ffffd9",
-            "#edf8b1",
-            "#c7e9b4",
-            "#7fcdbb",
-
-            "#41b6c4",
-            "#1d91c0",
-            "#225ea8",
-            "#253494",
-
-            "#081d58"
-        ]
-        var plantingScale = d3.scaleOrdinal()
-            .domain(plantingMonths)
-            .range(plantingMonthColors);
 
         //Maybe this: https://github.com/timwis/leaflet-choropleth
-        var speciesClasses = [
-            "annual rye grass",
-            "annual rye grass red clover",
-            "annual rye grass, radish",
-            "barley, wheat (winter)",
-            "cereal (winter) rye",
-            "cereal (winter) rye, hairy vetch",
-            "cereal (winter) rye, oats",
-            "cereal (winter) rye, radish",
-            "Dutch white clover",
-            "red clover",
-            "multispecies mix",
-            "oats",
-            "oats, peas",
-            "oats, radish",
-            "triticale",
-            "wheat (winter)"
-        ]
 
-        var speciesColors = [
-            "#e5f5e0", // Greens for annual rye grass
-            "#a1d99b",
-            "#31a354",
-            // For barley
-            "#e41a1c",
-            // Oranges for cereal rye
-            "#feedde",
-            "#fdbe85",
-            "#fd8d3c",
-            "#d94701",
-            // Blues For Dutch white clover and red clover
-            "#9ecae1",
-            "#3182bd",
-            // Multispecies mix
-            "#a65628",
-            // Purples For Oats
-            "#efedf5",
-            "#bcbddc",
-            "#756bb1",
-            // Triticale
-            "#ffff33",
-            // wheat (winter)
-            "#f781bf"
-        ]
-
-        // var setupSpeciesScale = d3.scaleSequential()
-        //     .domain([1, speciesClasses.length])
-        //     .interpolator(d3.interpolateTurbo);
-
-        // var speciesClassColors = []
-        // for (i = 1; i <= speciesClasses.length; i++) {
-        //     speciesClassColors.push(setupDrainScale(i))
-        // }
-
-        var speciesScale = d3.scaleOrdinal()
-            .domain(speciesClasses)
-            .range(speciesColors);
-
-        var rfqScale = d3.scaleThreshold()
-            .domain([100, 150, 200, 250, 300, 350])
-            .range(d3.schemeGreens[7]);
-
-
-        var gddScale = d3.scaleThreshold()
-            .domain([500, 1000, 1500, 2000, 2500, 3000, 4000])
-            .range(d3.schemeOrRd[8]);
-
-
-        var fgccScale = d3.scaleThreshold()
-            .domain([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-            .range(d3.schemeGreens[7]);
-
-        var biomassScale = d3.scaleThreshold()
-            .domain([0.5, 1, 1.5, 2, 2.5, 3, 3.5])
-            .range(d3.schemePuOr[7]);
-
-
-        function removeLegend(legendClassName) {
-            d3.select(legendClassName).remove();
-        }
-
-        function updateLegend(myscale, fmt_string) {
-
-            removeLegend('.legendSoil');
-
-            var svg = d3.select("#legend svg");
-
-            svg.append("g")
-                .attr("class", "legendSoil")
-                .attr("transform", "translate(20,30)")
-                .style("height", 300);
-
-            var legendSoil = d3.legendColor()
-                .shapeWidth(30)
-                .cells(myscale.domain().length - 2)
-                // .orient("horizontal")
-                .scale(myscale)
-
-            // .shapePadding(4)
-            if (fmt_string != "c") {
-                legendSoil.labels(d3.legendHelpers.thresholdLabels)
-            }
-
-
-            legendSoil.labelFormat(d3.format(fmt_string))
-
-            svg.select(".legendSoil")
-                .call(legendSoil);
-
-        };
-
-        // For representing nulls in the legend. 
-        // We just add this legend first and build a 
-        //  legend based on the data after.
-        function createNullLgend() {
-
-            removeLegend(".nullLegend");
-
-            var svg = d3.select("#legend svg");
-            var nullOrdScale = d3.scaleOrdinal()
-                .domain(["Null"])
-                .range(["#ccc"]);
-
-            svg.append("g")
-                .attr("class", "nullLegend")
-                .attr("transform", "translate(20,10)");
-
-            var nullValLegend = d3.legendColor()
-                .shapeWidth(30)
-                .cells(1)
-                .scale(nullOrdScale);
-
-            svg.select("g.nullLegend")
-                .call(nullValLegend);
-        };
         // Call updateScale when everything is loaded. Seemed to be an issue where
         //  the on change would try to be attached before the leaflet control containing 
         //  the dropdown and slider were located was created
