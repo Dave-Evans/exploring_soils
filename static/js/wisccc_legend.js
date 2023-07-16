@@ -147,7 +147,7 @@ var biomassScale = d3.scaleThreshold()
 function removeLegend(legendClassName) {
     d3.select(legendClassName).remove();
 }
-
+// Only for map
 function updateLegend(myscale, fmt_string) {
 
     removeLegend('.legendSoil');

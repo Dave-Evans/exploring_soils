@@ -495,7 +495,7 @@
                 .attr("x", 0 - (height / 2))
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
-                .text("Percent Green Cover");
+                .text("Cover crop biomass (ton/acre)");
 
             svg.append("text")      // text label for the x axis
                 .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.bottom - 5) + ")")
@@ -795,7 +795,7 @@
 
                 svg_legend.append("g")
                     .attr("class", "legendSoil")
-                    .attr("transform", "translate(20,30)")
+                    .attr("transform", "translate(-5,30)")
                 // .style("height", 400);
 
                 var legendSoil = d3.legendColor()
