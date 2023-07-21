@@ -445,6 +445,7 @@
                 newOption.text = "All";
                 newOption.value = "All";
                 filt.add(newOption);
+                uniq_instances.sort()
                 uniq_instances.forEach(function (item) {
                     // console.log(item)
                     if (item === null) { return }
@@ -642,7 +643,7 @@
                     return data
                 }
                 return data.filter(function (d) {
-                    return d.properties.cc_planting_date.getYear() == year;
+                    return d.properties.year == year;
                 });
 
             }
@@ -726,12 +727,6 @@
                 updateChart(false);
 
             })
-
-
-
-
-
-            // for populating select boxes
 
 
             function getScaleAndProperty(filtered_data, sdd) {
