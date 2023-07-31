@@ -318,18 +318,7 @@
                 "translate(" + margin.left + "," + margin.top + ")");
 
 
-        var getRegion = function (county) {
-            var western = ['St. Croix', 'Polk', 'Barron', 'Pierce', 'Trempealeau', 'Jackson', 'Vernon']
-            var central = ["Clark", "Marathon", "Lincoln"] //Jackson?
-            var southern = ["Sauk", "Iowa", "Grant", "Lafayette", "Dane", "Green", "Jefferson", "Rock"]
-            var eastern = ["Dodge", "Washington", "Green Lake", "Winnebago", "Fond du Lac", "Sheboygan", "Calumet", "Manitowoc", "Brown", "Kewaunee", "Door"]
-            let region;
-            if (western.includes(county)) { return "Western" }
-            if (southern.includes(county)) { return "Southern" }
-            if (eastern.includes(county)) { return "Eastern" }
-            if (central.includes(county)) { return "Central" }
-            return "Other";
-        }
+
 
 
 

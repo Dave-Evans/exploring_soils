@@ -119,9 +119,40 @@ const colorScalePriorCrops = d3.scaleOrdinal()
     )
     .range(priorcropColors);
 
+var o_region_cty_lu = {
+    "Northwest": ["Bayfield", "Douglas", "Polk", "Barron", "Chippewa", "Rusk", "Washburn", "Sawyer", "Burnett"],
+    "North Central": ["Ashland", "Iron", "Vilas", "Oneida", "Price", "Lincoln", "Taylor", "Marathon", "Clark"],
+    "Northeast": ["Florence", "Forest", "Marinette", "Langlade", "Oconto", "Menominee", "Shawano"],
+    "West Central": ["St. Croix", "Dunn", "Pierce", "Pepin", "Eau Claire", "Buffalo", "Trempealeau", "Jackson", "La Crosse", "Monroe"],
+    "East Central": ["Outagamie", "Brown", "Door", "Kewaunee", "Manitowoc", "Calumet", "Winnebago", "Fond du Lac", "Sheboygan"],
+    "Central": ["Wood", "Portage", "Waupaca", "Juneau", "Adams", "Waushara", "Marquette", "Green Lake"],
+    "Southwest": ["Vernon", "Richland", "Sauk", "Crawford", "Grant", "Iowa", "Lafayette"],
+    "South Central": ["Columbia", "Dane", "Green", "Dodge", "Jefferson", "Rock"],
+    "Southeast": ["Washington", "Ozaukee", "Waukesha", "Milwaukee", "Walworth", "Racine", "Kenosha"]
+}
+
+var getRegion = function (county) {
+
+    let region;
+    for (k in Object.keys(o_region_cty_lu)) {
+        region = Object.keys(o_region_cty_lu)[k];
+        if (o_region_cty_lu[region].includes(county)) { return region }
+    }
+
+    return "Other";
+}
+
 var colorScaleCounty = d3.scaleOrdinal()
-    .domain(["Eastern", "Central", "Southern", "Western"])
-    .range(['#e41a1c', '#377eb8', '#ff7f00', '#ffff33'])
+    .domain(Object.keys(o_region_cty_lu))
+    .range(['#d53e4f',
+        '#f46d43',
+        '#fdae61',
+        '#fee08b',
+        '#ffffbf',
+        '#e6f598',
+        '#abdda4',
+        '#66c2a5',
+        '#3288bd'])
 
 var plantingScale = d3.scaleOrdinal()
     .domain(plantingMonths)
