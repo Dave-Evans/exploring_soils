@@ -96,7 +96,7 @@ const priorcrop_list = [
     // 'barley',
     'other forage',
     'winter wheat',
-    'other grain',
+    'other small grains',
     // '.',
 ]
 
