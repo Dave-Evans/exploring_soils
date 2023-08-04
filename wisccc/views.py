@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.db import connection
 import json
 from django.http import JsonResponse
+from django.http import HttpResponse
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 
 def wisc_cc_graph(request):
@@ -9,11 +11,16 @@ def wisc_cc_graph(request):
 
 
 def wisc_cc_map(request):
-    return render(request, "wisccc/wisc_cc_map.html")
+    return render(request, "wisccc/wisc_cc_map_toggle.html")
 
 
 def wisc_cc_map_v2(request):
     return render(request, "wisccc/wisc_cc_map_toggle.html")
+
+
+@xframe_options_exempt
+def wisc_cc_map_embed(request):
+    return render(request, "wisccc/wisc_cc_map_embed.html")
 
 
 def get_wi_counties(request):
