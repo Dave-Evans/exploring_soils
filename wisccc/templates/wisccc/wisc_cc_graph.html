@@ -240,7 +240,8 @@
 
 
         </div>
-
+        <!-- <iframe id="iframe_wisc_cc_map" title="map of participating farmers" width=300 height=400
+            src="http://dev.evansgeospatial.com/wisc_cc_map_embed"></iframe> -->
         <div id=" data-collection" class="section level2">
 
             <div class="figure" style="text-align: center">
@@ -273,9 +274,20 @@
                         <select id="select_soil_texture" class="group-select">
                         </select> <br>
 
+                        Tillage
+                        <select id="select_tillage" class="group-select">
+                        </select> <br>
+
                         Seeding Method
                         <select id="select_seeding_method" class="group-select">
                         </select> <br>
+
+                        Manure applied prior to cover crop
+                        <input type="checkbox" id="checkbox_manure_prior" class="group-select">
+
+
+                        Manure applied post cover crop establishment
+                        <input type="checkbox" id="checkbox_manure_post" class="group-select">
 
                     </div>
                     <div class="col-md-4" id="color_changer">
@@ -448,6 +460,7 @@
             pop_select_box(submission_data, "select_seeding_method", "cc_seeding_method")
             pop_select_box(submission_data, "select_planting_year", "year");
             pop_select_box(submission_data, "select_county", "county_single");
+            pop_select_box(submission_data, "select_tillage", "residue_remaining");
 
 
 
@@ -588,6 +601,13 @@
 
                 filtered_data = filterDataSeedingMethod(filtered_data)
 
+                filtered_data = filterDataTillage(filtered_data)
+
+                filtered_data = filterDataManurePrior(filtered_data)
+
+                filtered_data = filterDataManurePost(filtered_data)
+
+
                 return filtered_data;
 
             }
@@ -607,7 +627,7 @@
 
             }
 
-            function filterDataSeedingMethod(data, sdd) {
+            function filterDataSeedingMethod(data) {
 
                 var selector;
                 selector = "#select_seeding_method";
@@ -619,7 +639,33 @@
                 return data.filter(function (d) {
                     return d.properties.cc_seeding_method == seeding_method;
                 });
+            }
 
+
+            function filterDataManurePrior(data) {
+
+                var selector;
+                selector = "#checkbox_manure_prior"
+                if (prior_manure) {
+                    return data.filter(function (d) {
+                        return d.properties.manure_prior == "Yes"
+                    })
+                } else {
+                    return data
+                }
+            }
+
+            function filterDataManurePost(data) {
+
+                var selector;
+                selector = "#checkbox_manure_post"
+                if (post_manure) {
+                    return data.filter(function (d) {
+                        return d.properties.manure_post == "Yes"
+                    })
+                } else {
+                    return data
+                }
             }
 
             function filterDataYear(data, sdd) {
@@ -650,6 +696,23 @@
                 }
                 return data.filter(function (d) {
                     return d.properties.county_single === county;
+                });
+
+            }
+
+            function filterDataTillage(data, sdd) {
+                // Reminder, won't be real year, 2020 == 120
+                var selector;
+
+                selector = "#select_tillage";
+
+                var tillage_tier = d3.select(selector).node().value
+                console.log(tillage_tier)
+                if (tillage_tier == "All") {
+                    return data
+                }
+                return data.filter(function (d) {
+                    return d.properties.residue_remaining === tillage_tier;
                 });
 
             }
@@ -696,6 +759,13 @@
 
             })
 
+            d3.select("#select_tillage").on("change", function () {
+                console.log("Changed tillage to: " + this.value);
+
+                updateChart(false);
+
+            })
+
             d3.select("#select_planting_year").on("change", function () {
 
                 console.log("Changed to: " + this.value)
@@ -713,6 +783,31 @@
             d3.select("#select_soil_texture").on("change", function () {
 
                 console.log("Changed to: " + this.value)
+                updateChart(false);
+
+            })
+
+
+            let prior_manure = false;
+            d3.select("#checkbox_manure_prior").on("change", function () {
+                if (prior_manure) {
+                    prior_manure = false;
+                } else {
+                    prior_manure = true;
+                }
+                console.log("Changed prior manure: " + prior_manure)
+                updateChart(false);
+
+            })
+
+            let post_manure = false;
+            d3.select("#checkbox_manure_post").on("change", function () {
+                if (post_manure) {
+                    post_manure = false;
+                } else {
+                    post_manure = true;
+                }
+                console.log("Changed to post manure: " + post_manure)
                 updateChart(false);
 
             })

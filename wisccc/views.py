@@ -95,6 +95,7 @@ def wisc_cc_static_data(request):
                             , geom.tillage_system 
                             , geom.tillage_equip_primary
                             , geom.tillage_equip_secondary
+                            , geom.residue_remaining
                             , geom.soil_conditions
                             , geom.cc_seeding_method
                             , geom.cc_planting_rate

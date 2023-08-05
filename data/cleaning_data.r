@@ -147,9 +147,11 @@ dat_survey %>%
 
 ###### For 2020 and 2021 data ##################################################
 
+counties = read_sf("~/Documents/exploring_soils/data/county_nrcs_a_wi.gdb/", layer="county_nrcs_a_wi")
+
 zips = read_sf("~/Documents/small_projects/wisc_cc/tl_2020_us_zcta520/tl_2020_us_zcta520.shp")
 zips$centroids <- st_transform(zips, 5070) %>%
-  st_centroid() %>%
+  st_centroid() %>% 
   #st_transform(., 4269) %>%
   st_transform(., 4326) %>%
   st_geometry()
@@ -338,7 +340,29 @@ dat_all <- dat_all %>%
       cc_seeding_method == "planter_15in" ~ NA,
       .default = cc_seeding_method
     )
-  ) %>%
+  )  %>%
+  mutate(residue_remaining = case_when(
+    grepl("15-30%", tillage_system) ~ "Reduced, 15-30% residue remaining",
+    grepl(">30%", tillage_system) ~ "Conservation, >30% residue remaining",
+    grepl("none", tolower(tillage_system)) ~ "Conservation, >30% residue remaining",
+    grepl("notill", tolower( gsub("-", "", gsub(" ", "", tillage_system) ) )) ~ "Conservation, >30% residue remaining",
+    grepl("<15%", tillage_system) ~ "Conventional, <15% residue remaining",
+    grepl("deep ripping", tolower(tillage_system)) ~ "Conventional, <15% residue remaining",
+    grepl("organic", tolower(tillage_system)) ~ "Conventional, <15% residue remaining",
+    .default = tillage_system
+  )) %>% 
+  # group_by(tillage_system, residue_remaining) %>%
+  # summarise(n= n()) %>%
+  # select(tillage_system, residue_remaining, n) -> tst
+  
+  # select(id, residue_remaining, tillage_system) %>% print(n=100)
+  
+  mutate(manure_prior = ifelse(manure_prior == ".", "No", manure_prior)) %>%
+  mutate(manure_post = ifelse(manure_post == ".", "No", manure_post)) %>%
+  mutate(manure_post = ifelse(is.na(manure_post), "No", manure_post)) %>%
+  
+  mutate(manure_rate = ifelse(manure_rate == ".", NA, manure_rate)) %>%
+  mutate(manure_value = ifelse(is.na(manure_value), 0, manure_value)) %>%
   mutate(county_single = ifelse(county == "Trempealeau Buffalo", "Trempealeau", county)) %>%
   mutate(county_single = str_split_i(county_single, ",", 1)) %>% 
   mutate(county_single = str_split_i(county_single, "&", 1)) %>% 
