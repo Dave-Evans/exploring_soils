@@ -382,17 +382,6 @@
             var dParserYmd = d3.timeParse("%Y-%m-%d")
             for (let i = 0; i < data.length; i++) {
 
-                // Coding prior crops with null as Other
-                if (data[i].properties.previous_crop.length == 0) { data[i].properties.previous_crop = "other forage" }
-                if (data[i].properties.previous_crop == 'Sorghum-sudangrass or forage sorghum') { data[i].properties.previous_crop = "other forage" }
-                if (data[i].properties.previous_crop == 'corn') { data[i].properties.previous_crop = "corn for grain" }
-                if (data[i].properties.previous_crop == 'peas') { data[i].properties.previous_crop = "vegetable crop" }
-                if (data[i].properties.previous_crop == 'green beans') { data[i].properties.previous_crop = "vegetable crop" }
-                if (data[i].properties.previous_crop == 'Rye') { data[i].properties.previous_crop = "other grain" }
-                if (data[i].properties.previous_crop == 'Winter Rye') { data[i].properties.previous_crop = "other forage" }
-                if (data[i].properties.previous_crop == 'barley') { data[i].properties.previous_crop = "other grain" }
-                if (data[i].properties.previous_crop == '.') { data[i].properties.previous_crop = "other forage" }
-
                 // Coding counties to regions
                 data[i].properties.region = getRegion(data[i].properties.county_single)
                 if (data[i].properties.region == "Other") {
@@ -788,25 +777,20 @@
             })
 
 
-            let prior_manure = false;
+            let prior_manure = document.getElementById('checkbox_manure_prior').checked;
             d3.select("#checkbox_manure_prior").on("change", function () {
-                if (prior_manure) {
-                    prior_manure = false;
-                } else {
-                    prior_manure = true;
-                }
+                prior_manure = document.getElementById('checkbox_manure_prior').checked
                 console.log("Changed prior manure: " + prior_manure)
                 updateChart(false);
 
             })
 
-            let post_manure = false;
+
+            let post_manure = document.getElementById('checkbox_manure_post').checked;
             d3.select("#checkbox_manure_post").on("change", function () {
-                if (post_manure) {
-                    post_manure = false;
-                } else {
-                    post_manure = true;
-                }
+
+                post_manure = document.getElementById('checkbox_manure_post').checked
+
                 console.log("Changed to post manure: " + post_manure)
                 updateChart(false);
 
@@ -885,7 +869,9 @@
                     .call(legendSoil);
             }
 
-
+            $(document).ready(function () {
+                updateChart(false)
+            });
 
         })
 
@@ -910,9 +896,7 @@
     <!-- tabsets -->
 
     <script>
-        $(document).ready(function () {
-            window.buildTabsets("TOC");
-        });
+
 
         $(document).ready(function () {
             $('.tabset-dropdown > .nav-tabs > li').click(function () {

@@ -588,25 +588,20 @@
             //add the layer to the map again, now that we have changed the filter value. 
             addLayerToMap();
         });
-        let prior_manure = false;
+        let prior_manure = document.getElementById('PriorManFilter').checked;
         $("#PriorManFilter").on("input", function () {
-            if (prior_manure == true) {
-                prior_manure = false;
-            } else {
-                prior_manure = true;
-            }
-            console.log(prior_manure)
+
+            prior_manure = document.getElementById('PriorManFilter').checked
+
             filterer()
             //add the layer to the map again, now that we have changed the filter value. 
             addLayerToMap();
         });
-        let post_manure = false;
+        let post_manure = document.getElementById('PostManFilter').checked;
         $("#PostManFilter").on("input", function () {
-            if (post_manure == true) {
-                post_manure = false;
-            } else {
-                post_manure = true;
-            }
+
+            post_manure = document.getElementById('PostManFilter').checked
+
             filterer()
             //add the layer to the map again, now that we have changed the filter value. 
             addLayerToMap();
