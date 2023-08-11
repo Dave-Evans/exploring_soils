@@ -176,7 +176,7 @@
 
         div.tooltip {
             position: absolute;
-            text-align: center;
+            text-align: left;
             padding: 5px;
             font: 12px sans-serif;
             background: lightsteelblue;
@@ -368,7 +368,18 @@
 
         function formatToolTip(feature) {
 
-            return feature.properties.total_precip + "<br/>" + feature.properties.cc_species + "<br/>" + feature.properties.cc_planting_rate + "<br/>"
+            var tool_tip_string = "Total precip: " + feature.properties.total_precip + " in" + "<br/>" +
+                feature.properties.cc_species + "<br/>" +
+                feature.properties.cc_planting_rate + "<br/>"
+
+            if (feature.properties.manure_value | feature.properties.manure_value > 0) {
+                tool_tip_string += "Manure applied: " +
+                    feature.properties.manure_value + " " +
+                    feature.properties.manure_rate
+            }
+
+            return tool_tip_string;
+
 
         }
         var dataurl = '/wisc_cc_static_data';
@@ -586,7 +597,7 @@
                 if (property == "acc_gdd") {
                     pretty_property = "Growing degree days"
                 } else if (property == "total_precip") {
-                    pretty_property = "Total precipitation"
+                    pretty_property = "Total precipitation (in)"
                 } else if (property == "cc_planting_date_flat") {
                     pretty_property = "Cover crop planting date"
                 }
