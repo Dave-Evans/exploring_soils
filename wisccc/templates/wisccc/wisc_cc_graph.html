@@ -252,6 +252,14 @@
 
                 <div class="row">
                     <div class="col-md-2" id="legend">
+                        <br>
+                        <b>
+                            <select id="select_color" class="group-select">
+                                <option value="region" selected>NOAA Climate Regions</option>
+                                <option value="cc_species">Cover crop species</option>
+                                <option value="previous_crop">Cash crop prior</option>
+                            </select>
+                        </b>
                         <svg width="200px" height="250px"></svg>
                     </div>
                     <div class="col-md-8" id="my_dataviz">
@@ -264,6 +272,10 @@
                 </div>
                 <div class="row" style="text-align: left;">
                     <div class=" col-md-3" id="filters">
+
+                        Cover crop species
+                        <select id="select_species" class="group-select">
+                        </select> <br>
 
                         County
                         <select id="select_county" class="group-select">
@@ -297,11 +309,11 @@
 
                     </div>
                     <div class="col-md-4" id="color_changer">
-                        <select id="select_color" class="group-select">
+                        <!-- <select id="select_color" class="group-select">
                             <option value="region" selected>Region</option>
                             <option value="cc_species">Cover crop species</option>
                             <option value="previous_crop">Cash crop prior</option>
-                        </select> <br>
+                        </select> <br> -->
                     </div>
                     <div class="col-md-3" id="x_axis_changer">
 
@@ -376,6 +388,8 @@
                 tool_tip_string += "Manure applied: " +
                     feature.properties.manure_value + " " +
                     feature.properties.manure_rate
+            } else {
+                tool_tip_string += "No manure applied"
             }
 
             return tool_tip_string;
@@ -466,6 +480,7 @@
                     filt.add(newOption);
                 })
             }
+            pop_select_box(submission_data, "select_species", "cc_species");
             pop_select_box(submission_data, "select_soil_texture", "dominant_soil_texture");
             pop_select_box(submission_data, "select_seeding_method", "cc_seeding_method")
             pop_select_box(submission_data, "select_planting_year", "year");
@@ -605,7 +620,7 @@
                     .transition().duration(1000)
                     .text(pretty_property);
 
-                updateLegend(color_scale)
+                updateLegendGraph(color_scale)
 
             }
 
@@ -692,6 +707,8 @@
             function getFilteredData(data) {
 
                 var filtered_data = filterDataYear(data)
+
+                filtered_data = filterDataSpecies(filtered_data)
 
                 filtered_data = filterDataCounty(filtered_data)
 
@@ -781,6 +798,24 @@
 
             }
 
+
+            function filterDataSpecies(data, sdd) {
+                // Reminder, won't be real year, 2020 == 120
+                var selector;
+
+                selector = "#select_species";
+
+                var species = d3.select(selector).node().value
+                console.log(species)
+                if (species == "All") {
+                    return data
+                }
+                return data.filter(function (d) {
+                    return d.properties.cc_species === species;
+                });
+
+            }
+
             function filterDataCounty(data, sdd) {
                 // Reminder, won't be real year, 2020 == 120
                 var selector;
@@ -852,6 +887,13 @@
             // Filter actions
             d3.select("#select_county").on("change", function () {
                 console.log("Changed county to: " + this.value);
+
+                updateChart(false);
+
+            })
+
+            d3.select("#select_species").on("change", function () {
+                console.log("Changed species to: " + this.value);
 
                 updateChart(false);
 
@@ -969,13 +1011,13 @@
             }
 
             // Legend
-            function updateLegend(scale) {
+            function updateLegendGraph(scale) {
                 // d3.select(legendClassName).remove();
                 var svg_legend = d3.select("#legend svg")
 
                 svg_legend.append("g")
                     .attr("class", "legendSoil")
-                    .attr("transform", "translate(-5,30)")
+                    .attr("transform", "translate(-5,10)")
                 // .style("height", 400);
 
                 var legendSoil = d3.legendColor()
