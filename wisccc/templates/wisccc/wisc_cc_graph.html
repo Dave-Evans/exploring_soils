@@ -279,13 +279,13 @@
                 </div>
 
                 <div class="row" style="text-align: left;">
-                    <div class=" col-md-4"><label>Filters</label></div>
+                    <div class=" col-md-6"><label>Filters</label></div>
                     <!-- <div class=" col-md-4"><label>Change color</label></div> -->
-                    <div class=" col-md-3"><label>Change X axis</label></div>
-                    <div class=" col-md-3"><label>Regression line</label></div>
+                    <div class=" col-md-4"><label>Change X axis</label></div>
+                    <!-- <div class=" col-md-3"><label>Regression line</label></div> -->
                 </div>
                 <div class="row" style="text-align: left;">
-                    <div class=" col-md-4" id="filters">
+                    <div class=" col-md-6" id="filters">
                         <table>
                             <tr>
                                 <td>Cover-crop species</td>
@@ -328,37 +328,6 @@
                             </tr>
 
                         </table>
-                        <!-- Cover crop species
-                        <select id="select_species" class="group-select">
-                        </select> <br>
-
-                        County
-                        <select id="select_county" class="group-select">
-                        </select> <br> -->
-
-                        <!-- Planting Year
-                        <select id="select_planting_year" class="group-select">
-                        </select> <br> -->
-
-                        <!-- Soil Texture
-                        <select id="select_soil_texture" class="group-select">
-                        </select> <br>
-
-                        Tillage
-                        <select id="select_tillage" class="group-select">
-                        </select> <br>
-
-                        Seeding Method
-                        <select id="select_seeding_method" class="group-select">
-                        </select> <br> -->
-
-
-
-
-
-
-
-
 
                     </div>
                     <!-- <div class="col-md-4" id="color_changer">
@@ -368,7 +337,7 @@
                             <option value="previous_crop">Cash crop prior</option>
                         </select> <br>
                     </div> -->
-                    <div class="col-md-3" id="x_axis_changer">
+                    <div class="col-md-4" id="x_axis_changer">
 
                         <select id="xFactor" class="group-select">
                             <option value="acc_gdd" selected>Growing degree days</option>
@@ -377,9 +346,13 @@
                         </select>
 
                     </div>
-                    <div class="col-md-3" id="lin_reg">
+
+                    <div class="col-md-4" id="lin_reg">
+
 
                         <table>
+                            <br>
+                            <label>Regression line</label>
                             <tr>
                                 <td>Add regression line</td>
                                 <td><input type="checkbox" id="checkbox_linreg_line" class="group-select"></td>
