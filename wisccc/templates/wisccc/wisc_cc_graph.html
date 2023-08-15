@@ -195,6 +195,12 @@
             /* makes a grey shadow below the navbar */
             box-shadow: 0 5px 15px rgba(1, 1, 1, .7);
         }
+
+        th,
+        td {
+            border: 7px solid white;
+
+        }
     </style>
 
     <!-- code folding -->
@@ -256,40 +262,85 @@
 
                 <div class="row">
                     <div class="col-md-2" id="legend">
-                        <!-- <br>
-                        <b>
-                            <select id="select_color" class="group-select">
-                                <option value="region" selected>NOAA Climate Regions</option>
-                                <option value="cc_species">Cover crop species</option>
-                                <option value="previous_crop">Cash crop prior</option>
-                            </select>
-                        </b> -->
+                        <br>
+                        <div style="text-align: left;">
+                            <b>Change color</b>
+                        </div>
+                        <select id="select_color" class="group-select">
+                            <option value="region" selected>NOAA Climate Regions</option>
+                            <option value="cc_species">Cover crop species</option>
+                            <option value="previous_crop">Cash crop prior</option>
+                        </select>
+
                         <svg width="200px" height="250px"></svg>
                     </div>
                     <div class="col-md-8" id="my_dataviz">
                     </div>
                 </div>
+
                 <div class="row" style="text-align: left;">
-                    <div class=" col-md-3"><label>Filters</label></div>
-                    <div class=" col-md-4"><label>Change color</label></div>
+                    <div class=" col-md-4"><label>Filters</label></div>
+                    <!-- <div class=" col-md-4"><label>Change color</label></div> -->
                     <div class=" col-md-3"><label>Change X axis</label></div>
+                    <div class=" col-md-3"><label>Regression line</label></div>
                 </div>
                 <div class="row" style="text-align: left;">
-                    <div class=" col-md-3" id="filters">
+                    <div class=" col-md-4" id="filters">
+                        <table>
+                            <tr>
+                                <td>Cover-crop species</td>
+                                <td><select id="select_species" class="group-select">
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>County</td>
+                                <td><select id="select_county" class="group-select">
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Planting Year</td>
+                                <td><select id="select_planting_year" class="group-select">
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Soil Texture</td>
+                                <td><select id="select_soil_texture" class="group-select">
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Tillage</td>
+                                <td><select id="select_tillage" class="group-select">
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Seeding Method</td>
+                                <td><select id="select_seeding_method" class="group-select">
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Manure applied prior to cover crop</td>
+                                <td><input type="checkbox" id="checkbox_manure_prior" class="group-select"></td>
+                            </tr>
+                            <tr>
+                                <td>Manure applied post cover crop establishment</td>
+                                <td><input type="checkbox" id="checkbox_manure_post" class="group-select"></td>
 
-                        Cover crop species
+                            </tr>
+
+                        </table>
+                        <!-- Cover crop species
                         <select id="select_species" class="group-select">
                         </select> <br>
 
                         County
                         <select id="select_county" class="group-select">
-                        </select> <br>
+                        </select> <br> -->
 
-                        Planting Year
+                        <!-- Planting Year
                         <select id="select_planting_year" class="group-select">
-                        </select> <br>
+                        </select> <br> -->
 
-                        Soil Texture
+                        <!-- Soil Texture
                         <select id="select_soil_texture" class="group-select">
                         </select> <br>
 
@@ -299,26 +350,24 @@
 
                         Seeding Method
                         <select id="select_seeding_method" class="group-select">
-                        </select> <br>
-
-                        Manure applied prior to cover crop
-                        <input type="checkbox" id="checkbox_manure_prior" class="group-select"> <br>
+                        </select> <br> -->
 
 
-                        Manure applied post cover crop establishment
-                        <input type="checkbox" id="checkbox_manure_post" class="group-select"> <br>
 
-                        Add linear regression line
-                        <input type="checkbox" id="checkbox_linreg_line" class="group-select"> <br>
+
+
+
+
+
 
                     </div>
-                    <div class="col-md-4" id="color_changer">
+                    <!-- <div class="col-md-4" id="color_changer">
                         <select id="select_color" class="group-select">
                             <option value="region" selected>Region</option>
                             <option value="cc_species">Cover crop species</option>
                             <option value="previous_crop">Cash crop prior</option>
                         </select> <br>
-                    </div>
+                    </div> -->
                     <div class="col-md-3" id="x_axis_changer">
 
                         <select id="xFactor" class="group-select">
@@ -326,6 +375,45 @@
                             <option value="cc_planting_date_flat">Planting date</option>
                             <option value="total_precip">Total precipitation</option>
                         </select>
+
+                    </div>
+                    <div class="col-md-3" id="lin_reg">
+
+                        <table>
+                            <tr>
+                                <td>Add regression line</td>
+                                <td><input type="checkbox" id="checkbox_linreg_line" class="group-select"></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <select id="select_model_type" class="group-select">
+                                            <option value="linear" selected>Linear</option>
+                                            <option value="quadratic">Quadratic</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div> <span id="regression_explanation"></span></div>
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div><span id="regression_equation"></span></div>
+                                </td>
+                            </tr>
+
+                        </table>
+
+
 
                     </div>
                 </div>
@@ -402,7 +490,7 @@
         }
         var dataurl = '/wisc_cc_static_data';
         var submission_data;
-        var model_data;
+        var model_data = [];
 
         d3.json(dataurl, function (data) {
             submission_data = data;
@@ -574,7 +662,12 @@
 
                 // For regression line
                 svg.selectAll(".line").remove();
+                $('#regression_equation').hide()
+                $('#regression_explanation').hide()
                 if (document.getElementById('checkbox_linreg_line').checked) {
+                    $('#regression_equation').show();
+                    $('#regression_explanation').show();
+
                     svg.append("path")
                         .datum(data)
                         .attr("class", "line")
@@ -683,26 +776,62 @@
                     )
 
                     return rslt
+                } else if (type == "quadratic") {
+                    var rslt = regression.polynomial(
+                        // Using precision to 5 because fit is usually so bad as to be nearly zero
+                        mod_data, {
+                        precision: 5,
+                        order: 2
+                    }
+                    )
+
+                    return rslt
                 }
 
             }
 
-            function addRegressionLine(data) {
+            function prettyRegExplanation(xproperty, r2) {
+                var pretty_prop;
+                if (xproperty == "cc_planting_date_flat") {
+                    pretty_prop = "Planting date"
+                } else if (xproperty == "total_precip") {
+                    pretty_prop = "Total precipitation (inches)"
+                } else if (xproperty == "acc_gdd") {
+                    pretty_prop = "Accumulated growing degree days"
+                }
 
+                pretty_prop += " explains " + r2 * 100 + " percent of the variation in cover crop biomass."
+                return pretty_prop
+
+            }
+
+            function addRegressionLine(data) {
+                var reg_expl = "explains"
                 var xproperty = getScaleAndProperty(data)[0];
                 if (xproperty == "cc_planting_date_flat") {
                     xproperty = "julian_day"
                 }
+                var model_type = d3.select("#select_model_type").node().value
 
                 var data_for_model = getDataForModel(data, xproperty)
 
-                var model_result = fitModel(data_for_model)
+                var model_result = fitModel(data_for_model, model_type)
                 console.log(model_result.string)
+
+
+                $('#regression_equation').text(model_result.string)
+                $('#regression_explanation').text(prettyRegExplanation(xproperty, model_result.r2))
+                // model_data = []
                 for (let i = 0; i < data.length; i++) {
 
                     data[i].properties.predicted = model_result.predict(data[i].properties[xproperty])[1]
 
                 }
+
+                // Sorting the data for tidy plotting
+                data.sort(function (a, b) {
+                    return a.properties[xproperty] - b.properties[xproperty];
+                });
 
                 return data
 
@@ -935,8 +1064,8 @@
 
             d3.select("#checkbox_linreg_line").on("change", function () {
 
-
                 updateChart(false);
+
             })
 
 
@@ -958,6 +1087,15 @@
                 updateChart(false);
 
             })
+
+            d3.select("#select_model_type").on("change", function () {
+
+                console.log("Changed to: " + this.value)
+                updateChart(false);
+
+            })
+
+
 
 
             function getScaleAndProperty(filtered_data, sdd) {
@@ -992,11 +1130,12 @@
                     scale = xScaleLinear
 
 
-                    scale.domain(
-                        d3.extent(filtered_data.map(function (child) {
+                    scale.domain([0,
+                        d3.max(filtered_data.map(function (child) {
                             return child.properties[property]
                         })
                         )
+                    ]
                     );
                 } else if ((property == "cc_planting_date") || (property == "cc_planting_date_flat")) {
 
