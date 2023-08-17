@@ -233,8 +233,8 @@
         </div>
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
-                <li><a href="#">menu1</a></li>
-                <li><a href="#">menu2</a></li>
+                <li><a href="{% url 'wisc_cc_home' %}">Home</a></li>
+                <li><a href="{% url 'wisc_cc_map' %}">Map</a></li>
                 <li><a href="#">menu3</a></li>
             </ul>
         </div>
@@ -765,7 +765,7 @@
 
             function prettyRegExplanation(xproperty, r2) {
                 var pretty_prop;
-                if (xproperty == "cc_planting_date_flat") {
+                if (xproperty == "julian_day") {
                     pretty_prop = "Planting date"
                 } else if (xproperty == "total_precip") {
                     pretty_prop = "Total precipitation (inches)"
@@ -773,7 +773,7 @@
                     pretty_prop = "Accumulated growing degree days"
                 }
 
-                pretty_prop += " explains " + r2 * 100 + " percent of the variation in cover crop biomass."
+                pretty_prop += " explains " + roundUp(r2 * 100, 1) + " percent of the variation in cover crop biomass."
                 return pretty_prop
 
             }
@@ -790,6 +790,7 @@
 
                 var model_result = fitModel(data_for_model, model_type)
                 console.log(model_result.string)
+                console.log("R2: " + model_result.r2)
 
 
                 $('#regression_equation').text(model_result.string)

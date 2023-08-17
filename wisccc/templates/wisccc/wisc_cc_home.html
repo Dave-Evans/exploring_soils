@@ -1,0 +1,71 @@
+{% extends 'kanopy/base_kanopy.html' %}
+{% load static %}
+{% block title %}Welcome to Wisconsin Citizen Science Cover Crop Project {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10 col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">Welcome</h3>
+        <p>Help gather data and learn about cover crop usage in Wisconsin</p>
+        <div class="card-deck">
+
+          <div class="card">
+            <a href="#">
+              <img class="card-img-top" width="200" height="200" src="{% static 'img/cover_crop_good_image.jpg' %}"
+                alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">Fill out cover crop survey</h5>
+                <p class="card-text">To fill out a survey, click here.
+                </p>
+
+              </div>
+            </a>
+          </div>
+
+          <div class="card">
+            <a href="{% url 'wisc_cc_map' %}">
+              <img class="card-img-top" width="200" height="200" src="{% static 'img/display_wisc_cc_map2.png' %}"
+                alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">View map</h5>
+                <p class="card-text">Explore the map where farmers have filled out surveys about cover crop usage.</p>
+
+              </div>
+            </a>
+          </div>
+          <div class="card">
+            <a href="{% url 'wisc_cc_graph' %}">
+              <img class="card-img-top" height="200" style="border:10px solid white;"
+                src="{% static 'img/display_wisc_cc_graph.png' %}" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">Explore data</h5>
+                <p class="card-text">Explore data we have collected about cover crops.</p>
+
+              </div>
+            </a>
+          </div>
+        </div>
+        {% if perms.kanopy.can_view_submissions %}
+        <br>
+        <div class="card">
+
+          <div class="card-header">
+            Welcome, {{ user.username }}
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">View Uploads Table</h5>
+            <p class="card-text">To view, edit, and delete uploaded cover crop documentation, click below.</p>
+            <a href="{% url 'kanopy_table' %}" class="btn btn-primary">Go to table</a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <div class="card-footer text-muted text-center">
+        Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

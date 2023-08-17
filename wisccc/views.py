@@ -6,6 +6,10 @@ from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
 
 
+def wisc_cc_home(request):
+    return render(request, "wisccc/wisc_cc_home.html")
+
+
 def wisc_cc_graph(request):
     return render(request, "wisccc/wisc_cc_graph.html")
 
