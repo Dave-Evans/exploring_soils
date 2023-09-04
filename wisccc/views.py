@@ -1,13 +1,86 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db import connection
 import json
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
+from wisccc.forms import SurveyForm, SurveyForm1, SurveyForm2, SurveyForm3
+from wisccc.models import Survey
 
 
 def wisc_cc_home(request):
     return render(request, "wisccc/wisc_cc_home.html")
+
+
+def wisc_cc_survey(request):
+    return render(request, "wisccc/wisc_cc_survey.html")
+
+
+def wisc_cc_survey1(request):
+    if request.method == "POST":
+        form = SurveyForm1(request.POST)
+        if form.is_valid():
+            new_form = form.save(commit=False)
+            new_form.user = request.user
+            new_form.save()
+
+            return redirect("wisc_cc_survey2")
+    else:
+        form = SurveyForm1()
+
+    # template = "wisccc/survey_upload_all.html"
+    template = "wisccc/survey_section_1.html"
+    return render(
+        request,
+        template,
+        {
+            "form": form,
+        },
+    )
+
+
+def wisc_cc_survey2(request):
+    if request.method == "POST":
+        form = SurveyForm2(request.POST)
+        if form.is_valid():
+            new_form = form.save(commit=False)
+            new_form.user = request.user
+            new_form.save()
+
+            return redirect("wisc_cc_survey3")
+    else:
+        form = SurveyForm2()
+
+    template = "wisccc/survey_section_2.html"
+    return render(
+        request,
+        template,
+        {
+            "form": form,
+        },
+    )
+
+
+def wisc_cc_survey3(request):
+    if request.method == "POST":
+        form = SurveyForm3(request.POST)
+        if form.is_valid():
+            new_form = form.save(commit=False)
+            new_form.user = request.user
+            new_form.save()
+
+            return redirect("wisc_cc_survey")
+    else:
+        form = SurveyForm3()
+
+    template = "wisccc/survey_section_3.html"
+    return render(
+        request,
+        template,
+        {
+            "form": form,
+        },
+    )
 
 
 def wisc_cc_graph(request):

@@ -1,0 +1,47 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+{% block title %}Welcome to Wisconsin Citizen Science Cover Crop Project {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10 col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">Welcome</h3>
+        <p>Help gather data and learn about cover crop usage in Wisconsin</p>
+        <p>There are three sections to the survey.</p>
+        <p>Login!!</p>
+        <div class="card-deck">
+          <ul>
+            <a href="{% url 'wisc_cc_survey1' %}">
+              <li>General Farm Characteristics</li>
+            </a>
+            <a href="{% url 'wisc_cc_survey2' %}">
+              <li>"Research Field" Cover Crop Information</li>
+            </a>
+            <a href="{% url 'wisc_cc_survey3' %}">
+              <li>Final Thoughts?</li>
+            </a>
+          </ul>
+          {% if perms.kanopy.can_view_submissions %}
+          <br>
+          <div class="card">
+
+            <div class="card-header">
+              Welcome, {{ user.username }}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">View Uploads Table</h5>
+              <p class="card-text">To view, edit, and delete uploaded cover crop documentation, click below.</p>
+              <a href="{% url 'kanopy_table' %}" class="btn btn-primary">Go to table</a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-footer text-muted text-center">
+          Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
