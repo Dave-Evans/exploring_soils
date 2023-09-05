@@ -7,53 +7,94 @@
   <div class="col-lg-8 col-md-10 col-sm-12">
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">Welcome</h3>
-        <p>Help gather data and learn about cover crop usage in Wisconsin</p>
+        <h3 class="card-title">Welcome, {{ user.username }}</h3>
+        <p>We're excited for this fourth season of our cover crop citizen science project, gathering real world data to
+          better understand how cover crops are being used in Wisconsin. We're part of a collaborative effort of
+          researchers, extension folks, and farmers like you working together to develop sound cover crop strategies.
+          We're also building a long-term statewide database of cover crop performance helping improve decision support
+          tools like SnapPlus, and developing better strategies for reducing erosion and conserving nutrients.</p>
 
-        {% if user.is_authenticated %}
+        <p>Thank you for filling out this survey. Please proceed ONLY if you have registered with us. (To register, send
+          an email with your name, mailing address, phone number, and county to Mrill Ingram <a
+            href="mailto:catesa@umn.edu">mingram@wisc.edu</a>)</p>
+
+        <p> We will be in touch very soon about collecting an optional biomass sample and to share information about the
+          data you are sharing. We look forward to working with you!</p>
+        <p> Dan Smith, Mrill Ingram, Gregg Sanford</p>
 
 
-        Hello, {{ user.username }}
 
         <p>There are four sections to the survey.</p>
-        <ul>
-          <a href="{% url 'wisc_cc_survey0' %}">
-            <li>About you</li>
-          </a>
-          <a href="{% url 'wisc_cc_survey1' %}">
-            <li>General Farm Characteristics</li>
-          </a>
-          <a href="{% url 'wisc_cc_survey2' %}">
-            <li>"Research Field" Cover Crop Information</li>
-          </a>
-          <a href="{% url 'wisc_cc_survey3' %}">
-            <li>Final Thoughts?</li>
-          </a>
-        </ul>
+        <div class="col-md-10">
+          <div class="list-group">
+            {% if completed_0 %}
+            <a href="{% url 'wisc_cc_survey0' %}"
+              class="list-group-item list-group-item-action list-group-item-success">About you - Completed! Click to
+              edit your response.</a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey0' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">About you</a>
+            {% endif %}
+
+            {% if completed_1 %}
+            <a href="{% url 'wisc_cc_survey1' %}"
+              class="list-group-item list-group-item-action list-group-item-success">General Farm Characteristics -
+              Completed! Click to
+              edit your response.</a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey1' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">General Farm Characteristics</a>
+            {% endif %}
+
+            {% if completed_2 %}
+            <a href="{% url 'wisc_cc_survey2' %}"
+              class="list-group-item list-group-item-action list-group-item-success">"Research Field" Cover Crop
+              Information - Completed! Click to
+              edit your response.</a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey2' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">"Research Field" Cover Crop
+              Information</a>
+            {% endif %}
 
 
-        {% else %}
+            {% if completed_3 %}
+            <a href="{% url 'wisc_cc_survey3' %}"
+              class="list-group-item list-group-item-action list-group-item-success">Final Thoughts? - Completed! Click
+              to
+              edit your response.</a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey3' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">Final Thoughts?</a>
+            {% endif %}
 
-        <p class="card-text">
-          To fill out our survey, please make sure you login, or create an account.
-          <br><br>
+          </div>
+        </div>
+        <br>
 
-          <a href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
-          <a href="{% url 'signup' %}" class="btn btn-primary ml-2">Sign up</a>
-
-        </p>
-
-
-        It won't take too long to sign up, and if you already have an account but forgot your password,
-        proceed to the Login page and click "Forgot password" to
-        to have your password reset.
-
-        {% endif %}
 
         <div class="card-footer text-muted text-center">
-          Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
+          Questions? See our <a href="#">references page</a>
+          {% if user.is_authenticated %}
+          <ul class="nav justify-content-end">
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'logout' %}">Logout</a>
+            </li>
+          </ul>
+
+          {% else %}
+          <ul class="nav justify-content-end">
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'signup' %}">Sign up</a>
+            </li>
+          </ul>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
-  {% endblock %}
+</div>
+{% endblock %}

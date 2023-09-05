@@ -9,7 +9,6 @@ class Farmer(models.Model):
     last_name = models.CharField(max_length=250, blank=True)
     nick_name = models.CharField(max_length=250, blank=True)
     farm_name = models.CharField(max_length=250, blank=True)
-    
 
 
 class NutrientMgmtSources(models.TextChoices):
@@ -264,6 +263,8 @@ class Survey(models.Model):
     survey_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    confirmed_accurate = models.BooleanField(null=False, default=False)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # Location
@@ -489,7 +490,7 @@ class Survey(models.Model):
 
     # In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
     # 16 Closest zip code for this field (so we can determine appropriate climate data and generate a location map of participating fields). Field must be located in Wisconsin.
-    closest_zip_code = models.SmallIntegerField(
+    closest_zip_code = models.IntegerField(
         verbose_name="Enter the closest zip code for this field.", null=True
     )
     # 17 What is this field(s) acreage?
@@ -651,7 +652,7 @@ class Survey(models.Model):
         null=True,
     )
     # 24a
-    manure_prior_rate = models.SmallIntegerField(
+    manure_prior_rate = models.IntegerField(
         verbose_name="At what rate will the manure be applied?", null=True
     )
     manure_prior_rate_units = models.CharField(
@@ -667,7 +668,7 @@ class Survey(models.Model):
         null=True,
     )
     # 25a
-    manure_post_rate = models.SmallIntegerField(
+    manure_post_rate = models.IntegerField(
         verbose_name="At what rate will the manure be applied?", null=True
     )
     manure_post_rate_units = models.CharField(
@@ -733,11 +734,11 @@ class Survey(models.Model):
     )
 
     # 32
-    cover_crop_seed_cost = models.SmallIntegerField(
+    cover_crop_seed_cost = models.IntegerField(
         verbose_name="Estimated cover crop seed cost for this field ($/acre)", null=True
     )
     # 33	Estimated cover crop planting cost per acre in this field. Please use UW Extension Custom Rate Guide.(https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf)
-    cover_crop_planting_cost = models.SmallIntegerField(
+    cover_crop_planting_cost = models.IntegerField(
         verbose_name="Estimated cover crop planting cost for this field ($/acre)",
         null=True,
     )

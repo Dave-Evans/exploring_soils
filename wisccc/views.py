@@ -9,16 +9,76 @@ from wisccc.forms import SurveyForm1, SurveyForm2, SurveyForm3, FarmerForm
 from wisccc.models import Survey, Farmer
 
 
+def check_section_completed(user_id, section):
+    """Checks a particular section, farmer, 1, 2, 3
+    to see if a particualr required field is a completed."""
+
+    if section == "farmer":
+        farmer = Farmer.objects.filter(user_id=user_id).first()
+        if farmer is None:
+            return False
+        if farmer.last_name == "" or farmer.last_name is None:
+            return False
+
+        return True
+
+    if section == 1:
+        survey = Survey.objects.filter(user_id=user_id).first()
+        if survey is None:
+            return False
+        if survey.percent_of_farm_cc is None:
+            return False
+
+        return True
+
+    if section == 2:
+        survey = Survey.objects.filter(user_id=user_id).first()
+        if survey is None:
+            return False
+        if survey.farm_location is None:
+            return False
+
+        return True
+
+    if section == 3:
+        survey = Survey.objects.filter(user_id=user_id).first()
+        if survey is None:
+            return False
+        if survey.additional_thoughts is None:
+            return False
+
+        return True
+
+
 def wisc_cc_home(request):
     return render(request, "wisccc/wisc_cc_home.html")
 
 
-# @login_required(login_url="signupFarmer")
+@login_required
 def wisc_cc_survey(request):
+    """Home page for Cover Crop survey. We check progress of different sections of the survey
+    by querying one required question from each section (0 (the farmer section),1,2,3).
+    If this is completed then we assume it is all completed."""
+    completed_0 = check_section_completed(request.user.id, "farmer")
+    completed_1 = check_section_completed(request.user.id, 1)
+    completed_2 = check_section_completed(request.user.id, 2)
+    completed_3 = check_section_completed(request.user.id, 3)
+
     template = "wisccc/wisc_cc_survey.html"
-    return render(request, template)
+
+    return render(
+        request,
+        template,
+        {
+            "completed_0": completed_0,
+            "completed_1": completed_1,
+            "completed_2": completed_2,
+            "completed_3": completed_3,
+        },
+    )
 
 
+@login_required
 def wisc_cc_survey0(request):
     try:
         instance = Farmer.objects.filter(user_id=request.user.id).first()
@@ -88,7 +148,7 @@ def wisc_cc_survey2(request):
         new_form.user = request.user
         new_form.save()
 
-        return redirect("wisc_cc_survey3")
+        return redirect("wisc_cc_survey")
 
     template = "wisccc/survey_section_2.html"
     return render(

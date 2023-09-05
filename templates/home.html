@@ -95,13 +95,31 @@
     <div class="hero-text">
       <h1 style="font-size:50px">Evans Geospatial</h1>
       <h3>Geospatial data specialists</h3>
+      <ul class="list-group list-group-flush">
+        <a href="{% url 'soils_in_depth' %}">
+          <li class="list-group-item">Exploring soils in depth: easily view
+            SSURGO data properties</li>
+        </a>
+        <a href="{% url 'kanopy_home' %}">
+          <li class="list-group-item">Green CovR: portal for submitting cover crop photos</li>
+        </a>
+        <a href="{% url 'wisc_cc_home' %}">
+          <li class="list-group-item">Wisconsin Cover Crop Citizen Science Project: Gathering data about
+            cover crop usage in Wisconsin</li>
+        </a>
+      </ul>
+
     </div>
+  </div>
   </div>
   <div class="hero-image hillshade">
     <div class="hero-text">
       <h1 style="font-size:50px">Projects</h1>
       <h4><a href="{% url 'soils_in_depth' %}">Exploring soils in depth</a>: easily view SSURGO data properties</h4>
       <h4><a href="{% url 'kanopy_home' %}">Green CovR</a>: portal for submitting cover crop photos</h4>
+      <h4><a href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Citizen Science Project</a>: Gathering data about
+        cover
+        crop usage in Wisconsin</h4>
     </div>
   </div>
   <script src="{% static 'js/popper.min.js' %}"></script>

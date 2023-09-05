@@ -341,7 +341,7 @@ class SurveyForm2(forms.ModelForm):
     )
     # 16 Closest zip code for this field (so we can determine appropriate climate data and generate a location map of participating fields). Field must be located in Wisconsin.
     closest_zip_code = forms.IntegerField(
-        label="Enter the closest zip code for this field.", required=True
+        label="Enter the closest zip code for this field.", required=True, min_value=0, max_value=99999
     )
     # 17 What is this field(s) acreage?
     field_acreage = forms.IntegerField(
