@@ -1,32 +1,65 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db import connection
 import json
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
-from wisccc.forms import SurveyForm, SurveyForm1, SurveyForm2, SurveyForm3
-from wisccc.models import Survey
+from wisccc.forms import SurveyForm1, SurveyForm2, SurveyForm3, FarmerForm
+from wisccc.models import Survey, Farmer
 
 
 def wisc_cc_home(request):
     return render(request, "wisccc/wisc_cc_home.html")
 
 
+# @login_required(login_url="signupFarmer")
 def wisc_cc_survey(request):
-    return render(request, "wisccc/wisc_cc_survey.html")
+    template = "wisccc/wisc_cc_survey.html"
+    return render(request, template)
 
 
+def wisc_cc_survey0(request):
+    try:
+        instance = Farmer.objects.filter(user_id=request.user.id).first()
+    except:
+        instance = Farmer.objects.create(user_id=request.user.id)
+
+    form = FarmerForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        new_form = form.save(commit=False)
+        new_form.user = request.user
+        new_form.save()
+
+        return redirect("wisc_cc_survey")
+
+    # template = "wisccc/survey_upload_all.html"
+    template = "wisccc/survey_section_0.html"
+    return render(
+        request,
+        template,
+        {
+            "form": form,
+        },
+    )
+
+
+@login_required
 def wisc_cc_survey1(request):
-    if request.method == "POST":
-        form = SurveyForm1(request.POST)
-        if form.is_valid():
-            new_form = form.save(commit=False)
-            new_form.user = request.user
-            new_form.save()
+    try:
+        instance = Survey.objects.filter(user_id=request.user.id).earliest(
+            "last_updated"
+        )
+    except:
+        instance = Survey.objects.create(user_id=request.user.id)
 
-            return redirect("wisc_cc_survey2")
-    else:
-        form = SurveyForm1()
+    form = SurveyForm1(request.POST or None, instance=instance)
+    if form.is_valid():
+        new_form = form.save(commit=False)
+        new_form.user = request.user
+        new_form.save()
+
+        return redirect("wisc_cc_survey2")
 
     # template = "wisccc/survey_upload_all.html"
     template = "wisccc/survey_section_1.html"
@@ -39,17 +72,23 @@ def wisc_cc_survey1(request):
     )
 
 
+@login_required
 def wisc_cc_survey2(request):
-    if request.method == "POST":
-        form = SurveyForm2(request.POST)
-        if form.is_valid():
-            new_form = form.save(commit=False)
-            new_form.user = request.user
-            new_form.save()
+    try:
+        instance = Survey.objects.filter(user_id=request.user.id).earliest(
+            "last_updated"
+        )
+    except:
+        instance = Survey.objects.create(user_id=request.user.id)
 
-            return redirect("wisc_cc_survey3")
-    else:
-        form = SurveyForm2()
+    form = SurveyForm2(request.POST or None, instance=instance)
+
+    if form.is_valid():
+        new_form = form.save(commit=False)
+        new_form.user = request.user
+        new_form.save()
+
+        return redirect("wisc_cc_survey3")
 
     template = "wisccc/survey_section_2.html"
     return render(
@@ -61,17 +100,23 @@ def wisc_cc_survey2(request):
     )
 
 
+@login_required
 def wisc_cc_survey3(request):
-    if request.method == "POST":
-        form = SurveyForm3(request.POST)
-        if form.is_valid():
-            new_form = form.save(commit=False)
-            new_form.user = request.user
-            new_form.save()
+    try:
+        instance = Survey.objects.filter(user_id=request.user.id).earliest(
+            "last_updated"
+        )
+    except:
+        instance = Survey.objects.create(user_id=request.user.id)
 
-            return redirect("wisc_cc_survey")
-    else:
-        form = SurveyForm3()
+    form = SurveyForm3(request.POST or None, instance=instance)
+
+    if form.is_valid():
+        new_form = form.save(commit=False)
+        new_form.user = request.user
+        new_form.save()
+
+        return redirect("wisc_cc_survey3")
 
     template = "wisccc/survey_section_3.html"
     return render(

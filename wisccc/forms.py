@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.gis import forms as geo_forms
+from wisccc.models import Survey, Farmer
 from wisccc.models import (
     CashCropChoices,
     CoverCropChoices,
@@ -9,7 +10,6 @@ from wisccc.models import (
     ManureApplicateUnitsChoices,
     NutrientMgmtSources,
     PrimaryTillageEquipmentChoices,
-    Survey,
     SecondaryTillageEquipmentChoices,
     SeedingMethodChoices,
     SoilConditionsSeedingChoices,
@@ -17,6 +17,22 @@ from wisccc.models import (
     TerminationMethodTimingChoices,
     TillageSystemChoices,
 )
+
+
+class FarmerForm(forms.ModelForm):
+    
+    first_name = forms.CharField(max_length=250, required=True)
+    last_name = forms.CharField(max_length=250, required=True)
+    nick_name = forms.CharField(max_length=250, required=True)
+    farm_name = forms.CharField(max_length=250, required=True)
+    class Meta:
+        model = Farmer
+        fields = (
+            "first_name",
+            "last_name",
+            "nick_name",
+            "farm_name"
+        )
 
 
 class SurveyForm1(forms.ModelForm):
@@ -57,17 +73,17 @@ class SurveyForm1(forms.ModelForm):
     dominant_soil_series_2 = forms.CharField(
         label="Soil series with the second greatest distribution on your farm",
         max_length=50,
-        required=True,
+        required=False,
     )
     dominant_soil_series_3 = forms.CharField(
         label="Soil series with the third greatest distribution on your farm",
         max_length=50,
-        required=True,
+        required=False,
     )
     dominant_soil_series_4 = forms.CharField(
         label="Soil series with the fourth greatest distribution on your farm",
         max_length=50,
-        required=True,
+        required=False,
     )
 
     # 6. From the following list, select and rank your top 1 - 3 sources of information for nutrient management:
@@ -79,12 +95,12 @@ class SurveyForm1(forms.ModelForm):
     info_source_nutrient_mgmt_2 = forms.ChoiceField(
         label="Second information source for nutrient management",
         choices=NutrientMgmtSources.choices,
-        required=True,
+        required=False,
     )
     info_source_nutrient_mgmt_3 = forms.ChoiceField(
         label="Third information source for nutrient management",
         choices=NutrientMgmtSources.choices,
-        required=True,
+        required=False,
     )
 
     source_nutrient_mgmt_write_in = forms.CharField(
@@ -112,13 +128,13 @@ class SurveyForm1(forms.ModelForm):
     info_source_cover_crops_2 = forms.ChoiceField(
         label="Second information source for cover crops",
         choices=CoverCropInfoSources.choices,
-        required=True,
+        required=False,
     )
 
     info_source_cover_crops_3 = forms.ChoiceField(
         label="Third information source for cover crops",
         choices=CoverCropInfoSources.choices,
-        required=True,
+        required=False,
     )
 
     info_source_cover_crops_write_in = forms.CharField(
@@ -130,6 +146,124 @@ class SurveyForm1(forms.ModelForm):
     # 7a. If you selected social media, what people or programs are most useful to you on questions of cover cropping?
     info_source_cover_crops_social_media = forms.CharField(
         label="Social media information source for cover crops",
+        required=True,
+        widget=forms.Textarea,
+        max_length=500,
+    )
+
+    # 8. In terms of support for cover cropping, select and rank the top 1 to 3 factors you’d like to see more of:
+    support_cover_crops_1 = forms.ChoiceField(
+        label="Most needed support for cover cropping",
+        choices=CoverCropSupport.choices,
+        required=True,
+    )
+
+    support_cover_crops_2 = forms.ChoiceField(
+        label="Second most needed support for cover cropping",
+        choices=CoverCropSupport.choices,
+        required=False,
+    )
+
+    support_cover_crops_3 = forms.ChoiceField(
+        label="Third most needed support for cover cropping",
+        choices=CoverCropSupport.choices,
+        required=False,
+    )
+
+    support_cover_crops_write_in = forms.CharField(
+        label="Other support for cover crops you would like to see",
+        required=False,
+        widget=forms.Textarea,
+        max_length=500,
+    )
+
+    # 9. Are you lacking in any information regarding your selecting, planting, and managing cover crops?
+    lacking_any_info_cover_crops = forms.CharField(
+        label="Are you lacking in any information regarding cover crops?",
+        required=True,
+        widget=forms.Textarea,
+        max_length=500,
+    )
+    # 10. Would you like to expand the number of acres you plant to cover crops?
+    like_to_expand_cover_crops = forms.BooleanField(
+        label="Would you like to expand the number of cover crop acres?",
+        required=False,
+    )
+    # 10 b. If yes, what are the main barries to expansion?
+    # Please share any details that will help us understand the challenges.
+    barriers_to_expansion = forms.CharField(
+        label="What are your barriers to expansion? Please share any details to help us understand.",
+        required=True,
+        widget=forms.Textarea,
+        max_length=1000,
+    )
+
+    # 11. What are the top risks of cover cropping for you, and how do you manage them?
+    top_risks_of_cover_cropping_mgmt = forms.CharField(
+        label="What are the top risks of cover cropping for you, and how do you manage them?",
+        required=True,
+        widget=forms.Textarea,
+        max_length=500,
+    )
+    # 11a. What would it take for you to quit planting covers?
+    quit_planting_cover_crops = forms.CharField(
+        label="What would it take for you to quit planting covers?",
+        required=True,
+        widget=forms.Textarea,
+        max_length=500,
+    )
+    # 12. Do you use crop insurance?
+    use_crop_insurance = forms.BooleanField(
+        label="Do you use crop insurance?", required=False
+    )
+    # 12a. If so, does it influence your cover cropping decisions, and how?
+    if_use_crop_insurance = forms.CharField(
+        label="If so, does it influence your cover cropping decisions, and how?",
+        required=False,
+        widget=forms.Textarea,
+        max_length=500,
+    )
+    # 13. Why do you cover crop? From the list below select and rank your top 3 - 5 motivations
+
+    why_cover_crops_1 = forms.ChoiceField(
+        label="Why do you use cover cropping?",
+        choices=CoverCropReasons.choices,
+        required=True,
+    )
+    why_cover_crops_2 = forms.ChoiceField(
+        label="Second reason you use cover cropping?",
+        choices=CoverCropReasons.choices,
+        required=False,
+    )
+    why_cover_crops_3 = forms.ChoiceField(
+        label="Third reason you use cover cropping?",
+        choices=CoverCropReasons.choices,
+        required=False,
+    )
+    why_cover_crops_4 = forms.ChoiceField(
+        label="Fourth reason you use cover cropping?",
+        choices=CoverCropReasons.choices,
+        required=False,
+    )
+    why_cover_crops_write_in = forms.CharField(
+        label="Other reasons you plant cover crops?",
+        required=False,
+        widget=forms.Textarea,
+        max_length=500,
+    )
+    # 14. Does planting a cover crop delay when you would otherwise plant your cash crop?
+    cover_crops_delay_cash_crop = forms.BooleanField(
+        label="Does planting a cover crop delay when you would otherwise plant your cash crop?",
+        required=False,
+    )
+
+    # 15a. Do you save cover crop seed?
+    save_cover_crop_seed = forms.BooleanField(
+        label="Do you save cover crop seed?", required=False
+    )
+    # 15b. What is your source for cover crop seed?
+    source_cover_crop_seed = forms.CharField(
+        label="What is your cover crop seed source?",
         required=True,
         widget=forms.Textarea,
         max_length=500,
@@ -318,6 +452,7 @@ class SurveyForm2(forms.ModelForm):
         label="Other cover crops planted and their rates, please specify in pounds per acre.",
         widget=forms.Textarea,
         max_length=500,
+        required=False,
     )
     # 20	"Previous crop in field
     previous_crop = forms.ChoiceField(
@@ -756,7 +891,7 @@ class SurveyForm(forms.ModelForm):
         required=False,
     )
     why_cover_crops_4 = forms.ChoiceField(
-        label="Fourth reasonyou use cover cropping?",
+        label="Fourth reason you use cover cropping?",
         choices=CoverCropReasons.choices,
         required=False,
     )

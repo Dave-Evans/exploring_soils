@@ -4,9 +4,12 @@ from django.contrib.gis.db import models as geo_models
 
 
 class Farmer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=250, blank=True)
+    last_name = models.CharField(max_length=250, blank=True)
+    nick_name = models.CharField(max_length=250, blank=True)
     farm_name = models.CharField(max_length=250, blank=True)
-    years_farming = models.IntegerField(null=True)
+    
 
 
 class NutrientMgmtSources(models.TextChoices):
@@ -258,6 +261,9 @@ class TerminationMethodTimingChoices(models.TextChoices):
 
 class Survey(models.Model):
     # Timestamp
+    survey_created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # Location

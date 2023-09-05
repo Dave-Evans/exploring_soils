@@ -9,35 +9,47 @@
       <div class="card-body">
         <h3 class="card-title">Welcome</h3>
         <p>Help gather data and learn about cover crop usage in Wisconsin</p>
-        <p>There are three sections to the survey.</p>
-        <p>Login!!</p>
-        <div class="card-deck">
-          <ul>
-            <a href="{% url 'wisc_cc_survey1' %}">
-              <li>General Farm Characteristics</li>
-            </a>
-            <a href="{% url 'wisc_cc_survey2' %}">
-              <li>"Research Field" Cover Crop Information</li>
-            </a>
-            <a href="{% url 'wisc_cc_survey3' %}">
-              <li>Final Thoughts?</li>
-            </a>
-          </ul>
-          {% if perms.kanopy.can_view_submissions %}
-          <br>
-          <div class="card">
 
-            <div class="card-header">
-              Welcome, {{ user.username }}
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">View Uploads Table</h5>
-              <p class="card-text">To view, edit, and delete uploaded cover crop documentation, click below.</p>
-              <a href="{% url 'kanopy_table' %}" class="btn btn-primary">Go to table</a>
-            </div>
-          </div>
-          {% endif %}
-        </div>
+        {% if user.is_authenticated %}
+
+
+        Hello, {{ user.username }}
+
+        <p>There are four sections to the survey.</p>
+        <ul>
+          <a href="{% url 'wisc_cc_survey0' %}">
+            <li>About you</li>
+          </a>
+          <a href="{% url 'wisc_cc_survey1' %}">
+            <li>General Farm Characteristics</li>
+          </a>
+          <a href="{% url 'wisc_cc_survey2' %}">
+            <li>"Research Field" Cover Crop Information</li>
+          </a>
+          <a href="{% url 'wisc_cc_survey3' %}">
+            <li>Final Thoughts?</li>
+          </a>
+        </ul>
+
+
+        {% else %}
+
+        <p class="card-text">
+          To fill out our survey, please make sure you login, or create an account.
+          <br><br>
+
+          <a href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
+          <a href="{% url 'signup' %}" class="btn btn-primary ml-2">Sign up</a>
+
+        </p>
+
+
+        It won't take too long to sign up, and if you already have an account but forgot your password,
+        proceed to the Login page and click "Forgot password" to
+        to have your password reset.
+
+        {% endif %}
+
         <div class="card-footer text-muted text-center">
           Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
         </div>
