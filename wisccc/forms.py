@@ -20,28 +20,20 @@ from wisccc.models import (
 
 
 class FarmerForm(forms.ModelForm):
-    
     first_name = forms.CharField(max_length=250, required=True)
     last_name = forms.CharField(max_length=250, required=True)
-    nick_name = forms.CharField(max_length=250, required=True)
-    farm_name = forms.CharField(max_length=250, required=True)
-    class Meta:
-        model = Farmer
-        fields = (
-            "first_name",
-            "last_name",
-            "nick_name",
-            "farm_name"
-        )
-
-
-class SurveyForm1(forms.ModelForm):
+    farm_name = forms.CharField(max_length=250, required=False)
     county = forms.CharField(
         label="County",
-        help_text="Enter the county of this field.",
         required=True,
     )
 
+    class Meta:
+        model = Farmer
+        fields = ("first_name", "last_name", "farm_name", "county")
+
+
+class SurveyForm1(forms.ModelForm):
     # 2. Years Experience
     years_experience = forms.IntegerField(
         label="Years experience of farming", required=True, min_value=0, max_value=100
@@ -251,28 +243,10 @@ class SurveyForm1(forms.ModelForm):
         widget=forms.Textarea,
         max_length=500,
     )
-    # 14. Does planting a cover crop delay when you would otherwise plant your cash crop?
-    cover_crops_delay_cash_crop = forms.BooleanField(
-        label="Does planting a cover crop delay when you would otherwise plant your cash crop?",
-        required=False,
-    )
-
-    # 15a. Do you save cover crop seed?
-    save_cover_crop_seed = forms.BooleanField(
-        label="Do you save cover crop seed?", required=False
-    )
-    # 15b. What is your source for cover crop seed?
-    source_cover_crop_seed = forms.CharField(
-        label="What is your cover crop seed source?",
-        required=True,
-        widget=forms.Textarea,
-        max_length=500,
-    )
 
     class Meta:
         model = Survey
         fields = (
-            "county",
             "years_experience",
             "total_acres",
             "percent_of_farm_cc",
@@ -306,9 +280,6 @@ class SurveyForm1(forms.ModelForm):
             "why_cover_crops_3",
             "why_cover_crops_4",
             "why_cover_crops_write_in",
-            "cover_crops_delay_cash_crop",
-            "save_cover_crop_seed",
-            "source_cover_crop_seed",
         )
 
 
@@ -327,7 +298,7 @@ class SurveyForm2(forms.ModelForm):
         # }
         # ),
         # )
-        label="Click the map where this field is located",
+        label="Zoom in to the map and click the general location for this field",
         help_text="To reset the location, click 'Delete all features' and click a different location",
         widget=geo_forms.OSMWidget(
             attrs={
@@ -341,7 +312,10 @@ class SurveyForm2(forms.ModelForm):
     )
     # 16 Closest zip code for this field (so we can determine appropriate climate data and generate a location map of participating fields). Field must be located in Wisconsin.
     closest_zip_code = forms.IntegerField(
-        label="Enter the closest zip code for this field.", required=True, min_value=0, max_value=99999
+        label="Enter the closest zip code for this field.",
+        required=True,
+        min_value=0,
+        max_value=99999,
     )
     # 17 What is this field(s) acreage?
     field_acreage = forms.IntegerField(
@@ -477,6 +451,24 @@ class SurveyForm2(forms.ModelForm):
         label="Please select the dominant soil texture of this field.",
         choices=SoilTextureClassChoices.choices,
         required=True,
+    )
+
+    # 14. Does planting a cover crop delay when you would otherwise plant your cash crop?
+    cover_crops_delay_cash_crop = forms.BooleanField(
+        label="Does planting a cover crop delay when you would otherwise plant your cash crop?",
+        required=False,
+    )
+
+    # 15a. Do you save cover crop seed?
+    save_cover_crop_seed = forms.BooleanField(
+        label="Do you save cover crop seed?", required=False
+    )
+    # 15b. What is your source for cover crop seed?
+    source_cover_crop_seed = forms.CharField(
+        label="What is your cover crop seed source?",
+        required=True,
+        widget=forms.Textarea,
+        max_length=500,
     )
 
     # 24	Will you apply manure prior to seeding cover crops on this field, and at what rate?
@@ -648,6 +640,9 @@ class SurveyForm2(forms.ModelForm):
             "cover_crop_planting_date",
             "cover_crop_estimated_termination",
             "days_between_crop_hvst_and_cc_estd",
+            "cover_crops_delay_cash_crop",
+            "save_cover_crop_seed",
+            "source_cover_crop_seed",
         )
 
 
@@ -686,11 +681,11 @@ class SurveyForm3(forms.ModelForm):
 
 
 class SurveyForm(forms.ModelForm):
-    county = forms.CharField(
-        label="County",
-        help_text="Enter the county of this field.",
-        required=True,
-    )
+    # county = forms.CharField(
+    #     label="County",
+    #     help_text="Enter the county of this field.",
+    #     required=True,
+    # )
 
     # 2. Years Experience
     years_experience = forms.IntegerField(
@@ -1224,7 +1219,6 @@ class SurveyForm(forms.ModelForm):
     class Meta:
         model = Survey
         fields = (
-            "county",
             "farm_location",
             "years_experience",
             "total_acres",

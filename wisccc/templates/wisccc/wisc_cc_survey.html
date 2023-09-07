@@ -8,6 +8,13 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">Welcome, {{ user.username }}</h3>
+
+
+        {% if completed_0 and completed_1 and completed_2 and completed_3 %}
+        <h5>Thank you</h5>
+        <p>Thank you for completing our survey</p>
+        <P>More words!</P>
+        {% else %}
         <p>We're excited for this fourth season of our cover crop citizen science project, gathering real world data to
           better understand how cover crops are being used in Wisconsin. We're part of a collaborative effort of
           researchers, extension folks, and farmers like you working together to develop sound cover crop strategies.
@@ -21,7 +28,7 @@
         <p> We will be in touch very soon about collecting an optional biomass sample and to share information about the
           data you are sharing. We look forward to working with you!</p>
         <p> Dan Smith, Mrill Ingram, Gregg Sanford</p>
-
+        {% endif %}
 
 
         <p>There are four sections to the survey.</p>

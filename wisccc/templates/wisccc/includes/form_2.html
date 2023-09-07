@@ -1,7 +1,12 @@
 {% load crispy_forms_tags %}
 
 
-
+<div>
+    <h5>In the following section we ask you about your specific cover cropping practices in one field or set of fields
+        (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis.
+    </h5>
+    <h5>Provide answers *for that field.*</h5>
+</div>
 <div class="form-row">
     <div class="form-group col-md-8 mb-0">
         {{ form.farm_location|as_crispy_field }}
@@ -14,6 +19,10 @@
     <div class="form-group col-md-4 mb-0">
         {{ form.field_acreage|as_crispy_field }}
     </div>
+</div>
+
+<div>
+    <h5>Crop rotation and cover crop species</h5>
 </div>
 
 <div class="form-row">
@@ -105,6 +114,24 @@
     <div class="form-group col-md-5 mb-0">
         {{ form.dominant_soil_texture|as_crispy_field }}
     </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form.cover_crops_delay_cash_crop|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-2 mb-0">
+        {{ form.save_cover_crop_seed|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ form.source_cover_crop_seed|as_crispy_field }}
+    </div>
+</div>
+
+<div>
+    <h5>Nutrient Management and tillage</h5>
 </div>
 
 <div class="form-row">

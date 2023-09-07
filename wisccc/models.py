@@ -7,8 +7,8 @@ class Farmer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=250, blank=True)
     last_name = models.CharField(max_length=250, blank=True)
-    nick_name = models.CharField(max_length=250, blank=True)
     farm_name = models.CharField(max_length=250, blank=True)
+    county = models.CharField(verbose_name="County of farm", max_length=150, null=True)
 
 
 class NutrientMgmtSources(models.TextChoices):
@@ -271,7 +271,7 @@ class Survey(models.Model):
     farm_location = geo_models.PointField(verbose_name="Farm location", null=True)
 
     # 1. County do you farm?
-    county = models.CharField(verbose_name="County of farm", max_length=50, null=True)
+
     #   Add choices here
 
     # 2. Years Experience

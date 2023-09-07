@@ -176,7 +176,7 @@ def wisc_cc_survey3(request):
         new_form.user = request.user
         new_form.save()
 
-        return redirect("wisc_cc_survey3")
+        return redirect("wisc_cc_survey")
 
     template = "wisccc/survey_section_3.html"
     return render(
