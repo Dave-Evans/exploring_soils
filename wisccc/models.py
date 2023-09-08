@@ -8,7 +8,7 @@ class Farmer(models.Model):
     first_name = models.CharField(max_length=250, blank=True)
     last_name = models.CharField(max_length=250, blank=True)
     farm_name = models.CharField(max_length=250, blank=True)
-    county = models.CharField(verbose_name="County of farm", max_length=150, null=True)
+    county = models.TextField(verbose_name="County of farm", null=True)
 
 
 class NutrientMgmtSources(models.TextChoices):
