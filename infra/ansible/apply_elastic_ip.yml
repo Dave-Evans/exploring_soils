@@ -4,11 +4,18 @@
 - hosts: all
   remote_user: root
   become: True
+  vars_files:
+    - vars/main.yml
 
   tasks:
+
   - name: Refresh .env file with new ip
     script: update_env_for_new_tier.sh {{ env }}
     args:
       creates: /home/ubuntu/exploring_soils/env_updated
     notify:
     - Restart apache
+
+  handlers:
+    - name: Restart apache
+      service: name=apache2 state=restarted

@@ -118,6 +118,10 @@ extract_envvar () {
 pullip () {
     sed -e 's/^"//' -e 's/"$//' <<< $(terraform output ip)
 }
+pull_instanceid() {
+    sed -e 's/^"//' -e 's/"$//' <<< $(terraform output webserver-instance-id)
+}
+
 
 # Directory
 top_level=$(git rev-parse --show-toplevel)
@@ -296,12 +300,12 @@ dump_db() {
 
 apply_elastic_ip() {
     if [ $1 == 'prod' ]; then
-        elastic_ip_id='eipalloc-0ab845d6db703de6e'
+        elastic_ip_id="eipalloc-0ab845d6db703de6e"
     else
-        elastic_ip_id='eipalloc-0039c4b1e6ce66fc3'
+        elastic_ip_id="eipalloc-0039c4b1e6ce66fc3"
     fi
 
-    instance_id=$( terraform output webserver-instance-id )
+    instance_id=$( pull_instanceid )
 
     DEBUG "Tier: $1"
     DEBUG "Elastic ip id: $elastic_ip_id"
