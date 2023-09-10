@@ -1,0 +1,14 @@
+---
+# For update, upgrade and reboot tasks
+##  https://www.cyberciti.biz/faq/ansible-apt-update-all-packages-on-ubuntu-debian-linux/
+- hosts: all
+  remote_user: root
+  become: True
+
+  tasks:
+  - name: Refresh .env file with new ip
+    script: update_env_for_new_tier.sh {{ env }}
+    args:
+      creates: /home/ubuntu/exploring_soils/env_updated
+    notify:
+    - Restart apache

@@ -29,7 +29,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 DEPLOYED = config("DEPLOYED", default=False, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
-CSRF_TRUSTED_ORIGINS = ["https://evansgeospatial.com"]
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 # For uploaded files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")

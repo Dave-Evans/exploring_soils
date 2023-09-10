@@ -202,7 +202,7 @@ create_ansible_vars() {
     fi
 
     INFO "Creating Ansible variables file: $ansvars"
-    for _var in database_user database_name database_pass key_name aws_backup_bucket_name; do
+    for _var in database_user database_name database_pass key_name aws_backup_bucket_name env; do
         eval "$_var=$(extract_envvar $_var)"
         eval "_val=\${$_var}"
         if [ -z "$_val" ]; then
@@ -293,6 +293,25 @@ dump_db() {
     python $top_level/manage.py dumpdata --indent 4 --natural-primary --natural-foreign --traceback > ./data/dump.json
     deactivate
 }
+
+apply_elastic_ip() {
+    if [ $1 == 'prod' ]; then
+        elastic_ip_id='eipalloc-0ab845d6db703de6e'
+    else
+        elastic_ip_id='eipalloc-0039c4b1e6ce66fc3'
+    fi
+
+    instance_id=$( terraform output webserver-instance-id )
+
+    DEBUG "Tier: $1"
+    DEBUG "Elastic ip id: $elastic_ip_id"
+    DEBUG "Server instance id: $instance_id"
+
+    aws ec2 associate-address --instance-id $instance_id --allocation-id $elastic_ip_id
+
+}
+
+
 while [ -n "$1" ]; do
     case "$1" in
 
@@ -353,6 +372,22 @@ while [ -n "$1" ]; do
             INFO "To 's3://$bucket/$folder/$file'"
             aws s3 cp "$2" "s3://$bucket/$folder/$file"
             shift
+            ;;
+        refresh)
+            
+            tier=$(extract_envvar ENV)
+            # Apply elastic ip
+            apply_elastic_ip $tier
+            # For refreshing the ip
+            terraform refresh
+            # Update ansible hosts
+            create_ansible_hostsfile
+            # Update our local .ssh reference for the server
+            ssh-keygen -f "/home/evans/.ssh/known_hosts" -R $( pullip )
+            # Modify remote .env file with updated ALLOWED_HOSTS
+            # Modify the `CSRF_TRUSTED_ORIGINS` with <tier>.evansgeospatial.com and restart
+            INFO "Provisioning database components"
+            ansible-playbook -i ./ansible/hosts ./ansible/apply_elastic_ip.yml
             ;;
         *)
             ERROR "Usage: bash helper.sh create_vars|spinup_infra|teardown|deploy|ssh|opensite|dumpdb|bkup"
