@@ -11,7 +11,7 @@ class Farmer(models.Model):
     county = models.TextField(verbose_name="County of farm", null=True)
 
 
-class NutrientMgmtSources(models.TextChoices):
+class NutrientMgmtSourcesChoices(models.TextChoices):
     """Different Nutrient management information sources"""
 
     BLANK = "", ""
@@ -24,7 +24,7 @@ class NutrientMgmtSources(models.TextChoices):
     OTHER = "OTHER", "Other"
 
 
-class CoverCropInfoSources(models.TextChoices):
+class CoverCropInfoSourcesChoices(models.TextChoices):
     """Different choices for cover crop information"""
 
     BLANK = "", ""
@@ -45,7 +45,7 @@ class CoverCropInfoSources(models.TextChoices):
     OTHER = "OTHER", "Other"
 
 
-class CoverCropSupport(models.TextChoices):
+class CoverCropSupportChoices(models.TextChoices):
     """In terms of support for cover cropping, select and rank the top 1 to 3 factors you’d like to see more of"""
 
     BLANK = "", ""
@@ -68,7 +68,7 @@ class CoverCropSupport(models.TextChoices):
     OTHER = "OTHER", "Other"
 
 
-class CoverCropReasons(models.TextChoices):
+class CoverCropReasonsChoices(models.TextChoices):
     """Reasons for cover cropping"""
 
     BLANK = "", ""
@@ -116,7 +116,16 @@ class CoverCropChoices(models.TextChoices):
     TURNIP = "TURNIP", "turnip"
     WHEAT_SPRING = "WHEAT_SPRING", "wheat (spring)"
     WHEAT_WINTER = "WHEAT_WINTER", "wheat (winter)"
+    MULTISPECIES = "MULITSPECIES", "multispecies mix of 2 or more"
     OTHER = "OTHER", "other"
+
+
+class CoverCropRateUnitsChoices(models.TextChoices):
+    """Choices for manure application units"""
+
+    BLANK = "", ""
+    POUNDS_ACRE = "POUNDS_ACRE", "lbs/acre"
+    BUSHELS_ACRE = "BUSHELS_ACRE", "bu/acre"
 
 
 class CashCropChoices(models.TextChoices):
@@ -256,6 +265,7 @@ class TerminationMethodTimingChoices(models.TextChoices):
         "GREEN_ROLLER_CRIMPER",
         "plant green, roller-crimper termination",
     )
+    OTHER = "OTHER", "other"
 
 
 class Survey(models.Model):
@@ -321,19 +331,19 @@ class Survey(models.Model):
     #       ________Write in any other key sources we didn’t include above.
     info_source_nutrient_mgmt_1 = models.CharField(
         verbose_name="Top information source for nutrient management",
-        choices=NutrientMgmtSources.choices,
+        choices=NutrientMgmtSourcesChoices.choices,
         max_length=30,
         null=True,
     )
     info_source_nutrient_mgmt_2 = models.CharField(
         verbose_name="Top information source for nutrient management",
-        choices=NutrientMgmtSources.choices,
+        choices=NutrientMgmtSourcesChoices.choices,
         max_length=30,
         null=True,
     )
     info_source_nutrient_mgmt_3 = models.CharField(
         verbose_name="Top information source for nutrient management",
-        choices=NutrientMgmtSources.choices,
+        choices=NutrientMgmtSourcesChoices.choices,
         max_length=30,
         null=True,
     )
@@ -352,21 +362,21 @@ class Survey(models.Model):
 
     info_source_cover_crops_1 = models.CharField(
         verbose_name="Top information source for cover crops",
-        choices=CoverCropInfoSources.choices,
+        choices=CoverCropInfoSourcesChoices.choices,
         max_length=30,
         null=True,
     )
 
     info_source_cover_crops_2 = models.CharField(
         verbose_name="Top information source for cover crops",
-        choices=CoverCropInfoSources.choices,
+        choices=CoverCropInfoSourcesChoices.choices,
         max_length=30,
         null=True,
     )
 
     info_source_cover_crops_3 = models.CharField(
         verbose_name="Top information source for cover crops",
-        choices=CoverCropInfoSources.choices,
+        choices=CoverCropInfoSourcesChoices.choices,
         max_length=30,
         null=True,
     )
@@ -384,21 +394,21 @@ class Survey(models.Model):
 
     support_cover_crops_1 = models.CharField(
         verbose_name="Support for cover cropping",
-        choices=CoverCropSupport.choices,
+        choices=CoverCropSupportChoices.choices,
         max_length=25,
         null=True,
     )
 
     support_cover_crops_2 = models.CharField(
         verbose_name="Support for cover cropping",
-        choices=CoverCropSupport.choices,
+        choices=CoverCropSupportChoices.choices,
         max_length=25,
         null=True,
     )
 
     support_cover_crops_3 = models.CharField(
         verbose_name="Support for cover cropping",
-        choices=CoverCropSupport.choices,
+        choices=CoverCropSupportChoices.choices,
         max_length=25,
         null=True,
     )
@@ -447,25 +457,25 @@ class Survey(models.Model):
 
     why_cover_crops_1 = models.CharField(
         verbose_name="Why do you use cover cropping?",
-        choices=CoverCropReasons.choices,
+        choices=CoverCropReasonsChoices.choices,
         max_length=25,
         null=True,
     )
     why_cover_crops_2 = models.CharField(
         verbose_name="Why do you use cover cropping?",
-        choices=CoverCropReasons.choices,
+        choices=CoverCropReasonsChoices.choices,
         max_length=25,
         null=True,
     )
     why_cover_crops_3 = models.CharField(
         verbose_name="Why do you use cover cropping?",
-        choices=CoverCropReasons.choices,
+        choices=CoverCropReasonsChoices.choices,
         max_length=25,
         null=True,
     )
     why_cover_crops_4 = models.CharField(
         verbose_name="Why do you use cover cropping?",
-        choices=CoverCropReasons.choices,
+        choices=CoverCropReasonsChoices.choices,
         max_length=25,
         null=True,
     )
@@ -562,6 +572,12 @@ class Survey(models.Model):
     cover_crop_planting_rate_1 = models.SmallIntegerField(
         verbose_name="Cover crop planting rate, for species 1", null=True
     )
+    cover_crop_planting_rate_1_units = models.CharField(
+        verbose_name="Units for cover crop 1 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
+    )
 
     # Species 2
     cover_crop_species_2 = models.CharField(
@@ -573,6 +589,12 @@ class Survey(models.Model):
     cover_crop_planting_rate_2 = models.SmallIntegerField(
         verbose_name="Cover crop planting rate, for species 2", null=True
     )
+    cover_crop_planting_rate_2_units = models.CharField(
+        verbose_name="Units for cover crop 2 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
+    )
     # Species 3
     cover_crop_species_3 = models.CharField(
         verbose_name="Cover crop species 3",
@@ -582,6 +604,12 @@ class Survey(models.Model):
     )
     cover_crop_planting_rate_3 = models.SmallIntegerField(
         verbose_name="Cover crop planting rate, for species 3", null=True
+    )
+    cover_crop_planting_rate_3_units = models.CharField(
+        verbose_name="Units for cover crop 3 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
     )
     # Species 4
     cover_crop_species_4 = models.CharField(
@@ -593,6 +621,12 @@ class Survey(models.Model):
     cover_crop_planting_rate_4 = models.SmallIntegerField(
         verbose_name="Cover crop planting rate, for species 4", null=True
     )
+    cover_crop_planting_rate_4_units = models.CharField(
+        verbose_name="Units for cover crop 4 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
+    )
     # Species 5
     cover_crop_species_5 = models.CharField(
         verbose_name="Cover crop species 5",
@@ -603,25 +637,21 @@ class Survey(models.Model):
     cover_crop_planting_rate_5 = models.SmallIntegerField(
         verbose_name="Cover crop planting rate, for species 5", null=True
     )
-
+    cover_crop_planting_rate_5_units = models.CharField(
+        verbose_name="Units for cover crop 5 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
+    )
     cover_crop_species_and_rate_write_in = models.TextField(
-        verbose_name="Other cover crops planted and their rates, please specify in pounds per acre."
+        verbose_name="Other cover crops planted and their rates, please specify in pounds per acre.",
+        null=True,
+    )
+
+    cover_crop_multispecies_mix_write_in = models.TextField(
+        verbose_name="details for multispecies mix", null=True
     )
     # 20	"Previous crop in field
-    # corn for grain
-    # corn silage
-    # soybeans
-    # wheat
-    # oats
-    # barley
-    # triticale
-    # sorghum-sudan grass or forage sorghum
-    # alfalfa
-    # vegetable crop
-    # other grain
-    # other forage
-    # other ________
-    # "
     previous_crop = models.CharField(
         verbose_name="Previous cash crop planted in the field",
         choices=CashCropChoices.choices,
@@ -761,7 +791,7 @@ class Survey(models.Model):
     )
     # 37	Please share any interesting experiments, failures, equipment challenges with cover crops.
     interesting_tales = models.TextField(
-        verbose_name="Interesting experiments, failures, equipment challenges",
+        verbose_name="What has been your cover crop “learning curve”? Please share any interesting experiments including failures that have helped you adapt cover cropping to your farm.",
         null=True,
     )
     # 38	If another grower asked you where to start with cover cropping what would you recommend and why?
@@ -771,5 +801,6 @@ class Survey(models.Model):
     )
     # 39	Do you have any additional thoughts or questions about this data gathering process? Any important survey questions we should ask next time?
     additional_thoughts = models.TextField(
-        verbose_name="Any additional thoughts?", null=True
+        verbose_name="Any additional thoughts or questions? Any important survey questions we should ask next time?",
+        null=True,
     )
