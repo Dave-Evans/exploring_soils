@@ -377,8 +377,8 @@ while [ -n "$1" ]; do
             aws s3 cp "$2" "s3://$bucket/$folder/$file"
             shift
             ;;
-        refresh)
-            
+        promote_tier)
+            # For making a server instance accessbile via a known IP
             tier=$(extract_envvar ENV)
             # Apply elastic ip
             apply_elastic_ip $tier
