@@ -5,6 +5,11 @@ from wisccc import views as wisccc_views
 urlpatterns = [
     re_path(r"^wisc-cc-home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
     re_path(r"^wisc_cc_home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
+    re_path(
+        r"^wisccc_download_data$",
+        wisccc_views.wisccc_download_data,
+        name="wisccc_download_data",
+    ),
     re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),
     re_path(
         r"^wisc-cc-survey/0$", wisccc_views.wisc_cc_survey0, name="wisc_cc_survey0"

@@ -804,3 +804,6 @@ class Survey(models.Model):
         verbose_name="Any additional thoughts or questions? Any important survey questions we should ask next time?",
         null=True,
     )
+
+    class Meta:
+        permissions = (("survery_manager", "Survey Manager"),)

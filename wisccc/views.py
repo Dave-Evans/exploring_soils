@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import connection
 import json
+import djqscsv
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
 from wisccc.forms import SurveyForm1, SurveyForm2, SurveyForm3, FarmerForm
 from wisccc.models import Survey, Farmer
+import pandas as pd
 
 
 def check_section_completed(user_id, section):
@@ -50,8 +52,124 @@ def check_section_completed(user_id, section):
         return True
 
 
+def get_survey_data():
+    """For getting survey data and returning an excel doc"""
+    query = """
+        select 
+            s.id
+            , f.first_name 
+            , f.last_name	
+            , f.farm_name  
+            , f.county 
+            , s.years_experience
+            , s.total_acres
+            , s.percent_of_farm_cc
+            , s.dominant_soil_series_1
+            , s.dominant_soil_series_2
+            , s.dominant_soil_series_3
+            , s.dominant_soil_series_4
+            , s.info_source_nutrient_mgmt_1
+            , s.info_source_nutrient_mgmt_2
+            , s.info_source_nutrient_mgmt_3
+            , s.source_nutrient_mgmt_write_in
+            , s.cov_crops_for_ntrnt_mgmt_comments_questions
+            , s.info_source_cover_crops_1
+            , s.info_source_cover_crops_2
+            , s.info_source_cover_crops_3
+            , s.info_source_cover_crops_write_in
+            , s.info_source_cover_crops_social_media
+            , s.support_cover_crops_1
+            , s.support_cover_crops_2
+            , s.support_cover_crops_3
+            , s.support_cover_crops_write_in
+            , s.lacking_any_info_cover_crops
+            , s.like_to_expand_cover_crops
+            , s.barriers_to_expansion
+            , s.top_risks_of_cover_cropping_mgmt
+            , s.quit_planting_cover_crops
+            , s.use_crop_insurance
+            , s.if_use_crop_insurance
+            , s.why_cover_crops_1
+            , s.why_cover_crops_2
+            , s.why_cover_crops_3
+            , s.why_cover_crops_4
+            , s.why_cover_crops_write_in
+            , s.cover_crops_delay_cash_crop
+            , s.save_cover_crop_seed
+            , s.source_cover_crop_seed
+            , s.closest_zip_code
+            , s.field_acreage
+            , s.crop_rotation
+            , s.crop_rotation_2021_cover_crop_species
+            , s.crop_rotation_2021_cash_crop_species
+            , s.crop_rotation_2022_cover_crop_species
+            , s.crop_rotation_2022_cash_crop_species
+            , s.crop_rotation_2023_cover_crop_species
+            , s.crop_rotation_2023_cash_crop_species
+            , s.cover_crop_species_1
+            , s.cover_crop_planting_rate_1
+            , s.cover_crop_species_2
+            , s.cover_crop_planting_rate_2
+            , s.cover_crop_species_3
+            , s.cover_crop_planting_rate_3
+            , s.cover_crop_species_4
+            , s.cover_crop_planting_rate_4
+            , s.cover_crop_species_5
+            , s.cover_crop_planting_rate_5
+            , s.cover_crop_species_and_rate_write_in
+            , s.previous_crop
+            , s.cash_crop_planting_date
+            , s.years_with_cover_crops
+            , s.dominant_soil_texture
+            , s.manure_prior
+            , s.manure_prior_rate
+            , s.manure_prior_rate_units
+            , s.manure_post
+            , s.manure_post_rate
+            , s.manure_post_rate_units
+            , s.tillage_system_cash_crop
+            , s.primary_tillage_equipment_1
+            , s.primary_tillage_equipment_2
+            , s.primary_tillage_equipment_write_in
+            , s.secondary_tillage_equipment
+            , s.secondary_tillage_equipment_write_in
+            , s.soil_conditions_at_cover_crop_seeding
+            , s.cover_crop_seeding_method
+            , s.cover_crop_seeding_method_write_in
+            , s.cover_crop_seed_cost
+            , s.cover_crop_planting_cost
+            , s.cover_crop_planting_date
+            , s.cover_crop_estimated_termination
+            , s.days_between_crop_hvst_and_cc_estd
+            , s.interesting_tales
+            , s.where_to_start
+            , s.additional_thoughts
+            , s.user_id
+            , st_x( farm_location ) as longitude
+            , st_y( farm_location ) as latitude
+            , s.last_updated
+            , s.survey_created
+        from wisccc_survey s 
+        left join wisccc_farmer f
+        on s.user_id = f.user_id """
+    dat = pd.read_sql(query, connection)
+    return dat
+
+
 def wisc_cc_home(request):
     return render(request, "wisccc/wisc_cc_home.html")
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisccc_download_data(request):
+    # qs = Survey.objects.raw(query)
+    # return djqscsv.render_to_csv_response(qs)
+    df = get_survey_data()
+    resp = HttpResponse(content_type="text/csv")
+    resp["Content-Disposition"] = "attachment; filename=survey_data.csv"
+
+    df.to_csv(path_or_buf=resp, sep=",", index=False)
+    return resp
 
 
 @login_required
