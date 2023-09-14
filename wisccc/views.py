@@ -160,7 +160,7 @@ def wisc_cc_home(request):
     return render(request, "wisccc/wisc_cc_home.html")
 
 
-@permission_required("wisccc.survery_manager", raise_exception=True)
+# @permission_required("wisccc.survery_manager", raise_exception=True)
 def wisccc_download_data(request):
     # qs = Survey.objects.raw(query)
     # return djqscsv.render_to_csv_response(qs)
