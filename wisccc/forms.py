@@ -64,7 +64,7 @@ class SurveyForm1(forms.ModelForm):
     )
     # 5. Do you know the dominant soil series on your farm? If so, please list them below in order of how widely distributed (ex. Plano silt loam).
     dominant_soil_series_1 = forms.CharField(
-        label="If you know the dominant soil series on your farm please list them below in order of how widely distributed.",
+        label="If you know the dominant soil series on your farm please list them below in order of how widely distributed. (ex. Plano, Drummer, Tama).",
         help_text="Most dominant",
         max_length=50,
         required=True,
@@ -91,7 +91,7 @@ class SurveyForm1(forms.ModelForm):
 
     # 6. From the following list, select and rank your top 1 - 3 sources of information for nutrient management:
     info_source_nutrient_mgmt_1 = forms.ChoiceField(
-        label="What are your top three sources for nutrient management information?",
+        label="What are your top three sources of information for nutrient management?",
         help_text="First",
         choices=NutrientMgmtSourcesChoices.choices,
         required=True,
@@ -126,7 +126,7 @@ class SurveyForm1(forms.ModelForm):
 
     # 7. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
     info_source_cover_crops_1 = forms.ChoiceField(
-        label="What are your top three sources for cover crop information?",
+        label="What are your top three sources of information on cover cropping?",
         help_text="First",
         choices=CoverCropInfoSourcesChoices.choices,
         required=True,
@@ -281,7 +281,7 @@ class SurveyForm1(forms.ModelForm):
             # "info_source_cover_crops_2",
             # "info_source_cover_crops_3",
             "info_source_cover_crops_write_in",
-            "info_source_cover_crops_social_media",
+            # "info_source_cover_crops_social_media",
             "support_cover_crops_1",
             "support_cover_crops_2",
             "support_cover_crops_3",
@@ -327,6 +327,7 @@ class SurveyForm2(forms.ModelForm):
                 "default_zoom": 6,
             }
         ),
+        required=False,
     )
     # 16 Closest zip code for this field (so we can determine appropriate climate data and generate a location map of participating fields). Field must be located in Wisconsin.
     closest_zip_code = forms.IntegerField(
@@ -479,14 +480,15 @@ class SurveyForm2(forms.ModelForm):
     )
 
     # 20	"Previous crop in field
+    # DELETED
     previous_crop = forms.ChoiceField(
         label="Previous cash crop planted in this field in 2023.",
         choices=CashCropChoices.choices,
-        required=True,
+        required=False,
     )
     # 21	What date this year did you plant your cash crop in this field?
     cash_crop_planting_date = forms.DateField(
-        label="What date this year did you plant your cash crop in this field?",
+        label="What date this year did you plant your cash crop in this field? (Estimate is OK if not known)",
         required=True,
     )
     # 22	How many years have you been planting cover crops *in this field*?
@@ -569,7 +571,7 @@ class SurveyForm2(forms.ModelForm):
     primary_tillage_equipment_1 = forms.ChoiceField(
         label="Primary tillage equipment (select all that apply) for a cash crop preceding a cover crop?",
         choices=PrimaryTillageEquipmentChoices.choices,
-        required=False,
+        required=True,
     )
     primary_tillage_equipment_2 = forms.ChoiceField(
         label="Primary tillage equipment",
@@ -689,7 +691,7 @@ class SurveyForm2(forms.ModelForm):
             "manure_post_rate_units",
             "tillage_system_cash_crop",
             "primary_tillage_equipment_1",
-            "primary_tillage_equipment_2",
+            # "primary_tillage_equipment_2",
             "primary_tillage_equipment_write_in",
             "secondary_tillage_equipment",
             "secondary_tillage_equipment_write_in",
@@ -712,7 +714,7 @@ class SurveyForm3(forms.ModelForm):
 
     # 37	Please share any interesting experiments, failures, equipment challenges with cover crops.
     interesting_tales = forms.CharField(
-        label="Interesting experiments, failures, equipment challenges",
+        label="What has been your cover crop “learning curve”? Please share with any interesting experiments including failures that have helped you adapt cover cropping to your farm.",
         widget=forms.Textarea,
         max_length=1000,
         required=True,
@@ -726,7 +728,7 @@ class SurveyForm3(forms.ModelForm):
     )
     # 39	Do you have any additional thoughts or questions about this data gathering process? Any important survey questions we should ask next time?
     additional_thoughts = forms.CharField(
-        label="Any additional thoughts?",
+        label="Any additional thoughts or questions? Any important survey questions we should ask next time?",
         widget=forms.Textarea,
         max_length=1000,
         required=True,
@@ -864,17 +866,17 @@ class SurveyForm(forms.ModelForm):
         required=True,
     )
 
-    support_cover_crops_2 = forms.ChoiceField(
-        label="Second most needed support for cover cropping",
-        choices=CoverCropSupportChoices.choices,
-        required=True,
-    )
+    # support_cover_crops_2 = forms.ChoiceField(
+    #     label="Second most needed support for cover cropping",
+    #     choices=CoverCropSupportChoices.choices,
+    #     required=False,
+    # )
 
-    support_cover_crops_3 = forms.ChoiceField(
-        label="Third most needed support for cover cropping",
-        choices=CoverCropSupportChoices.choices,
-        required=True,
-    )
+    # support_cover_crops_3 = forms.ChoiceField(
+    #     label="Third most needed support for cover cropping",
+    #     choices=CoverCropSupportChoices.choices,
+    #     required=False,
+    # )
 
     support_cover_crops_write_in = forms.CharField(
         label="Other support for cover crops you would like to see",
@@ -907,7 +909,7 @@ class SurveyForm(forms.ModelForm):
     # 11. What are the top risks of cover cropping for you, and how do you manage them?
     top_risks_of_cover_cropping_mgmt = forms.CharField(
         label="What are the top risks of cover cropping for you, and how do you manage them?",
-        required=True,
+        required=False,
         widget=forms.Textarea,
         max_length=500,
     )
@@ -975,7 +977,7 @@ class SurveyForm(forms.ModelForm):
         max_length=500,
     )
 
-    # In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
+    # In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre or 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
     farm_location = geo_forms.PointField(
         # widget=forms.OpenLayersWidget(
         # attrs={

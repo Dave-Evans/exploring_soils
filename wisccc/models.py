@@ -193,7 +193,7 @@ class ManureApplicateUnitsChoices(models.TextChoices):
 
     BLANK = "", ""
     POUNDS_ACRE = "POUNDS_ACRE", "lbs/acre"
-    GALLONS = "GALLONS", "gallons"
+    GALLONS = "GALLONS", "gallons/acre"
 
 
 class TillageSystemChoices(models.TextChoices):

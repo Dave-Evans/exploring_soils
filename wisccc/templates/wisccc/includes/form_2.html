@@ -3,15 +3,11 @@
 
 <div>
     <h5>In the following section we ask you about your specific cover cropping practices in one field or set of fields
-        (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis.
+        (can be one acre or 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis.
     </h5>
     <h5>Provide answers *for that field.*</h5>
 </div>
-<div class="form-row">
-    <div class="form-group col-md-8 mb-0">
-        {{ form.farm_location|as_crispy_field }}
-    </div>
-</div>
+
 <div class="form-row">
     <div class="form-group col-md-6 mb-0">
         {{ form.closest_zip_code|as_crispy_field }}
@@ -20,7 +16,11 @@
         {{ form.field_acreage|as_crispy_field }}
     </div>
 </div>
-
+<div class="form-row">
+    <div class="form-group col-md-8 mb-0">
+        {{ form.farm_location|as_crispy_field }}
+    </div>
+</div>
 <div>
     <h5>Crop rotation and cover crop species</h5>
 </div>
@@ -57,15 +57,16 @@
         {{ form.crop_rotation|as_crispy_field }}
     </div>
 </div>
+<h5>Cover crop dates and planting rates</h5>
 <div class="form-row">
-    <div class="form-group col-md-5 mb-0">
+    <!-- <div class="form-group col-md-5 mb-0">
         {{ form.previous_crop|as_crispy_field }}
-    </div>
+    </div> -->
     <div class="form-group col-md-5 mb-0">
         {{ form.cash_crop_planting_date|as_crispy_field }}
     </div>
 </div>
-<h6>Please select any of the following that were planted as a cover crop in this field *this year*.</h6>
+<p>Please select any of the following that were planted as a cover crop in this field *this year*.</p>
 <div class="form-row">
     <div class="form-group col-md-4 mb-0">
         {{ form.cover_crop_species_1|as_crispy_field }}
@@ -193,9 +194,9 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col-md-6 mb-0">
+    <!-- <div class="form-group col-md-6 mb-0">
         {{ form.primary_tillage_equipment_2|as_crispy_field }}
-    </div>
+    </div> -->
     <div class="form-group col-md-5 mb-0">
         {{ form.primary_tillage_equipment_write_in|as_crispy_field }}
     </div>

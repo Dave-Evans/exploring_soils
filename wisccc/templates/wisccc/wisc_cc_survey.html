@@ -7,7 +7,7 @@
   <div class="col-lg-8 col-md-10 col-sm-12">
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">Welcome, {{ user.username }}</h3>
+        <h3 class="card-title">Welcome {{ user.username }}</h3>
 
 
         {% if completed_0 and completed_1 and completed_2 and completed_3 %}
@@ -36,43 +36,45 @@
           <div class="list-group">
             {% if completed_0 %}
             <a href="{% url 'wisc_cc_survey0' %}"
-              class="list-group-item list-group-item-action list-group-item-success">About you - Completed! Click to
+              class="list-group-item list-group-item-action list-group-item-success">I. About You - Completed! Click to
               edit your response.</a>
             {% else %}
             <a href="{% url 'wisc_cc_survey0' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">About you</a>
+              class="list-group-item list-group-item-action list-group-item-warning">I. About You</a>
             {% endif %}
 
             {% if completed_1 %}
             <a href="{% url 'wisc_cc_survey1' %}"
-              class="list-group-item list-group-item-action list-group-item-success">General Farm Characteristics -
+              class="list-group-item list-group-item-action list-group-item-success">II. General Farm Characteristics -
               Completed! Click to
               edit your response.</a>
             {% else %}
             <a href="{% url 'wisc_cc_survey1' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">General Farm Characteristics</a>
+              class="list-group-item list-group-item-action list-group-item-warning">II. General Farm
+              Characteristics</a>
             {% endif %}
 
             {% if completed_2 %}
             <a href="{% url 'wisc_cc_survey2' %}"
-              class="list-group-item list-group-item-action list-group-item-success">"Research Field" Cover Crop
+              class="list-group-item list-group-item-action list-group-item-success">III. "Research Field" Cover Crop
               Information - Completed! Click to
               edit your response.</a>
             {% else %}
             <a href="{% url 'wisc_cc_survey2' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">"Research Field" Cover Crop
+              class="list-group-item list-group-item-action list-group-item-warning">III. "Research Field" Cover Crop
               Information</a>
             {% endif %}
 
 
             {% if completed_3 %}
             <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-success">Final Thoughts? - Completed! Click
+              class="list-group-item list-group-item-action list-group-item-success">IV. Final Thoughts - Completed!
+              Click
               to
               edit your response.</a>
             {% else %}
             <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">Final Thoughts?</a>
+              class="list-group-item list-group-item-action list-group-item-warning">IV. Final Thoughts</a>
             {% endif %}
 
           </div>
@@ -80,26 +82,15 @@
         <br>
 
 
-        <div class="card-footer text-muted text-center">
+        <!-- <div class="card-footer text-muted text-center">
           Questions? See our <a href="#">references page</a>
-          {% if user.is_authenticated %}
+          
           <ul class="nav justify-content-end">
             <li class="nav-item">
               <a class="nav-link active" href="{% url 'logout' %}">Logout</a>
             </li>
           </ul>
-
-          {% else %}
-          <ul class="nav justify-content-end">
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'signup' %}">Sign up</a>
-            </li>
-          </ul>
-          {% endif %}
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

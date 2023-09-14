@@ -12,13 +12,15 @@
   {{ form.media }}
 </head>
 
-<h3 class="card-title">"Research Field" Cover Crop Information</h3>
+<h3 class="card-title">III. "Research Field" Cover Crop Information</h3>
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
   {% include 'wisccc/includes/form_2.html' %}
 
   <button type="submit" class="btn btn-primary">Submit</button>
+  <a href="{% url 'wisc_cc_survey' %}"><button type="button" class="btn btn-secondary">Back to survey home
+      page</button></a>
 
 
 </form>
