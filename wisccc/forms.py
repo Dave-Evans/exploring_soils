@@ -155,7 +155,7 @@ class SurveyForm1(forms.ModelForm):
     # 7a. If you selected social media, what people or programs are most useful to you on questions of cover cropping?
     info_source_cover_crops_social_media = forms.CharField(
         label="PROBABLY delte this: Social media information source for cover crops",
-        required=True,
+        required=False,
         widget=forms.Textarea,
         max_length=500,
     )
@@ -167,17 +167,17 @@ class SurveyForm1(forms.ModelForm):
         required=True,
     )
 
-    # support_cover_crops_2 = forms.ChoiceField(
-    #     label="Second most needed support for cover cropping",
-    #     choices=CoverCropSupportChoices.choices,
-    #     required=False,
-    # )
+    support_cover_crops_2 = forms.ChoiceField(
+        label="Second most needed support for cover cropping",
+        choices=CoverCropSupportChoices.choices,
+        required=False,
+    )
 
-    # support_cover_crops_3 = forms.ChoiceField(
-    #     label="Third most needed support for cover cropping",
-    #     choices=CoverCropSupportChoices.choices,
-    #     required=False,
-    # )
+    support_cover_crops_3 = forms.ChoiceField(
+        label="Third most needed support for cover cropping",
+        choices=CoverCropSupportChoices.choices,
+        required=False,
+    )
 
     support_cover_crops_write_in = forms.CharField(
         label="If you chose “other” please provide details.",
@@ -210,7 +210,7 @@ class SurveyForm1(forms.ModelForm):
     # 11. What are the top risks of cover cropping for you, and how do you manage them?
     top_risks_of_cover_cropping_mgmt = forms.CharField(
         label="What are the top risks of cover cropping for you, and how do you manage them?",
-        required=True,
+        required=False,
         widget=forms.Textarea,
         max_length=500,
     )
