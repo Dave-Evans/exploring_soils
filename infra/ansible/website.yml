@@ -54,16 +54,16 @@
       mode: '0755'
 
   # This will be pulling from an S3 bucket
-  - name: Move backup db dump file
-    copy:
-      src: ../../data/dump.json
-      dest: /home/ubuntu/exploring_soils/data/dump.json
-      remote_src: no
+  # - name: Move backup db dump file
+  #   copy:
+  #     src: ../../data/dump.json
+  #     dest: /home/ubuntu/exploring_soils/data/dump.json
+  #     remote_src: no
 
   # Remove old migrations, create fresh, and load data
   # Should be run **ONLY** on one machine
   - name: Run a script to delete old migrations and recreate and then load data
-    script: build_and_load_db.sh
+    script: build_and_load_db.sh {{aws_backup_bucket_name}}
     args:
       creates: /home/ubuntu/exploring_soils/migrations_are_complete
     notify:
