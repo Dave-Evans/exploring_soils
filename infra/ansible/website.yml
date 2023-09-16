@@ -73,10 +73,10 @@
   - name: Ensure a job that runs at 01:42 GMT. Creates an entry like "0 5,2 * * ls -alh > /dev/null"
     cron:
       name: "Set up DB backup"
-      minute: "38"
-      hour: "2"
+      minute: "32"
+      hour: "1"
       user: root
-      job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./infra/helper.sh dumpdb; bash ./infra/helper.sh bkup ./data/dump.json"
+      job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./infra/helper.sh daily_bkup;"
 
 
   - name: Change directory permissions

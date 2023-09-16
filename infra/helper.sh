@@ -291,11 +291,30 @@ scp_to_server() {
 
 }
 
+bkup() {
+    bucket=$(extract_envvar AWS_BACKUP_BUCKET_NAME)
+    folder="db"
+    file=$(basename -- "$1")
+    INFO "Copying $1'"
+    INFO "To 's3://$bucket/$folder/$file'"
+    aws s3 cp "$1" "s3://$bucket/$folder/$file"
+}
+
+
 dump_db() {
     # For dumping the database as backup
+    bkup_fl="./data/dump_$(printf '%(%Y%m%d)T\n' -1).json"
     source $myvenv_dir/bin/activate
-    python $top_level/manage.py dumpdata --indent 4 --natural-primary --natural-foreign --traceback > ./data/dump.json
+    python $top_level/manage.py dumpdata --indent 4 --natural-primary --natural-foreign --traceback --exclude sessions --exclude admin.LogEntry > $bkup_fl
     deactivate
+    echo $bkup_fl
+}
+
+daily_bkup() {
+
+    bkup_fl=$( dump_db )
+    bkup $bkup_fl
+
 }
 
 apply_elastic_ip() {
@@ -368,18 +387,33 @@ while [ -n "$1" ]; do
             INFO "Dumping database to ./data/dump.json"
             dump_db
             ;;
-        bkup)
-            bucket=$(extract_envvar AWS_BACKUP_BUCKET_NAME)
-            folder="db"
-            file=$(basename -- "$2")
-            INFO "Copying $2'"
-            INFO "To 's3://$bucket/$folder/$file'"
-            aws s3 cp "$2" "s3://$bucket/$folder/$file"
+        daily_bkup)
+            INFO "Dumping and backup up database"
+            daily_bkup
             shift
             ;;
         promote_tier)
             # For making a server instance accessbile via a known IP
             tier=$(extract_envvar ENV)
+
+            echo "You would like to promote this instance to the $tier tier?."
+            echo "Enter 'yes' to proceed"
+            read resp
+            if [ "$resp" != 'yes' ]; then
+                echo $resp
+                exit 1
+            else
+                if [ "$tier" == "prod" ]; then
+                    echo "  -------------  "
+                    echo "   Are you certain you want to promote this to production?    "
+                    echo "  -------------  "
+                    read resp
+                    if [ "$resp" != 'yes' ]; then
+                        echo $resp
+                        exit 1
+                    fi
+                fi
+            fi
             # Apply elastic ip
             apply_elastic_ip $tier
             # For refreshing the ip
