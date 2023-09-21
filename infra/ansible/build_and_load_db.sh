@@ -1,16 +1,23 @@
 #!/bin/bash
-
+# First arg is backup s3 bucket
 # Enter repository
 cd /home/ubuntu/exploring_soils
 
-# Find all migrations directories and delete the contents
-# for dr in $(find . -maxdepth 2 -mindepth 1 -type d)
-#   do 
-#     if [ $(basename $dr) == "migrations" ]
-#     then echo $dr
-#     sudo rm $dr/* 
-#     fi
-#   done
+# Download data
+# get all s3 files
+rslt=$(aws s3 ls $1/db/)
+
+# get all backup files with dates
+# Sorted to get biggest date, most recent
+bkups=$( echo $rslt | grep -o "dump_\([0-9]\)\{8\}\.json" | sort -r)
+
+# Grab the first, most recent
+fl_bkup=$( echo $bkups | cut -d " " -f 1 )
+
+aws s3 cp s3://$1/db/$fl_bkup ./data/.
+
+bkup_fl="dump_$(printf '%(%Y%m%d)T\n' -1).json"
+
 find . -maxdepth 3 -path "*/migrations/*.py" -not -name "__init__.py" -delete
 # enter virtual env and create fresh migration files,
 #   use them to build the database
@@ -21,5 +28,5 @@ python ./manage.py makemigrations
 echo "Running migrate"
 python ./manage.py migrate
 echo "Loading data"
-python ./manage.py loaddata data/dump.json
+python ./manage.py loaddata data/$fl_bkup
 python ./manage.py collectstatic --noinput
