@@ -55,101 +55,97 @@ def check_section_completed(user_id, section):
 def get_survey_data():
     """For getting survey data and returning an excel doc"""
     query = """
+
         select 
             s.user_id
             , s.id as response_id
             , u.username 
+            , u.email
             , f.first_name 
-            , f.last_name	
+            , f.last_name
             , f.farm_name  
-            , f.county 
-            , s.years_experience
-            , s.total_acres
-            , s.percent_of_farm_cc
-            , s.dominant_soil_series_1
-            , s.dominant_soil_series_2
-            , s.dominant_soil_series_3
-            , s.dominant_soil_series_4
-            , s.info_source_nutrient_mgmt_1
-            , s.info_source_nutrient_mgmt_2
-            , s.info_source_nutrient_mgmt_3
-            , s.source_nutrient_mgmt_write_in
-            , s.cov_crops_for_ntrnt_mgmt_comments_questions
-            , s.info_source_cover_crops_1
-            , s.info_source_cover_crops_2
-            , s.info_source_cover_crops_3
-            , s.info_source_cover_crops_write_in
-            , s.info_source_cover_crops_social_media
-            , s.support_cover_crops_1
-            , s.support_cover_crops_2
-            , s.support_cover_crops_3
-            , s.support_cover_crops_write_in
-            , s.lacking_any_info_cover_crops
-            , s.like_to_expand_cover_crops
-            , s.barriers_to_expansion
-            , s.top_risks_of_cover_cropping_mgmt
-            , s.quit_planting_cover_crops
-            , s.use_crop_insurance
-            , s.if_use_crop_insurance
-            , s.why_cover_crops_1
-            , s.why_cover_crops_2
-            , s.why_cover_crops_3
-            , s.why_cover_crops_4
-            , s.why_cover_crops_write_in
-            , s.cover_crops_delay_cash_crop
-            , s.save_cover_crop_seed
-            , s.source_cover_crop_seed
-            , s.closest_zip_code
-            , s.field_acreage
-            , s.crop_rotation
-            , s.crop_rotation_2021_cover_crop_species
-            , s.crop_rotation_2021_cash_crop_species
-            , s.crop_rotation_2022_cover_crop_species
-            , s.crop_rotation_2022_cash_crop_species
-            , s.crop_rotation_2023_cover_crop_species
-            , s.crop_rotation_2023_cash_crop_species
-            , s.cover_crop_species_1
-            , s.cover_crop_planting_rate_1
-            , s.cover_crop_species_2
-            , s.cover_crop_planting_rate_2
-            , s.cover_crop_species_3
-            , s.cover_crop_planting_rate_3
-            , s.cover_crop_species_4
-            , s.cover_crop_planting_rate_4
-            , s.cover_crop_species_5
-            , s.cover_crop_planting_rate_5
-            , s.cover_crop_species_and_rate_write_in
-            , s.previous_crop
-            , s.cash_crop_planting_date
-            , s.years_with_cover_crops
-            , s.dominant_soil_texture
-            , s.manure_prior
-            , s.manure_prior_rate
-            , s.manure_prior_rate_units
-            , s.manure_post
-            , s.manure_post_rate
-            , s.manure_post_rate_units
-            , s.tillage_system_cash_crop
-            , s.primary_tillage_equipment_1
-            , s.primary_tillage_equipment_2
-            , s.primary_tillage_equipment_write_in
-            , s.secondary_tillage_equipment
-            , s.secondary_tillage_equipment_write_in
-            , s.soil_conditions_at_cover_crop_seeding
-            , s.cover_crop_seeding_method
-            , s.cover_crop_seeding_method_write_in
-            , s.cover_crop_seed_cost
-            , s.cover_crop_planting_cost
-            , s.cover_crop_planting_date
-            , s.cover_crop_estimated_termination
-            , s.days_between_crop_hvst_and_cc_estd
-            , s.interesting_tales
-            , s.where_to_start
-            , s.additional_thoughts
+            , f.county
             , st_x( farm_location ) as longitude
-            , st_y( farm_location ) as latitude
-            , s.last_updated
-            , s.survey_created
+            , st_y( farm_location ) as latitude 
+            , s.years_experience as "1. How many total years experience do you have planting cover crops?"
+            , s.total_acres as "2. Total acres you planted to cover crops this year."
+            , s.percent_of_farm_cc as "3. What percent of all your farm acres did you plant to covers this year?"
+            , s.dominant_soil_series_1 as "4a. If you know the dominant soil series on your farm please list them below in order of how widely distributed. (ex. Plano, Drummer, Tama)."
+            , s.dominant_soil_series_2 as "4b. Second most dominant"
+            , s.dominant_soil_series_3 as "4c. Third most dominant"
+            , s.dominant_soil_series_4 as "4d. Fourth most dominant"
+            , s.info_source_nutrient_mgmt_1 as "5a. What are your top three sources of information for nutrient management?"
+            , s.info_source_nutrient_mgmt_2 as "5b. Second"
+            , s.info_source_nutrient_mgmt_3 as "5c. Third"
+            , s.source_nutrient_mgmt_write_in as "6. If you chose other please explain."
+            , s.cov_crops_for_ntrnt_mgmt_comments_questions as "7. Please share any experiences or questions regarding using cover crops for nutrient management."
+            , s.info_source_cover_crops_1 as "8a. What are your top three sources of information on cover cropping?"
+            , s.info_source_cover_crops_2 as "8b. Second"
+            , s.info_source_cover_crops_3 as "8c. Third"
+            , s.info_source_cover_crops_write_in as "9. If you chose social media or other please provide details."
+            , s.support_cover_crops_1 as "10. Which of the following would make the biggest difference to you in terms of support for using cover crops?"
+            , s.support_cover_crops_write_in as "11. If you chose “other” please provide details."
+            , s.lacking_any_info_cover_crops as "12. Are you lacking in any information regarding cover crops? Please explain."
+            , s.barriers_to_expansion as "13. Would you like to expand the number of acres you cover crop? If yes, what are the main barriers? Please share any details that will help us understand the challenges."
+            , s.quit_planting_cover_crops as "14. What would it take for you to quit planting covers?"
+            , s.if_use_crop_insurance as "15. Do you use crop insurance? If so, does it influence your cover cropping decisions, and how?"
+            , s.why_cover_crops_write_in as "16. What are your top 3 motivations for cover cropping? Please explain."
+            , s.closest_zip_code as "17. Enter the closest zip code for this field."
+            , s.field_acreage as "18. What is this fields acreage?"
+            , s.farm_location as "19. Zoom in to the map and click the general location for this field."
+            , s.crop_rotation_2021_cash_crop_species as "20a. Cash crop planted 2021"
+            , s.crop_rotation_2021_cover_crop_species as "20b. Cover crop planted in 2021"
+            , s.crop_rotation_2022_cash_crop_species as "21a. Cash crop planted 2022"
+            , s.crop_rotation_2022_cover_crop_species as "21b. Cover crop planted in 2022"
+            , s.crop_rotation_2023_cash_crop_species as "22a. Cash crop planted 2023"
+            , s.crop_rotation_2023_cover_crop_species as "22b. Cover crop planted in 2023"
+            , s.crop_rotation as "23. Are there any other details you would like to share about your crop rotation?"
+            , s.cover_crop_species_1 as "24a. Cover crop 1"
+            , s.cover_crop_planting_rate_1 as "24b. Planting rate, for cover crop 1"
+            , s.cover_crop_planting_rate_1_units as "24c. Units for cover crop 1"
+            , s.cover_crop_species_2 as "25a. Cover crop 2"
+            , s.cover_crop_planting_rate_2 as "25b. Planting rate, for cover crop 2"
+            , s.cover_crop_planting_rate_2_units as "25c. Units for cover crop 2"
+            , s.cover_crop_species_3 as "26a. Cover crop 3"
+            , s.cover_crop_planting_rate_3 as "26b. Planting rate, for cover crop 3"
+            , s.cover_crop_planting_rate_3_units as "26c. Units for cover crop 3"
+            , s.cover_crop_species_4 as "27a. Cover crop 4"
+            , s.cover_crop_planting_rate_4 as "27b. Planting rate, for cover crop 4"
+            , s.cover_crop_planting_rate_4_units as "27c. Units for cover crop 4"
+            , s.cover_crop_species_5 as "28a. Cover crop 5"
+            , s.cover_crop_planting_rate_5 as "28b. Planting rate, for cover crop 5"
+            , s.cover_crop_planting_rate_5_units as "28c. Units for cover crop 5"
+            , s.cover_crop_species_and_rate_write_in as "29. Other cover crops planted and their rates, please specify in pounds per acre."
+            , s.cover_crop_multispecies_mix_write_in as "30. If you planted a multispecies mix in 2023 please provide details."
+            , s.cash_crop_planting_date as "31. What date this year did you plant your cash crop in this field? (Estimate is OK if not known)"
+            , s.years_with_cover_crops as "32. How many years have you been planting cover crops *in this field*?"
+            , s.dominant_soil_texture as "33. Please select the dominant soil texture of this field."
+            , s.cover_crops_delay_cash_crop as "34. Does planting a cover crop delay when you would otherwise plant your cash crop?"
+            , s.save_cover_crop_seed as "35. Do you save cover crop seed?"
+            , s.source_cover_crop_seed as "36. What is your cover crop seed source?"
+            , s.manure_prior as "37a. Will you apply manure prior to seeding cover crops on this field?"
+            , s.manure_prior_rate as "37b. At what rate will the manure be applied?"
+            , s.manure_prior_rate_units as "37c. Please select the units for the manure application rate."
+            , s.manure_post as "38a. Will manure be applied to the field after the cover crop is established?"
+            , s.manure_post_rate as "38b. At what rate will the manure be applied?"
+            , s.manure_post_rate_units as "38c. Please select the units for the manure application rate."
+            , s.tillage_system_cash_crop as "39. What is your tillage system for the cash crop preceding the cover crop?"
+            , s.primary_tillage_equipment as "40. Primary tillage equipment (select all that apply) for a cash crop preceding a cover crop?"
+            , s.primary_tillage_equipment_write_in as "40a. If you selected other, please explain."
+            , s.secondary_tillage_equipment as "41a. Secondary tillage equipment (select all that apply) for cash crop preceding the cover crop?"
+            , s.secondary_tillage_equipment_write_in as "41b. If you selected other, please explain."
+            , s.soil_conditions_at_cover_crop_seeding as "42. Soil conditions in this field at cover crop seeding."
+            , s.cover_crop_seeding_method as "43. Please select your the seeding method for your cover crop."
+            , s.cover_crop_seeding_method_write_in as "43a. If you selected other, please explain."
+            , s.cover_crop_seed_cost as "44. Estimated cover crop seed cost for this field ($/acre)"
+            , s.cover_crop_planting_cost as "45. Estimated cover crop planting cost per acre in this field. Please use"
+            , s.cover_crop_planting_date as "46. Cover crop planting date for this field (estimate is OK if not known)."
+            , s.cover_crop_estimated_termination as "47. Estimated termination timing/method for this field."
+            , s.days_between_crop_hvst_and_cc_estd as "48. Number of days estimated between crop harvest and cover crop establishment in this field."
+            , s.interesting_tales as "49. Whats been your cover crop learning curve? Share any interesting experiments or failures."
+            , s.where_to_start as "50. Where would you tell another grower to start with cover crops? Why?"
+            , s.additional_thoughts as "51. Any additional thoughts or questions? Any important survey questions we should ask next time?"
+
         from wisccc_survey s 
         left join wisccc_farmer f
         on s.user_id = f.user_id 
