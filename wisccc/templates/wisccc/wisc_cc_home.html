@@ -8,16 +8,18 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">Welcome</h3>
-        <p>Help gather data and learn about cover crop usage in Wisconsin</p>
+        <p>Click on the map or graph below to explore cover crop information contributed by farmers from around
+          Wisconsin. If you've registered to participate in our 2023-24 cover crop survey, click on the survey link to
+          the left. </p>
         <div class="card-deck">
 
           <div class="card">
             <a href="{% url 'wisc_cc_survey' %}">
-              <img class="card-img-top" width="200" height="200" src="{% static 'img/cover_crop_good_image.jpg' %}"
+              <img class="card-img-top" width="200" height="200" src="{% static 'img/oats_berseem.jpg' %}"
                 alt="Card image cap">
               <div class="card-body">
-                <h5 class="card-title">Fill out cover crop survey</h5>
-                <p class="card-text">To fill out a survey, click here.
+                <h5 class="card-title">Cover Crop Survey</h5>
+                <p class="card-text">
                 </p>
 
               </div>
@@ -29,8 +31,8 @@
               <img class="card-img-top" width="200" height="200" src="{% static 'img/display_wisc_cc_map2.png' %}"
                 alt="Card image cap">
               <div class="card-body">
-                <h5 class="card-title">View map</h5>
-                <p class="card-text">Explore the map where farmers have filled out surveys about cover crop usage.</p>
+                <h5 class="card-title">Interactive Cover Crop Practices & Biomass Map </h5>
+                <p class="card-text"></p>
 
               </div>
             </a>
@@ -40,15 +42,19 @@
               <img class="card-img-top" height="200" style="border:10px solid white;"
                 src="{% static 'img/display_wisc_cc_graph.png' %}" alt="Card image cap">
               <div class="card-body">
-                <h5 class="card-title">Explore data</h5>
-                <p class="card-text">Explore data we have collected about cover crops.</p>
+                <h5 class="card-title">Cover Crop Data Graphs</h5>
+                <p class="card-text">Change variables to explore locations, species, tillage and more.</p>
 
               </div>
             </a>
           </div>
+          <br>
+
         </div>
         <!-- if perms.wisccc.survery_manager %} -->
         <br>
+        <p>We are grateful for our Soil Health Collaborative partners, the USDA-ARS Dairy Forage Research Center &
+          UW-Madison's Center for Integrated Agricultural Systems, and for our collaborating Wisconsin farmers. </p>
         <div class="card">
 
           <div class="card-header">
