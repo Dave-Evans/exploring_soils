@@ -145,6 +145,7 @@ class CashCropChoices(models.TextChoices):
     VEGETABLE_CROP = "VEGETABLE_CROP", "vegetable crop"
     OTHER_GRAIN = "OTHER_GRAIN", "other grain"
     OTHER_FORAGE = "OTHER_FORAGE", "other forage"
+    LIVESTOCK = "LIVESTOCK", "livestock feeding/grazing"
 
 
 class SeedingMethodChoices(models.TextChoices):
@@ -280,26 +281,22 @@ class Survey(models.Model):
     # Location
     farm_location = geo_models.PointField(verbose_name="Farm location", null=True)
 
-    # 1. County do you farm?
-
-    #   Add choices here
-
-    # 2. Years Experience
+    # 1. Years Experience
     years_experience = models.PositiveSmallIntegerField(
         verbose_name="Years experience of farming", null=True
     )
 
-    # 3. Total acres of cover crops
+    # 2. Total acres of cover crops
     total_acres = models.IntegerField(
         verbose_name="Total acres of cover crops", null=True
     )
 
-    # 4. Percent acres of your farm in cc?
+    # 3. Percent acres of your farm in cc?
     percent_of_farm_cc = models.PositiveSmallIntegerField(
         verbose_name="The percent of your farm, in acres, that is planted in cover crops",
         null=True,
     )
-    # 5. Do you know the dominant soil series on your farm? If so, please list them below in order of how widely distributed (ex. Plano silt loam).
+    # 4. Do you know the dominant soil series on your farm? If so, please list them below in order of how widely distributed (ex. Plano silt loam).
     dominant_soil_series_1 = models.CharField(
         verbose_name="Soil series with the greatest distribution on your farm",
         max_length=50,
@@ -321,14 +318,8 @@ class Survey(models.Model):
         null=True,
     )
 
-    # 6. From the following list, select and rank your top 1 - 3 sources of information for nutrient management:
-    #       Agronomist/CCA/other private consultant
-    #       Friends and neighbor farmers
-    #       Local cooperative
-    #       Land conservation office
-    #       Producer-led Watershed Group
-    #       UW Extension
-    #       ________Write in any other key sources we didn’t include above.
+    # 5. From the following list, select and rank your top 1 - 3 sources of information for nutrient management:
+
     info_source_nutrient_mgmt_1 = models.CharField(
         verbose_name="Top information source for nutrient management",
         choices=NutrientMgmtSourcesChoices.choices,
@@ -353,13 +344,13 @@ class Survey(models.Model):
         null=True,
     )
     #
-    # 6a. For using cover crops for nutrient management, do you have any experiences to share or questions you'd like more information on?
+    # . For using cover crops for nutrient management, do you have any experiences to share or questions you'd like more information on?
     cov_crops_for_ntrnt_mgmt_comments_questions = models.TextField(
         verbose_name="Questions or comments about nutrient management and cover crops",
         null=True,
     )
-    # 7. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
 
+    # 6. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
     info_source_cover_crops_1 = models.CharField(
         verbose_name="Top information source for cover crops",
         choices=CoverCropInfoSourcesChoices.choices,
@@ -382,15 +373,11 @@ class Survey(models.Model):
     )
 
     info_source_cover_crops_write_in = models.TextField(
-        verbose_name="Other information source for cover crops",
+        verbose_name="Other information and social media source for cover crops",
         null=True,
     )
-    # 7a. If you selected social media, what people or programs are most useful to you on questions of cover cropping?
-    info_source_cover_crops_social_media = models.TextField(
-        verbose_name="Social media information source for cover crops",
-        null=True,
-    )
-    # 8. In terms of support for cover cropping, select and rank the top 1 to 3 factors you’d like to see more of:
+
+    # 7. In terms of support for cover cropping, select and rank the top 1 to 3 factors you’d like to see more of:
 
     support_cover_crops_1 = models.CharField(
         verbose_name="Support for cover cropping",
@@ -418,67 +405,31 @@ class Survey(models.Model):
         null=True,
     )
 
-    # 9. Are you lacking in any information regarding your selecting, planting, and managing cover crops?
+    # 8. Are you lacking in any information regarding your selecting, planting, and managing cover crops?
     lacking_any_info_cover_crops = models.TextField(
         verbose_name="Lacking in any information regarding cover crops?",
         null=True,
     )
-    # 10. Would you like to expand the number of acres you plant to cover crops?
-    like_to_expand_cover_crops = models.BooleanField(
-        verbose_name="Would you like to expand the number of cover crop acres?",
-        null=True,
-    )
-    # 10 b. If yes, what are the main barries to expansion?
+
+    # 9. If yes, what are the main barries to expansion?
     # Please share any details that will help us understand the challenges.
     barriers_to_expansion = models.TextField(
         verbose_name="What are your barriers to expansion? Please share any details to help us understand.",
         null=True,
     )
 
-    # 11. What are the top risks of cover cropping for you, and how do you manage them?
-    top_risks_of_cover_cropping_mgmt = models.TextField(
-        verbose_name="What are the top risks of cover cropping for you, and how do you manage them?",
-        null=True,
-    )
-    # 11a. What would it take for you to quit planting covers?
+    # 10. What would it take for you to quit planting covers?
     quit_planting_cover_crops = models.TextField(
         verbose_name="What would it take for you to quit planting covers?", null=True
     )
-    # 12. Do you use crop insurance?
-    use_crop_insurance = models.BooleanField(
-        verbose_name="Do you use crop insurance?", null=True
-    )
-    # 12a. If so, does it influence your cover cropping decisions, and how?
+
+    # 11. If so, does it influence your cover cropping decisions, and how?
     if_use_crop_insurance = models.TextField(
         verbose_name="If so, does it influence your cover cropping decisions, and how?",
         null=True,
     )
-    # 13. Why do you cover crop? From the list below select and rank your top 3 - 5 motivations
+    # 12. Why do you cover crop? From the list below select and rank your top 3 - 5 motivations
 
-    why_cover_crops_1 = models.CharField(
-        verbose_name="Why do you use cover cropping?",
-        choices=CoverCropReasonsChoices.choices,
-        max_length=25,
-        null=True,
-    )
-    why_cover_crops_2 = models.CharField(
-        verbose_name="Why do you use cover cropping?",
-        choices=CoverCropReasonsChoices.choices,
-        max_length=25,
-        null=True,
-    )
-    why_cover_crops_3 = models.CharField(
-        verbose_name="Why do you use cover cropping?",
-        choices=CoverCropReasonsChoices.choices,
-        max_length=25,
-        null=True,
-    )
-    why_cover_crops_4 = models.CharField(
-        verbose_name="Why do you use cover cropping?",
-        choices=CoverCropReasonsChoices.choices,
-        max_length=25,
-        null=True,
-    )
     why_cover_crops_write_in = models.TextField(
         verbose_name="Other reasons you plant cover crops?",
         null=True,
@@ -651,13 +602,7 @@ class Survey(models.Model):
     cover_crop_multispecies_mix_write_in = models.TextField(
         verbose_name="details for multispecies mix", null=True
     )
-    # 20	"Previous crop in field
-    previous_crop = models.CharField(
-        verbose_name="Previous cash crop planted in the field",
-        choices=CashCropChoices.choices,
-        max_length=30,
-        null=True,
-    )
+
     # 21	What date this year did you plant your cash crop in this field?
     cash_crop_planting_date = models.DateField(
         verbose_name="What date this year did you plant your cash crop in this field?",
@@ -715,18 +660,13 @@ class Survey(models.Model):
         null=True,
     )
     # 27	"Primary tillage equipment (select all that apply) for a cash crop preceding a cover crop?
-    primary_tillage_equipment_1 = models.CharField(
+    primary_tillage_equipment = models.CharField(
         verbose_name="Primary tillage equipment",
         choices=PrimaryTillageEquipmentChoices.choices,
         max_length=30,
         null=True,
     )
-    primary_tillage_equipment_2 = models.CharField(
-        verbose_name="Primary tillage equipment",
-        choices=PrimaryTillageEquipmentChoices.choices,
-        max_length=30,
-        null=True,
-    )
+
     primary_tillage_equipment_write_in = models.TextField(
         verbose_name="Primary tillage equipment, write in",
         null=True,

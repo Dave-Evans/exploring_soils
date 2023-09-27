@@ -37,7 +37,7 @@ def check_section_completed(user_id, section):
         survey = Survey.objects.filter(user_id=user_id).first()
         if survey is None:
             return False
-        if survey.farm_location is None:
+        if survey.closest_zip_code is None:
             return False
 
         return True
@@ -56,7 +56,9 @@ def get_survey_data():
     """For getting survey data and returning an excel doc"""
     query = """
         select 
-            s.id
+            s.user_id
+            , s.id as response_id
+            , u.username 
             , f.first_name 
             , f.last_name	
             , f.farm_name  
@@ -144,14 +146,15 @@ def get_survey_data():
             , s.interesting_tales
             , s.where_to_start
             , s.additional_thoughts
-            , s.user_id
             , st_x( farm_location ) as longitude
             , st_y( farm_location ) as latitude
             , s.last_updated
             , s.survey_created
         from wisccc_survey s 
         left join wisccc_farmer f
-        on s.user_id = f.user_id """
+        on s.user_id = f.user_id 
+        left join auth_user as u
+        on s.user_id = u.id"""
     dat = pd.read_sql(query, connection)
     return dat
 
