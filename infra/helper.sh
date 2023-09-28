@@ -424,7 +424,7 @@ while [ -n "$1" ]; do
             ssh-keygen -f "/home/evans/.ssh/known_hosts" -R $( pullip )
             # Modify remote .env file with updated ALLOWED_HOSTS
             # Modify the `CSRF_TRUSTED_ORIGINS` with <tier>.evansgeospatial.com and restart
-            INFO "Provisioning database components"
+            INFO "Applying elastic ip"
             ansible-playbook -i ./ansible/hosts ./ansible/apply_elastic_ip.yml
             ;;
         *)
