@@ -51,7 +51,7 @@
           <br>
 
         </div>
-        <!-- if perms.wisccc.survery_manager %} -->
+        {% if perms.wisccc.survery_manager %}
         <br>
         <p>We are grateful for our Soil Health Collaborative partners, the USDA-ARS Dairy Forage Research Center &
           UW-Madison's Center for Integrated Agricultural Systems, and for our collaborating Wisconsin farmers. </p>
@@ -66,7 +66,7 @@
             <a href="{% url 'wisccc_download_data' %}" class="btn btn-primary">Download</a>
           </div>
         </div>
-        <!-- endif %} -->
+        {% endif %}
       </div>
       <!-- <div class="card-footer text-muted text-center">
         Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
