@@ -251,6 +251,7 @@ class TerminationMethodTimingChoices(models.TextChoices):
     BLANK = "", ""
     GRAZE_FALL = "GRAZE_FALL", "graze fall"
     WINTERKILL = "WINTERKILL", "little to no cover crop growth in spring"
+    FALLKILL = "FALLKILL", "killing frost (fall)"
     GRAZE_SPRING = "GRAZE_SPRING", "graze spring"
     SPRING_HERBICIDE = (
         "SPRING_HERBICIDE",
