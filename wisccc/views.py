@@ -4,8 +4,10 @@ import json
 import djqscsv
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
+
 from wisccc.forms import SurveyForm1, SurveyForm2, SurveyForm3, FarmerForm
 from wisccc.models import Survey, Farmer
 import pandas as pd
@@ -155,6 +157,17 @@ def get_survey_data():
     return dat
 
 
+def check_user_has_registered(user_id):
+    """For ensuring that the user has signed up prior
+    to visiting the survey"""
+    user = User.objects.filter(id=user_id).first()
+    registered = ["evans.dave.michael@gmail.com", "mingram@wisc.edu"]
+
+    b_registered = user.email in registered
+
+    return b_registered
+
+
 def wisc_cc_home(request):
     return render(request, "wisccc/wisc_cc_home.html")
 
@@ -176,6 +189,9 @@ def wisc_cc_survey(request):
     """Home page for Cover Crop survey. We check progress of different sections of the survey
     by querying one required question from each section (0 (the farmer section),1,2,3).
     If this is completed then we assume it is all completed."""
+
+    b_registered = check_user_has_registered(request.user.id)
+
     completed_0 = check_section_completed(request.user.id, "farmer")
     completed_1 = check_section_completed(request.user.id, 1)
     completed_2 = check_section_completed(request.user.id, 2)
@@ -187,6 +203,7 @@ def wisc_cc_survey(request):
         request,
         template,
         {
+            "b_registered": b_registered,
             "completed_0": completed_0,
             "completed_1": completed_1,
             "completed_2": completed_2,
