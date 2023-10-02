@@ -161,9 +161,10 @@ def check_user_has_registered(user_id):
     """For ensuring that the user has signed up prior
     to visiting the survey"""
     user = User.objects.filter(id=user_id).first()
-    registered = ["evans.dave.michael@gmail.com", "mingram@wisc.edu"]
-
-    b_registered = user.email in registered
+    query = "select email from preregistered where email is not null"
+    registered = pd.read_sql(query, connection).email.tolist()
+    registered = [i.lower() for i in registered]
+    b_registered = user.email.lower() in registered
 
     return b_registered
 
