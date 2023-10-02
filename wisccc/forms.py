@@ -661,3 +661,10 @@ class SurveyForm3(forms.ModelForm):
             "where_to_start",
             "additional_thoughts",
         )
+
+
+class FullSurveyForm(forms.ModelForm):
+    """All survey questions for updating"""
+
+    class Meta:
+        model = Survey
