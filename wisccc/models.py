@@ -275,7 +275,7 @@ class Survey(models.Model):
     survey_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    confirmed_accurate = models.BooleanField(null=False, default=False)
+    confirmed_accurate = models.BooleanField(null=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

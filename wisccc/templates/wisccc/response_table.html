@@ -1,6 +1,6 @@
 {% extends 'wisccc/base_wisccc.html' %}
 {% load static %}
-{% block title %}Welcome to Wisconsin Citizen Science Cover Crop Project {% endblock %}
+{% block title %}Wisconsin Citizen Science Cover Crop Project {% endblock %}
 
 {% load render_table from django_tables2 %}
 {% load bootstrap4 %}
@@ -10,9 +10,9 @@
 
   <div class="card">
     <div class="card-body">
-      <h3 class="card-title">Uploaded</h3>
+      <h3 class="card-title">Survey Responses</h3>
       <h5 class="card-title"><a href="{% url 'wisccc_download_data' %}">Download all data</a></h5>
-      <div class="col-md-10">
+      <div class="col-md-12">
         {% render_table table %}
       </div>
     </div>

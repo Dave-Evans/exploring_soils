@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.db import connection
 import json
@@ -469,18 +469,18 @@ def wisc_cc_static_data(request):
     return JsonResponse(list(data["features"]), safe=False)
 
 
-class SurveyResponseDeleteView(PermissionRequiredMixin, DeleteView):
-    permission_required = "wisccc.survery_manager"
-    model = Survey
-    success_url = reverse_lazy("kanopy_table")
+# class SurveyResponseDeleteView(PermissionRequiredMixin, DeleteView):
+#     permission_required = "wisccc.survery_manager"
+#     model = Survey
+#     success_url = reverse_lazy("kanopy_table")
 
 
-class SurveyResponseUpdateView(PermissionRequiredMixin, UpdateView):
-    permission_required = "wisccc.survery_manager"
-    model = Survey
-    form_class = FullSurveyForm
-    template_name = "wisccc/update_form.html"
-    success_url = reverse_lazy("kanopy_table")
+# class SurveyResponseUpdateView(PermissionRequiredMixin, UpdateView):
+#     permission_required = "wisccc.survery_manager"
+#     model = Survey
+#     form_class = FullSurveyForm
+#     template_name = "wisccc/update_form.html"
+#     success_url = reverse_lazy("kanopy_table")
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -514,3 +514,26 @@ def response_table(request):
     RequestConfig(request, paginate={"per_page": 15}).configure(table)
 
     return render(request, "wisccc/response_table.html", {"table": table})
+
+
+def update_response(request, id):
+    """For updating survey"""
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(Survey, id=id)
+
+    # pass the object as instance in form
+    form = FullSurveyForm(request.POST or None, instance=obj)
+
+    # save the data from the form and
+    # redirect to detail_view
+    if form.is_valid():
+        form.save()
+        return redirect("response_table")
+    # add form dictionary to context
+    context["form"] = form
+
+    return render(request, "wisccc/survey_review.html", context)

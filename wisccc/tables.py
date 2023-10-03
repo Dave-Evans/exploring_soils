@@ -40,8 +40,8 @@ class ResponseTable(tables.Table):
     #     template_name = "django_tables2/bootstrap.html"
     #     attrs = {"class": "table table-hover"}
 
-    # edit = TemplateColumn(template_name="wisccc/update_column.html")
-    delete = TemplateColumn(template_name="wisccc/delete_column.html")
+    edit = TemplateColumn(template_name="wisccc/update_column.html")
+    # delete = TemplateColumn(template_name="wisccc/delete_column.html")
 
 
 # table = ResponseTable(data)
