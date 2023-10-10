@@ -497,6 +497,7 @@ def response_table(request):
                 , f.first_name 
                 , f.last_name
                 , s.survey_created
+                , s.confirmed_accurate
             from wisccc_survey s 
             left join wisccc_farmer f
             on s.user_id = f.user_id 
