@@ -412,10 +412,11 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">About this graph</h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h3 class="modal-title" id="exampleModalLabel">About this graph
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </h3>
                 </div>
                 <div class="modal-body">
                     <p>This graph shows data about how cover crops grown in Wisconsin.
@@ -446,11 +447,12 @@
                         cover
                         crop biomass and the selected growth variable.
                         Regression allows us to quantify the relationship of the variables.
-                        When toggledyou will see a line appear on the graph and an equation representing the statistical
-                        relionship of the variables as well as a brief sentence describing how strong or weak the
-                        relationship is.
+                        When toggled, you will see a line appear on the graph and an equation representing the
+                        statistical
+                        relionship of the variables as well as a brief sentence describing how much variation is
+                        explained by the select growth factor.
                     </p>
-                    <p>When you <b>hover</b> over individual points you will see details from what the farmer enteredin
+                    <p>When you <b>hover</b> over individual points you will see details from what the farmer entered in
                         the
                         survey about the cover crop species planted.
                         Where it was filled in, information about planting rate will also appear.
@@ -854,6 +856,7 @@
                 }
 
                 pretty_prop += " explains " + roundUp(r2 * 100, 1) + " percent of the variation in cover crop biomass."
+
                 return pretty_prop
 
             }
