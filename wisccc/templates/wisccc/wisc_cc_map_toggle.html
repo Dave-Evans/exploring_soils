@@ -272,9 +272,9 @@
 
                             <select id="PropertySelection" class="PropSelector">
                                 <option value="cc_species">Cover crop species</option>
-                                <option value="cc_biomass">Cover crop biomass</option>
+                                <option value="cc_biomass">Cover crop biomass (tons dm/acre)</option>
                                 <option value="fq_rfq">Relative forage quality</option>
-                                <option value="acc_gdd">Growing degree days</option>
+                                <option value="acc_gdd">Growing degree units</option>
                                 <option value="cc_planting_date_mo">Planting date</option>
                             </select>
                             <div id="legend"><svg width="260px" height="400px"></svg></div>
@@ -381,7 +381,7 @@
                 "<dt>Planting date</dt> <dd>" + planting_date + "</dd>" +
                 "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
                 "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
-                "<dt>Cumulative growing degree days</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
+                "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
                 "</dl>" +
                 "*This point is not the actual location of the farm. Locations have been obscured to protect landowner's privacy.";
 
