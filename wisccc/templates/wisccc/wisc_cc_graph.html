@@ -903,6 +903,8 @@
 
                 filtered_data = filterDataManurePost(filtered_data)
 
+                filtered_data = filterDataNulls(filtered_data)
+
                 filtered_data = addRegressionLine(filtered_data)
 
                 return filtered_data;
@@ -1027,6 +1029,14 @@
                 }
                 return data.filter(function (d) {
                     return d.properties.residue_remaining === tillage_tier;
+                });
+
+            }
+
+            function filterDataNulls(data, sdd) {
+                // Removing points with null biomass
+                return data.filter(function (d) {
+                    return d.properties.cc_biomass != null;
                 });
 
             }
