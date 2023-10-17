@@ -342,7 +342,7 @@
 
                         <select id="xFactor" class="group-select">
                             <option value="total_precip" selected>Total precipitation</option>
-                            <option value="acc_gdd">Growing degree days</option>
+                            <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_flat">Planting date</option>
 
                         </select>
@@ -419,21 +419,22 @@
                         of the cover crop was present above ground) and different factors which could influence how well
                         it grew.
                     </p>
-                    <p><b>X-Axis:</b> Here, can choose to visualize the relationship between biomass and total
+                    <p><label style="font-size: medium;">X-Axis:</label> Here, can choose to visualize the relationship
+                        between biomass and total
                         precipitation,
-                        growing degree days*, or planting date.
+                        growing degree units*, or planting date.
                     </p>
-                    <p><b>Change color:</b> You can use the colors to explore data by climate region**, cover crop
+                    <p><label style="font-size: medium;">Change color:</label> You can use the colors to explore data by
+                        climate region**, cover crop
                         species, or
                         crop planted prior to cover crop.</p>
-                    <p><b>Filters:</b> Explore the relationship between cover crop biomass and factors such as county,
-                        tillage,
-                        cover crop species and more. (Note that our database is built on input from about 100 farms, and
-                        if
-                        you select many filters at once, you may end up with very few data points to display or the
-                        graph
-                        may be empty.)</p>
-                    <p><b>Regression line:</b> Toggle to visualize the statistical relationship between cover crop
+                    <p><label style="font-size: medium;">Filters:</label> Explore the relationship between cover crop
+                        biomass and factors such as county, tillage, cover crop species and more.
+                        (Note that our database is built on input from about 100 farms, and if you select many filters
+                        at once, you may end up with very few data points to display or the
+                        graph may be empty.)</p>
+                    <p><label style="font-size: medium;">Regression line:</label> Toggle to visualize the statistical
+                        relationship between cover crop
                         biomass and
                         the
                         selected growth variable. When checked, you will see a regression line, an equation representing
@@ -441,15 +442,19 @@
                         statistical relationship of the variables, and a brief sentence describing how much variation is
                         explained by the select growth factor.</p>
 
-                    <p><b>Hover</b> over colored points for details from individual farmers where we have them,
+                    <p><label style="font-size: medium;">Hover</label> over colored points for details from individual
+                        farmers where we have them,
                         including
                         planting
                         rate and manure application if used.</p>
                     <hr>
-                    <b>*Growing degree days</b> are a measure of how much heat has accumulated over a season. This can
-                    indicate
-                    how favorable were conditions for plants.
-                    <p><b>**Climate regions</b> are areas delineated by the <a target="_blank" rel="noopener noreferrer"
+                    <p><label style="font-size: medium;">*Growing degree units</label> are a measure of how much heat
+                        has
+                        accumulated over a season. This can
+                        indicate
+                        how favorable were conditions for plants.
+                    <p><label style="font-size: medium;">**Climate regions</label> are areas delineated by the <a
+                            target="_blank" rel="noopener noreferrer"
                             href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">National
                             Oceanic and Atmospheric Administration
                             (NOAA)</a> to create areas of similar temperature and precipitation.
@@ -747,7 +752,7 @@
 
                 var pretty_property;
                 if (property == "acc_gdd") {
-                    pretty_property = "Growing degree days"
+                    pretty_property = "Growing degree units"
                 } else if (property == "total_precip") {
                     pretty_property = "Total precipitation (in)"
                 } else if (property == "cc_planting_date_flat") {
@@ -837,7 +842,7 @@
                 } else if (xproperty == "total_precip") {
                     pretty_prop = "Total precipitation (inches)"
                 } else if (xproperty == "acc_gdd") {
-                    pretty_prop = "Accumulated growing degree days"
+                    pretty_prop = "Accumulated growing degree units"
                 }
 
                 pretty_prop += " explains " + roundUp(r2 * 100, 1) + " percent of the variation in cover crop biomass."
