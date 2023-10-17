@@ -248,11 +248,12 @@
             <h2 class="title toc-ignore"><br>Wisconsin Citizen Science Cover Crop Project</h2>
 
 
-            <h4 class="date"></h4>
-            <h5 class="author">Mrill Ingram, <a href="mailto:mingram@wisc.edu">mingram@wisc.edu</a></h5>
-
-
+            <button type="button" style="border: 1px solid;" class="btn btn-secondary btn-lg" data-toggle="modal"
+                data-target="#helpInformation">
+                How to use this graph
+            </button>
         </div>
+        <br>
         <!-- <iframe id="iframe_wisc_cc_map" title="map of participating farmers" width=300 height=400
             src="http://dev.evansgeospatial.com/wisc_cc_map_embed"></iframe> -->
         <div id=" data-collection" class="section level2">
@@ -264,7 +265,7 @@
                     <div class="col-md-2" id="legend">
                         <br>
                         <div style="text-align: left;">
-                            <b>Change color</b>
+                            <label style="font-size: medium;">Color</label>
                         </div>
                         <select id="select_color" class="group-select">
                             <option value="cc_species" selected>Cover crop species</option>
@@ -274,13 +275,6 @@
 
                         <svg width="200px" height="250px"></svg>
                         <br>
-                        <br>
-                        <br>
-
-                        <button type="button" class="btn btn-secondary" data-toggle="modal"
-                            data-target="#helpInformation">
-                            What is this?
-                        </button>
 
                     </div>
                     <div class="col-md-8" id="my_dataviz">
@@ -288,10 +282,8 @@
                 </div>
 
                 <div class="row" style="text-align: left;">
-                    <div class=" col-md-6"><label>Filters</label></div>
-                    <!-- <div class=" col-md-4"><label>Change color</label></div> -->
-                    <div class=" col-md-4"><label>Change X axis</label></div>
-                    <!-- <div class=" col-md-3"><label>Regression line</label></div> -->
+                    <div class=" col-md-6"><label style="font-size: medium;">Filters</label></div>
+                    <div class=" col-md-4"><label style="font-size: medium;">X axis</label></div>
                 </div>
                 <div class="row" style="text-align: left;">
                     <div class=" col-md-6" id="filters">
@@ -362,7 +354,7 @@
 
                         <table>
                             <br>
-                            <label>Regression line</label>
+                            <label style="font-size: medium;">Regression line</label>
                             <tr>
                                 <td>Add regression line</td>
                                 <td><input type="checkbox" id="checkbox_linreg_line" class="group-select"></td>
@@ -419,64 +411,57 @@
                     </h3>
                 </div>
                 <div class="modal-body">
-                    <p>This graph shows data about how cover crops grown in Wisconsin.
-                        Data were collected from surveys about the 2020, 2021, 2022 seasons.
-                        Each data point represents cover crop information for one field from a farmer who completed a
-                        survey.
+                    <p>This graph shares farmer data about how cover crops grow in Wisconsin. Each colored data point
+                        represents cover crop information for one field from a farmer who completed a survey in fall
+                        2020, 2021, or 2022.
                     </p>
-                    <p>The graph illustrates the relationship between cover crop biomass (how much of the cover crop
-                        was present above ground) and different factors which could influence how well it grew.
-                        You can manipulate what factor is shown at the bottom of the graph.
-                        You can choose to visualize the relationship between biomass and total precipitation
-                        received, growing degree days, or planting date.
+                    <p>The graph illustrates the relationship between cover crop biomass (how much
+                        of the cover crop was present above ground) and different factors which could influence how well
+                        it grew.
                     </p>
-
-                    <p><b>Colors</b> of the points can be changed so individual data points represent different
-                        cover crop species, indicate in what climate region they were grown, or what was planted prior
-                        to the cover crop.
+                    <p><b>X-Axis:</b> Here, can choose to visualize the relationship between biomass and total
+                        precipitation,
+                        growing degree days*, or planting date.
                     </p>
-
-                    <p>The <b>filters</b> allow you to see how the relationship between cover crop biomass and different
-                        growth
-                        factors varies for different subgroups of the data.
-                        Note that if you have several filters applied at the same time there may be very few data points
-                        remaining after the filters, and the graph may look blank.
-                    </p>
-
-                    <p>The <b>regression line</b> toggle allows you to visualize the statistical relationship between
-                        cover
-                        crop biomass and the selected growth variable.
-                        Regression allows us to quantify the relationship of the variables.
-                        When toggled, you will see a line appear on the graph and an equation representing the
-                        statistical
-                        relionship of the variables as well as a brief sentence describing how much variation is
-                        explained by the select growth factor.
-                    </p>
-                    <p>When you <b>hover</b> over individual points you will see details from what the farmer entered in
+                    <p><b>Change color:</b> You can use the colors to explore data by climate region**, cover crop
+                        species, or
+                        crop planted prior to cover crop.</p>
+                    <p><b>Filters:</b> Explore the relationship between cover crop biomass and factors such as county,
+                        tillage,
+                        cover crop species and more. (Note that our database is built on input from about 100 farms, and
+                        if
+                        you select many filters at once, you may end up with very few data points to display or the
+                        graph
+                        may be empty.)</p>
+                    <p><b>Regression line:</b> Toggle to visualize the statistical relationship between cover crop
+                        biomass and
                         the
-                        survey about the cover crop species planted.
-                        Where it was filled in, information about planting rate will also appear.
-                        If manure was applied, the quantity applied will be shown.
-                    </p>
-                    <p><b>Climate regions</b> are areas delineated by the <a target="_blank" rel="noopener noreferrer"
+                        selected growth variable. When checked, you will see a regression line, an equation representing
+                        the
+                        statistical relationship of the variables, and a brief sentence describing how much variation is
+                        explained by the select growth factor.</p>
+
+                    <p><b>Hover</b> over colored points for details from individual farmers where we have them,
+                        including
+                        planting
+                        rate and manure application if used.</p>
+                    <hr>
+                    <b>*Growing degree days</b> are a measure of how much heat has accumulated over a season. This can
+                    indicate
+                    how favorable were conditions for plants.
+                    <p><b>**Climate regions</b> are areas delineated by the <a target="_blank" rel="noopener noreferrer"
                             href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">National
                             Oceanic and Atmospheric Administration
                             (NOAA)</a> to create areas of similar temperature and precipitation.
-                        This allows you to understand the geographic similarity between different data points.
-                    </p>
-                    <p><b>Growing degree days</b> are a measure of how much heat has accumulated over a season.
-                        This can indicate how favorable were conditions for plants.
-                    </p>
-                    <p>
-                        <!-- Null data points
-                        Where did the biomass data come from? -->
                     </p>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <script>
 
