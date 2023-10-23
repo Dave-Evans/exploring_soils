@@ -8,9 +8,11 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">Welcome</h3>
-        <p>Click on the map or graph below to explore cover crop information contributed by farmers from around
-          Wisconsin. If you've registered to participate in our 2023-24 cover crop survey, click on the survey link to
-          the left. </p>
+        <p>Since 2020, the Wisconsin Citizen Science Cover Crop project has been collecting information from farmers
+          around the state on their cover crop practices and results. You can explore that data via the interactive map
+          and graphs below. For more information on the project background and methods, please visit our <a
+            href="https://www.michaelfields.org/soil-health" target="_blank" rel="noopener noreferrer">website</a>.
+        </p>
         <div class="card-deck">
 
           <div class="card">
@@ -19,7 +21,7 @@
                 alt="Card image cap">
               <div class="card-body">
                 <h5 class="card-title">Cover Crop Survey</h5>
-                <p class="card-text">
+                <p class="card-text">Click here if you've registered to participate in this year's survey.
                 </p>
 
               </div>
@@ -31,7 +33,7 @@
               <img class="card-img-top" width="200" height="200" src="{% static 'img/display_wisc_cc_map2.png' %}"
                 alt="Card image cap">
               <div class="card-body">
-                <h5 class="card-title">Interactive Cover Crop Practices & Biomass Map </h5>
+                <h5 class="card-title">Map-based visualization of cover crop practices and biomass results by farm</h5>
                 <p class="card-text"></p>
 
               </div>
@@ -52,8 +54,8 @@
 
         </div>
         <br>
-        <p>We are grateful for our Soil Health Collaborative partners, the USDA-ARS Dairy Forage Research Center &
-          UW-Madison's Center for Integrated Agricultural Systems, and for our collaborating Wisconsin farmers. </p>
+        <p>We are grateful to our Soil Health Collaborative partners the USDA-ARS Dairy Forage Research Center &
+          UW-Madison's Center for Integrated Agricultural Systems, and to our collaborating Wisconsin farmers. </p>
         {% if perms.wisccc.survery_manager %}
         <br>
 
