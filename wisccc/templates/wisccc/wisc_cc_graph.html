@@ -253,14 +253,15 @@
 
         <div class="fluid-row" id="header">
 
-            <h2 class="title toc-ignore">Wisc Cover Crop</h2>
+            <h2 class="title toc-ignore"><br>Wisconsin Citizen Science Cover Crop Project</h2>
 
 
-            <h4 class="date">July, 2023</h4>
-            <h5 class="author">Mrill Ingram, <a href="mailto:mingram@wisc.edu">mingram@wisc.edu</a></h5>
-
-
+            <button type="button" style="border: 1px solid;" class="btn btn-secondary btn-lg" data-toggle="modal"
+                data-target="#helpInformation">
+                How to use this graph
+            </button>
         </div>
+        <br>
         <!-- <iframe id="iframe_wisc_cc_map" title="map of participating farmers" width=300 height=400
             src="http://dev.evansgeospatial.com/wisc_cc_map_embed"></iframe> -->
         <div id=" data-collection" class="section level2">
@@ -272,7 +273,7 @@
                     <div class="col-md-2" id="legend">
                         <br>
                         <div style="text-align: left;">
-                            <b>Change color</b>
+                            <label style="font-size: medium;">Color</label>
                         </div>
                         <select id="select_color" class="group-select">
                             <option value="cc_species" selected>Cover crop species</option>
@@ -281,22 +282,22 @@
                         </select>
 
                         <svg width="200px" height="250px"></svg>
+                        <br>
+
                     </div>
                     <div class="col-md-8" id="my_dataviz">
                     </div>
                 </div>
 
                 <div class="row" style="text-align: left;">
-                    <div class=" col-md-6"><label>Filters</label></div>
-                    <!-- <div class=" col-md-4"><label>Change color</label></div> -->
-                    <div class=" col-md-4"><label>Change X axis</label></div>
-                    <!-- <div class=" col-md-3"><label>Regression line</label></div> -->
+                    <div class=" col-md-6"><label style="font-size: medium;">Filters</label></div>
+                    <div class=" col-md-4"><label style="font-size: medium;">X axis</label></div>
                 </div>
                 <div class="row" style="text-align: left;">
                     <div class=" col-md-6" id="filters">
                         <table>
                             <tr>
-                                <td>Cover-crop species</td>
+                                <td>Cover crop species</td>
                                 <td><select id="select_species" class="group-select">
                                     </select></td>
                             </tr>
@@ -385,7 +386,7 @@
 
                         <select id="xFactor" class="group-select">
                             <option value="total_precip" selected>Total precipitation</option>
-                            <option value="acc_gdd">Growing degree days</option>
+                            <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_flat">Planting date</option>
 
                         </select>
@@ -397,7 +398,7 @@
 
                         <table>
                             <br>
-                            <label>Regression line</label>
+                            <label style="font-size: medium;">Regression line</label>
                             <tr>
                                 <td>Add regression line</td>
                                 <td><input type="checkbox" id="checkbox_linreg_line" class="group-select"></td>
@@ -441,7 +442,76 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="helpInformation" tabindex="-1" role="dialog" aria-labelledby="helpInformationLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel">About this graph
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </h3>
+                </div>
+                <div class="modal-body">
+                    <p>This graph shares farmer data about how cover crops grow in Wisconsin. Each colored data point
+                        represents cover crop information for one field from a farmer who completed a survey in fall
+                        2020, 2021, or 2022.
+                    </p>
+                    <p>The graph illustrates the relationship between cover crop biomass (how much
+                        of the cover crop was present above ground) and different factors which could influence how well
+                        it grew.
+                    </p>
+                    <p><label style="font-size: medium;">X-Axis:</label> Here, can choose to visualize the relationship
+                        between biomass and total
+                        precipitation,
+                        growing degree units*, or planting date.
+                    </p>
+                    <p><label style="font-size: medium;">Change color:</label> You can use the colors to explore data by
+                        climate region**, cover crop
+                        species, or
+                        crop planted prior to cover crop.</p>
+                    <p><label style="font-size: medium;">Filters:</label> Explore the relationship between cover crop
+                        biomass and factors such as county, tillage, cover crop species and more.
+                        (Note that our database is built on input from about 100 farms, and if you select many filters
+                        at once, you may end up with very few data points to display or the
+                        graph may be empty.)</p>
+                    <p><label style="font-size: medium;">Regression line:</label> Toggle to visualize the statistical
+                        relationship between cover crop
+                        biomass and
+                        the
+                        selected growth variable. When checked, you will see a regression line, an equation representing
+                        the
+                        statistical relationship of the variables, and a brief sentence describing how much variation is
+                        explained by the select growth factor.</p>
 
+                    <p><label style="font-size: medium;">Hover</label> over colored points for details from individual
+                        farmers where we have them,
+                        including
+                        planting
+                        rate and manure application if used.</p>
+                    <hr>
+                    <p><label style="font-size: medium;">*Growing degree units</label> are a measure of how much heat
+                        has
+                        accumulated over a season. This can
+                        indicate
+                        how favorable were conditions for plants.
+                    <p><label style="font-size: medium;">**Climate regions</label> are areas delineated by the <a
+                            target="_blank" rel="noopener noreferrer"
+                            href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">National
+                            Oceanic and Atmospheric Administration
+                            (NOAA)</a> to create areas of similar temperature and precipitation.
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
     <script>
 
         var margin = { top: 10, right: 30, bottom: 55, left: 50 },
@@ -490,7 +560,9 @@
 
         function formatToolTip(feature) {
 
-            var tool_tip_string = "Total precip: " + feature.properties.total_precip + " in" + "<br/>" +
+            var tool_tip_string =
+                //"Total precip: " + feature.properties.total_precip + " in" + "<br/>" +
+                feature.properties.county_single + " County" + "<br/>" +
                 feature.properties.cc_species + "<br/>" +
                 feature.properties.cc_planting_rate + "<br/>"
 
@@ -789,7 +861,7 @@
 
                 var pretty_property;
                 if (property == "acc_gdd") {
-                    pretty_property = "Growing degree days"
+                    pretty_property = "Growing degree units"
                 } else if (property == "total_precip") {
                     pretty_property = "Total precipitation (in)"
                 } else if (property == "cc_planting_date_flat") {
@@ -879,10 +951,11 @@
                 } else if (xproperty == "total_precip") {
                     pretty_prop = "Total precipitation (inches)"
                 } else if (xproperty == "acc_gdd") {
-                    pretty_prop = "Accumulated growing degree days"
+                    pretty_prop = "Accumulated growing degree units"
                 }
 
                 pretty_prop += " explains " + roundUp(r2 * 100, 1) + " percent of the variation in cover crop biomass."
+
                 return pretty_prop
 
             }
@@ -938,6 +1011,8 @@
                 filtered_data = filterDataManurePrior(filtered_data)
 
                 filtered_data = filterDataManurePost(filtered_data)
+
+                filtered_data = filterDataNulls(filtered_data)
 
                 filtered_data = addRegressionLine(filtered_data)
 
@@ -1084,6 +1159,14 @@
                 }
                 return data.filter(function (d) {
                     return d.properties.residue_remaining === tillage_tier;
+                });
+
+            }
+
+            function filterDataNulls(data, sdd) {
+                // Removing points with null biomass
+                return data.filter(function (d) {
+                    return d.properties.cc_biomass != null;
                 });
 
             }
