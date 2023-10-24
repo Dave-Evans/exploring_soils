@@ -746,5 +746,9 @@ class Survey(models.Model):
         null=True,
     )
 
+    # open_to_sharing = models.BooleanField(
+    #     verbose_name="(Would you be open to having your cover cropping experience shared on our website for other interested farmers?)",
+    #     null=True,
+    # )
     class Meta:
         permissions = (("survery_manager", "Survey Manager"),)

@@ -221,6 +221,14 @@
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+        integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+        integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <nav class="navbar navbar-fixed-top header" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -245,14 +253,15 @@
 
         <div class="fluid-row" id="header">
 
-            <h2 class="title toc-ignore">Wisc Cover Crop</h2>
+            <h2 class="title toc-ignore"><br>Wisconsin Citizen Science Cover Crop Project</h2>
 
 
-            <h4 class="date">July, 2023</h4>
-            <h5 class="author">Mrill Ingram, <a href="mailto:mingram@wisc.edu">mingram@wisc.edu</a></h5>
-
-
+            <button type="button" style="border: 1px solid;" class="btn btn-secondary btn-lg" data-toggle="modal"
+                data-target="#helpInformation">
+                How to use this graph
+            </button>
         </div>
+        <br>
         <!-- <iframe id="iframe_wisc_cc_map" title="map of participating farmers" width=300 height=400
             src="http://dev.evansgeospatial.com/wisc_cc_map_embed"></iframe> -->
         <div id=" data-collection" class="section level2">
@@ -264,7 +273,7 @@
                     <div class="col-md-2" id="legend">
                         <br>
                         <div style="text-align: left;">
-                            <b>Change color</b>
+                            <label style="font-size: medium;">Color</label>
                         </div>
                         <select id="select_color" class="group-select">
                             <option value="cc_species" selected>Cover crop species</option>
@@ -273,23 +282,59 @@
                         </select>
 
                         <svg width="200px" height="250px"></svg>
+                        <br>
+
                     </div>
                     <div class="col-md-8" id="my_dataviz">
                     </div>
                 </div>
 
                 <div class="row" style="text-align: left;">
-                    <div class=" col-md-6"><label>Filters</label></div>
-                    <!-- <div class=" col-md-4"><label>Change color</label></div> -->
-                    <div class=" col-md-4"><label>Change X axis</label></div>
-                    <!-- <div class=" col-md-3"><label>Regression line</label></div> -->
+                    <div class=" col-md-6"><label style="font-size: medium;">Filters</label></div>
+                    <div class=" col-md-4"><label style="font-size: medium;">X axis</label></div>
                 </div>
                 <div class="row" style="text-align: left;">
                     <div class=" col-md-6" id="filters">
                         <table>
                             <tr>
-                                <td>Cover-crop species</td>
+                                <td>Cover crop species</td>
                                 <td><select id="select_species" class="group-select">
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>County Selectize</td>
+                                <td><select id="selectize_county" multiple placeholder="Select counties...">
+                                        <!-- <option value='Washington'>Washington</option>
+                                        <option value='Sheboygan'>Sheboygan</option>
+                                        <option value='Calumet'>Calumet</option>
+                                        <option value='Fond du Lac'>Fond du Lac</option>
+                                        <option value='Dodge'>Dodge</option>
+                                        <option value='Jefferson'>Jefferson</option>
+                                        <option value='Lafayette'>Lafayette</option>
+                                        <option value='Rock'>Rock</option>
+                                        <option value='Green'>Green</option>
+                                        <option value='Dane'>Dane</option>
+                                        <option value='Grant'>Grant</option>
+                                        <option value='Pierce'>Pierce</option>
+                                        <option value='St. Croix'>St. Croix</option>
+                                        <option value='Kewaunee'>Kewaunee</option>
+                                        <option value='Door'>Door</option>
+                                        <option value='Manitowoc'>Manitowoc</option>
+                                        <option value='Brown'>Brown</option>
+                                        <option value='Lincoln'>Lincoln</option>
+                                        <option value='Marathon'>Marathon</option>
+                                        <option value='Vernon'>Vernon</option>
+                                        <option value='Clark'>Clark</option>
+                                        <option value='Trempealeau'>Trempealeau</option>
+                                        <option value='Barron'>Barron</option>
+                                        <option value='Winnebago'>Winnebago</option>
+                                        <option value='Iowa'>Iowa</option>
+                                        <option value='Sauk'>Sauk</option>
+                                        <option value='Green Lake'>Green Lake</option>
+                                        <option value='Columbia'>Columbia</option>
+                                        <option value='Polk'>Polk</option>
+                                        <option value='Jackson'>Jackson</option>
+                                        <option value='Dunn'>Dunn</option> -->
                                     </select></td>
                             </tr>
                             <tr>
@@ -341,7 +386,7 @@
 
                         <select id="xFactor" class="group-select">
                             <option value="total_precip" selected>Total precipitation</option>
-                            <option value="acc_gdd">Growing degree days</option>
+                            <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_flat">Planting date</option>
 
                         </select>
@@ -353,7 +398,7 @@
 
                         <table>
                             <br>
-                            <label>Regression line</label>
+                            <label style="font-size: medium;">Regression line</label>
                             <tr>
                                 <td>Add regression line</td>
                                 <td><input type="checkbox" id="checkbox_linreg_line" class="group-select"></td>
@@ -397,7 +442,76 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="helpInformation" tabindex="-1" role="dialog" aria-labelledby="helpInformationLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel">About this graph
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </h3>
+                </div>
+                <div class="modal-body">
+                    <p>This graph shares farmer data about how cover crops grow in Wisconsin. Each colored data point
+                        represents cover crop information for one field from a farmer who completed a survey in fall
+                        2020, 2021, or 2022.
+                    </p>
+                    <p>The graph illustrates the relationship between cover crop biomass (how much
+                        of the cover crop was present above ground) and different factors which could influence how well
+                        it grew.
+                    </p>
+                    <p><label style="font-size: medium;">X-Axis:</label> Here, can choose to visualize the relationship
+                        between biomass and total
+                        precipitation,
+                        growing degree units*, or planting date.
+                    </p>
+                    <p><label style="font-size: medium;">Change color:</label> You can use the colors to explore data by
+                        climate region**, cover crop
+                        species, or
+                        crop planted prior to cover crop.</p>
+                    <p><label style="font-size: medium;">Filters:</label> Explore the relationship between cover crop
+                        biomass and factors such as county, tillage, cover crop species and more.
+                        (Note that our database is built on input from about 100 farms, and if you select many filters
+                        at once, you may end up with very few data points to display or the
+                        graph may be empty.)</p>
+                    <p><label style="font-size: medium;">Regression line:</label> Toggle to visualize the statistical
+                        relationship between cover crop
+                        biomass and
+                        the
+                        selected growth variable. When checked, you will see a regression line, an equation representing
+                        the
+                        statistical relationship of the variables, and a brief sentence describing how much variation is
+                        explained by the select growth factor.</p>
 
+                    <p><label style="font-size: medium;">Hover</label> over colored points for details from individual
+                        farmers where we have them,
+                        including
+                        planting
+                        rate and manure application if used.</p>
+                    <hr>
+                    <p><label style="font-size: medium;">*Growing degree units</label> are a measure of how much heat
+                        has
+                        accumulated over a season. This can
+                        indicate
+                        how favorable were conditions for plants.
+                    <p><label style="font-size: medium;">**Climate regions</label> are areas delineated by the <a
+                            target="_blank" rel="noopener noreferrer"
+                            href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">National
+                            Oceanic and Atmospheric Administration
+                            (NOAA)</a> to create areas of similar temperature and precipitation.
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
     <script>
 
         var margin = { top: 10, right: 30, bottom: 55, left: 50 },
@@ -446,7 +560,9 @@
 
         function formatToolTip(feature) {
 
-            var tool_tip_string = "Total precip: " + feature.properties.total_precip + " in" + "<br/>" +
+            var tool_tip_string =
+                //"Total precip: " + feature.properties.total_precip + " in" + "<br/>" +
+                feature.properties.county_single + " County" + "<br/>" +
                 feature.properties.cc_species + "<br/>" +
                 feature.properties.cc_planting_rate + "<br/>"
 
@@ -464,6 +580,7 @@
         }
         var dataurl = '/wisc_cc_static_data';
         var submission_data;
+
         var model_data = [];
 
         d3.json(dataurl, function (data) {
@@ -523,6 +640,29 @@
             // Hack to limit the graphs to just 2020 and 2021 (years flattened so just need  == 2020)
             // data = data.filter(function (d) { return d.properties.cc_planting_date_flat.getFullYear() == 2020 })
             submission_data = data;
+            var pop_selectize_box = function (geojson_data, id_selector, field_name) {
+                var all_instances = [];
+                for (item in geojson_data) {
+
+                    all_instances.push(geojson_data[item]['properties'][field_name])
+
+                }
+                // Deduplicating
+                const uniq_instances = [...new Set(all_instances)];
+                uniq_instances.sort()
+                var filt = document.getElementById(id_selector);
+                var option_array = []
+                uniq_instances.forEach(function (item) {
+                    option_array.push({ label: item, value: item })
+                    // controller.addOption({
+                    //     label: item.toString(),
+                    //     value: item.toString()
+                    // });
+                })
+                return option_array;
+            }
+
+
             var pop_select_box = function (geojson_data, id_selector, field_name) {
                 var all_instances = [];
                 for (item in geojson_data) {
@@ -530,13 +670,16 @@
                     all_instances.push(geojson_data[item]['properties'][field_name])
 
                 }
+                // Deduplicating
                 const uniq_instances = [...new Set(all_instances)];
+                uniq_instances.sort()
                 var filt = document.getElementById(id_selector);
+
                 var newOption = document.createElement("option");
                 newOption.text = "All";
                 newOption.value = "All";
                 filt.add(newOption);
-                uniq_instances.sort()
+
                 uniq_instances.forEach(function (item) {
                     // console.log(item)
                     if (item === null) { return }
@@ -545,14 +688,51 @@
                     newOption.value = item.toString();
                     filt.add(newOption);
                 })
+
             }
+
+
+            var $selectize_county = $(function () {
+                $("#selectize_county").selectize({
+                    plugins: ["restore_on_backspace", "clear_button"],
+                    delimiter: " - ",
+                    persist: false,
+                    maxItems: null,
+                    valueField: "value",
+                    labelField: "label",
+                    searchField: ["value", "label"],
+                    options: pop_selectize_box(submission_data, "selectize_county", "county_single"),
+                    onChange: function (value, isOnInitialize) {
+                        updateChart(false)
+                    }
+                });
+            });
+            var county_control = $selectize_county[0].selectize;
+            var $selectize_species = $(function () {
+                $("#select_species").selectize({
+                    plugins: ["restore_on_backspace", "clear_button"],
+                    delimiter: " - ",
+                    persist: false,
+                    maxItems: null,
+                    valueField: "value",
+                    labelField: "label",
+                    searchField: ["value", "label"],
+                    options: pop_selectize_box(submission_data, "select_species", "cc_species"),
+                    onChange: function (value, isOnInitialize) {
+                        updateChart(false)
+                    }
+                });
+            });
+            var species_control = $selectize_county[0].selectize;
+            //pop_selectize_box(submission_data, "selectize_county", "county_single", control);
+
             pop_select_box(submission_data, "select_species", "cc_species");
             pop_select_box(submission_data, "select_soil_texture", "dominant_soil_texture");
             pop_select_box(submission_data, "select_seeding_method", "cc_seeding_method")
             pop_select_box(submission_data, "select_planting_year", "year");
             pop_select_box(submission_data, "select_county", "county_single");
             pop_select_box(submission_data, "select_tillage", "residue_remaining");
-
+            $('#select_species').selectize();
 
 
             // Add X axis
@@ -681,7 +861,7 @@
 
                 var pretty_property;
                 if (property == "acc_gdd") {
-                    pretty_property = "Growing degree days"
+                    pretty_property = "Growing degree units"
                 } else if (property == "total_precip") {
                     pretty_property = "Total precipitation (in)"
                 } else if (property == "cc_planting_date_flat") {
@@ -771,10 +951,11 @@
                 } else if (xproperty == "total_precip") {
                     pretty_prop = "Total precipitation (inches)"
                 } else if (xproperty == "acc_gdd") {
-                    pretty_prop = "Accumulated growing degree days"
+                    pretty_prop = "Accumulated growing degree units"
                 }
 
                 pretty_prop += " explains " + roundUp(r2 * 100, 1) + " percent of the variation in cover crop biomass."
+
                 return pretty_prop
 
             }
@@ -818,7 +999,8 @@
 
                 filtered_data = filterDataSpecies(filtered_data)
 
-                filtered_data = filterDataCounty(filtered_data)
+                //filtered_data = filterDataCounty(filtered_data)
+                filtered_data = filterDataCountySelectize(filtered_data)
 
                 filtered_data = filterDataSoilText(filtered_data)
 
@@ -829,6 +1011,8 @@
                 filtered_data = filterDataManurePrior(filtered_data)
 
                 filtered_data = filterDataManurePost(filtered_data)
+
+                filtered_data = filterDataNulls(filtered_data)
 
                 filtered_data = addRegressionLine(filtered_data)
 
@@ -924,8 +1108,29 @@
 
             }
 
+            function filterDataCountySelectize(data, sdd) {
+
+                var selector;
+
+                selector = "#selectize_county";
+
+                var county_array = $('#selectize_county').selectize()[0].selectize.getValue()
+
+
+                if (county_array == null | county_array.length == 0) {
+                    return data
+                }
+                return data.filter(function (d) {
+                    var is_this_one = county_array.includes(d.properties.county_single)
+                    console.log(d.id, is_this_one)
+                    return county_array.includes(d.properties.county_single)
+                    // return d.properties.county_single === county;
+                });
+
+            }
+
             function filterDataCounty(data, sdd) {
-                // Reminder, won't be real year, 2020 == 120
+
                 var selector;
 
                 selector = "#select_county";
@@ -954,6 +1159,14 @@
                 }
                 return data.filter(function (d) {
                     return d.properties.residue_remaining === tillage_tier;
+                });
+
+            }
+
+            function filterDataNulls(data, sdd) {
+                // Removing points with null biomass
+                return data.filter(function (d) {
+                    return d.properties.cc_biomass != null;
                 });
 
             }
@@ -993,7 +1206,7 @@
             })
 
             // Filter actions
-            d3.select("#select_county").on("change", function () {
+            d3.select("#selectize_county").on("change", function () {
                 console.log("Changed county to: " + this.value);
 
                 updateChart(false);

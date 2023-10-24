@@ -9,17 +9,17 @@
       <div class="card-body">
         <h3 class="card-title">Welcome {{ user.username }}</h3>
 
-        <!-- if not b_registered %}
+        {% if not b_registered %}
 
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-warning" role="alert">
           Have you registered to fill out this survey? We do not recognize
           the email address you have used to create this account.
           <br>
-          For your survey response to be accepted we need you to register <a
-            href="https://forms.gle/N7SzjedFwGJFXPUJ9">here</a>.
+          For your survey response to be accepted we need you to register <a href="https://forms.gle/N7SzjedFwGJFXPUJ9"
+            target="_blank" rel="noopener noreferrer">here</a>.
         </div>
 
-        endif %} -->
+        {% endif %}
 
         {% if completed_0 and completed_1 and completed_2 and completed_3 %}
 
@@ -90,13 +90,15 @@
 
             {% if completed_3 %}
             <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-success">IV. Final Thoughts - Completed!
+              class="list-group-item list-group-item-action list-group-item-success">IV. Thoughts on outreach about
+              cover cropping - Completed!
               Click
               to
               edit your response.</a>
             {% else %}
             <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">IV. Final Thoughts</a>
+              class="list-group-item list-group-item-action list-group-item-warning">IV. Thoughts on outreach about
+              cover cropping</a>
             {% endif %}
 
           </div>

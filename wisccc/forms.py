@@ -634,7 +634,8 @@ class SurveyForm3(forms.ModelForm):
 
     # 49	Please share any interesting experiments, failures, equipment challenges with cover crops.
     interesting_tales = forms.CharField(
-        label="49. What's been your cover crop learning curve? Share any interesting experiments or failures.",
+        label="""49. What's been your cover crop learning curve? Share any interesting experiments or failures.
+        (Would you be open to having your cover cropping experience shared on our website for other interested farmers?)""",
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=1000,
         required=True,
