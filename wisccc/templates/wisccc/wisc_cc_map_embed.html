@@ -199,7 +199,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
             "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
             "</dl>" +
-            "*This point is not the actual location of the photo. Collection locations have been obscured to protect landowner's privacy.";
+            "Collection locations have been obscured to protect landowner's privacy.";
 
 
         if (feature.properties && feature.properties.popupContent) {
@@ -243,10 +243,10 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         }).addTo(map);
         //map.fitBounds(soilsPoints);
         geojsonObject.eachLayer(function (layer) {
-            // layer.setStyle({ fillColor: layer.feature.properties.cc_species ? speciesScale(layer.feature.properties.cc_species) : "#ccc" })
-            // updateLegend(speciesScale, "c")
-            layer.setStyle({ fillColor: layer.feature.properties.cc_biomass ? biomassScale(layer.feature.properties.cc_biomass) : "#ccc" })
-            updateLegend(biomassScale, pct = false)
+            layer.setStyle({ fillColor: layer.feature.properties.cc_species ? speciesScale(layer.feature.properties.cc_species) : "#ccc" })
+            updateLegend(speciesScale, "c")
+            // layer.setStyle({ fillColor: layer.feature.properties.cc_biomass ? biomassScale(layer.feature.properties.cc_biomass) : "#ccc" })
+            // updateLegend(biomassScale, pct = false)
         })
     });
 
