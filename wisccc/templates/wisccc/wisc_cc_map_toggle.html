@@ -367,6 +367,16 @@
             return Math.ceil(num * precision) / precision
         }
 
+        function binRFQ(rfq) {
+            if (rfq == null) { return null }
+
+            if (rfq > 151) { return "Prime" }
+            if (rfq <= 150 && rfq >= 125) { return "Grade 1" }
+            if (rfq < 125 && rfq >= 103) { return "Grade 2" }
+            if (rfq < 103 && rfq >= 87) { return "Grade 3" }
+
+        }
+
         function classifySeason(planting_date) {
             var seasons = {
                 // Dec, Jan, Feb
@@ -393,7 +403,7 @@
                 var planting_date = feature.properties.cc_planting_date.toLocaleDateString();
             }
 
-            feature.properties.cc_planting_season = classifySeason(feature.properties.cc_planting_date);
+
 
             var biomass_val = feature.properties.cc_biomass;
 
@@ -484,6 +494,8 @@
                     data[i].properties.cc_planting_date = dParserYmd(data[i].properties.cc_planting_date.slice(0, 10))
                     data[i].properties.cc_planting_date_mo = getMonthWord(data[i].properties.cc_planting_date)
                 }
+                data[i].properties.cc_planting_season = classifySeason(data[i].properties.cc_planting_date);
+                data[i].properties.rfq_bin = binRFQ(data[i].properties.fq_rfq);
             }
 
             pop_select_box(soilsLayer, "SpeciesFilter", "cc_species")
@@ -649,9 +661,13 @@
                     updateLegend(biomassScale, ".1f")
                 } else if (property == "fq_rfq") {
                     layer.setStyle({
-                        fillColor: layer.feature.properties.fq_rfq ? rfqScale(layer.feature.properties.fq_rfq) : "#ccc"
+                        fillColor: layer.feature.properties.rfq_bin ? rfqBinsScale(layer.feature.properties.rfq_bin) : "#ccc"
                     })
-                    updateLegend(rfqScale, ".0f")
+                    updateLegend(rfqBinsScale, "c")
+                    // layer.setStyle({
+                    //     fillColor: layer.feature.properties.fq_rfq ? rfqScale(layer.feature.properties.fq_rfq) : "#ccc"
+                    // })
+                    // updateLegend(rfqScale, ".0f")
                 } else if (property == "cc_species") {
                     layer.setStyle({
                         fillColor: layer.feature.properties.cc_species ? speciesScale(layer.feature.properties.cc_species) : "#ccc"

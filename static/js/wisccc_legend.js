@@ -83,6 +83,24 @@ var plantingScale = d3.scaleOrdinal()
     .domain(plantingMonths)
     .range(plantingMonthColors);
 
+const rfqBins = [
+    "Prime",
+    "Grade 1",
+    "Grade 2",
+    "Grade 3"
+]
+
+const rfqColors = [
+    "#238b45",
+    "#74c476",
+    "#bae4b3",
+    "#edf8e9"
+]
+
+var rfqBinsScale = d3.scaleOrdinal()
+    .domain(rfqBins)
+    .range(rfqColors);
+
 const plantingSeasons = [
     "Winter",
     "Spring",
