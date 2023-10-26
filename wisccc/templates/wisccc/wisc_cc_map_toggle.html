@@ -366,6 +366,19 @@
             return Math.ceil(num * precision) / precision
         }
 
+        function classifySeason(planting_date) {
+            // Dec, Jan, Feb
+            var winter = [12, 1, 2]
+            // March, April, May
+            var spring = [3, 4, 5]
+            // June, July, August
+            var summer = [6, 7, 8]
+            // Sept, Oct, Nov
+            var fall = [9, 10, 11]
+
+            if (winter.includes(planting_date.getMonth())) { }
+        };
+
         function onEachFeature(feature, layer) {
             if (feature.properties.cc_planting_date === null) {
                 var planting_date = null;

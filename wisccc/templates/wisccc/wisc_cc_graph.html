@@ -589,8 +589,9 @@
                 cov_crop_planting_date.setFullYear(data[i].properties.cc_planting_date.getFullYear())
                 cov_crop_planting_date.setMonth(data[i].properties.cc_planting_date.getMonth())
                 cov_crop_planting_date.setDate(data[i].properties.cc_planting_date.getDate())
-                //data[i].properties.cc_planting_date_flat;
-                // console.log("Planting date before flat: " + cov_crop_planting_date)
+
+                console.log("Planting date: " + data[i].properties.cc_planting_date)
+
 
                 //Julian day calc
                 data[i].properties.julian_day = calcJulianDay(data[i].properties.cc_planting_date)

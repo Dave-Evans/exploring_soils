@@ -64,6 +64,20 @@ const plantingMonths = [
     "November"
 ]
 
+const plantingSeasons = [
+    "Winter",
+    "Spring",
+    "Summer",
+    "Fall"
+]
+
+const plantingSeasonColors = [
+    "#2c7bb6",
+    "#fdae61",
+    "#d7191c",
+    "#abd9e9"
+]
+
 const plantingMonthColors = [
     "#ffffd9",
     "#ffffd9",
