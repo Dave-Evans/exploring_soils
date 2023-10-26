@@ -277,7 +277,8 @@
                                 <option value="acc_gdd">Growing degree units</option>
                                 <option value="cc_planting_date_mo">Planting date</option>
                             </select>
-                            <div id="legend"><svg width="260px" height="300px"></svg>
+                            <div id="legend">
+                                <svg width="260px" height="300px"></svg>
                                 <p>Actual locations have been<br>obscured to protect landowner's privacy.</p>
                             </div>
 
@@ -372,6 +373,20 @@
             // March, April, May
             var spring = [3, 4, 5]
             // June, July, August
+            var summer = [6, 7, 8]
+            // Sept, Oct, Nov
+            var fall = [9, 10, 11]
+
+            // Dec, Jan, Feb
+            var seasons = {
+                Winter: [12, 1, 2],
+                Spring: [3, 4, 5],
+                Summer: [6, 7, 8],
+                Fall: [9, 10, 11]
+            }
+
+
+
             var summer = [6, 7, 8]
             // Sept, Oct, Nov
             var fall = [9, 10, 11]
