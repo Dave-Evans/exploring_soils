@@ -368,30 +368,22 @@
         }
 
         function classifySeason(planting_date) {
-            // Dec, Jan, Feb
-            var winter = [12, 1, 2]
-            // March, April, May
-            var spring = [3, 4, 5]
-            // June, July, August
-            var summer = [6, 7, 8]
-            // Sept, Oct, Nov
-            var fall = [9, 10, 11]
-
-            // Dec, Jan, Feb
             var seasons = {
+                // Dec, Jan, Feb
                 Winter: [12, 1, 2],
+                // March, April, May
                 Spring: [3, 4, 5],
+                // June, July, August
                 Summer: [6, 7, 8],
+                // Sept, Oct, Nov
                 Fall: [9, 10, 11]
             }
-
-
-
-            var summer = [6, 7, 8]
-            // Sept, Oct, Nov
-            var fall = [9, 10, 11]
-
-            if (winter.includes(planting_date.getMonth())) { }
+            if (planting_date == null) { return null }
+            for (let season in seasons) {
+                if (seasons[season].includes(planting_date.getMonth() + 1)) {
+                    return season
+                }
+            }
         };
 
         function onEachFeature(feature, layer) {
@@ -400,6 +392,9 @@
             } else {
                 var planting_date = feature.properties.cc_planting_date.toLocaleDateString();
             }
+
+            feature.properties.cc_planting_season = classifySeason(feature.properties.cc_planting_date);
+
             var biomass_val = feature.properties.cc_biomass;
 
             var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
@@ -663,10 +658,16 @@
                     })
                     updateLegend(speciesScale, "c")
                 } else if (property == "cc_planting_date_mo") {
+
                     layer.setStyle({
-                        fillColor: layer.feature.properties.cc_planting_date_mo ? plantingScale(layer.feature.properties.cc_planting_date_mo) : "#ccc"
+                        fillColor: layer.feature.properties.cc_planting_season ? plantingSeasonScale(layer.feature.properties.cc_planting_season) : "#ccc"
                     })
-                    updateLegend(plantingScale, "c")
+                    updateLegend(plantingSeasonScale, "c")
+
+                    // layer.setStyle({
+                    //     fillColor: layer.feature.properties.cc_planting_date_mo ? plantingScale(layer.feature.properties.cc_planting_date_mo) : "#ccc"
+                    // })
+                    // updateLegend(plantingScale, "c")
                 }
 
 
