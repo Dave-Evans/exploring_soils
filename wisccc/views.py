@@ -1,14 +1,32 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
 from django.db import connection
 import json
 import djqscsv
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.views.generic import (
+    TemplateView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+    ListView,
+)
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
-
-from wisccc.forms import SurveyForm1, SurveyForm2, SurveyForm3, FarmerForm
+from django_tables2 import RequestConfig
+from wisccc.tables import (
+    ResponseTable,
+)
+from wisccc.forms import (
+    SurveyForm1,
+    SurveyForm2,
+    SurveyForm3,
+    FarmerForm,
+    FullSurveyForm,
+)
 from wisccc.models import Survey, Farmer
 import pandas as pd
 
@@ -147,7 +165,7 @@ def get_survey_data():
             , s.interesting_tales as "49. Whats been your cover crop learning curve? Share any interesting experiments or failures."
             , s.where_to_start as "50. Where would you tell another grower to start with cover crops? Why?"
             , s.additional_thoughts as "51. Any additional thoughts or questions? Any important survey questions we should ask next time?"
-
+            , s.survey_created
         from wisccc_survey s 
         left join wisccc_farmer f
         on s.user_id = f.user_id 
@@ -450,3 +468,74 @@ def wisc_cc_static_data(request):
     data = get_json()
 
     return JsonResponse(list(data["features"]), safe=False)
+
+
+# class SurveyResponseDeleteView(PermissionRequiredMixin, DeleteView):
+#     permission_required = "wisccc.survery_manager"
+#     model = Survey
+#     success_url = reverse_lazy("kanopy_table")
+
+
+# class SurveyResponseUpdateView(PermissionRequiredMixin, UpdateView):
+#     permission_required = "wisccc.survery_manager"
+#     model = Survey
+#     form_class = FullSurveyForm
+#     template_name = "wisccc/update_form.html"
+#     success_url = reverse_lazy("kanopy_table")
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def response_table(request):
+    """List wisc response entries"""
+
+    def get_table_data():
+        """For getting survey data and returning an excel doc"""
+        query = """
+            select 
+                s.id as id
+                , u.username 
+                , u.email
+                , f.first_name 
+                , f.last_name
+                , s.survey_created
+                , s.confirmed_accurate
+            from wisccc_survey s 
+            left join wisccc_farmer f
+            on s.user_id = f.user_id 
+            left join auth_user as u
+            on s.user_id = u.id"""
+        dat = pd.read_sql(query, connection)
+        dat = dat.to_dict("records")
+
+        return dat
+
+    data = get_table_data()
+
+    # table = ResponseTable(Survey.objects.all())
+    table = ResponseTable(data)
+    RequestConfig(request, paginate={"per_page": 15}).configure(table)
+
+    return render(request, "wisccc/response_table.html", {"table": table})
+
+
+def update_response(request, id):
+    """For updating survey"""
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(Survey, id=id)
+
+    # pass the object as instance in form
+    form = FullSurveyForm(request.POST or None, instance=obj)
+
+    # save the data from the form and
+    # redirect to detail_view
+    if form.is_valid():
+        form.save()
+        return redirect("response_table")
+    # add form dictionary to context
+    context["form"] = form
+
+    return render(request, "wisccc/survey_review.html", context)
