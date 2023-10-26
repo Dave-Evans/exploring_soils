@@ -96,7 +96,8 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
     var map = L.map('mapid', {
         layers: [osm],
         maxZoom: max_zoom,
-        zoomControl: false
+        zoomControl: false,
+        renderer: L.canvas({ tolerance: 15 })
     }).setView([44.6373, -90.012], 7);
 
     map.createPane('pane_counties');
