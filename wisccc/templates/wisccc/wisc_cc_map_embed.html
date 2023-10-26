@@ -191,13 +191,14 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
         var popupContent = "<dl>" +
             "<dt>Cover crop</dt> <dd>" + feature.properties.cc_species + "</dd>" +
+            "<dt>Cover Crop Species and Seeding Rate</dt> <dd>" + feature.properties.cc_species + "<br>" + feature.properties.cc_planting_rate + "</dd>" +
             "<dt>Previous crop</dt> <dd>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</dd>" +
             "<dt>Planting date</dt> <dd>" + planting_date + "</dd>" +
-            "<dt>Planting info</dt> <dd>" + feature.properties.cc_planting_rate + "</dd>" +
             "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
             "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
-            "<dt>Cumulative growing degree days</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
-            "</dl>" + "*This point is not the actual location of the photo. Collection locations have been obscured to protect landowner's privacy.";
+            "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
+            "</dl>" +
+            "*This point is not the actual location of the photo. Collection locations have been obscured to protect landowner's privacy.";
 
 
         if (feature.properties && feature.properties.popupContent) {
@@ -241,10 +242,10 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         }).addTo(map);
         //map.fitBounds(soilsPoints);
         geojsonObject.eachLayer(function (layer) {
-            layer.setStyle({ fillColor: layer.feature.properties.cc_species ? speciesScale(layer.feature.properties.cc_species) : "#ccc" })
-            updateLegend(speciesScale, "c")
-            // layer.setStyle({ fillColor: layer.feature.properties.cc_biomass ? biomassScale(layer.feature.properties.cc_biomass) : "#ccc" })
-            // updateLegend(biomassScale, pct = false)
+            // layer.setStyle({ fillColor: layer.feature.properties.cc_species ? speciesScale(layer.feature.properties.cc_species) : "#ccc" })
+            // updateLegend(speciesScale, "c")
+            layer.setStyle({ fillColor: layer.feature.properties.cc_biomass ? biomassScale(layer.feature.properties.cc_biomass) : "#ccc" })
+            updateLegend(biomassScale, pct = false)
         })
     });
 
