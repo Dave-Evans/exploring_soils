@@ -277,7 +277,9 @@
                                 <option value="acc_gdd">Growing degree units</option>
                                 <option value="cc_planting_date_mo">Planting date</option>
                             </select>
-                            <div id="legend"><svg width="260px" height="400px"></svg></div>
+                            <div id="legend"><svg width="260px" height="300px"></svg>
+                                <p>Actual locations have been<br>obscured to protect landowner's privacy.</p>
+                            </div>
 
                     </div>
 
@@ -382,8 +384,8 @@
                 "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
                 "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
                 "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
-                "</dl>" +
-                "*This point is not the actual location of the farm. Locations have been obscured to protect landowner's privacy.";
+                "</dl>";// +
+            // "*This point is not the actual location of the farm. Locations have been obscured to protect landowner's privacy.";
 
 
             if (feature.properties && feature.properties.popupContent) {
