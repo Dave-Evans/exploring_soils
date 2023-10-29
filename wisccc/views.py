@@ -191,7 +191,8 @@ def wisc_cc_survey(request):
     by querying one required question from each section (0 (the farmer section),1,2,3).
     If this is completed then we assume it is all completed."""
 
-    b_registered = check_user_has_registered(request.user.id)
+    # b_registered = check_user_has_registered(request.user.id)
+    b_registered = True
 
     completed_0 = check_section_completed(request.user.id, "farmer")
     completed_1 = check_section_completed(request.user.id, 1)
