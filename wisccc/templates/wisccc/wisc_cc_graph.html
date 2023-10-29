@@ -301,42 +301,11 @@
                                 <td><select id="select_species" class="group-select">
                                     </select></td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td>County Selectize</td>
                                 <td><select id="selectize_county" multiple placeholder="Select counties...">
-                                        <!-- <option value='Washington'>Washington</option>
-                                        <option value='Sheboygan'>Sheboygan</option>
-                                        <option value='Calumet'>Calumet</option>
-                                        <option value='Fond du Lac'>Fond du Lac</option>
-                                        <option value='Dodge'>Dodge</option>
-                                        <option value='Jefferson'>Jefferson</option>
-                                        <option value='Lafayette'>Lafayette</option>
-                                        <option value='Rock'>Rock</option>
-                                        <option value='Green'>Green</option>
-                                        <option value='Dane'>Dane</option>
-                                        <option value='Grant'>Grant</option>
-                                        <option value='Pierce'>Pierce</option>
-                                        <option value='St. Croix'>St. Croix</option>
-                                        <option value='Kewaunee'>Kewaunee</option>
-                                        <option value='Door'>Door</option>
-                                        <option value='Manitowoc'>Manitowoc</option>
-                                        <option value='Brown'>Brown</option>
-                                        <option value='Lincoln'>Lincoln</option>
-                                        <option value='Marathon'>Marathon</option>
-                                        <option value='Vernon'>Vernon</option>
-                                        <option value='Clark'>Clark</option>
-                                        <option value='Trempealeau'>Trempealeau</option>
-                                        <option value='Barron'>Barron</option>
-                                        <option value='Winnebago'>Winnebago</option>
-                                        <option value='Iowa'>Iowa</option>
-                                        <option value='Sauk'>Sauk</option>
-                                        <option value='Green Lake'>Green Lake</option>
-                                        <option value='Columbia'>Columbia</option>
-                                        <option value='Polk'>Polk</option>
-                                        <option value='Jackson'>Jackson</option>
-                                        <option value='Dunn'>Dunn</option> -->
                                     </select></td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td>County</td>
                                 <td><select id="select_county" class="group-select">
@@ -692,38 +661,38 @@
             }
 
 
-            var $selectize_county = $(function () {
-                $("#selectize_county").selectize({
-                    plugins: ["restore_on_backspace", "clear_button"],
-                    delimiter: " - ",
-                    persist: false,
-                    maxItems: null,
-                    valueField: "value",
-                    labelField: "label",
-                    searchField: ["value", "label"],
-                    options: pop_selectize_box(submission_data, "selectize_county", "county_single"),
-                    onChange: function (value, isOnInitialize) {
-                        updateChart(false)
-                    }
-                });
-            });
-            var county_control = $selectize_county[0].selectize;
-            var $selectize_species = $(function () {
-                $("#select_species").selectize({
-                    plugins: ["restore_on_backspace", "clear_button"],
-                    delimiter: " - ",
-                    persist: false,
-                    maxItems: null,
-                    valueField: "value",
-                    labelField: "label",
-                    searchField: ["value", "label"],
-                    options: pop_selectize_box(submission_data, "select_species", "cc_species"),
-                    onChange: function (value, isOnInitialize) {
-                        updateChart(false)
-                    }
-                });
-            });
-            var species_control = $selectize_county[0].selectize;
+            // var $selectize_county = $(function () {
+            //     $("#selectize_county").selectize({
+            //         plugins: ["restore_on_backspace", "clear_button"],
+            //         delimiter: " - ",
+            //         persist: false,
+            //         maxItems: null,
+            //         valueField: "value",
+            //         labelField: "label",
+            //         searchField: ["value", "label"],
+            //         options: pop_selectize_box(submission_data, "selectize_county", "county_single"),
+            //         onChange: function (value, isOnInitialize) {
+            //             updateChart(false)
+            //         }
+            //     });
+            // });
+            // var county_control = $selectize_county[0].selectize;
+            // var $selectize_species = $(function () {
+            //     $("#select_species").selectize({
+            //         plugins: ["restore_on_backspace", "clear_button"],
+            //         delimiter: " - ",
+            //         persist: false,
+            //         maxItems: null,
+            //         valueField: "value",
+            //         labelField: "label",
+            //         searchField: ["value", "label"],
+            //         options: pop_selectize_box(submission_data, "select_species", "cc_species"),
+            //         onChange: function (value, isOnInitialize) {
+            //             updateChart(false)
+            //         }
+            //     });
+            // });
+            // var species_control = $selectize_county[0].selectize;
             //pop_selectize_box(submission_data, "selectize_county", "county_single", control);
 
             pop_select_box(submission_data, "select_species", "cc_species");
@@ -732,7 +701,7 @@
             pop_select_box(submission_data, "select_planting_year", "year");
             pop_select_box(submission_data, "select_county", "county_single");
             pop_select_box(submission_data, "select_tillage", "residue_remaining");
-            $('#select_species').selectize();
+            // $('#select_species').selectize();
 
 
             // Add X axis
@@ -999,8 +968,8 @@
 
                 filtered_data = filterDataSpecies(filtered_data)
 
-                //filtered_data = filterDataCounty(filtered_data)
-                filtered_data = filterDataCountySelectize(filtered_data)
+                filtered_data = filterDataCounty(filtered_data)
+                // filtered_data = filterDataCountySelectize(filtered_data)
 
                 filtered_data = filterDataSoilText(filtered_data)
 
@@ -1206,7 +1175,7 @@
             })
 
             // Filter actions
-            d3.select("#selectize_county").on("change", function () {
+            d3.select("#select_county").on("change", function () {
                 console.log("Changed county to: " + this.value);
 
                 updateChart(false);
