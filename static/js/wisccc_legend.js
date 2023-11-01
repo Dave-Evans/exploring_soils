@@ -49,6 +49,21 @@ var speciesScale = d3.scaleOrdinal()
     .domain(speciesClasses)
     .range(speciesColors);
 
+const plantingMonthColors = [
+    "#ffffd9",
+    "#ffffd9",
+    "#edf8b1",
+    "#c7e9b4",
+    "#7fcdbb",
+
+    "#41b6c4",
+    "#1d91c0",
+    "#225ea8",
+    "#253494",
+
+    "#081d58"
+]
+
 const plantingMonths = [
     "February",
     "March",
@@ -64,20 +79,51 @@ const plantingMonths = [
     "November"
 ]
 
-const plantingMonthColors = [
-    "#ffffd9",
-    "#ffffd9",
-    "#edf8b1",
-    "#c7e9b4",
-    "#7fcdbb",
+var plantingScale = d3.scaleOrdinal()
+    .domain(plantingMonths)
+    .range(plantingMonthColors);
 
-    "#41b6c4",
-    "#1d91c0",
-    "#225ea8",
-    "#253494",
-
-    "#081d58"
+const rfqBins = [
+    "Prime",
+    "Grade 1",
+    "Grade 2",
+    "Grade 3"
 ]
+
+const rfqColors = [
+    "#238b45",
+    "#74c476",
+    "#bae4b3",
+    "#edf8e9"
+]
+
+var rfqBinsScale = d3.scaleOrdinal()
+    .domain(rfqBins)
+    .range(rfqColors);
+
+const plantingSeasons = [
+    "Winter",
+    "Spring",
+    "Summer",
+    "Fall"
+]
+
+const plantingSeasonColors = [
+
+    "#2c7bb6", // winter
+    "#c2e699", // spring
+    "#d94701", // summer
+    "#ffffd4" // fall
+    // "#2c7bb6", // winter
+    // "#fdae61", // spring
+    // "#d7191c", // summer
+    // "#abd9e9" // fall
+]
+var plantingSeasonScale = d3.scaleOrdinal()
+    .domain(plantingSeasons)
+    .range(plantingSeasonColors);
+
+
 
 
 const priorcrop_list = [
@@ -154,9 +200,7 @@ var colorScaleCounty = d3.scaleOrdinal()
         '#f46d43',
         '#d53e4f'])
 
-var plantingScale = d3.scaleOrdinal()
-    .domain(plantingMonths)
-    .range(plantingMonthColors);
+
 
 
 var rfqScale = d3.scaleThreshold()

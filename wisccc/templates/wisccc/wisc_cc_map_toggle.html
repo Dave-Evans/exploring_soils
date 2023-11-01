@@ -277,7 +277,10 @@
                                 <option value="acc_gdd">Growing degree units</option>
                                 <option value="cc_planting_date_mo">Planting date</option>
                             </select>
-                            <div id="legend"><svg width="260px" height="400px"></svg></div>
+                            <div id="legend">
+                                <svg width="260px" height="300px"></svg>
+                                <p>Actual locations have been<br>obscured to protect landowner's privacy.</p>
+                            </div>
 
                     </div>
 
@@ -364,12 +367,44 @@
             return Math.ceil(num * precision) / precision
         }
 
+        function binRFQ(rfq) {
+            if (rfq == null) { return null }
+
+            if (rfq > 151) { return "Prime" }
+            if (rfq <= 150 && rfq >= 125) { return "Grade 1" }
+            if (rfq < 125 && rfq >= 103) { return "Grade 2" }
+            if (rfq < 103 && rfq >= 87) { return "Grade 3" }
+
+        }
+
+        function classifySeason(planting_date) {
+            var seasons = {
+                // Dec, Jan, Feb
+                Winter: [12, 1, 2],
+                // March, April, May
+                Spring: [3, 4, 5],
+                // June, July, August
+                Summer: [6, 7, 8],
+                // Sept, Oct, Nov
+                Fall: [9, 10, 11]
+            }
+            if (planting_date == null) { return null }
+            for (let season in seasons) {
+                if (seasons[season].includes(planting_date.getMonth() + 1)) {
+                    return season
+                }
+            }
+        };
+
         function onEachFeature(feature, layer) {
             if (feature.properties.cc_planting_date === null) {
                 var planting_date = null;
             } else {
                 var planting_date = feature.properties.cc_planting_date.toLocaleDateString();
             }
+
+
+
             var biomass_val = feature.properties.cc_biomass;
 
             var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
@@ -382,8 +417,8 @@
                 "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
                 "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
                 "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
-                "</dl>" +
-                "*This point is not the actual location of the farm. Locations have been obscured to protect landowner's privacy.";
+                "</dl>";// +
+            // "*This point is not the actual location of the farm. Locations have been obscured to protect landowner's privacy.";
 
 
             if (feature.properties && feature.properties.popupContent) {
@@ -459,6 +494,8 @@
                     data[i].properties.cc_planting_date = dParserYmd(data[i].properties.cc_planting_date.slice(0, 10))
                     data[i].properties.cc_planting_date_mo = getMonthWord(data[i].properties.cc_planting_date)
                 }
+                data[i].properties.cc_planting_season = classifySeason(data[i].properties.cc_planting_date);
+                data[i].properties.rfq_bin = binRFQ(data[i].properties.fq_rfq);
             }
 
             pop_select_box(soilsLayer, "SpeciesFilter", "cc_species")
@@ -624,19 +661,29 @@
                     updateLegend(biomassScale, ".1f")
                 } else if (property == "fq_rfq") {
                     layer.setStyle({
-                        fillColor: layer.feature.properties.fq_rfq ? rfqScale(layer.feature.properties.fq_rfq) : "#ccc"
+                        fillColor: layer.feature.properties.rfq_bin ? rfqBinsScale(layer.feature.properties.rfq_bin) : "#ccc"
                     })
-                    updateLegend(rfqScale, ".0f")
+                    updateLegend(rfqBinsScale, "c")
+                    // layer.setStyle({
+                    //     fillColor: layer.feature.properties.fq_rfq ? rfqScale(layer.feature.properties.fq_rfq) : "#ccc"
+                    // })
+                    // updateLegend(rfqScale, ".0f")
                 } else if (property == "cc_species") {
                     layer.setStyle({
                         fillColor: layer.feature.properties.cc_species ? speciesScale(layer.feature.properties.cc_species) : "#ccc"
                     })
                     updateLegend(speciesScale, "c")
                 } else if (property == "cc_planting_date_mo") {
+
                     layer.setStyle({
-                        fillColor: layer.feature.properties.cc_planting_date_mo ? plantingScale(layer.feature.properties.cc_planting_date_mo) : "#ccc"
+                        fillColor: layer.feature.properties.cc_planting_season ? plantingSeasonScale(layer.feature.properties.cc_planting_season) : "#ccc"
                     })
-                    updateLegend(plantingScale, "c")
+                    updateLegend(plantingSeasonScale, "c")
+
+                    // layer.setStyle({
+                    //     fillColor: layer.feature.properties.cc_planting_date_mo ? plantingScale(layer.feature.properties.cc_planting_date_mo) : "#ccc"
+                    // })
+                    // updateLegend(plantingScale, "c")
                 }
 
 
