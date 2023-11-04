@@ -32,9 +32,10 @@
         }
 
         body {
-            padding-top: 50px;
+            padding-top: 0px;
             /* the size of the padding-top need to be the one of the navbar */
         }
+
 
         /* Main containers */
         .header {
@@ -199,7 +200,7 @@
 <body>
 
     <!-- navigation bar -->
-    <nav class="navbar navbar-fixed-top header" role="navigation">
+    <nav class="navbar navbar-lg navbar-light header" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
                 <span class="sr-only">Toggle navigation</span>
@@ -215,6 +216,7 @@
                 <li><a href="{% url 'wisc_cc_graph' %}">Graph</a></li>
                 <li><a href="{% url 'wisc_cc_survey' %}">Survey</a></li>
             </ul>
+
         </div>
     </nav>
 
