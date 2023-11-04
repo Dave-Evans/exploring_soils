@@ -272,7 +272,7 @@ def wisc_cc_survey0(request):
         request,
         template,
         {
-            "form": form,
+            "farmer_form": form,
         },
     )
 
@@ -547,15 +547,20 @@ def update_response(request, id):
     # fetch the object related to passed id
     obj = get_object_or_404(Survey, id=id)
 
+    farmer = Farmer.objects.filter(user_id=obj.user_id).first()
+
     # pass the object as instance in form
     form = FullSurveyForm(request.POST or None, instance=obj)
 
+    farmer_form = FarmerForm(request.POST or None, instance=farmer)
     # save the data from the form and
     # redirect to detail_view
-    if form.is_valid():
+    if form.is_valid() and farmer_form.is_valid():
         form.save()
+        farmer_form.save()
         return redirect("response_table")
     # add form dictionary to context
     context["form"] = form
+    context["farmer_form"] = farmer_form
 
     return render(request, "wisccc/survey_review.html", context)
