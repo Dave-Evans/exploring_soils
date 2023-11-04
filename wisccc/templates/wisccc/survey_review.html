@@ -14,8 +14,13 @@
 
 
 <h3 class="card-title">Review Response</h3>
+
+
+
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
+
+  {% include 'wisccc/includes/form_farmer.html' %}
 
   {% include 'wisccc/includes/full_form.html' %}
 

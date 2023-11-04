@@ -188,19 +188,7 @@ def check_user_has_registered(user_id):
 
 
 def wisc_cc_home(request):
-    page_list = [
-        {"url": "/wisc_cc_home", "name": "Home", "active": True},
-        {"url": "/wisc_cc_graph", "name": "Graph", "active": False},
-        {"url": "/wisc_cc_map", "name": "Map", "active": False},
-        {"url": "/wisc-cc-survey", "name": "Survey", "active": False},
-    ]
-    return render(
-        request,
-        "wisccc/wisc_cc_home.html",
-        {
-            "page_list": page_list,
-        },
-    )
+    return render(request, "wisccc/wisc_cc_home.html")
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -228,12 +216,6 @@ def wisc_cc_survey(request):
     completed_1 = check_section_completed(request.user.id, 1)
     completed_2 = check_section_completed(request.user.id, 2)
     completed_3 = check_section_completed(request.user.id, 3)
-    page_list = [
-        {"url": "/wisc_cc_home", "name": "Home", "active": False},
-        {"url": "/wisc_cc_graph", "name": "Graph", "active": False},
-        {"url": "/wisc_cc_map", "name": "Map", "active": False},
-        {"url": "/wisc_cc_survey", "name": "Survey", "active": True},
-    ]
 
     template = "wisccc/wisc_cc_survey.html"
 
@@ -246,7 +228,6 @@ def wisc_cc_survey(request):
             "completed_1": completed_1,
             "completed_2": completed_2,
             "completed_3": completed_3,
-            "page_list": page_list,
         },
     )
 
