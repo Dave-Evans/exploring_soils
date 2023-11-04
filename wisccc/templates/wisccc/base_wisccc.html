@@ -20,16 +20,16 @@
   <div class="collapse navbar-collapse" id="navbarText">
     <ul class="navbar-nav mr-auto">
 
-      <li class="nav-item">
+      <li class="nav-item" id="nav-home">
         <a class="nav-link" href="{% url 'wisc_cc_home' %}">Home</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" id="nav-graph">
         <a class="nav-link" href="{% url 'wisc_cc_graph' %}">Graph</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" id="nav-map">
         <a class="nav-link" href="{% url 'wisc_cc_map' %}">Map</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" id="nav-survey">
         <a class="nav-link" href="{% url 'wisc_cc_survey' %}">Survey</a>
       </li>
 
@@ -82,4 +82,26 @@
   {% block content %}
   {% endblock %}
 </div>
+<script>
+  updateActive = function () {
+
+    var whichpage = window.location.href.split("/").pop()
+    if (whichpage.includes("graph")) {
+      $("#nav-graph").addClass("active");
+    }
+    if (whichpage.includes("survey")) {
+      $("#nav-survey").addClass("active");
+    }
+    if (whichpage.includes("home")) {
+      $("#nav-home").addClass("active");
+    }
+    if (whichpage.includes("map")) {
+      $("#nav-map").addClass("active");
+    }
+
+  }
+  updateActive()
+
+</script>
+
 {% endblock %}
