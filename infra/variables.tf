@@ -4,6 +4,7 @@ variable "project_name" {
   default = {
     dev  = "davemike-dev"
     prod = "davemike-prod"
+    scratch = "davemike-scratch"
   }
 }
 
