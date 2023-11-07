@@ -33,10 +33,12 @@ class ResponseTable(tables.Table):
     email = tables.Column()
     survey_created = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column.html")
+    delete = TemplateColumn(template_name="wisccc/delete_column.html")
 
     # delete = TemplateColumn(template_name="wisccc/delete_column.html")
     class Meta:
-        template_name = "django_tables2/bootstrap.html"
+        template_name = "django_tables2/bootstrap4.html"
+
         attrs = {"class": "table table-hover"}
 
         row_attrs = {

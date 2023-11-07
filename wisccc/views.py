@@ -519,6 +519,24 @@ def response_table(request):
     return render(request, "wisccc/response_table.html", {"table": table})
 
 
+def delete_response(request, id):
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(Survey, id=id)
+
+    if request.method == "POST":
+        # delete object
+        obj.delete()
+        # after deleting redirect to
+        # home page
+        return redirect("response_table")
+
+    return render(request, "wisccc/delete_response.html", context)
+
+
 def update_response(request, id):
     """For updating survey"""
     # dictionary for initial data with
