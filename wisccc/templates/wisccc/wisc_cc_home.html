@@ -1,0 +1,93 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+{% block title %}Welcome to Wisconsin Citizen Science Cover Crop Project {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10 col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">Welcome</h3>
+        <p>Since 2020, the Wisconsin Citizen Science Cover Crop project has been collecting information from farmers
+          around the state on their cover crop practices and results. You can explore that data via the interactive map
+          and graphs below. For more information on the project background and methods, please visit our <a
+            href="https://www.michaelfields.org/soil-health" target="_blank" rel="noopener noreferrer">website</a>.
+        </p>
+        <div class="card-deck">
+
+          <div class="card">
+            <a href="{% url 'wisc_cc_survey' %}">
+              <img class="card-img-top" width="200" height="200" src="{% static 'img/oats_berseem.jpg' %}"
+                alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">Cover Crop Survey</h5>
+                <p class="card-text">Click here if you've registered to participate in this year's survey.
+                </p>
+
+              </div>
+            </a>
+          </div>
+
+          <div class="card">
+            <a href="{% url 'wisc_cc_map' %}">
+              <img class="card-img-top" width="200" height="200" src="{% static 'img/display_wisc_cc_map2.png' %}"
+                alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">Map-based visualization of cover crop practices and biomass results by farm</h5>
+                <p class="card-text"></p>
+
+              </div>
+            </a>
+          </div>
+          <div class="card">
+            <a href="{% url 'wisc_cc_graph' %}">
+              <img class="card-img-top" height="200" style="border:10px solid white;"
+                src="{% static 'img/display_wisc_cc_graph.png' %}" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">Cover Crop Data Graphs</h5>
+                <p class="card-text">Change variables to explore locations, species, tillage and more.</p>
+
+              </div>
+            </a>
+          </div>
+
+
+        </div>
+        <br>
+        <p>We are grateful to our Soil Health Collaborative partners the USDA-ARS Dairy Forage Research Center &
+          UW-Madison's Center for Integrated Agricultural Systems, and to our collaborating Wisconsin farmers. </p>
+        {% if perms.wisccc.survery_manager %}
+        <br>
+        <div class="card">
+
+
+          <div class="card-deck">
+            <div class="card">
+
+              <div class="card-header">
+                Hello Administrator!
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">Download the data!</h5>
+                <p class="card-text">To download the data click below</p>
+                <a href="{% url 'wisccc_download_data' %}" class="btn btn-primary">Download</a>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">View survey responses</h5>
+                <p class="card-text">View and edit survey responses.</p>
+                <a href="{% url 'response_table' %}" class="btn btn-primary">View responses</a>
+
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <!-- <div class="card-footer text-muted text-center">
+        Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
+      </div> -->
+      </div>
+    </div>
+  </div>
+  {% endblock %}

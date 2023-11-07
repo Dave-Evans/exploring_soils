@@ -51,14 +51,21 @@ def studies(request):
     studies = Study.objects.all()
     return render(request, 'studies_home.html', {'studies': studies})
 
-def explore_soils(request):
+def soils_in_depth(request):
 
-    return render(request, 'explore_soils.html')
+    return render(request, 'plotter/explore_soils_2.html')
 
-def pull_soils(request, lly, llx, ury, urx):
+def pull_soils(request, minx, miny, maxx, maxy):
     '''For downloading and processing soils data
     Note the actual function call has X,Y, while the view is lat, long'''
-    json_soils = return_soils_json(llx, lly, urx, ury)
+    bbox = {
+        "minx" : minx,
+        "miny" : miny,
+        "maxx" : maxx,
+        "maxy" : maxy
+    }
+    # json_soils = return_soils_json(llx, lly, urx, ury)
+    json_soils = return_soils_json(bbox)
     return JsonResponse(json_soils, safe=True)
 
 def add_rep(request, pk):

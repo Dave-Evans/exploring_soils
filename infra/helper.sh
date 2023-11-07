@@ -116,8 +116,12 @@ extract_envvar () {
 # Making a wrapper around terraform output ip
 # in case future versions of this don't use terraform for ip
 pullip () {
-    terraform output ip
+    sed -e 's/^"//' -e 's/"$//' <<< $(terraform output ip)
 }
+pull_instanceid() {
+    sed -e 's/^"//' -e 's/"$//' <<< $(terraform output webserver-instance-id)
+}
+
 
 # Directory
 top_level=$(git rev-parse --show-toplevel)
@@ -163,13 +167,17 @@ create_tf_vars () {
     fi
 
     INFO "Creating Terraform variables file: $tfvars"
-    for _var in aws_storage_bucket_name key_name aws_access_key_id aws_secret_access_key; do
+    for _var in key_name aws_access_key_id aws_secret_access_key aws_backup_bucket_name aws_storage_bucket_name env; do
         eval "$_var=$(extract_envvar $_var)"
         eval "_val=\${$_var}"
         if [ -z "$_val" ]; then
             ERROR "need to specify '$_var' in $env_file"
             # echo "need to specify '$_var' in $env_file"
         else
+            if [ "$_var" == "key_name" ]; then
+                _val=$(echo "$_val" | cut -f 1 -d '.')
+            fi        
+            
             DEBUG "$_var: $_val"
             # echo "$_var: $_val"
             echo "$_var = \"$_val\"" >> $tfvars
@@ -198,7 +206,7 @@ create_ansible_vars() {
     fi
 
     INFO "Creating Ansible variables file: $ansvars"
-    for _var in database_user database_name database_pass key_name; do
+    for _var in database_user database_name database_pass key_name aws_backup_bucket_name env; do
         eval "$_var=$(extract_envvar $_var)"
         eval "_val=\${$_var}"
         if [ -z "$_val" ]; then
@@ -210,7 +218,26 @@ create_ansible_vars() {
             echo "$_var: $_val" >> $ansvars
         fi
     done
+    # Pull directly from current branch
+    echo "branch: $branchname" >> $ansvars
 
+}
+
+update_bucket_names () {
+    _var=env
+    eval "$_var=$(extract_envvar $_var)"
+    eval "_val=\${$_var}"    
+
+    bkup_bucket=$(extract_envvar AWS_BACKUP_BUCKET_NAME)
+    strg_bucket=$(extract_envvar AWS_STORAGE_BUCKET_NAME)
+
+    if [ $_var == 'prod' ]; then
+        sed -i "s/AWS_BACKUP_BUCKET_NAME=.*/AWS_BACKUP_BUCKET_NAME=$bkup_bucket/g" $env_file 
+        sed -i "s/AWS_STORAGE_BUCKET_NAME=.*/AWS_STROAGE_BUCKET_NAME=$strg_bucket/g" $env_file 
+    else
+        sed -i "s/AWS_BACKUP_BUCKET_NAME=.*/AWS_BACKUP_BUCKET_NAME=$bkup_bucket-$_val/g" $env_file 
+        sed -i "s/AWS_STORAGE_BUCKET_NAME=.*/AWS_STORAGE_BUCKET_NAME=$strg_bucket-$_val/g" $env_file 
+    fi
 }
 
 spinup_infra () {
@@ -220,7 +247,7 @@ spinup_infra () {
 
     INFO "Extracting IP Address"
     ipaddress=$( pullip )
-    sed -i "s/ALLOWED_HOSTS=.*/ALLOWED_HOSTS=$ipaddress/g" $env_file
+    sed -i "s/ALLOWED_HOSTS=.*/ALLOWED_HOSTS=$ipaddress,evansgeospatial.com/g" $env_file
 
 }
 
@@ -240,8 +267,16 @@ create_ansible_hostsfile () {
 }
 
 provision_deploy () {
+    
+    INFO "Extracting IP Address"
+    ipaddress=$( pullip )
+    sed -i "s/ALLOWED_HOSTS=.*/ALLOWED_HOSTS=$ipaddress/g" $env_file
+    create_ansible_hostsfile
+
+
     INFO "Provisioning database components"
     ansible-playbook -i ./ansible/hosts ./ansible/database.yml
+    
     # must be run after db is setup
     INFO "Provisioning web components and deploying application"
     ansible-playbook -i ./ansible/hosts ./ansible/website.yml
@@ -256,12 +291,50 @@ scp_to_server() {
 
 }
 
+bkup() {
+    bucket=$(extract_envvar AWS_BACKUP_BUCKET_NAME)
+    folder="db"
+    file=$(basename -- "$1")
+    INFO "Copying $1'"
+    INFO "To 's3://$bucket/$folder/$file'"
+    aws s3 cp "$1" "s3://$bucket/$folder/$file"
+}
+
+
 dump_db() {
     # For dumping the database as backup
+    bkup_fl="./data/dump_$(printf '%(%Y%m%d)T\n' -1).json"
     source $myvenv_dir/bin/activate
-    python $top_level/manage.py dumpdata --indent 4 --natural-primary --natural-foreign --traceback > ./data/dump.json
+    python $top_level/manage.py dumpdata --indent 4 --natural-primary --natural-foreign --traceback --exclude sessions --exclude admin.LogEntry > $bkup_fl
     deactivate
+    echo $bkup_fl
 }
+
+daily_bkup() {
+
+    bkup_fl=$( dump_db )
+    bkup $bkup_fl
+
+}
+
+apply_elastic_ip() {
+    if [ $1 == 'prod' ]; then
+        elastic_ip_id="eipalloc-0ab845d6db703de6e"
+    else
+        elastic_ip_id="eipalloc-0039c4b1e6ce66fc3"
+    fi
+
+    instance_id=$( pull_instanceid )
+
+    DEBUG "Tier: $1"
+    DEBUG "Elastic ip id: $elastic_ip_id"
+    DEBUG "Server instance id: $instance_id"
+
+    aws ec2 associate-address --instance-id $instance_id --allocation-id $elastic_ip_id
+
+}
+
+
 while [ -n "$1" ]; do
     case "$1" in
 
@@ -275,7 +348,7 @@ while [ -n "$1" ]; do
             env_file="$2"
 
             shift
-            ;;        
+            ;;
         create_vars)
             # Create Terraform vars file
             create_tf_vars
@@ -314,14 +387,45 @@ while [ -n "$1" ]; do
             INFO "Dumping database to ./data/dump.json"
             dump_db
             ;;
-        bkup)
-            bucket=$(extract_envvar AWS_STORAGE_BUCKET_NAME)
-            folder="db"
-            file=$(basename -- "$2")
-            INFO "Copying $2'"
-            INFO "To 's3://$bucket/$folder/$file'"
-            aws s3 cp "$2" "s3://$bucket/$folder/$file"
+        daily_bkup)
+            INFO "Dumping and backup up database"
+            daily_bkup
             shift
+            ;;
+        promote_tier)
+            # For making a server instance accessbile via a known IP
+            tier=$(extract_envvar ENV)
+
+            echo "You would like to promote this instance to the $tier tier?."
+            echo "Enter 'yes' to proceed"
+            read resp
+            if [ "$resp" != 'yes' ]; then
+                echo $resp
+                exit 1
+            else
+                if [ "$tier" == "prod" ]; then
+                    echo "  -------------  "
+                    echo "   Are you certain you want to promote this to production?    "
+                    echo "  -------------  "
+                    read resp
+                    if [ "$resp" != 'yes' ]; then
+                        echo $resp
+                        exit 1
+                    fi
+                fi
+            fi
+            # Apply elastic ip
+            apply_elastic_ip $tier
+            # For refreshing the ip
+            terraform refresh
+            # Update ansible hosts
+            create_ansible_hostsfile
+            # Update our local .ssh reference for the server
+            ssh-keygen -f "/home/evans/.ssh/known_hosts" -R $( pullip )
+            # Modify remote .env file with updated ALLOWED_HOSTS
+            # Modify the `CSRF_TRUSTED_ORIGINS` with <tier>.evansgeospatial.com and restart
+            INFO "Applying elastic ip"
+            ansible-playbook -i ./ansible/hosts ./ansible/apply_elastic_ip.yml
             ;;
         *)
             ERROR "Usage: bash helper.sh create_vars|spinup_infra|teardown|deploy|ssh|opensite|dumpdb|bkup"
@@ -329,6 +433,7 @@ while [ -n "$1" ]; do
             ;;
     esac
     shift
+    
 done
 
 

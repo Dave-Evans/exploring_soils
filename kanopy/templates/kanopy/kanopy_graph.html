@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+  <meta name="author" content="Evans Geospatial" />
+
+  <meta name="date" content="2022-09-01" />
+
+  <title>Green CovR Data Summary</title>
+  <!-- Deleted Script -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Delete stylesheet -->
+  <!-- Delete script -->
+  <!-- Deleted script -->
+  <!-- Delete stylesheet -->
+  <!-- Deleted script -->
+
+
+  <style type="text/css">
+    code {
+      white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+    pre:not([class]) {
+      background-color: white;
+    }
+  </style>
+  <script type="text/javascript">
+    if (window.hljs) {
+      hljs.configure({ languages: [] });
+      hljs.initHighlightingOnLoad();
+      if (document.readyState && document.readyState === "complete") {
+        window.setTimeout(function () { hljs.initHighlighting(); }, 0);
+      }
+    }
+  </script>
+
+
+
+  <style type="text/css">
+    h1 {
+      font-size: 34px;
+    }
+
+    h1.title {
+      font-size: 38px;
+    }
+
+    h2 {
+      font-size: 30px;
+    }
+
+    h3 {
+      font-size: 24px;
+    }
+
+    h4 {
+      font-size: 18px;
+    }
+
+    h5 {
+      font-size: 16px;
+    }
+
+    h6 {
+      font-size: 12px;
+    }
+
+    .table th:not([align]) {
+      text-align: left;
+    }
+  </style>
+
+
+
+
+  <style type="text/css">
+    .main-container {
+      max-width: 940px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    code {
+      color: inherit;
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    .tabbed-pane {
+      padding-top: 12px;
+    }
+
+    .html-widget {
+      margin-bottom: 20px;
+    }
+
+    button.code-folding-btn:focus {
+      outline: none;
+    }
+
+    summary {
+      display: list-item;
+    }
+  </style>
+
+
+
+  <!-- tabsets -->
+
+  <style type="text/css">
+    .tabset-dropdown>.nav-tabs {
+      display: inline-table;
+      max-height: 500px;
+      min-height: 44px;
+      overflow-y: auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .tabset-dropdown>.nav-tabs>li.active:before {
+      content: "";
+      font-family: 'Glyphicons Halflings';
+      display: inline-block;
+      padding: 10px;
+      border-right: 1px solid #ddd;
+    }
+
+    .tabset-dropdown>.nav-tabs.nav-tabs-open>li.active:before {
+      content: "";
+      border: none;
+    }
+
+    .tabset-dropdown>.nav-tabs.nav-tabs-open:before {
+      content: "";
+      font-family: 'Glyphicons Halflings';
+      display: inline-block;
+      padding: 10px;
+      border-right: 1px solid #ddd;
+    }
+
+    .tabset-dropdown>.nav-tabs>li.active {
+      display: block;
+    }
+
+    .tabset-dropdown>.nav-tabs>li>a,
+    .tabset-dropdown>.nav-tabs>li>a:focus,
+    .tabset-dropdown>.nav-tabs>li>a:hover {
+      border: none;
+      display: inline-block;
+      border-radius: 4px;
+      background-color: transparent;
+    }
+
+    .tabset-dropdown>.nav-tabs.nav-tabs-open>li {
+      display: block;
+      float: none;
+    }
+
+    .tabset-dropdown>.nav-tabs>li {
+      display: none;
+    }
+
+    div.tooltip {
+      position: absolute;
+      text-align: center;
+      padding: 5px;
+      font: 12px sans-serif;
+      background: lightsteelblue;
+      border: 0px;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+  </style>
+
+  <!-- code folding -->
+
+
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+</head>
+
+<body>
+  <!-- Load d3.js -->
+  <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+  <script src="http://code.jquery.com/jquery.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  <div class="container-fluid main-container">
+
+    <div class="fluid-row" id="header">
+
+      <h2 class="title toc-ignore">Green CovR: Tracking cover crop growth across Minnesota</h2>
+      <h5><a href="{% url 'kanopy_home' %}">Back to Green Covr home page</a></h5>
+      <h5><a href="https://mosh.umn.edu" target="_blank" rel="noopener noreferrer">Minnesota Office for Soil
+          Health</a></h5>
+      <h4 class="date">September, 2022</h4>
+      <h5 class="author">Anna Cates, <a href="mailto:catesa@umn.edu">catesa@umn.edu</a></h5>
+      <h5 class="author">Marcelle Lewandowski, <a href="mailto:alewand@umn.edu">alewand@umn.edu</a></h5>
+
+    </div>
+
+    <div id="data-collection" class="section level2">
+
+      <p><b>Background:</b> Between fall 2020 and spring 2022, about 300 on-farm photos of cover crops were submitted
+        from eight Soil and Water Conservation Districts. East Otter Tail/Wadena, and Faribault each contributed more
+        than 70 photos, Becker and Traverse over 30, and we received 10-20 each from Mower, Olmsted, Pipestone, and
+        Winona. We estimated the percent green cover using a <a
+          href="https://wilsonlab.cfans.umn.edu/lab-resources/greencovr-app" target="_blank"
+          rel="noopener noreferrer">photo image analysis</a> which estimates
+        how much of a given photograph is green. You can see the individual photos by clicking
+        on those points on the <a href="{% url 'green_covr_submission_map' %}">map</a>.</p>
+
+      <p><b>Data exploration:</b> Below, you can browse the data by planting date,
+        <a href="{% url 'green_covr_references' %}"> total growing degree days</a>
+        (an estimate of how much good crop growing weather the cover crop experienced), or seeding rate. We'd expect
+        more green cover when planting date is
+        earlier, seeding rate is higher, or there are more growing degree days, but the data don't show a clear linear
+        trend. Although some crops with more time to grow did better, there's a lot of variability we can't explain.
+        This might be due to planting conditions (soil, weather, residue) as well as management decisions.
+      </p>
+      <div class="figure" style="text-align: center">
+
+
+        <div class="row">
+          <div class="col-md-2" id="legend">
+            <svg width="200px" height="250px"></svg>
+          </div>
+          <div class="col-md-8" id="my_dataviz">
+          </div>
+        </div>
+        <div class="row" style="text-align: left;">
+          <div class=" col-md-3"><label>Filters</label></div>
+          <div class=" col-md-4"><label>Change color</label></div>
+          <div class=" col-md-3"><label>Change X axis</label></div>
+        </div>
+        <div class="row" style="text-align: left;">
+          <div class=" col-md-3" id="filters">
+
+            County
+            <select id="select_county" class="group-select">
+              <option value="9999" selected>All</option>
+              <option value="Clay">Clay</option>
+              <option value="Becker">Becker</option>
+              <option value="Otter Tail">Otter Tail</option>
+              <option value="Wadena">Wadena</option>
+              <option value="Traverse">Traverse</option>
+              <option value="Pipestone">Pipestone</option>
+              <option value="Olmsted">Olmsted</option>
+              <option value="Winona">Winona</option>
+              <option value="Faribault">Faribault</option>
+              <option value="Freeborn">Freeborn</option>
+              <option value="Mower">Mower</option>
+            </select> <br>
+
+
+
+            Planting Date Year
+            <select id="select_planting_year" class="group-select">
+              <option value="9999" selected>All</option>
+              <option value="120">2020</option>
+              <option value="121">2021</option>
+            </select> <br>
+          </div>
+          <div class="col-md-4" id="color_changer">
+            <select id="select_color" class="group-select">
+              <option value="county_name" selected>County</option>
+              <option value="cover_crop_group1">Cover crop species</option>
+              <option value="crop_prior">Cash crop prior</option>
+            </select> <br>
+          </div>
+          <div class="col-md-3" id="x_axis_changer">
+
+            <select id="xFactor" class="group-select">
+              <option value="gdd" selected>Growing degree days</option>
+              <option value="cover_crop_planting_date_flat">Planting date</option>
+              <option value="cover_crop_planting_rate">Planting rate</option>
+            </select>
+
+          </div>
+        </div>
+        <br>
+
+
+      </div>
+    </div>
+    <div id="effect-of-interseeding" class="section level2">
+
+
+      <p><b>Interpretations: </b>Some of the cover crops were interseeded with a growing cash crop. You can
+        see below that there were successful cover crops with or without interseeding, even though there were fewer
+        growing degree days when cover crops weren't interseeded. Interseeding tends to be a little riskier than
+        post-harvest seeding: 54% of interseeded cover crops had less than 20% green cover, while only 40% of the not
+        interseed cover crops were below that threshold. When cover crops were not interseeded and establishment was
+        more consistent, there's a little bit clearer relationship between growing degree days and green cover.</p>
+      <p>
+      </p>
+      <div class="figure" style="text-align: center">
+        <div class="row">
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-4" id="label_interseeded">
+            <label>Interseeded</label>
+          </div>
+          <div class="col-md-4" id="label_not_interseeded">
+            <label>Not Interseeded</label>
+          </div>
+        </div>
+        <div class="row" style="text-align: left;">
+          <div class="col-md-2" id="legend_interseeded">
+            <svg width="200px" height="400px"></svg>
+          </div>
+          <div class="col-md-4" id="graph_interseeded"></div>
+          <div class="col-md-4" id="graph_not_interseeded"></div>
+        </div>
+        <div class="row" style="text-align: left;">
+          <div class="col-md-3"><label>Filters</label></div>
+          <div class="col-md-4"><label>Change color</label></div>
+          <div class="col-md-3"><label style="text-align: left;">Change X axis</label></div>
+        </div>
+        <div class="row" style="text-align: left;">
+          <div class="col-md-3" id="filters">
+
+            County
+            <select id="select_county_sdd" class="group-select">
+              <option value="9999" selected>All</option>
+              <option value="Clay">Clay</option>
+              <option value="Becker">Becker</option>
+              <option value="Otter Tail">Otter Tail</option>
+              <option value="Wadena">Wadena</option>
+              <option value="Traverse">Traverse</option>
+              <option value="Pipestone">Pipestone</option>
+              <option value="Olmsted">Olmsted</option>
+              <option value="Winona">Winona</option>
+              <option value="Faribault">Faribault</option>
+              <option value="Freeborn">Freeborn</option>
+              <option value="Mower">Mower</option>
+            </select>
+            <br>
+
+
+
+            Planting Date Year
+            <select id="select_planting_year_sdd" class="group-select">
+              <option value="9999" selected>All</option>
+              <option value="120">2020</option>
+              <option value="121">2021</option>
+            </select>
+
+          </div>
+          <div class="col-md-3" id="color_changer">
+            <select id="select_color_sdd" class="group-select">
+              <option value="county_name" selected>County</option>
+              <option value="cover_crop_group1">Cover crop species</option>
+              <option value="crop_prior">Cash crop prior</option>
+            </select>
+          </div>
+
+          <div class="col-md-3" id="x_axis_changer">
+
+            <select id="xFactorSdd" class="group-select">
+              <option value="gdd" selected>Growing degree days</option>
+              <option value="cover_crop_planting_date_flat">Planting date</option>
+              <option value="cover_crop_planting_rate">Planting rate</option>
+            </select>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="effect-of-cover-crop-species" class="section level2">
+      <br>
+      <p>You can manipulate the graph above to explore different cover crop species, different prior cash crops, and
+        planting method. For non-interseeded cover crops, drilling produced an average of 45% green cover while all
+        other methods produced less than 30% green cover. Generally, cover crops following corn silage, canning crops,
+        and small grains had higher levels of green cover than corn or soybean in non-interseeded crops. Interseeding
+        increased cover crops' green cover following corn from 20% to 29% on average (especially when incorporated
+        instead of aerial-seeded), while it didn't increase cover crop green cover for other crops as consistently.
+      </p>
+      <p>Many of our data points are from mixes of winter-killed and winter-hardy species, and we can not estimate what
+        proportion of each species was seeded or emerged. So unfortunately we're not able to show a clear advantage to
+        any single cover crop species here. It does appear that mixes based on annual ryegrass, legumes, and brassicas -
+        common in interseeding systems - produced only moderate biomass even when they had long growing periods (early
+        planting dates, high growing degree days). Most growers favored mixes based on cereal rye or oats, and these
+        both performed very well across the state.</p>
+      <p>Different cover crops fit different goals and systems. To choose a cover crop, talk to other local farmers,
+        Soil and Water Conservation Districts, or NRCS. For information on different cover crop species, consult the <a
+          href="https://mosh.umn.edu/management/minnesota-cover-crop-research" target="_blank"
+          rel="noopener noreferrer">MN
+          Office for Soil Health Cover Crop Guide</a>, <a href="https://extension.umn.edu/soil-and-water/cover-crops"
+          target="_blank" rel="noopener noreferrer">UMN Extension resources</a> and the <a
+          href="https://www.midwestcovercrops.org/selector-tool/" target="_blank" rel="noopener noreferrer">Midwest
+          Cover Crops Council Selector
+          Tool.</a>
+      </p>
+      <p><b>Photo submission:</b> Data collection is ongoing and open to any potential collaborators, as continuing to
+        build this dataset will help promote cover crop adoption methods with the greatest likelihood for success. We're
+        looking for photos taken from chest height of cover crops at their greatest point of growth- so right before
+        frost, for winter-killed crops, and right before spring termination, for winter hardy crops. By submitting
+        images year-after-year, you will learn more about what impacts cover crop growth in your county. If you think
+        you'd like to submit a photo, visit our <a href="{% url 'kanopy_upload' %}">submission portal</a> to see what
+        other information you'll need to have ready. Thank you for your contributions!</p>
+
+    </div>
+
+
+
+
+
+  </div>
+
+  <script>
+
+    var sdd_margin = { top: 10, right: 25, bottom: 50, left: 50 },
+      sdd_width = 300 - sdd_margin.left - sdd_margin.right,
+      sdd_height = 470 - sdd_margin.top - sdd_margin.bottom;
+
+    // append the svg object to the body of the page
+    var sdd_svg = d3.select("#graph_interseeded")
+      .append("svg")
+      .attr("width", sdd_width + sdd_margin.left + sdd_margin.right)
+      .attr("height", sdd_height + sdd_margin.top + sdd_margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + sdd_margin.left + "," + sdd_margin.top + ")");
+
+    var not_sdd_svg = d3.select("#graph_not_interseeded")
+      .append("svg")
+      .attr("width", sdd_width + sdd_margin.left + sdd_margin.right)
+      .attr("height", sdd_height + sdd_margin.top + sdd_margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + sdd_margin.left + "," + sdd_margin.top + ")");
+
+    var margin = { top: 10, right: 30, bottom: 55, left: 50 },
+      width = 700 - margin.left - margin.right,
+      height = 450 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+    var priorcrop2color = {
+      CORN: "#7fc97f",
+      CORN_SILAGE: "#beaed4",
+      SOY_BEANS: "#fdc086",
+      SMALL_GRAIN: "#ffff99",
+      CANNING_CROP: "#386cb0",
+      PREVENT_PLANT: "#f0027f",
+      DRY_BEANS: "#bf5b17",
+      OTHER: "#666666"
+    }
+
+
+    var priorcrop_list = [
+      "Corn",
+      "Corn silage",
+      "Soy beans",
+      "Small grain",
+      "Canning crop",
+      "Prevent plant",
+      "Dry beans",
+      "Other"
+    ]
+
+    var priorcropColors = priorcrop_list.map(function (f) {
+      return f.toUpperCase().replace(" ", "_") in priorcrop2color ? priorcrop2color[f.toUpperCase().replace(" ", "_")] : "#666666"
+    });
+
+    var colorScalePriorCrops = d3.scaleOrdinal()
+      .domain(
+        priorcrop_list
+      )
+      .range(priorcropColors);
+
+    var crop2color = {
+      Cereal_Rye: '#fdd0a2',
+      Cereal_Rye_mix: '#fdae6b',
+      Cereal_RyefslashBrassica: '#fd8d3c',
+      Cereal_RyefslashLegume: '#e6550d',
+      Cereal_RyefslashTriticale: '#a63603',
+      Annual_ryegrass_mix: '#f781bf',
+      Brassica_mix: '#e41a1c',
+      LegumefslashBrassica_mix: '#377eb8',
+      OatsfslashOat_mix: '#4daf4a',
+      Spring_Wheat_mix: '#984ea3',
+      Triticale: '#ffff33',
+      Other: '#D9D9D9',
+    }
+
+    var crop_category_list = [
+      "Cereal Rye",
+      "Cereal Rye mix",
+      "Cereal Rye/Brassica",
+      "Cereal Rye/Legume",
+      "Cereal Rye/Triticale",
+      "Annual ryegrass mix",
+      "Brassica mix",
+      "Legume/Brassica mix",
+      "Oats or Oat mix",
+      "Spring Wheat mix",
+      "Triticale",
+      "Other"
+    ]
+
+    var cropColors = crop_category_list.map(function (f) {
+      return f.replaceAll(" ", "_").replaceAll("/", "fslash") in crop2color ? crop2color[f.replaceAll(" ", "_").replaceAll("/", "fslash")] : "brown"
+    });
+
+    var colorScaleCrops = d3.scaleOrdinal()
+      .domain(
+        crop_category_list
+      )
+      .range(cropColors);
+
+    // Used to return a color for a given id
+    function coverCropItemizer(id) {
+      var crop2id = {
+        Annual_ryegrass_mix: [63, 60, 124, 102, 70, 311, 203, 129, 156, 91, 250, 20, 92, 64, 42, 41, 43],
+        Brassica_mix: [249, 263, 254, 221],
+        Cereal_Rye: [86, 87, 88, 131, 130, 191, 183, 184, 187, 186, 173, 98, 126, 285, 96, 97, 169, 155, 189, 188, 310, 308, 266, 171, 170, 165, 160, 218, 271, 148, 127, 277, 275, 274, 147, 146, 227, 59, 143, 85, 291, 229, 298, 241, 232, 145, 35, 34, 293, 54, 136, 55, 137, 253, 320, 252, 319, 317, 256, 321, 318, 122, 212, 280, 281, 132, 282, 278, 151, 134, 133, 196, 195, 209, 208, 313, 199, 316, 315, 314, 167, 33],
+        Cereal_Rye_mix: [312, 276, 172, 150, 153, 139, 290, 140, 135, 211, 201, 202, 192, 292, 231, 294, 142, 119, 118, 44, 32, 38],
+        Cereal_RyefslashBrassica: [283, 163, 128, 90, 89, 190, 94, 300, 322, 204, 304, 305, 205, 200, 194, 193, 109, 154, 81, 164, 284, 219, 77, 159, 78, 84, 177, 79, 176, 180, 157, 76, 56, 270, 181, 62, 80, 182, 269, 273, 225, 82, 222, 272, 247, 244, 108, 234, 69, 65],
+        Cereal_RyefslashLegume: [217, 162, 267, 268, 245, 299, 61, 138, 47, 210],
+        Cereal_RyefslashTriticale: [166, 158, 174, 237, 296, 238, 295, 309, 307, 306, 288, 287, 289, 302, 303, 301],
+        LegumefslashBrassica_mix: [51, 141, 74, 161, 185, 48, 144, 264, 297, 240],
+        Oats_or_Oat_mix: [23, 216, 120, 213, 95, 24, 233, 123, 50, 243, 49, 228, 242, 31, 121, 207, 52, 45, 46, 21, 25, 26, 40, 99, 36, 37, 239, 261, 251, 117, 116, 214, 115, 68, 215, 73, 72, 75, 57, 29, 246, 53, 39, 30, 260, 262, 28, 27, 152, 22, 236, 230],
+        Other: [100, 197, 198, 226, 224],
+        Spring_Wheat_mix: [235, 248, 106, 105, 114, 113, 111, 103, 112, 107, 110, 258],
+        Triticale: [66, 71, 125, 286, 93, 178, 179, 220, 83, 58, 67, 175, 149, 223, 168, 279, 259]
+      }
+
+      for (let crop in crop2id) {
+        if (crop2id.hasOwnProperty(crop)) {
+          var ids = crop2id[crop];
+          if (ids.includes(id)) {
+            return crop.replaceAll("fslash", "/").replaceAll("_", " ")
+          }
+        }
+      }
+    }
+
+    var county2color = {
+      // Northern counties
+      Clay: "#6baed6",
+      Otter_Tail: "#08519c",
+      Becker: "#3182BD",
+
+      Wadena: "#9ecae1",
+      Traverse: "#c6dbef",
+      // Southern counties
+      Pipestone: "#fef0d9",
+      Olmsted: "#fdae6b",
+      Winona: "#fd8d3c",
+      Faribault: "#d94801",
+      Freeborn: "#f16913",
+      Mower: "#8c2d04"
+    }
+
+    var cnty_list = [
+      // Northern counties
+      "Otter Tail",
+      "Becker",
+      "Clay",
+      "Wadena",
+      "Traverse",
+      // Southern counties
+      "Pipestone",
+      "Olmsted",
+      "Winona",
+      "Freeborn",
+      "Faribault",
+      "Mower"]
+
+    var cntyColors = cnty_list.map(function (f) {
+      return f.replace(" ", "_") in county2color ? county2color[f] : "brown"
+    });
+
+
+    var colorScaleCounty = d3.scaleOrdinal()
+      .domain(
+        cnty_list
+      )
+      .range(cntyColors);
+
+
+
+    var seeding2symbol = {
+      "DRILL": d3.symbol().type(d3.symbolSquare)(),
+      "BROADCAST": d3.symbol().type(d3.symbolTriangle)(),
+      "BROADCAST_INCORPORATION": d3.symbol().type(d3.symbolCross)(),
+      "AERIAL": d3.symbol().type(d3.symbolStar)(),
+      "MANURE_SLURRY": d3.symbol().type(d3.symbolDiamond)(),
+      "OTHER": d3.symbol().type(d3.symbolCircle)()
+    }
+
+    var listSeedingMethods = [
+      "DRILL",
+      "BROADCAST",
+      "BROADCAST_INCORPORATION",
+      "AERIAL",
+      "MANURE_SLURRY",
+      "OTHER"
+    ]
+
+    var seedingMethodsMap = listSeedingMethods.map(function (f) {
+      return f in seeding2symbol ? seeding2symbol[f] : d3.symbol().type(d3.symbolWye)
+    })
+
+    var seedingSymbolScale = d3.scaleOrdinal()
+      .domain(listSeedingMethods)
+      .range(seedingMethodsMap);
+
+    function formatCoverCrops(feature) {
+      var raw_cov_crops = [
+        feature.properties.cover_crop_species_1,
+        feature.properties.cover_crop_species_2,
+        feature.properties.cover_crop_species_3,
+        feature.properties.cover_crop_species_4,
+      ]
+
+      var cov_crops = [];
+      for (let i = 0; i < raw_cov_crops.length; i++) {
+        if (raw_cov_crops[i] != "None") {
+          cov_crops.push(raw_cov_crops[i].toLowerCase().replace("_", " "))
+        }
+      }
+      return cov_crops.join(", ")
+    }
+
+    var submission_data;
+
+    d3.json('/kanopy_submissions_json', function (data) {
+      // For tooltip
+      var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+      // Converting dates to times
+      var dParserYmd = d3.timeParse("%Y-%m-%d")
+      for (let i = 0; i < data.length; i++) {
+        // Convert these to dates
+        data[i].properties.cover_crop_planting_date = dParserYmd(data[i].properties.cover_crop_planting_date)
+        data[i].properties.cover_crop_termination_date = dParserYmd(data[i].properties.cover_crop_termination_date)
+        data[i].properties.photo_taken_date = dParserYmd(data[i].properties.photo_taken_date)
+
+        // Code the covercrops
+        data[i].properties.cover_crop_group1 = coverCropItemizer(data[i].id)
+
+        // Coding prior crops with null as Other
+        if (data[i].properties.crop_prior.length == 0) {
+          data[i].properties.crop_prior = "Other"
+        }
+        // Formatting for pretty display
+        data[i].properties.crop_prior = data[i].properties.crop_prior[0] + data[i].properties.crop_prior.substring(1).toLowerCase().replace("_", " ")
+
+        // Converting planting dates to be all same year for 
+        //   overlapping display
+
+        var cov_crop_planting_date = new Date();
+        cov_crop_planting_date.setFullYear(data[i].properties.cover_crop_planting_date.getFullYear())
+        cov_crop_planting_date.setMonth(data[i].properties.cover_crop_planting_date.getMonth())
+        cov_crop_planting_date.setDate(data[i].properties.cover_crop_planting_date.getDate())
+        //data[i].properties.cover_crop_planting_date_flat;
+        console.log("Planting date before: " + cov_crop_planting_date)
+        if (cov_crop_planting_date.getFullYear() == 2021) {
+
+          cov_crop_planting_date.setFullYear(cov_crop_planting_date.getFullYear() - 1);
+
+        }
+        console.log("Planting date after: " + cov_crop_planting_date)
+        data[i].properties.cover_crop_planting_date_flat = cov_crop_planting_date
+
+      }
+      // Hack to limit the graphs to just 2020 and 2021 (years flattened so just need  == 2020)
+      data = data.filter(function (d) { return d.properties.cover_crop_planting_date_flat.getFullYear() == 2020 })
+      submission_data = data;
+
+
+
+
+      // Add X axis
+      var xScaleLinear = d3.scaleLinear()
+        .domain([0, 7000])
+        .range([0, width]);
+
+      var xScaleTime = d3.scaleTime()
+        .domain([new Date(2020, 4, 1), new Date(2022, 10, 1)])
+        .range([0, width]);
+
+      var xSddScaleLinear = d3.scaleLinear()
+        .domain([0, 7000])
+        .range([0, sdd_width]);
+
+      var xSddScaleTime = d3.scaleTime()
+        .domain([new Date(2020, 4, 1), new Date(2022, 10, 1)])
+        .range([0, sdd_width]);
+
+
+
+      var xAxis = d3.axisBottom(xScaleTime);
+      svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .attr("class", "myXAxis");
+
+      // Add Y axis
+      var yScale = d3.scaleLinear()
+        .domain([0, 1])
+        .range([height, 0]);
+
+      var yAxis = d3.axisLeft(yScale);
+      yAxis.ticks(10, ".0%")
+
+      svg.append("g")
+        .call(yAxis)
+        .attr("class", "myYAxis")
+
+
+      sdd_svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .attr("class", "sddMyXAxis");
+
+      sdd_svg.append("g")
+        .call(yAxis)
+        .attr("class", "myYAxis");
+
+      not_sdd_svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .attr("class", "sddMyXAxis");
+
+      not_sdd_svg.append("g")
+        .call(yAxis)
+        .attr("class", "myYAxis");
+
+      sdd_svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Percent Green Cover");
+
+      sdd_svg.append("text")      // text label for the x axis
+        .attr("transform", "translate(" + (sdd_width / 2) + " ," + (sdd_height + sdd_margin.bottom - 5) + ")")
+        .style("text-anchor", "middle")
+        .attr("class", "sdd_x_axis_label")
+        .text("");
+
+      not_sdd_svg.append("text")      // text label for the x axis
+        .attr("transform", "translate(" + (sdd_width / 2) + " ," + (sdd_height + sdd_margin.bottom - 5) + ")")
+        .style("text-anchor", "middle")
+        .attr("class", "not_sdd_x_axis_label")
+        .text("");
+
+      svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Percent Green Cover");
+
+      svg.append("text")      // text label for the x axis
+        .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.bottom - 5) + ")")
+        .style("text-anchor", "middle")
+        .attr("class", "x_axis_label")
+        .text("");
+
+      function sddEnterPoints(data, property_and_scale) {
+        var property = property_and_scale[0]
+        var scale = property_and_scale[1]
+        var color_property = property_and_scale[2]
+        var color_scale = property_and_scale[3]
+
+        sdd_svg.append('g')
+          .selectAll("path")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
+          .enter()
+          .append("path")
+          .attr("class", "point")
+          .attr("d", function (d) {
+            return seedingSymbolScale(d.properties.seeding_method)
+          })
+          .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
+          .style("fill", function (d) { return color_scale(d.properties[color_property]); })
+          .style("stroke", "#252525")
+
+        not_sdd_svg.append('g')
+          .selectAll("path")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
+          .enter()
+          .append("path")
+          .attr("class", "point")
+          .attr("d", function (d) {
+            return seedingSymbolScale(d.properties.seeding_method)
+          })
+          .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
+          .style("fill", function (d) { return color_scale(d.properties[color_property]); })
+          .style("stroke", "#252525")
+
+      }
+      sddEnterPoints(data, getScaleAndProperty(data, true))
+      sddUpdatePoints(data, getScaleAndProperty(data, true))
+
+
+      function sddUpdatePoints(data, property_and_scale) {
+        var property = property_and_scale[0]
+        var scale = property_and_scale[1]
+        var color_property = property_and_scale[2]
+        var color_scale = property_and_scale[3]
+
+        sdd_svg.selectAll(".point")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
+          .transition().duration(1000)
+          .attr("d", function (d) {
+            return seedingSymbolScale(d.properties.seeding_method)
+          })
+          .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
+          .style("fill", function (d) { return color_scale(d.properties[color_property]); })
+
+        sdd_svg.select(".sddMyXAxis")
+          .transition()
+          .call(d3.axisBottom(scale))
+          .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-45)");
+
+        not_sdd_svg.selectAll(".point")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
+          .transition().duration(1000)
+          .attr("d", function (d) {
+            return seedingSymbolScale(d.properties.seeding_method)
+          })
+          .attr("transform", function (d) { return "translate(" + scale(d.properties[property]) + "," + yScale(d.properties.fgcc_value) + ")"; })
+          .style("fill", function (d) { return color_scale(d.properties[color_property]); })
+
+        not_sdd_svg.select(".sddMyXAxis")
+          .transition()
+          .call(d3.axisBottom(scale))
+          .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-45)");
+
+        var pretty_property;
+        if (property == "gdd") {
+          pretty_property = "Growing degree days"
+        } else if (property == "cover_crop_planting_rate") {
+          pretty_property = "Cover crop planting rate (lbs/acre)"
+        } else if (property == "cover_crop_planting_date_flat") {
+          pretty_property = "Cover crop planting date"
+        }
+        console.log("From sddUpdatePoints:")
+        console.log("   property = " + property)
+        console.log("   pretty_property = " + pretty_property)
+
+        sdd_svg.select('.sdd_x_axis_label')
+          .transition().duration(1000)
+          .text(pretty_property);
+
+        not_sdd_svg.select('.not_sdd_x_axis_label')
+          .transition().duration(1000)
+          .text(pretty_property);
+
+        updateSddLegend(color_scale)
+      }
+
+      function sddExitPoints(data) {
+        sdd_svg.selectAll(".point")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == true }))
+          .exit()
+          .remove();
+
+        not_sdd_svg.selectAll(".point")
+          .data(data.filter(function (d) { return d.properties.cover_crop_interseeded == false }))
+          .exit()
+          .remove();
+      }
+
+      // Add dots
+      function enterPoints(data, property_and_scale) {
+        var property = property_and_scale[0]
+        var scale = property_and_scale[1]
+        var color_property = property_and_scale[2]
+        var color_scale = property_and_scale[3]
+
+        svg.append('g')
+          .selectAll("dot")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("cx", function (d) { return scale(d.properties[property]); })
+          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          .attr("r", 3)
+
+          .style("fill", function (d) { return color_scale((d.properties[color_property])); })
+          .style("stroke", "#252525")
+          .on("mouseover", function (d) {
+            div.transition()
+              .duration(200)
+              .style("opacity", .9)
+              .attr("r", 5);
+            div
+              .html(formatCoverCrops(d))
+              .style("left", (d3.event.pageX) + "px")
+              .style("top", (d3.event.pageY - 28) + "px");
+          })
+          .on("mouseout", function (d) {
+            div.transition()
+              .duration(500)
+              .attr("r", 3)
+              .style("opacity", 0);
+          });
+
+
+      }
+
+      function updatePoints(data, property_and_scale) {
+        var property = property_and_scale[0]
+        var scale = property_and_scale[1]
+        var color_property = property_and_scale[2]
+        var color_scale = property_and_scale[3]
+        svg.selectAll("circle")
+          .data(data)
+          .transition().duration(1000)
+          .attr("cx", function (d) { return scale(d.properties[property]); })
+          .attr("cy", function (d) { return yScale(d.properties.fgcc_value); })
+          .style("fill", function (d) { return color_scale((d.properties[color_property])); })
+
+        svg.select(".myXAxis")
+          .transition()
+          .call(d3.axisBottom(scale))
+          // .ticks(d3.timeFormat("%Y"))
+          .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-25)");
+
+
+        var pretty_property;
+        if (property == "gdd") {
+          pretty_property = "Growing degree days"
+        } else if (property == "cover_crop_planting_rate") {
+          pretty_property = "Cover crop planting rate (lbs/acre)"
+        } else if (property == "cover_crop_planting_date_flat") {
+          pretty_property = "Cover crop planting date"
+        }
+        svg.select('.x_axis_label')
+          .transition().duration(1000)
+          .text(pretty_property);
+
+        updateLegend(color_scale)
+
+      }
+
+      function exitPoints(data) {
+        svg.selectAll("circle")
+          .data(data)
+          .exit()
+          .remove();
+      }
+
+      // Filters to apply:
+      // - Select the year
+      //   - Slider instead for date?
+      // - Cover crop
+      // - Interseeded
+      // - Previous cash crop
+
+      function getFilteredData(data, sdd) {
+
+        var filtered_data = filterDataYear(data, sdd)
+
+        filtered_data = filterDataCounty(filtered_data, sdd)
+
+        if (sdd) {
+          filtered_data = filtered_data.filter(function (d) {
+            return d.properties.cover_crop_interseeded != null;
+          });
+        }
+
+        return filtered_data;
+
+      }
+
+      function filterDataYear(data, sdd) {
+        // Reminder, won't be real year, 2020 == 120
+        var selector;
+        if (sdd) {
+          selector = "#select_planting_year_sdd";
+        } else {
+          selector = "#select_planting_year";
+        }
+        var year = d3.select(selector).node().value
+        if (year == 9999) {
+          return data
+        }
+        return data.filter(function (d) {
+          return d.properties.cover_crop_planting_date.getYear() == year;
+        });
+
+      }
+
+      function filterDataCounty(data, sdd) {
+        // Reminder, won't be real year, 2020 == 120
+        var selector;
+        if (sdd) {
+          selector = "#select_county_sdd";
+        } else {
+          selector = "#select_county";
+        }
+        var county = d3.select(selector).node().value
+        console.log(county + " County")
+        if (county == "9999") {
+          return data
+        }
+        return data.filter(function (d) {
+          return d.properties.county_name === county;
+        });
+
+      }
+
+      enterPoints(data, getScaleAndProperty(data))
+      updatePoints(data, getScaleAndProperty(data))
+
+      function updateChart(sdd) {
+        // https://stackoverflow.com/questions/39964570/how-to-filter-data-with-d3-js
+
+        if (sdd) {
+          var filtered_data = getFilteredData(data, sdd);
+          sddEnterPoints(filtered_data, getScaleAndProperty(filtered_data, sdd));
+          sddUpdatePoints(filtered_data, getScaleAndProperty(filtered_data, sdd));
+          sddExitPoints(filtered_data, getScaleAndProperty(filtered_data, sdd));
+
+          console.log("No. of data points: " + filtered_data.length)
+
+        } else {
+          var filtered_data = getFilteredData(data);
+          enterPoints(filtered_data, getScaleAndProperty(filtered_data));
+          updatePoints(filtered_data, getScaleAndProperty(filtered_data));
+          exitPoints(filtered_data, getScaleAndProperty(filtered_data));
+
+          console.log("No. of data points: " + filtered_data.length)
+        }
+
+
+      }
+
+      d3.select("#select_planting_year").on("change", function () {
+
+        console.log("Changed to: " + this.value)
+        updateChart(false);
+
+      })
+
+      d3.select("#xFactor").on("change", function () {
+        console.log("Changed x to: " + this.value);
+
+        updateChart(false);
+
+      })
+
+
+      d3.select("#select_color").on("change", function () {
+        console.log("Changed color to: " + this.value);
+
+        updateChart(false);
+
+      })
+
+      d3.select("#select_county").on("change", function () {
+        console.log("Changed county to: " + this.value);
+
+        updateChart(false);
+
+      })
+
+      d3.select("#select_planting_year_sdd").on("change", function () {
+
+        console.log("Changed to: " + this.value)
+        updateChart(true);
+
+      })
+
+      d3.select("#xFactorSdd").on("change", function () {
+        console.log("Changed x to: " + this.value);
+
+        updateChart(true);
+
+      })
+
+      d3.select("#select_county_sdd").on("change", function () {
+        console.log("Changed county to: " + this.value);
+
+        updateChart(true);
+
+      })
+
+      d3.select("#select_color_sdd").on("change", function () {
+        console.log("Changed sdd color to: " + this.value);
+
+        updateChart(true);
+
+      })
+
+
+      function getScaleAndProperty(filtered_data, sdd) {
+        if (sdd) {
+          var property = d3.select("#xFactorSdd").node().value
+          var color_property = d3.select("#select_color_sdd").node().value
+        } else {
+          var property = d3.select("#xFactor").node().value
+          var color_property = d3.select("#select_color").node().value
+        }
+
+        var color_scale;
+        if (color_property == "county_name") {
+          color_scale = colorScaleCounty;
+        } else if (color_property == "cover_crop_group1") {
+          color_scale = colorScaleCrops;
+        } else if (color_property == "crop_prior") {
+          color_scale = colorScalePriorCrops
+        }
+
+        var scale;
+        if (property == "gdd") {
+          if (sdd) {
+            scale = xSddScaleLinear
+          } else {
+            scale = xScaleLinear
+          }
+
+          scale.domain([0,
+            d3.max(filtered_data.map(function (child) {
+              return child.properties[property]
+            })
+            )
+          ]
+          );
+        } else if (property == "cover_crop_planting_rate") {
+          if (sdd) {
+            scale = xSddScaleLinear
+          } else {
+            scale = xScaleLinear
+          }
+
+          scale.domain(
+            d3.extent(filtered_data.map(function (child) {
+              return child.properties[property]
+            })
+            )
+          );
+        } else if ((property == "cover_crop_planting_date") || (property == "cover_crop_planting_date_flat")) {
+          if (sdd) {
+            scale = xSddScaleTime
+          } else {
+            scale = xScaleTime
+          }
+
+          scale.domain(
+            d3.extent(filtered_data.map(function (child) {
+              return child.properties[property]
+            })
+            )
+          );
+        }
+
+        return [property, scale, color_property, color_scale]
+      }
+
+      // Legend
+      function updateLegend(scale) {
+        // d3.select(legendClassName).remove();
+        var svg_legend = d3.select("#legend svg")
+
+        svg_legend.append("g")
+          .attr("class", "legendSoil")
+          .attr("transform", "translate(20,30)")
+        // .style("height", 400);
+
+        var legendSoil = d3.legendColor()
+          .scale(scale)
+        // .orient("horizontal");
+
+        svg_legend.select(".legendSoil")
+          .call(legendSoil);
+      }
+
+      function updateSddLegend(scale) {
+
+        var sdd_svg_legend = d3.select("#legend_interseeded svg")
+
+
+        sdd_svg_legend.append("g")
+          .attr("class", "legendSoilInterseeded")
+          .attr("transform", "translate(7 , 175)")
+        // .style("height", 400);
+
+        var legendSoilInterseeded = d3.legendColor()
+          .scale(scale)
+        // .orient("horizontal");
+
+        sdd_svg_legend.select(".legendSoilInterseeded")
+          .call(legendSoilInterseeded);
+
+        // Legend for seeding method
+        var seedingSymbolScale_pretty = d3.scaleOrdinal()
+          .domain([
+            "Drill",
+            "Broadcast",
+            "Broadcast w/incorporation",
+            "Aerial",
+            "Manure slurry",
+            "Other"
+          ])
+          .range([
+            d3.symbol().type(d3.symbolSquare)(),
+            d3.symbol().type(d3.symbolTriangle)(),
+            d3.symbol().type(d3.symbolCross)(),
+            d3.symbol().type(d3.symbolStar)(),
+            d3.symbol().type(d3.symbolDiamond)(),
+            d3.symbol().type(d3.symbolCircle)()
+          ]);
+
+        sdd_svg_legend.append("g")
+          .attr("class", "legendSymbol")
+          .attr("transform", "translate(10, 30)");
+
+        var legendPath = d3.legendSymbol()
+          .scale(seedingSymbolScale_pretty)
+          .labelWrap(30)
+        sdd_svg_legend.select(".legendSymbol")
+          .call(legendPath);
+      }
+
+    })
+
+
+
+
+
+  </script>
+  <script>
+
+    // add bootstrap table styles to pandoc tables
+    function bootstrapStylePandocTables() {
+      $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+    }
+    $(document).ready(function () {
+      bootstrapStylePandocTables();
+    });
+
+
+  </script>
+
+  <!-- tabsets -->
+
+  <script>
+    $(document).ready(function () {
+      window.buildTabsets("TOC");
+    });
+
+    $(document).ready(function () {
+      $('.tabset-dropdown > .nav-tabs > li').click(function () {
+        $(this).parent().toggleClass('nav-tabs-open')
+      });
+    });
+  </script>
+
+  <!-- code folding -->
+
+
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+</body>
+
+</html>

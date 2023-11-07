@@ -9,6 +9,10 @@ from .forms import BookForm
 # TODO 
 # Add 'user' to model and filter by that in list
 
+def home(request):  
+    
+    return render(request, 'home.html')
+
 @login_required
 def book_list(request):
     books = Book.objects.all()

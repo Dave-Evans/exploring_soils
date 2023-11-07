@@ -1,0 +1,462 @@
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load bootstrap4 %}
+
+<!-- For leaflet marker shapes
+https://stackoverflow.com/questions/54978367/custom-markers-with-different-shapes-and-colors-in-leaflet-r 
+
+For D3 point map
+https://datadrivensecurity.info/blog/vis/malmaps-d3/
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Wisconsin Citizen Science Cover Crop Map{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"
+        integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ=="
+        crossorigin="anonymous"></script>
+    {% block stylesheet %}{% endblock %}
+</head>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+<script src="{% static 'js/L.Control.Window.js' %}"></script>
+<style>
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+    }
+
+    .leaflet-container {
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .custom-control {
+
+        font-size: 14px;
+        border-radius: 5px;
+        padding: 4px;
+        border: 2px solid rgba(0, 0, 0, 0.2);
+    }
+</style>
+<link rel="stylesheet" href="{% static 'css/L.Control.Window.css' %}" />
+<div id="mapid"></div>
+
+<div id="ctrl_inner_html">
+    <img width="200" height="100" src="/static/img/MoshStacked_maroon.png" /><br><br>
+
+    <h5>Set filters</h5>
+    <span>Year
+        <select id="YearFilter" class="YearSelector">
+        </select>
+    </span><br>
+    <span>Soil texture
+        <select id="SoilTextFilter" class="SoilSelector">
+        </select>
+    </span><br>
+    <span>Seeding method
+        <select id="SeedingFilter" class="SeedingSelector">
+        </select>
+    </span><br>
+    <h5>Select property</h5>
+    <select id="PropertySelection" class="PropSelector">
+        <option value="cc_biomass">Cover crop biomass</option>
+        <option value="fq_rfq">Relative forage quality</option>
+        <option value="gdd">Growing degree days</option>
+    </select>
+    <div id="legend"><svg width="260px" height="200px"></svg></div><button id="info-button">Info</button>
+</div>
+
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script>
+
+
+    mapLink =
+        '<a href="http://www.esri.com/">Esri</a>';
+    wholink =
+        'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+    var satelite = L.tileLayer(
+        'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; ' + mapLink + ', ' + wholink,
+        maxZoom: 18,
+    });
+    var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    });
+
+
+
+    var baseMaps = {
+        "Satelite": satelite,
+        "Streets, landmarks, etc": osm,
+
+    };
+
+
+
+    var max_zoom = 18;
+    var map = L.map('mapid', {
+        layers: [osm],
+        maxZoom: max_zoom,
+        zoomControl: false
+    }).setView([44.6373, -90.012], 7);
+
+    map.createPane('pane_counties');
+    map.getPane('pane_counties').style.zIndex = 300;
+
+    var county_styling = {
+        fillColor: "#f0f0f0",
+        color: "#252525",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.2
+    };
+
+    function cntyPopup(feature, layer) {
+
+        var popupContent = "<dl><dt>" + feature.properties.countyname + " County</dt></dl>";
+
+        if (feature.properties && feature.properties.popupContent) {
+            popupContent += feature.properties.popupContent;
+        }
+
+        layer.bindPopup(popupContent);
+    }
+    var wi_counties_json_object;
+    var counties_layer = L.layerGroup();
+
+    var cnty_result = $.getJSON("/get_wi_counties", function (data) {
+        wi_counties_json_object = L.geoJSON(data, {
+            style: county_styling,
+            pane: "pane_counties",
+            onEachFeature: cntyPopup
+        }).addTo(counties_layer);
+        map.addLayer(wi_counties_json_object)
+
+    });
+
+
+
+    map.createPane('pane_collection_pts');
+    map.getPane('pane_collection_pts').style.zIndex = 650;
+
+
+
+    var layerControl = L.control.layers(baseMaps).addTo(map);
+    layerControl.addOverlay(counties_layer, "Counties")
+
+    // Custom control for controls
+    L.Control.cntrlpanel = L.Control.extend({
+        onAdd: function (map) {
+
+            var controlsdiv = L.DomUtil.create('div', 'custom-control');
+            controlsdiv.style.width = '250px';
+            controlsdiv.style.height = '500px';
+            controlsdiv.style.background = 'white';
+            controlsdiv.id = "controls";
+            controlsdiv.innerHTML = ''
+
+
+            $(controlsdiv).mousedown(function () {
+                map.dragging.disable();
+            });
+            $(document).mouseup(function () {
+                map.dragging.enable();
+            });
+
+            return controlsdiv;
+        },
+        onRemove: function (map) {
+            // Nothing to do here
+        }
+    });
+    L.control.cntrlpanel = function (opts) {
+        return new L.Control.cntrlpanel(opts);
+    }
+    L.control.cntrlpanel({ position: 'topleft' }).addTo(map);
+    // Scale bar
+    L.control.scale().addTo(map);
+    // manageDepthSlider();       
+    // disableDownload();
+
+
+    function onEachFeature(feature, layer) {
+
+
+        var popupContent = "<dl>" +
+            "<dt>ID</dt> <dd>" + feature.id + "</dd>" +
+            "<dt>Cover crop</dt> <dd>" + feature.properties.cc_species + "</dd>" +
+            "<dt>Previous crop</dt> <dd>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</dd>" +
+            "<dt>Planting date</dt> <dd>" + feature.properties.cc_planting_date + "</dd>" +
+            "<dt>Planting rate</dt> <dd>" + feature.properties.cc_planting_rate + "</dd>" +
+            "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
+            "<dt>Biomass (ton DM/acre)</dt> <dd>" + feature.properties.cc_biomass + "</dd>" +
+            "<dt>Cumulative growing degree days</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
+            "</dl>" + "*This point is not the actual location of the photo. Collection locations have been obscured to protect landowner's privacy.";
+
+
+        if (feature.properties && feature.properties.popupContent) {
+            popupContent += feature.properties.popupContent;
+        }
+
+        layer.bindPopup(popupContent);
+    }
+
+    var geojsonMarkerOptions = {
+        radius: 8,
+        fillColor: "#ff0000",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+
+    var dataurl = '/wisc_cc_static_data';
+
+    var geojsonObject;
+    var soilsLayer;
+
+    var soilsCircle = $.getJSON(dataurl, function (data) {
+        soilsLayer = data;
+
+        // geojsonObject = L.geoJSON(data, {
+        //     pointToLayer: function (feature, latlng) {
+        //         soilsPoints.push(latlng);
+        //         return L.circleMarker(latlng, geojsonMarkerOptions);
+        //     },
+        //     //filter: yearFilter,
+        //     pane: "pane_collection_pts",
+        //     onEachFeature: onEachFeature
+        // }).addTo(map);
+        // //map.fitBounds(soilsPoints);
+        // geojsonObject.eachLayer(function (layer) {
+        //     layer.setStyle({ fillColor: gddScale(layer.feature.properties.acc_gdd) })
+        //     updateLegend(gddScale, ".0f")
+        // })
+
+        pop_select_box("YearFilter", "year");
+        pop_select_box("SeedingFilter", "cc_seeding_method");
+        pop_select_box("SoilTextFilter", "dominant_soil_texture");
+        filterer();
+        addLayerToMap();
+    });
+
+    // for populating select boxes
+    var pop_select_box = function (id_selector, field_name) {
+        var all_instances = [];
+        for (item in soilsLayer) {
+
+            all_instances.push(soilsLayer[item]['properties'][field_name])
+
+        }
+        const uniq_instances = [...new Set(all_instances)];
+        var filt = document.getElementById(id_selector);
+        var newOption = document.createElement("option");
+        newOption.text = "All";
+        newOption.value = "All";
+        filt.add(newOption);
+        uniq_instances.forEach(function (item) {
+            console.log(item)
+            if (item === null) { return }
+            var newOption = document.createElement("option");
+            newOption.text = item.toString();
+            newOption.value = item.toString();
+            filt.add(newOption);
+        })
+    }
+    let filter_values;
+
+    var filterer = function (feature) {
+        filter_values = {
+            year: false,
+            seeding_method: false,
+            soil_texture: false,
+        }
+        if (document.getElementById("YearFilter").value == "All") {
+            filter_values['year'] = document.getElementById("YearFilter").value;
+        } else {
+            filter_values['year'] = parseInt(document.getElementById("YearFilter").value);
+        }
+
+        filter_values['cc_seeding_method'] = document.getElementById("SeedingFilter").value;
+        filter_values['dominant_soil_texture'] = document.getElementById("SoilTextFilter").value;
+
+
+    }
+
+
+    function addLayerToMap() {
+        //remove the layer from the map entirely
+        if (map.hasLayer(geojsonObject)) {
+            geojsonObject.remove();
+        }
+        //add the data layer and style based on attribute. 
+
+        geojsonObject = L.geoJson(soilsLayer, {
+
+            filter: (feature) => {
+
+                // Filter each property by the selected filter value
+                // If no filter, the 'All' option, then the filter value is true, hence the or statement
+                const filt_year = (filter_values.year == "All") ? true : (feature.properties.year == filter_values.year);
+                const filt_seeding = (filter_values.cc_seeding_method == "All") ? true : (feature.properties.cc_seeding_method == filter_values.cc_seeding_method);
+                const filt_soiltext = (filter_values.dominant_soil_texture == "All") ? true : (feature.properties.dominant_soil_texture == filter_values.dominant_soil_texture);
+
+                return filt_year && filt_seeding && filt_soiltext //only true if both are true
+            },
+
+            pointToLayer: function (feature, latlng) {
+                return new L.CircleMarker(latlng, geojsonMarkerOptions);
+            },
+            onEachFeature: onEachFeature,
+            style: function (feature) {
+                updateLegend(biomassScale, ".1f");
+                return {
+
+                    fillColor: biomassScale(feature.properties.cc_biomass)
+                };
+            },
+        }).addTo(map);
+        console.log(Object.keys(geojsonObject._layers).length + " locations after filtering.")
+    }
+
+    $("#YearFilter").on("input", function () {
+        filterer()
+        //add the layer to the map again, now that we have changed the filter value. 
+        addLayerToMap();
+    });
+    $("#SeedingFilter").on("input", function () {
+        filterer()
+        //add the layer to the map again, now that we have changed the filter value. 
+        addLayerToMap();
+    });
+    $("#SoilTextFilter").on("input", function () {
+        filterer()
+        //add the layer to the map again, now that we have changed the filter value. 
+        addLayerToMap();
+    });
+
+    function updateStyle(property) {
+        geojsonObject.eachLayer(function (layer) {
+            if (property == "gdd") {
+                layer.setStyle({ fillColor: gddScale(layer.feature.properties.acc_gdd) })
+                updateLegend(gddScale, ".0f")
+            } else if (property == "cc_biomass") {
+                layer.setStyle({ fillColor: biomassScale(layer.feature.properties.cc_biomass) })
+                updateLegend(biomassScale, ".1f")
+            } else if (property == "fq_rfq") {
+                layer.setStyle({ fillColor: rfqScale(layer.feature.properties.fq_rfq) })
+                updateLegend(rfqScale, ".0f")
+            }
+        })
+    }
+
+    //Maybe this: https://github.com/timwis/leaflet-choropleth
+
+    var rfqScale = d3.scaleThreshold()
+        .domain([100, 150, 200, 250, 300, 350])
+        .range(d3.schemeGreens[7]);
+
+
+
+    var gddScale = d3.scaleThreshold()
+        .domain([500, 1000, 1500, 2000, 2500, 3000, 4000])
+        .range(d3.schemeOrRd[8]);
+
+
+    var fgccScale = d3.scaleThreshold()
+        .domain([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+        .range(d3.schemeGreens[7]);
+
+    var biomassScale = d3.scaleThreshold()
+        .domain([0.5, 1, 1.5, 2, 2.5, 3, 3.5])
+        .range(d3.schemePuOr[7]);
+
+
+    function removeLegend(legendClassName) {
+        d3.select(legendClassName).remove();
+    }
+
+    function updateLegend(myscale, fmt_string) {
+
+        removeLegend('.legendSoil');
+
+        var svg = d3.select("#legend svg");
+
+        svg.append("g")
+            .attr("class", "legendSoil")
+            .attr("transform", "translate(20,30)")
+            .style("height", 150);
+
+        var legendSoil = d3.legendColor()
+            .shapeWidth(30)
+            .cells(6)
+            // .orient("horizontal")
+            .scale(myscale)
+
+        // .shapePadding(4)
+
+        legendSoil.labels(d3.legendHelpers.thresholdLabels)
+
+        legendSoil.labelFormat(d3.format(fmt_string))
+
+        svg.select(".legendSoil")
+            .call(legendSoil);
+
+    };
+
+    // Call updateScale when everything is loaded. Seemed to be an issue where
+    //  the on change would try to be attached before the leaflet control containing 
+    //  the dropdown and slider were located was created
+    $('body').on('change', '#PropertySelection', function () {
+        var selected_property = $('#PropertySelection').val();
+        updateStyle(selected_property);
+    });
+
+    new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
+    $('body').on('change', '#ZoomSelection', function () {
+        var selected_zoom = $('#ZoomSelection').val();
+        map.setMaxZoom(parseInt(selected_zoom))
+    });
+
+    $('body').on('click', '#info-button', function () {
+        showInfoWindow();
+    });
+
+    function showInfoWindow() {
+        var winInfo = L.control.window(map,
+            {
+                title: 'MOSH Cover crop growth data project',
+                content: 'Click on data points to view the amount of green cover produced by cover crops. To view other basemaps or toggle the county boundaries, use the menu in the upper righthand counter. Learn more about the MN Office for Soil Health at <a href="https://mosh.umn.edu">mosh.umn.edu</a>',
+                visible: true
+            })
+    }
+    // Moves map controls to proper spot
+    document.getElementById("controls").appendChild(document.getElementById('ctrl_inner_html'))
+</script>
+
+
+
+
+</body>
+
+</html>

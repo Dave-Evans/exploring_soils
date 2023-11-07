@@ -2,6 +2,8 @@
 - hosts: all
   remote_user: ubuntu
   become: True
+  vars_files:
+    - vars/main.yml  
 
   tasks:
 
@@ -19,12 +21,18 @@
       repo: "https://github.com/Dave-Evans/exploring_soils.git"
       force: yes
       dest: /home/ubuntu/exploring_soils
+      version: "{{ branch }}"
 
   - name: Install Python modules
     pip:
       requirements: /home/ubuntu/exploring_soils/requirements.txt
       virtualenv: /home/ubuntu/exploring_soils/myvenv
-      virtualenv_command: /usr/bin/python3.6 -m venv
+      virtualenv_command: /usr/bin/python3 -m venv
+
+  - name: Run a script to download county data and load
+    script: load_county_data.sh {{ database_name }} {{ database_user }} {{ database_pass }} {{aws_backup_bucket_name}}
+    args:
+      creates: /home/ubuntu/exploring_soils/loaded_county_layer
 
   - name: Move apache config file
     copy:
@@ -35,7 +43,7 @@
   # Variabalize the env file
   - name: Move env file
     copy:
-      src: /home/daveevans/Documents/exploring_soils/test.env
+      src: ../../.env
       dest: /home/ubuntu/exploring_soils/.env
       remote_src: no      
 
@@ -46,16 +54,16 @@
       mode: '0755'
 
   # This will be pulling from an S3 bucket
-  - name: Move backup db dump file
-    copy:
-      src: /home/daveevans/Documents/exploring_soils/data/dump.json
-      dest: /home/ubuntu/exploring_soils/data/dump.json
-      remote_src: no
+  # - name: Move backup db dump file
+  #   copy:
+  #     src: ../../data/dump.json
+  #     dest: /home/ubuntu/exploring_soils/data/dump.json
+  #     remote_src: no
 
   # Remove old migrations, create fresh, and load data
   # Should be run **ONLY** on one machine
   - name: Run a script to delete old migrations and recreate and then load data
-    script: build_and_load_db.sh
+    script: build_and_load_db.sh {{aws_backup_bucket_name}}
     args:
       creates: /home/ubuntu/exploring_soils/migrations_are_complete
     notify:
@@ -65,10 +73,10 @@
   - name: Ensure a job that runs at 01:42 GMT. Creates an entry like "0 5,2 * * ls -alh > /dev/null"
     cron:
       name: "Set up DB backup"
-      minute: "38"
-      hour: "2"
+      minute: "32"
+      hour: "1"
       user: root
-      job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./deployment/helper.sh dumpdb; bash ./deployment/helper.sh bkup ./data/dump.json"
+      job: "cd /home/ubuntu/exploring_soils; source myvenv/bin/activate; bash ./infra/helper.sh daily_bkup;"
 
 
   - name: Change directory permissions

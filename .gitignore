@@ -4,4 +4,6 @@
 myvenv/
 *.sqlite3
 *.json
-.env
+*.env
+*.pem
+/*/migrations/

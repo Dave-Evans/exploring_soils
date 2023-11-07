@@ -1,0 +1,122 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+{% block title %}Welcome to Wisconsin Citizen Science Cover Crop Project {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10 col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">Welcome {{ user.username }}</h3>
+
+        {% if not b_registered %}
+
+        <div class="alert alert-warning" role="alert">
+          Have you registered to fill out this survey? We do not recognize
+          the email address you have used to create this account.
+          <br>
+          For your survey response to be accepted we need you to register <a href="https://forms.gle/N7SzjedFwGJFXPUJ9"
+            target="_blank" rel="noopener noreferrer">here</a>.
+        </div>
+
+        {% endif %}
+
+        {% if completed_0 and completed_1 and completed_2 and completed_3 %}
+
+        <h4>Thank you!</h4>
+
+        <p>Thank you for completing our survey. If you would like to edit your answers, just click on one of the four
+          survey sections below. We will be in touch to be sure the biomass sampling is going ok, and to share other
+          project info. Also, check out the map and graph of the data we've collected so far! Project information
+          available on the Michael Fields website.</p>
+
+        <p>Please contact
+          Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a> with any questions</p>
+
+        <p>Dan Smith, Mrill Ingram, Ricardo Costa Silva, Gregg Sanford.</p>
+
+
+        {% else %}
+
+        <p>We're excited for this fourth season of our cover crop citizen science
+          project, and to be able to add a spring biomass element. You are part of a state-wide collaborative effort to
+          develop sound cover crop strategies for Wisconsin. You're also helping improve tools like SnapPlus and
+          developing better cost-effective strategies for reducing erosion and conserving nutrients.</p>
+
+        <p>We will be in touch to be sure the biomass sampling is going ok, and to share other project info. Also, check
+          out the map and graph of the data we've collected so far! Please contact
+          Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a> with any questions</p>
+
+        <p>Dan Smith, Mrill Ingram, Ricardo Costa Silva, Gregg Sanford.</p>
+
+
+        {% endif %}
+
+
+        <p>There are four sections to the survey.</p>
+        <div class="col-md-10">
+          <div class="list-group">
+            {% if completed_0 %}
+            <a href="{% url 'wisc_cc_survey0' %}"
+              class="list-group-item list-group-item-action list-group-item-success">I. About You - Completed! Click to
+              edit your response.</a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey0' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">I. About You</a>
+            {% endif %}
+
+            {% if completed_1 %}
+            <a href="{% url 'wisc_cc_survey1' %}"
+              class="list-group-item list-group-item-action list-group-item-success">II. General Farm Characteristics -
+              Completed! Click to
+              edit your response.</a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey1' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">II. General Farm
+              Characteristics</a>
+            {% endif %}
+
+            {% if completed_2 %}
+            <a href="{% url 'wisc_cc_survey2' %}"
+              class="list-group-item list-group-item-action list-group-item-success">III. "Research Field" Cover Crop
+              Information - Completed! Click to
+              edit your response.</a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey2' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">III. "Research Field" Cover Crop
+              Information</a>
+            {% endif %}
+
+
+            {% if completed_3 %}
+            <a href="{% url 'wisc_cc_survey3' %}"
+              class="list-group-item list-group-item-action list-group-item-success">IV. Thoughts on outreach about
+              cover cropping - Completed!
+              Click
+              to
+              edit your response.</a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey3' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">IV. Thoughts on outreach about
+              cover cropping</a>
+            {% endif %}
+
+          </div>
+        </div>
+        <br>
+
+
+        <!-- <div class="card-footer text-muted text-center">
+          Questions? See our <a href="#">references page</a>
+          
+          <ul class="nav justify-content-end">
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'logout' %}">Logout</a>
+            </li>
+          </ul>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

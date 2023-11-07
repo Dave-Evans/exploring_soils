@@ -6,20 +6,20 @@
 {% load bootstrap4 %}
 
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10 col-sm-12">
-      <div class="card">
-        <div class="card-body">
-          <h3 class="card-title">Uploaded</h3>
-          <h5 class="card-title"><a href="{% url 'kanopy_download' %}">Download all data</a></h5>
-            <div class="col-md-10">
-                {% render_table table %}
-            </div>
-        </div>
-        <div class="card-footer text-muted text-center">
-          Questions? See our references <a href="#">page</a>
-        </div>
+<div class="row justify-content-center">
+
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title">Uploaded</h3>
+      <h5 class="card-title"><a href="{% url 'kanopy_download' %}">Download all data</a></h5>
+      <div class="col-md-10">
+        {% render_table table %}
       </div>
     </div>
+    <div class="card-footer text-muted text-center">
+      Questions? See our references <a href="#">page</a>
+    </div>
   </div>
+
+</div>
 {% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'wisccc/base_wisccc.html' %}
+
+{% block title %}Welcome to our survey{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block javascript %}
+
+<!-- Fengyuan Chen's Datepicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css"
+  integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js"
+  integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+<head>
+  {{ form.media }}
+</head>
+
+
+
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10 col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <script type="text/javascript">
+          $(function () {
+            // Prevent accidental navigation away
+            $(':input').bind(
+              'change', function () { setConfirmUnload(true); });
+            $('.noprompt-required').click(
+              function () { setConfirmUnload(false); });
+
+            function setConfirmUnload(on) {
+              window.onbeforeunload = on ? unloadMessage : null;
+            }
+            function unloadMessage() {
+              return ('You have entered new data on this page. ' +
+                'If you navigate away from this page without ' +
+                'first saving your data, the changes will be lost.');
+            }
+
+            window.onerror = UnspecifiedErrorHandler;
+            function UnspecifiedErrorHandler() {
+              return true;
+            }
+
+          });
+
+        </script>
+
+        {% block form %}
+        {% endblock %}
+
+      </div>
+      <!-- <div class="card-footer text-muted text-center" style="font-size: small;">
+        This project is a collaboration between the Center for Integrated Agricultural Systems and the Michael Fields
+        Institute.
+      </div> -->
+
+    </div>
+  </div>
+</div>
+
+
+{{form.errors}}
+
+{% endblock %}

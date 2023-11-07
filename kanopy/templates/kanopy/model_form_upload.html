@@ -1,172 +1,184 @@
 {% extends 'kanopy/base_kanopy.html' %}
 
 {% block title %}Welcome to Green CovR{% endblock %}
-  {% load static %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block javascript %}
 
-  <!-- Fengyuan Chen's Datepicker -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+<!-- Fengyuan Chen's Datepicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css"
+  integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js"
+  integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
 
-  <script type="text/javascript" src="{% static "js/fgcc.js" %}"></script>
-  
+<script type="text/javascript" src='{% static "js/fgcc.js" %}'></script>
 
-  
+
+
 {% endblock %}
 
 
 {% block content %}
+
 <head>
-    {{ form.media }}
+  {{ form.media }}
 </head>
 
 
 
-  <div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10 col-sm-12">
-      <div class="card">
-        <div class="card-body">
-          <h3 class="card-title">Upload a photo</h3>
-          
-            {% if request.session.submissions|length > 0 %}
-                <a href="{% url "kanopy_thanks" %}">
-                    View previous uploads
-                </a>
-            {% endif %}
-            <p>
-            Thank you for submitting a cover crop ground cover photo to the MN Office for Soil Health (<a href="mosh.umn.edu">MOSH</a>) Green CovR database. 
-            The app was developed in the Wilson Lab for manure management and water quality.
-            MOSH will use this data anonymously to evaluate how successful cover crops are when planted in different contexts.
-            Please give us as much information as possible about the field where photos are taken in order to interpret the data correctly.
-            If you are unsure about the accuracy of dates or other information, please leave a note in the “Comments” section. 
-            </p>
-            <h4>How to take a photo for the database</h4>
-            <p>
-                <b>What:</b> A photo looking down at the ground when the cover crop is growing, especially at maximum growth right before termination or winter freeze.
-                <br/>
-                <b>When:</b> Photos should be taken at least 2 hours after sunrise or before sunset to minimize shadows.
-                    Sun overhead is preferred.
-                <br/>
-                <b>Where:</b> In an “average” part of your cover crop stand, preferably not headlands, drowned out or other marginal areas.
-                <br/>
-                <b>How:</b> Hold your camera 4-5’ off the ground, far enough away from your body to avoid your shoes in the frame.
-                    Keep it as horizontal as possible.
-                    Stand with the sun in front of you so you don’t create a shadow in the photo.
-                    Check the photo for any odd rocks, shadows or other non-plant or soil material.
-                    
-                    Then submit with the data below!
-                 <br/>
-                 
-                <table width="100%">
-                    <tr>
-                        <th>Example good photo</th>
-                        <th>Example poor photo</th>
-                    </tr>
-                    <tr>
-                        <td width="50%"><img width="250" height="250" src="{% static 'img/cover_crop_good_image.jpg' %}"/></td>
-                        <td width="50%"><img width="250" height="250" src="{% static 'img/cover_crop_poor_image.jpg' %}"/></td>
-                    </tr>
-                <table>                 
-                 <!-- <span id="image_row">    -->
-                        <!-- <img class="left" width="250" height="250" src="{% static 'img/cover_crop_good_image.jpg' %}"/> -->
-                        <!-- <img class="right" width="250" height="250" src="{% static 'img/cover_crop_poor_image.jpg' %}"/> -->
-                <!-- </span> -->
-                <br/>
-                Questions? Contact Anna Cates, <a href="mailto:catesa@umn.edu">catesa@umn.edu</a>. 
-            
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10 col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">Upload a photo</h3>
+
+        {% if request.session.submissions|length > 0 %}
+        <a href='{% url "kanopy_thanks" %}'>
+          View previous uploads
+        </a>
+        {% endif %}
+        <p>
+          Thank you for submitting a cover crop ground cover photo to the MN Office for Soil Health (<a
+            href="https://mosh.umn.edu">MOSH</a>) Green CovR database.
+          The app was developed in the Wilson Lab for manure management and water quality.
+          MOSH will use this data anonymously to evaluate how successful cover crops are when planted in different
+          contexts.
+          Please give us as much information as possible about the field where photos are taken in order to interpret
+          the data correctly.
+          If you are unsure about the accuracy of dates or other information, please leave a note in the “Comments”
+          section.
+        </p>
+        <h4>How to take a photo for the database</h4>
+        <p>
+          <b>What:</b> A photo looking down at the ground when the cover crop is growing, especially at maximum growth
+          right before termination or winter freeze.
+          <br />
+          <b>When:</b> Photos should be taken at least 2 hours after sunrise or before sunset to minimize shadows.
+          Sun overhead is preferred.
+          <br />
+          <b>Where:</b> In an “average” part of your cover crop stand, preferably not headlands, drowned out or other
+          marginal areas.
+          <br />
+          <b>How:</b> Hold your camera 4-5’ off the ground, far enough away from your body to avoid your shoes in the
+          frame.
+          Keep it as horizontal as possible.
+          Stand with the sun in front of you so you don’t create a shadow in the photo.
+          Check the photo for any odd rocks, shadows or other non-plant or soil material.
+
+          Then submit with the data below!
+          <br />
+
+        <table width="100%">
+          <tr>
+            <th>Example good photo</th>
+            <th>Example poor photo</th>
+          </tr>
+          <tr>
+            <td width="50%"><img width="250" height="250" src="{% static 'img/cover_crop_good_image.jpg' %}" /></td>
+            <td width="50%"><img width="250" height="250" src="{% static 'img/cover_crop_poor_image.jpg' %}" /></td>
+          </tr>
+          <table>
+            <!-- <span id="image_row">    -->
+            <!-- <img class="left" width="250" height="250" src="{% static 'img/cover_crop_good_image.jpg' %}"/> -->
+            <!-- <img class="right" width="250" height="250" src="{% static 'img/cover_crop_poor_image.jpg' %}"/> -->
+            <!-- </span> -->
+            <br />
+            Questions? Contact Anna Cates, <a href="mailto:catesa@umn.edu">catesa@umn.edu</a>.
+
             </p>
             <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                {% include 'kanopy/includes/form.html' %}                     
-                
-                <button type="submit" class="btn btn-primary">Upload</button>
+              {% csrf_token %}
 
-                
+              {% include 'kanopy/includes/form.html' %}
+
+              <button type="submit" class="btn btn-primary">Upload</button>
+
+
             </form>
-        </div>
-        <div class="card-footer text-muted text-center">
-          Dave Evans built this website in collaboration with MOSH and the Wilson Lab, which developed the Green CovR algorithm.
-        </div>
-        
       </div>
+      <div class="card-footer text-muted text-center" style="font-size: small;">
+        This website is a collaboration between <a href="https://mosh.umn.edu">MOSH</a> and the <a
+          href="https://wilsonlab.cfans.umn.edu/">Wilson Lab</a>, which developed the Green CovR
+        algorithm and Evans Geospatial.
+      </div>
+
     </div>
   </div>
-  
-  <script>
-  <!-- For seeing when a file is uploaded -->
-      var firstFile;
-      const fileSelector = document.getElementById('id_image');
-      fileSelector.addEventListener('change', (event) => {
-        const fileList = event.target.files;
-        <!-- const firstFile = fileList[0]; -->
-        firstFile = fileList[0];
-        console.log("First file is:");
-        console.log(firstFile);
-        calcFGCC(firstFile);
-      });
-      
-     function calcFGCC(firstFile) {
-     
-        var url = URL.createObjectURL(firstFile);
-        var img = document.createElement("img");
-        img.alt = firstFile.name;
-        img.onload = () => getFGCCcoverage(img);
-        img.src = url;
+</div>
 
-        
-     
-     };
-     
-     function getFGCCcoverage(img){
-     
-        var input = document.createElement("canvas");
-        input.width = img.width;
-        input.height = img.height;
+<script>
+  // <!-- For seeing when a file is uploaded -->
+  var firstFile;
+  const fileSelector = document.getElementById('id_image');
+  fileSelector.addEventListener('change', (event) => {
+    const fileList = event.target.files;
+    // <!-- const firstFile = fileList[0]; -->
+    firstFile = fileList[0];
+    console.log("First file is:");
+    console.log(firstFile);
+    calcFGCC(firstFile);
+  });
 
-        var output = document.createElement("canvas");
-        output.width = img.width;
-        output.height = img.height;
+  function calcFGCC(firstFile) {
 
-        var context = input.getContext("2d");
-        context.drawImage(img, 0, 0, input.width, input.height);
+    var url = URL.createObjectURL(firstFile);
+    var img = document.createElement("img");
+    img.alt = firstFile.name;
+    img.onload = () => getFGCCcoverage(img);
+    img.src = url;
 
-        var classifier = new FGCC(input, output);
-        classifier.p1 = 0.95;
-        classifier.p2 = 0.95;
-        classifier.p3 = 20;
-        classifier.noise = 100;
-        var coverage = classifier.classify(); 
-        var fgcc = (coverage).toFixed(5)
-        updateFGCCval(fgcc);     
-     };
-      
 
-      
-      function updateFGCCval(value){
-          $('#id_fgcc_value').val(value);
-        };
-    
+
+  };
+
+  function getFGCCcoverage(img) {
+
+    var input = document.createElement("canvas");
+    input.width = img.width;
+    input.height = img.height;
+
+    var output = document.createElement("canvas");
+    output.width = img.width;
+    output.height = img.height;
+
+    var context = input.getContext("2d");
+    context.drawImage(img, 0, 0, input.width, input.height);
+
+    var classifier = new FGCC(input, output);
+    classifier.p1 = 0.95;
+    classifier.p2 = 0.95;
+    classifier.p3 = 20;
+    classifier.noise = 100;
+    var coverage = classifier.classify();
+    var fgcc = (coverage).toFixed(5)
+    updateFGCCval(fgcc);
+  };
+
+
+
+  function updateFGCCval(value) {
+    $('#id_fgcc_value').val(value);
+  };
+
 </script>
-     <script>
-    $(function () {
-      $("#id_cover_crop_planting_date").datepicker({
-      format:'yyyy-mm-dd',
+<script>
+  $(function () {
+    $("#id_cover_crop_planting_date").datepicker({
+      format: 'yyyy-mm-dd',
     });
+  });
+
+  $(function () {
+    $("#id_cover_crop_termination_date").datepicker({
+      format: 'yyyy-mm-dd',
     });
-    
-    $(function () {
-      $("#id_cover_crop_termination_date").datepicker({
-      format:'yyyy-mm-dd',
+  });
+
+  $(function () {
+    $("#id_photo_taken_date").datepicker({
+      format: 'yyyy-mm-dd',
     });
-    });
-    
-    $(function () {
-      $("#id_photo_taken_date").datepicker({
-      format:'yyyy-mm-dd',
-    });
-    });
-  </script>
+  });
+</script>
 {% endblock %}
