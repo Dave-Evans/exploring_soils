@@ -48,6 +48,14 @@ urlpatterns = [
         name="kanopy_submissions_json",
     ),
     re_path(
+        r"^kanopy/submissions$",
+        kanopy_views.kanopy_submissions,
+        name="kanopy_submissions",
+    ),
+    re_path(
+        r"^kanopy/barchart$", kanopy_views.kanopy_sub_graph, name="kanopy_sub_graph"
+    ),
+    re_path(
         r"^county_map$",
         kanopy_views.county_map,
         name="county_map",

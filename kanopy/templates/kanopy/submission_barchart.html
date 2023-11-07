@@ -3,160 +3,159 @@
 <!-- https://bl.ocks.org/d3noob/8952219 -->
 <!-- https://observablehq.com/@nightire/column-chart-with-brush -->
 <!-- https://observablehq.com/@bmschmidt/quadtree-brush-optimization -->
+
 <head>
-	<style>
+  <style>
+    .axis {
+      font: 10px sans-serif;
+    }
 
-	.axis {
-	  font: 10px sans-serif;
-	}
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
 
-	.axis path,
-	.axis line {
-	  fill: none;
-	  stroke: #000;
-	  shape-rendering: crispEdges;
-  }
-  
-  .bar {
+    .bar {
       fill: steelblue;
-  }
+    }
 
-  .highlight {
+    .highlight {
       fill: orange;
-  }  
-
-	</style>
+    }
+  </style>
 </head>
 
 <body>
-  <input type="text" id="start_date" >
-  <input type="text" id="end_date" >
-	
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
-<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
+  <input type="text" id="start_date">
+  <input type="text" id="end_date">
 
-<script>
-  var data = JSON.parse('{{ freq|escapejs }}');
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
+  <script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
 
-  var margin = {top: 20, right: 20, bottom: 70, left: 40},
+  <script>
+    var data = JSON.parse('{{ freq|escapejs }}');
+
+    var margin = { top: 20, right: 20, bottom: 70, left: 40 },
       width = 500 - margin.left - margin.right,
       height = 200 - margin.top - margin.bottom;
 
-  // Parse the date / time
-  var	parseDate = d3.timeParse("%Y-%m-%d");
-  var formatDate = d3.timeFormat("%B %d, %Y");
+    // Parse the date / time
+    var parseDate = d3.timeParse("%Y-%m-%d");
+    var formatDate = d3.timeFormat("%B %d, %Y");
 
-  var x = d3.scaleBand().range([0, width], .05);
+    var x = d3.scaleBand().range([0, width], .05);
 
-  var y = d3.scaleLinear().range([height, 0]);
+    var y = d3.scaleLinear().range([height, 0]);
 
-  var yAxis = d3.axisLeft()
+    var yAxis = d3.axisLeft()
       .scale(y)
       .ticks(3);
 
-  var svg = d3.select("body").append("svg")
+    var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", 
-            "translate(" + margin.left + "," + margin.top + ")");
-  var eventData;
-  var mouseEvent;
-  // d3.csv("total_mileage.csv").then(function(data) {
-  data.forEach(function(d) {
+      .append("g")
+      .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+    var eventData;
+    var mouseEvent;
+    // d3.csv("total_mileage.csv").then(function(data) {
+    data.forEach(function (d) {
       d.date = parseDate(d.dt_seq);
       d.value = +d.num_uploads;
-  });
+    });
 
-  x.domain(data.map(function(d) { return d.date; }));
-  y.domain([0, d3.max(data, function(d) { return d.value; })]);
-  
-  // custom invert function
-  x.invert = (function(){
+    x.domain(data.map(function (d) { return d.date; }));
+    y.domain([0, d3.max(data, function (d) { return d.value; })]);
+
+    // custom invert function
+    x.invert = (function () {
       var domain = x.domain()
       var range = x.range()
       var scale = d3.scaleQuantize().domain(range).range(domain)
 
-      return function(x){
-          return scale(x)
+      return function (x) {
+        return scale(x)
       }
-  })()
+    })()
 
-  // Add the brush feature using the d3.brush function
-  var brush = d3.brushX()
+    // Add the brush feature using the d3.brush function
+    var brush = d3.brushX()
       // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
-      .extent( [ [0,0], [width,height] ] ) 
+      .extent([[0, 0], [width, height]])
       // Each time the brush selection changes, trigger the 'updateDates' function
-      .on("end", updateDates) 
+      .on("end", updateDates)
 
     // Defining xAxis here so that we can
     //  set tick values...before scales?
     var xAxis = d3.axisBottom()
       .tickFormat(d3.timeFormat('%b %d'))
       //.ticks(d3.timeDay.every(100))
-      .tickValues(x.domain().filter(function(d,i){ return !(i%15)}))   
+      .tickValues(x.domain().filter(function (d, i) { return !(i % 100) }))
       .scale(x);
-    
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-        .selectAll("text")  
-              .style("text-anchor", "end")
-              .attr("dx", "-.8em")
-              .attr("dy", ".15em")
-              .attr("transform", "rotate(-15)" );          
 
     svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", ".15em")
+      .attr("transform", "rotate(-15)");
+
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
       .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end");
-    
-    svg.append("g")
-        .selectAll("bar")
-        .data(data)
-        .enter().append("rect")
-        .attr("class", "bar")  
-        .on("mouseover", onMouseOver) //Add listener for the mouseover event
-        .on("mouseout", onMouseOut)   //Add listener for the mouseout event      
-        .attr("x", function(d) { return x(d.date); })
-        .attr("width", x.bandwidth())
-        .attr("y", function(d) { return y(d.value); })
-        .attr("height", function(d) { return height - y(d.value); });
-
-        // Add the brushing
-    var end_upload_date = new Date( Date.now() );
-    var start_upload_date = new Date( Date.now() );
-    start_upload_date.setMonth( start_upload_date.getMonth() - 2 );
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end");
 
     svg.append("g")
-       .attr("class", "brush")
-       .call(brush)
-       .call(brush.move, [200, 300]);
+      .selectAll("bar")
+      .data(data)
+      .enter().append("rect")
+      .attr("class", "bar")
+      .on("mouseover", onMouseOver) //Add listener for the mouseover event
+      .on("mouseout", onMouseOut)   //Add listener for the mouseout event      
+      .attr("x", function (d) { return x(d.date); })
+      .attr("width", x.bandwidth())
+      .attr("y", function (d) { return y(d.value); })
+      .attr("height", function (d) { return height - y(d.value); });
+
+    // Add the brushing
+    var end_upload_date = new Date(Date.now());
+    var start_upload_date = new Date(Date.now());
+    start_upload_date.setMonth(start_upload_date.getMonth() - 2);
+
+    svg.append("g")
+      .attr("class", "brush")
+      .call(brush)
+      .call(brush.move, [200, 300]);
 
     //mouseover event handler function
     // Updating for v6
     //function onMouseOver(d, i) {
     function onMouseOver(event, d) {
-        eventData = event;
-        mouseEvent = d;
-        
-        d3.select(this).attr('class', 'highlight');
-        svg.append("text")
-          .attr('class', 'val') 
-          .attr('x', function() {
-              return x(d.date);
-          })
-          .attr('y', function() {
-              return y(d.value) - 15;
-          })
-          .text(function() {
-              return [ formatDate(d.date) + ": " + d.value + " uploads"];  // Value of the text
-          });
+      eventData = event;
+      mouseEvent = d;
+
+      d3.select(this).attr('class', 'highlight');
+      svg.append("text")
+        .attr('class', 'val')
+        .attr('x', function () {
+          return x(d.date);
+        })
+        .attr('y', function () {
+          return y(d.value) - 15;
+        })
+        .text(function () {
+          return [formatDate(d.date) + ": " + d.value + " uploads"];  // Value of the text
+        });
     }
 
     //mouseout event handler function
@@ -164,25 +163,25 @@
     // Updating for v6
     //function onMouseOut(d, i) {
     function onMouseOut(event, d) {
-        // use the text label class to remove label on mouseout
-        d3.select(this).attr('class', 'bar');
-        d3.select(this)
-          .transition()     // adds animation
-          .duration(400)
-          .attr('width', x.bandwidth())
-          .attr("y", function(d) { return y(d.value); })
-          .attr("height", function(d) { return height - y(d.value); });
+      // use the text label class to remove label on mouseout
+      d3.select(this).attr('class', 'bar');
+      d3.select(this)
+        .transition()     // adds animation
+        .duration(400)
+        .attr('width', x.bandwidth())
+        .attr("y", function (d) { return y(d.value); })
+        .attr("height", function (d) { return height - y(d.value); });
 
-        d3.selectAll('.val')
-          .remove()
+      d3.selectAll('.val')
+        .remove()
     }
 
-    function updateDates({selection: extent}) {
+    function updateDates({ selection: extent }) {
 
       console.log(extent);
       if (extent === null) {
         return;
-      }      
+      }
       var selected_start = x.invert(extent[0]);
       var selected_end = x.invert(extent[1]);
       console.log("Start: ", selected_start);
@@ -191,13 +190,13 @@
     }
     d3.select('svg')
       .append("text")
-      .attr("x", 200)             
+      .attr("x", 200)
       .attr("y", margin.top)
       .attr("font-size", 12)
-      .attr("text-anchor", "middle")  
-      .text("Select by submission date");    
-  // });
+      .attr("text-anchor", "middle")
+      .text("Select by submission date");
+    // });
 
-</script>
+  </script>
 
 </body>

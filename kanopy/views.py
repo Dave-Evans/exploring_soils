@@ -285,7 +285,7 @@ def get_submission_freq():
             on alldays.dt_seq = dt_uploaded
             order by dt_seq
             )
-        select jsonb_build_object( 'dt_seq', dt_seq, 'num_uploads', num_uploads)
+        select json_build_object( 'dt_seq', dt_seq, 'num_uploads', num_uploads)
         from rslt       
         """
         )
