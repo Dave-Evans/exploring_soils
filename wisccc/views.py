@@ -488,6 +488,14 @@ def wisc_cc_static_data(request):
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def response_table(request):
     """List wisc response entries"""
+    all_surveys = Survey.objects.all()
+    total_surveys = all_surveys.count()
+    completed_surveys = (
+        all_surveys.filter(percent_of_farm_cc__isnull=False)
+        .filter(closest_zip_code__isnull=False)
+        .filter(additional_thoughts__isnull=False)
+        .count()
+    )
 
     def get_table_data():
         """For getting survey data and returning an excel doc"""
@@ -516,7 +524,15 @@ def response_table(request):
     table = ResponseTable(data)
     RequestConfig(request, paginate={"per_page": 15}).configure(table)
 
-    return render(request, "wisccc/response_table.html", {"table": table})
+    return render(
+        request,
+        "wisccc/response_table.html",
+        {
+            "table": table,
+            "total_surveys": total_surveys,
+            "completed_surveys": completed_surveys,
+        },
+    )
 
 
 def delete_response(request, id):

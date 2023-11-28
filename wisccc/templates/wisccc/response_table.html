@@ -21,7 +21,13 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">Survey Responses</h3>
-        <h5 class="card-title"><a href="{% url 'wisccc_download_data' %}">Download all data</a></h5>
+        <h7 class="card-title">
+          <span><a href="{% url 'wisccc_download_data' %}">Download all data</a></span>
+          <span style="float: right">{{ completed_surveys }} surveys completed of {{ total_surveys }} total</span>
+        </h7>
+        <!-- <h7 class="card-title">
+          <span style="float: right">{{ completed_surveys }} completed of {{ total_surveys }} surveys</span>
+        </h7>         -->
         <div class="col-md-12">
           {% render_table table %}
         </div>
