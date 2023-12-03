@@ -6,6 +6,7 @@ urlpatterns = [
     re_path(r"^wisc-cc-home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
     re_path(r"^wisc_cc_home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
     path("update_response/<id>", wisccc_views.update_response, name="update_response"),
+    path("delete_response/<id>", wisccc_views.delete_response, name="delete_response"),
     re_path(r"^response_table$", wisccc_views.response_table, name="response_table"),
     re_path(
         r"^wisccc_download_data$",

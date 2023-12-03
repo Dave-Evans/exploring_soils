@@ -28,6 +28,7 @@ def signup(request):
 class UserUpdateView(UpdateView):
     model = User
     fields = (
+        "username",
         "first_name",
         "last_name",
         "email",

@@ -253,7 +253,7 @@ def wisc_cc_survey0(request):
         request,
         template,
         {
-            "form": form,
+            "farmer_form": form,
         },
     )
 
@@ -488,6 +488,14 @@ def wisc_cc_static_data(request):
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def response_table(request):
     """List wisc response entries"""
+    all_surveys = Survey.objects.all()
+    total_surveys = all_surveys.count()
+    completed_surveys = (
+        all_surveys.filter(percent_of_farm_cc__isnull=False)
+        .filter(closest_zip_code__isnull=False)
+        .filter(additional_thoughts__isnull=False)
+        .count()
+    )
 
     def get_table_data():
         """For getting survey data and returning an excel doc"""
@@ -516,7 +524,33 @@ def response_table(request):
     table = ResponseTable(data)
     RequestConfig(request, paginate={"per_page": 15}).configure(table)
 
-    return render(request, "wisccc/response_table.html", {"table": table})
+    return render(
+        request,
+        "wisccc/response_table.html",
+        {
+            "table": table,
+            "total_surveys": total_surveys,
+            "completed_surveys": completed_surveys,
+        },
+    )
+
+
+def delete_response(request, id):
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(Survey, id=id)
+
+    if request.method == "POST":
+        # delete object
+        obj.delete()
+        # after deleting redirect to
+        # home page
+        return redirect("response_table")
+
+    return render(request, "wisccc/delete_response.html", context)
 
 
 def update_response(request, id):
@@ -528,15 +562,20 @@ def update_response(request, id):
     # fetch the object related to passed id
     obj = get_object_or_404(Survey, id=id)
 
+    farmer = Farmer.objects.filter(user_id=obj.user_id).first()
+
     # pass the object as instance in form
     form = FullSurveyForm(request.POST or None, instance=obj)
 
+    farmer_form = FarmerForm(request.POST or None, instance=farmer)
     # save the data from the form and
     # redirect to detail_view
-    if form.is_valid():
+    if form.is_valid() and farmer_form.is_valid():
         form.save()
+        farmer_form.save()
         return redirect("response_table")
     # add form dictionary to context
     context["form"] = form
+    context["farmer_form"] = farmer_form
 
     return render(request, "wisccc/survey_review.html", context)
