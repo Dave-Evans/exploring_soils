@@ -1193,6 +1193,13 @@ class FullSurveyForm(forms.ModelForm):
         required=False,
     )
 
+    notes_admin = forms.CharField(
+        label="Notes about survey response (for admin purposes)",
+        widget=forms.Textarea,
+        max_length=5000,
+        required=False,
+    )
+
     confirmed_accurate = forms.ChoiceField(
         label="Is all the information in this entry accurate?",
         required=False,
@@ -1281,4 +1288,5 @@ class FullSurveyForm(forms.ModelForm):
             "where_to_start",
             "additional_thoughts",
             "confirmed_accurate",
+            "notes_admin",
         )

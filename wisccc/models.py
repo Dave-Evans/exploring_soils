@@ -275,6 +275,10 @@ class Survey(models.Model):
     survey_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    notes_admin = models.TextField(
+        verbose_name="Questions or comments about nutrient management and cover crops",
+        null=True,
+    )
     confirmed_accurate = models.BooleanField(null=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -414,6 +414,11 @@
 <div>
     <div class="form-row">
         <div class="form-group col-md-12 mb-0">
+            {{ form.notes_admin|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
             {{ form.confirmed_accurate|as_crispy_field }}
         </div>
     </div>
