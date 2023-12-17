@@ -443,7 +443,7 @@ def wisc_cc_static_data(request):
                             , geom.total_precip
                             , geom.acc_gdd
                             , geom.days_from_plant_to_bio_hrvst
-                            , geom.cc_biomass
+                            , geom.cc_biomass@permission_required("wisccc.survery_manager", raise_exception=True)
                             , geom.fq_cp
                             , geom.fq_andf
                             , geom.fq_undfom30
@@ -535,6 +535,7 @@ def response_table(request):
     )
 
 
+@permission_required("wisccc.survery_manager", raise_exception=True)
 def delete_response(request, id):
     # dictionary for initial data with
     # field names as keys
@@ -553,6 +554,7 @@ def delete_response(request, id):
     return render(request, "wisccc/delete_response.html", context)
 
 
+@permission_required("wisccc.survery_manager", raise_exception=True)
 def update_response(request, id):
     """For updating survey"""
     # dictionary for initial data with
