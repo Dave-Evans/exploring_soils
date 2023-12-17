@@ -299,6 +299,9 @@ def wisc_cc_survey2(request):
 
     if form.is_valid():
         new_form = form.save(commit=False)
+        # Here classify species
+        new_form.derive_species_class()
+        new_form.populate_county()
         new_form.user = request.user
         new_form.save()
 
@@ -453,6 +456,7 @@ def wisc_cc_static_data(request):
                             , geom.fq_rfq
                             , geom.cc_rate_and_species
                             , geom.cc_species
+                            , geom.cc_species_raw
                             , ST_GeometryN(ST_GeneratePoints(geom.b_collectionpoint, 1), 1) as collectionpoint 
                         FROM (
                             select 
@@ -572,6 +576,8 @@ def update_response(request, id):
     # redirect to detail_view
     if form.is_valid() and farmer_form.is_valid():
         form.save()
+        # Here verify county
+        # Here calc gdu?
         farmer_form.save()
         return redirect("response_table")
     # add form dictionary to context

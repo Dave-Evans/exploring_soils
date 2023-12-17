@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models as geo_models
+from .derive_species_class import derive_species_class
 
 
 class Farmer(models.Model):
@@ -749,6 +750,47 @@ class Survey(models.Model):
         verbose_name="Any additional thoughts or questions? Any important survey questions we should ask next time?",
         null=True,
     )
+
+    derived_species_class = models.CharField(
+        verbose_name="Cover crop species class",
+        max_length=90,
+        null=True,
+    )
+
+    derived_county = models.CharField(max_length=250, blank=True)
+
+    def derive_species_class(self):
+        self.derived_species_class = derive_species_class(self)
+
+    def populate_county(self):
+        """Populate a usuable county name
+        - first check to see if we can use farm_location
+        - then use provided zipcode: use 5 digit to centroid table?
+        - if all outside wisc? not used
+        """
+        id = self.id
+
+        def lookup_county_from_loc(id):
+            from django.db import connection
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                select wc.countyname 
+                from wisccc_survey ws
+                left join wi_counties wc
+                on ST_Intersects(ws.farm_location, wc.shape)
+                where ws.id = {id}"""
+                )
+                row = cursor.fetchone()
+
+            derived_county = row[0]
+            return derived_county
+
+        if self.farm_location is not None:
+            self.derived_county = lookup_county_from_loc(id)
+        else:
+            self.derived_county = None
 
     # open_to_sharing = models.BooleanField(
     #     verbose_name="(Would you be open to having your cover cropping experience shared on our website for other interested farmers?)",
