@@ -43,6 +43,11 @@ urlpatterns = [
         name="wisc_cc_static_data",
     ),
     re_path(
+        r"^get_wisc_cc_data$",
+        wisccc_views.get_wisc_cc_data,
+        name="get_wisc_cc_data",
+    ),
+    re_path(
         r"^get_wi_counties$",
         wisccc_views.get_wi_counties,
         name="get_wi_counties",

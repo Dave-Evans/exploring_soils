@@ -28,6 +28,7 @@ from wisccc.forms import (
     FullSurveyForm,
 )
 from wisccc.models import Survey, Farmer
+from wisccc.derive_species_class import pull_all_years_together
 import pandas as pd
 
 
@@ -399,6 +400,12 @@ def get_wi_counties(request):
     return JsonResponse(data, safe=False)
 
 
+def get_wisc_cc_data(request):
+    data = pull_all_years_together("json")
+
+    return JsonResponse(list(data["features"]), safe=False)
+
+
 # For accessing data from previous years survey
 def wisc_cc_static_data(request):
     def get_json():
@@ -446,7 +453,7 @@ def wisc_cc_static_data(request):
                             , geom.total_precip
                             , geom.acc_gdd
                             , geom.days_from_plant_to_bio_hrvst
-                            , geom.cc_biomass@permission_required("wisccc.survery_manager", raise_exception=True)
+                            , geom.cc_biomass
                             , geom.fq_cp
                             , geom.fq_andf
                             , geom.fq_undfom30
