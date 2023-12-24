@@ -50,19 +50,11 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col-md-6 mb-0">
-        {{ form.cover_crop_multispecies_mix_write_in|as_crispy_field }}
-    </div>
-    <div class="form-group col-md-6 mb-0">
+    <div class="form-group col-md-10 mb-0">
         {{ form.crop_rotation|as_crispy_field }}
     </div>
 </div>
 <h5>Cover crop dates and planting rates</h5>
-<div class="form-row">
-    <div class="form-group col-md-5 mb-0">
-        {{ form.cash_crop_planting_date|as_crispy_field }}
-    </div>
-</div>
 <p>Please select any of the following that were planted as a cover crop in this field *this year*.</p>
 <div class="form-row">
     <div class="form-group col-md-4 mb-0">
@@ -129,7 +121,11 @@
         {{ form.cover_crop_multispecies_mix_write_in|as_crispy_field }}
     </div>
 </div>
-
+<div class="form-row">
+    <div class="form-group col-md-5 mb-0">
+        {{ form.cash_crop_planting_date|as_crispy_field }}
+    </div>
+</div>
 
 <div class="form-row">
     <div class="form-group col-md-5 mb-0">
