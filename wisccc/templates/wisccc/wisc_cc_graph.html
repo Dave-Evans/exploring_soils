@@ -532,9 +532,10 @@
             var tool_tip_string =
                 //"Total precip: " + feature.properties.total_precip + " in" + "<br/>" +
                 feature.properties.county_single + " County" + "<br/>" +
-                feature.properties.cc_species + "<br/>" +
+                feature.properties.cc_species_raw + "<br/>" +
                 feature.properties.cc_planting_rate + "<br/>"
 
+            // Add manure prior and manure post if else statements here for new data
             if (feature.properties.manure_value | feature.properties.manure_value > 0) {
                 tool_tip_string += "Manure applied: " +
                     feature.properties.manure_value + " " +
@@ -548,6 +549,7 @@
 
         }
         var dataurl = '/wisc_cc_static_data';
+        // var dataurl = '/get_wisc_cc_data';
         var submission_data;
 
         var model_data = [];

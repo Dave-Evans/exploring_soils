@@ -1,47 +1,26 @@
 
 const speciesClasses = [
-    "annual rye grass",
-    "annual rye grass red clover",
-    "annual rye grass, radish",
-    "barley, wheat (winter)",
+    "annual ryegrass or annual ryegrass mix",
+    "barley or barley mix",
+    "cereal (winter) rye mix",
     "cereal (winter) rye",
-    "cereal (winter) rye, hairy vetch",
-    "cereal (winter) rye, oats",
-    "cereal (winter) rye, radish",
-    "Dutch white clover",
-    "red clover",
+    "wheat (winter)",
     "multispecies mix",
-    "oats",
-    "oats, peas",
-    "oats, radish",
-    "triticale",
-    "wheat (winter)"
+    "legume or legume mix",
+    "oats or oat mix",
+    "other"
 ]
 
 const speciesColors = [
-    "#e5f5e0", // Greens for annual rye grass
-    "#a1d99b",
-    "#31a354",
-    // For barley
+    "#1b9e77",
+    "#d95f02",
+    "#7570b3",
+    "#e7298a",
+    "#66a61e",
+    "#e6ab02",
+    "#a6761d",
     "#e41a1c",
-    // Oranges for cereal rye
-    "#feedde",
-    "#fdbe85",
-    "#fd8d3c",
-    "#d94701",
-    // Blues For Dutch white clover and red clover
-    "#9ecae1",
-    "#3182bd",
-    // Multispecies mix
-    "#a65628",
-    // Purples For Oats
-    "#efedf5",
-    "#bcbddc",
-    "#756bb1",
-    // Triticale
-    "#ffff33",
-    // wheat (winter)
-    "#f781bf"
+    "#666666"
 ]
 
 

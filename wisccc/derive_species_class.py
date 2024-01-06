@@ -244,10 +244,6 @@ def update_2023_plus():
 
     surveys = Survey.objects.all()
     for survey_response in surveys:
-        print(survey_response.cover_crop_species_1)
-        if survey_response.cover_crop_species_1 == "OTHER_GRASS":
-            print("Got one")
-            break
         cc_sp_1 = survey_response.cover_crop_species_1
         cc_sp_2 = survey_response.cover_crop_species_2
         cc_sp_3 = survey_response.cover_crop_species_3
