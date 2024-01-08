@@ -34,6 +34,11 @@
     args:
       creates: /home/ubuntu/exploring_soils/loaded_county_layer
 
+  - name: Run a script to download old static data and load to database
+    script: load_old_data.sh {{ database_name }} {{ database_user }} {{ database_pass }} {{aws_backup_bucket_name}}
+    args:
+      creates: /home/ubuntu/exploring_soils/loaded_static_data
+
   - name: Move apache config file
     copy:
       src: /home/ubuntu/exploring_soils/deployment/000-default.conf
