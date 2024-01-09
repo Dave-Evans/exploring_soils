@@ -443,7 +443,7 @@ def wisc_cc_static_data(request):
                             , geom.total_precip
                             , geom.acc_gdd
                             , geom.days_from_plant_to_bio_hrvst
-                            , geom.cc_biomass@permission_required("wisccc.survery_manager", raise_exception=True)
+                            , geom.cc_biomass
                             , geom.fq_cp
                             , geom.fq_andf
                             , geom.fq_undfom30
