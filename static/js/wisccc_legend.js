@@ -1,16 +1,37 @@
 
+// const speciesClasses = [
+//     "annual ryegrass or <br>annual ryegrass mix",
+//     "barley or barley mix",
+//     "cereal (winter) rye mix",
+//     "cereal (winter) rye",
+//     "wheat (winter)",
+//     "multispecies mix",
+//     "legume or legume mix",
+//     "oats or oat mix",
+//     "other"
+// ]
+// const speciesColors = [
+//     "#1b9e77",
+//     "#d95f02",
+//     "#7570b3",
+//     "#e7298a",
+//     "#66a61e",
+//     "#e6ab02",
+//     "#a6761d",
+//     "#e41a1c",
+//     "#666666"
+// ]
 const speciesClasses = [
-    "annual ryegrass or annual ryegrass mix",
-    "barley or barley mix",
-    "cereal (winter) rye mix",
-    "cereal (winter) rye",
-    "wheat (winter)",
+
+    "winter cereal",
+    "spring cereal",
+    "annual legume",
+    "perennial legume",
+    "brassica",
+    "grass",
     "multispecies mix",
-    "legume or legume mix",
-    "oats or oat mix",
     "other"
 ]
-
 const speciesColors = [
     "#1b9e77",
     "#d95f02",
@@ -19,8 +40,7 @@ const speciesColors = [
     "#66a61e",
     "#e6ab02",
     "#a6761d",
-    "#e41a1c",
-    "#666666"
+    "#e41a1c"
 ]
 
 

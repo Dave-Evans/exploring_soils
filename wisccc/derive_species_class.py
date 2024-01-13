@@ -5,7 +5,9 @@ from django.db import connection
 
 
 def give_species_options(plumbing):
-    # plumbing = False
+    """Helper function: a lookup for how the cover crop name is formatted.
+    2023 and further (collected via django app) will use all caps and abrev (plumbing)
+    but 2020-2022 will be formatted as human ready."""
     sp_dct = {
         "ANNUAL_RYEGRASS": "ANNUAL_RYEGRASS" if plumbing else "annual ryegrass",
         "BARLEY": "BARLEY" if plumbing else "barley",
@@ -37,7 +39,7 @@ def give_species_options(plumbing):
     return sp_dct
 
 
-def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
+def derive_species_class_old(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
     """Takes a wisccc_survey object and classifies
     the given species into a reduced number of classes
     """
@@ -55,7 +57,7 @@ def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
     # annual rye grass and mix
     # when ryegrass is first and there is up to one other species given.
     if (cc_sp_1 == sp_dct["ANNUAL_RYEGRASS"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
-        return "annual ryegrass or annual ryegrass mix"
+        return "annual ryegrass mix"
 
     # # Barley and winter wheat
     # added the "or" option for write-in of past year
@@ -92,6 +94,18 @@ def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
 
     # For legume/legume  mix
     if (
+        cc_sp_1
+        in [
+            sp_dct["RED_CLOVER"],
+            sp_dct["BERSEEM_CLOVER"],
+            sp_dct["CRIMSON_CLOVER"],
+            sp_dct["COWPEA"],
+            sp_dct["FIELD_PEA"],
+            sp_dct["HAIRY_VETCH"],
+            sp_dct["OTHER_LEGUME"],
+            "Dutch white clover",
+        ]
+    ) or (
         (
             cc_sp_1
             in [
@@ -101,18 +115,7 @@ def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
                 sp_dct["COWPEA"],
                 sp_dct["FIELD_PEA"],
                 sp_dct["HAIRY_VETCH"],
-                "Dutch white clover",
-            ]
-        )
-        or (
-            cc_sp_1
-            in [
-                sp_dct["RED_CLOVER"],
-                sp_dct["BERSEEM_CLOVER"],
-                sp_dct["CRIMSON_CLOVER"],
-                sp_dct["COWPEA"],
-                sp_dct["FIELD_PEA"],
-                sp_dct["HAIRY_VETCH"],
+                sp_dct["OTHER_LEGUME"],
             ]
         )
         and any([cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5])
@@ -149,7 +152,7 @@ def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
     if (cc_sp_1 == sp_dct["ANNUAL_RYEGRASS"]) and not any(
         [cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]
     ):
-        return "annual ryegrass"
+        return "annual ryegrass mix"
 
     # Only cereal rye
     if (cc_sp_1 == sp_dct["CEREAL_RYE"]) and not any(
@@ -193,6 +196,124 @@ def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
 
     return "other"
     # return "other - escaped"
+
+
+def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
+    """Takes a wisccc_survey object and classifies
+    the given species into a reduced number of classes
+    """
+    # cc_sp_1 = survey_response.cover_crop_species_1
+    # cc_sp_2 = survey_response.cover_crop_species_2
+    # cc_sp_3 = survey_response.cover_crop_species_3
+    # cc_sp_4 = survey_response.cover_crop_species_4
+    # cc_sp_5 = survey_response.cover_crop_species_5
+    # keep null if all null
+    if cc_sp_1 is None or cc_sp_1 == ".":
+        return None
+
+    sp_dct = give_species_options(cc_sp_1.isupper())
+
+    # Winter cereals
+    if (cc_sp_1 == sp_dct["ANNUAL_RYEGRASS"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "winter cereal"
+    if (cc_sp_1 == sp_dct["CEREAL_RYE"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "winter cereal"
+    if (cc_sp_1 == sp_dct["TRITICALE"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "winter cereal"
+    if (cc_sp_1 == sp_dct["WHEAT_WINTER"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "winter cereal"
+    if (cc_sp_1 == "rye") and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "winter cereal"
+    if (cc_sp_1 == "triticale") and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "winter cereal"
+    if (cc_sp_1 == "winter wheat") and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "winter cereal"
+
+    # Spring Cereal
+    if (cc_sp_1 == sp_dct["BARLEY"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "spring cereal"
+    if (cc_sp_1 == sp_dct["OATS"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "spring cereal"
+    if cc_sp_1 == "Oats and 3 lb of raddish":
+        return "spring cereal"
+    if (cc_sp_1 == sp_dct["WHEAT_SPRING"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "spring cereal"
+
+    # Brassica
+    if (cc_sp_1 == sp_dct["TURNIP"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "brassica"
+    if (cc_sp_1 == sp_dct["RADISH"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "brassica"
+    if (cc_sp_1 == sp_dct["CANOLA"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "brassica"
+    if (cc_sp_1 == sp_dct["KALE"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "brassica"
+
+    # GRASS
+    if (cc_sp_1 == sp_dct["SORGHUM"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "grass"
+    if (cc_sp_1 == sp_dct["SORGHUM_SUDAN"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "grass"
+    if (cc_sp_1 == sp_dct["OTHER_GRASS"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "grass"
+
+    # Legume Perennial
+    if (cc_sp_1 == sp_dct["RED_CLOVER"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "perennial legume"
+    if (cc_sp_1 == "Dutch white clover") and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "perennial legume"
+    # if (cc_sp_1 == sp_dct["DUTCH_WHITE_CLOVER"]) and not any(
+    #     [cc_sp_3, cc_sp_4, cc_sp_5]
+    # ):
+    #     return "perennial legume"
+
+    # Legume Annual
+    if (cc_sp_1 == sp_dct["BERSEEM_CLOVER"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "annual legume"
+    if (cc_sp_1 == sp_dct["CRIMSON_CLOVER"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "annual legume"
+    if (cc_sp_1 == sp_dct["COWPEA"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "annual legume"
+    if (cc_sp_1 == sp_dct["FIELD_PEA"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "annual legume"
+    if (cc_sp_1 == sp_dct["HAIRY_VETCH"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "annual legume"
+    if (cc_sp_1 == sp_dct["OTHER_LEGUME"]) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "annual legume"
+
+    # Grouping the multispecies
+    # When there are five crops listed
+    if all([cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "multispecies mix"
+
+    # When there are four crops listed
+    if all([cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4]):
+        return "multispecies mix"
+
+    # When there are three crops listed
+    if all([cc_sp_1, cc_sp_2, cc_sp_3]):
+        return "multispecies mix"
+
+    # When mulitspecies is selected
+    if cc_sp_1 == sp_dct["MULITSPECIES"]:
+        return "multispecies mix"
+
+    # for past years write in
+    if cc_sp_1 == "Terra life maizepro cover crop mix":
+        return "multispecies mix"
+
+    # keep null if all null
+    if not any([cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]):
+        return None
+
+    if cc_sp_1 in [
+        sp_dct["OTHER"],
+        sp_dct["OTHER_BROADLEAF"],
+    ]:
+        return "other"
+
+    # return "other"
+    return "other - escaped"
 
 
 def update_static_species(id, species):
@@ -468,7 +589,7 @@ def pull_all_years_together(f_output):
             end as mod_cover_crop_species_2,
             case
                 when live_dat.cover_crop_species_3 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
-                when live_dat.cover_crop_species_3 =  'BARLEY' then 'barley'
+                when live_dat.cover_crop_species_3 = 'BARLEY' then 'barley'
                 when live_dat.cover_crop_species_3 = 'BERSEEM_CLOVER' then 'berseem clover'
                 when live_dat.cover_crop_species_3 = 'CANOLA' then 'canola/rapeseed'
                 when live_dat.cover_crop_species_3 = 'CEREAL_RYE' then 'cereal (winter) rye'
