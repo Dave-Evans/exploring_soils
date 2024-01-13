@@ -29,6 +29,7 @@ dat_survey %>%
   rename(county = "1. In what county do you farm? (If you farm in more than one, list them in order of number of acres.)") %>%
   rename(years_experience = "3. How many total years experience do you have planting cover crops?"  ) %>%
   rename(zipcode = "15. Closest zip code for this field (so we can determine appropriate climate data and generate a location map of participating fields). Field must be located in Wisconsin.") %>%
+  rename(cc_species_raw = "18. Please select any of the following that were planted as a cover crop in this field this year.") %>%    
   rename(previous_crop = "19. Previous crop in field") %>%
   rename(cash_crop_planting_date = "20. What date this year did you plant your cash crop in this field?") %>%
   rename(dominant_soil_texture = "22. Please choose the dominant soil texture of the field.") %>%
@@ -138,7 +139,8 @@ dat_survey %>%
     fq_RFQ,
     
     cc_rate_and_species,
-    cc_species
+    cc_species,
+    cc_species_raw
     ) -> dat_2022
   
 # write_tsv(dat_2022, "~/Documents/small_projects/wisc_cc/wisc_cc_dat_2022.tsv")
@@ -177,6 +179,7 @@ dat_20_21 %>%
   # Perhaps lump red clover and Dutch white clover together as clover
   #   lump radish mixes together?
   #   annual rye grass mix?
+  mutate(cc_species_raw = cc_species) %>%      
   mutate(cc_functional_group_mod = case_when(
     cc_species == "annual ryegrass, radish" ~ "annual rye grass, radish",
     cc_species == "annual rye grass, radish" ~ "annual rye grass, radish",
@@ -296,7 +299,8 @@ dat_20_21 %>%
     fq_RFQ,
     
     cc_rate_and_species,
-    cc_species
+    cc_species,
+    cc_species_raw
   ) -> dat_20_21
 
 dat_all = rbind(dat_2022, dat_20_21)
@@ -382,3 +386,9 @@ dat_all <- dat_all %>%
     
 
 write_tsv(dat_all, "~/Documents/small_projects/wisc_cc/wisc_cc_dat.tsv")
+dat_all = read_tsv("~/Documents/small_projects/wisc_cc/wisc_cc_dat.tsv")
+
+dat_all %>%
+  group_by(cc_species_raw, cc_species) %>%
+  summarise(n = n()) -> dat
+view(dat)

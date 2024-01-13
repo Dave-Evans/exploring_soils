@@ -394,7 +394,7 @@ def pull_all_years_together(f_output):
     df: for pandas dataframe"""
 
     query = """
-    SELECT 
+SELECT 
         stat.id
         , stat.year
         , stat.county
@@ -494,19 +494,19 @@ def pull_all_years_together(f_output):
         cover_crop_planting_date as cc_planting_date,
         
         null as anpp,
-        null as cc_biomass_collection_date,
+        cc_biomass_collection_date,
         null as total_precip,
         null as acc_gdd,
         null as days_from_plant_to_bio_hrvst,
 
-        null as cc_biomass,
-        null as fq_cp,
-        null as fq_andf,
-        null as fq_undfom30,
-        null as fq_ndfd30,
-        null as fq_tdn_adf,
-        null as fq_milkton,
-        null as fq_rfq,
+        cc_biomass,
+        fq_cp,
+        fq_andf,
+        fq_undfom30,
+        fq_ndfd30,
+        fq_tdn_adf,
+        fq_milkton,
+        fq_rfq,
         
         concat(		
             concat(  cover_crop_planting_rate_1, ' ', mod_cover_crop_planting_rate_1_units, ' ', mod_cover_crop_species_1),
@@ -530,7 +530,9 @@ def pull_all_years_together(f_output):
                 live_dat.closest_zip_code,
                 '-',
                 upper(substring(wf.first_name, 1, 1)),
-                upper(substring(wf.last_name,  1, 1))
+                upper(substring(wf.last_name,  1, 1)),
+                '-',
+                '23'
             ) as wisc_cc_id,
             date_part('year', live_dat.cover_crop_planting_date) as year,
             case
@@ -589,7 +591,7 @@ def pull_all_years_together(f_output):
             end as mod_cover_crop_species_2,
             case
                 when live_dat.cover_crop_species_3 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
-                when live_dat.cover_crop_species_3 = 'BARLEY' then 'barley'
+                when live_dat.cover_crop_species_3 =  'BARLEY' then 'barley'
                 when live_dat.cover_crop_species_3 = 'BERSEEM_CLOVER' then 'berseem clover'
                 when live_dat.cover_crop_species_3 = 'CANOLA' then 'canola/rapeseed'
                 when live_dat.cover_crop_species_3 = 'CEREAL_RYE' then 'cereal (winter) rye'
@@ -756,7 +758,41 @@ def pull_all_years_together(f_output):
             
             from wisccc_survey as live_dat
             left join wisccc_farmer wf 
-            on live_dat.user_id = wf.user_id 
+            on live_dat.user_id = wf.user_id
+            left join (
+	            select 
+					surv.id,
+				
+					TO_DATE(lab.date_processed,'MM-DD-YYYY') as cc_biomass_collection_date,
+					
+					lab.dry_matter as cc_biomass,
+					lab.cp as fq_cp,
+					lab.andf as fq_andf,
+					lab.undfom30 as fq_undfom30,
+					lab.ndfd30 as fq_ndfd30,
+					lab.tdn_adf as fq_tdn_adf,
+					lab.milk_ton_milk2013 as fq_milkton,
+					lab.rfq as fq_rfq
+					
+				from (
+					select ws.id, 
+							concat(
+				                '23',
+				                upper(substring(wf.first_name, 1, 1)),
+				                upper(substring(wf.last_name,  1, 1)),
+				              	ws.closest_zip_code
+				            ) as labid
+					from wisccc_survey ws
+					left join wisccc_farmer wf 
+					on ws.user_id = wf.user_id 
+				) as surv
+				inner join (
+					select substring(description1 for 9) as labid, *
+					from lab_data_2023 
+				) as lab
+				on surv.labid = lab.labid
+            ) as labdata
+            on live_dat.id = labdata.id
             where live_dat.confirmed_accurate = TRUE
 
     ) as a
