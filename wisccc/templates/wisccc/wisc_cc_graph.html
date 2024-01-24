@@ -637,9 +637,19 @@
 
             var pop_select_box = function (geojson_data, id_selector, field_name) {
                 var all_instances = [];
-                for (item in geojson_data) {
 
-                    all_instances.push(geojson_data[item]['properties'][field_name])
+                for (item in geojson_data) {
+                    if (field_name == "cc_species_raw") {
+                        var cc_species_raw = geojson_data[item]['properties'][field_name]
+
+                        if (cc_species_raw === null) { continue; }
+
+                        all_instances = all_instances.concat(cc_species_raw.split(", "));
+
+                    } else {
+                        all_instances.push(geojson_data[item]['properties'][field_name])
+                    }
+
 
                 }
                 // Deduplicating

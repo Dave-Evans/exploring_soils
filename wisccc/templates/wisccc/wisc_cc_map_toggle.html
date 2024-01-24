@@ -405,7 +405,9 @@
                 var planting_date = feature.properties.cc_planting_date.toLocaleDateString();
             }
 
-
+            if (feature.properties.cc_species_raw == null) {
+                feature.properties.cc_species_raw = ''
+            }
 
             var biomass_val = feature.properties.cc_biomass;
 
@@ -500,7 +502,7 @@
                 data[i].properties.rfq_bin = binRFQ(data[i].properties.fq_rfq);
             }
 
-            pop_select_box(soilsLayer, "SpeciesFilter", "cc_species")
+            pop_select_box(soilsLayer, "SpeciesFilter", "cc_species_raw")
             pop_select_box(soilsLayer, "YearFilter", "year");
             pop_select_box(soilsLayer, "SeedingFilter", "cc_seeding_method");
             pop_select_box(soilsLayer, "SoilTextFilter", "dominant_soil_texture");
@@ -515,11 +517,22 @@
         var pop_select_box = function (geojson_data, id_selector, field_name) {
             var all_instances = [];
             for (item in geojson_data) {
+                if (field_name == "cc_species_raw") {
+                    var cc_species_raw = geojson_data[item]['properties'][field_name]
 
-                all_instances.push(geojson_data[item]['properties'][field_name])
+                    if (cc_species_raw === null) { continue; }
+
+                    all_instances = all_instances.concat(cc_species_raw.split(", "));
+
+
+                } else {
+                    all_instances.push(geojson_data[item]['properties'][field_name])
+                }
+
 
             }
             const uniq_instances = [...new Set(all_instances)];
+            console.log(uniq_instances)
             var filt = document.getElementById(id_selector);
             var newOption = document.createElement("option");
             newOption.text = "All";
@@ -541,7 +554,7 @@
                 year: false,
                 seeding_method: false,
                 soil_texture: false,
-                cc_species: false,
+                cc_species_raw: false,
                 residue_remaining: false,
                 manure_prior: false,
                 manure_post: false
@@ -554,7 +567,7 @@
 
             filter_values['cc_seeding_method'] = document.getElementById("SeedingFilter").value;
             filter_values['dominant_soil_texture'] = document.getElementById("SoilTextFilter").value;
-            filter_values['cc_species'] = document.getElementById("SpeciesFilter").value;
+            filter_values['cc_species_raw'] = document.getElementById("SpeciesFilter").value;
             filter_values['residue_remaining'] = document.getElementById("TillageFilter").value;
             filter_values['manure_prior'] = prior_manure;
             filter_values['manure_post'] = post_manure;
@@ -579,7 +592,7 @@
                     const filt_year = (filter_values.year == "All") ? true : (feature.properties.year == filter_values.year);
                     const filt_seeding = (filter_values.cc_seeding_method == "All") ? true : (feature.properties.cc_seeding_method == filter_values.cc_seeding_method);
                     const filt_soiltext = (filter_values.dominant_soil_texture == "All") ? true : (feature.properties.dominant_soil_texture == filter_values.dominant_soil_texture);
-                    const filt_species = (filter_values.cc_species == "All") ? true : (feature.properties.cc_species == filter_values.cc_species);
+                    const filt_species = (filter_values.cc_species_raw == "All") ? true : (feature.properties.cc_species_raw.includes(filter_values.cc_species_raw));
                     const filt_till = (filter_values.residue_remaining == "All") ? true : (feature.properties.residue_remaining == filter_values.residue_remaining);
                     const filt_priorman = (filter_values.manure_prior == false) ? true : (feature.properties.manure_prior == "Yes");
                     const filt_postman = (filter_values.manure_post == false) ? true : (feature.properties.manure_post == "Yes");
