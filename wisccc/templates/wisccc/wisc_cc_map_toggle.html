@@ -17,6 +17,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"
         integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ=="
         crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+        integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+        integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
     <script src="{% static 'js/L.Control.Window.js' %}"></script>
@@ -194,6 +201,11 @@
       height: 10px;
       margin-top: 8px;
     }*/
+        /* Selectize dropdowns */
+        .selectize-dropdown,
+        .selectize-input {
+            width: 200px !important;
+        }
     </style>
 </head>
 
@@ -272,7 +284,8 @@
 
                         <h4>Select display property</h5>
 
-                            <select id="PropertySelection" class="PropSelector">
+                            <select id="PropertySelection"
+                                class="PropSelector selectize-control single selectize-input">
                                 <option value="cc_species">Cover crop species</option>
                                 <option value="cc_biomass">Cover crop biomass (tons dm/acre)</option>
                                 <option value="fq_rfq">Relative forage quality</option>
@@ -405,10 +418,6 @@
                 var planting_date = feature.properties.cc_planting_date.toLocaleDateString();
             }
 
-            if (feature.properties.cc_species_raw == null) {
-                feature.properties.cc_species_raw = ''
-            }
-
             var biomass_val = feature.properties.cc_biomass;
 
             var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
@@ -447,7 +456,7 @@
         var soilsLayer;
 
         var soilsCircle = $.getJSON(dataurl, function (data) {
-            soilsLayer = data;
+
             var dParserYmd = d3.timeParse("%Y-%m-%d")
             getMonthWord = function (dt) {
                 let month_word;
@@ -491,7 +500,16 @@
                 }
                 return month_word;
             }
-            for (let i = 0; i < soilsLayer.length; i++) {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].properties.cc_species_raw == null) {
+                    data[i].properties.cc_species_raw = ''
+                }
+                if (data[i].properties.cc_seeding_method == null) {
+                    data[i].properties.cc_seeding_method = ''
+                }
+                if (data[i].properties.dominant_soil_texture == null) {
+                    data[i].properties.dominant_soil_texture = ''
+                }
                 if (data[i].properties.cc_planting_date === null) {
                     data[i].properties.cc_planting_date = null
                 } else {
@@ -501,19 +519,80 @@
                 data[i].properties.cc_planting_season = classifySeason(data[i].properties.cc_planting_date);
                 data[i].properties.rfq_bin = binRFQ(data[i].properties.fq_rfq);
             }
+            soilsLayer = data;
+            // pop_select_box(soilsLayer, "SpeciesFilter", "cc_species_raw")
+            // pop_select_box(soilsLayer, "YearFilter", "year");
+            // pop_select_box(soilsLayer, "SeedingFilter", "cc_seeding_method");
+            // pop_select_box(soilsLayer, "SoilTextFilter", "dominant_soil_texture");
+            // pop_select_box(soilsLayer, "TillageFilter", "residue_remaining");
+            var boxes_select = {
 
-            pop_select_box(soilsLayer, "SpeciesFilter", "cc_species_raw")
-            pop_select_box(soilsLayer, "YearFilter", "year");
-            pop_select_box(soilsLayer, "SeedingFilter", "cc_seeding_method");
-            pop_select_box(soilsLayer, "SoilTextFilter", "dominant_soil_texture");
-            pop_select_box(soilsLayer, "TillageFilter", "residue_remaining");
+                "SpeciesFilter": "cc_species_raw",
+                "SoilTextFilter": "dominant_soil_texture",
+                "SeedingFilter": "cc_seeding_method",
+                "YearFilter": "year",
+                "TillageFilter": "residue_remaining"
+            }
+            // $('#select_model_type').selectize();
+            // $('#xFactor').selectize();
+            // $('#select_color').selectize();
+            for (k in Object.keys(boxes_select)) {
 
+                id_selector = Object.keys(boxes_select)[k];
+                target_field = boxes_select[id_selector]
+                $("#" + id_selector).selectize({
+                    plugins: ["remove_button"],
+                    delimiter: " - ",
+                    placeholder: "All",
+                    persist: false,
+                    closeAfterSelect: true,
+                    maxItems: null,
+                    valueField: "value",
+                    labelField: "label",
+                    searchField: ["value", "label"],
+                    options: pop_selectize_box(soilsLayer, id_selector, target_field),
+                    onChange: function (value, isOnInitialize) {
+                        // updateChart(false)
+                        filterer()
+                        //add the layer to the map again, now that we have changed the filter value. 
+                        addLayerToMap();
+                    }
+                })
+            }
 
             filterer();
             addLayerToMap();
         });
 
         // for populating select boxes
+        var pop_selectize_box = function (geojson_data, id_selector, field_name) {
+            var all_instances = [];
+            for (item in geojson_data) {
+
+                if (field_name == "cc_species_raw") {
+                    var cc_species_raw = geojson_data[item]['properties'][field_name]
+
+                    if (cc_species_raw === null) { continue; }
+
+                    all_instances = all_instances.concat(cc_species_raw.split(", "));
+
+
+                } else {
+                    all_instances.push(geojson_data[item]['properties'][field_name])
+                }
+
+            }
+            // Deduplicating
+            const uniq_instances = [...new Set(all_instances)];
+            uniq_instances.sort()
+            var filt = document.getElementById(id_selector);
+            var option_array = []
+            uniq_instances.forEach(function (item) {
+                option_array.push({ label: item, value: item })
+
+            })
+            return option_array;
+        }
         var pop_select_box = function (geojson_data, id_selector, field_name) {
             var all_instances = [];
             for (item in geojson_data) {
@@ -547,33 +626,49 @@
                 filt.add(newOption);
             })
         }
+
         let filter_values;
 
         var filterer = function (feature) {
             filter_values = {
                 year: false,
-                seeding_method: false,
-                soil_texture: false,
                 cc_species_raw: false,
-                residue_remaining: false,
                 manure_prior: false,
                 manure_post: false
             }
-            if (document.getElementById("YearFilter").value == "All") {
-                filter_values['year'] = document.getElementById("YearFilter").value;
-            } else {
-                filter_values['year'] = parseInt(document.getElementById("YearFilter").value);
-            }
 
-            filter_values['cc_seeding_method'] = document.getElementById("SeedingFilter").value;
-            filter_values['dominant_soil_texture'] = document.getElementById("SoilTextFilter").value;
-            filter_values['cc_species_raw'] = document.getElementById("SpeciesFilter").value;
-            filter_values['residue_remaining'] = document.getElementById("TillageFilter").value;
+
+
+            filter_values['year'] = $("#YearFilter").selectize()[0].selectize.getValue().map((x) => parseInt(x))
+
+            filter_values['cc_seeding_method'] = $("#SeedingFilter").selectize()[0].selectize.getValue();
+            filter_values['dominant_soil_texture'] = $("#SoilTextFilter").selectize()[0].selectize.getValue();
+            filter_values['cc_species_raw'] = $("#SpeciesFilter").selectize()[0].selectize.getValue();
+            filter_values['residue_remaining'] = $("#TillageFilter").selectize()[0].selectize.getValue();
             filter_values['manure_prior'] = prior_manure;
             filter_values['manure_post'] = post_manure;
 
 
         }
+
+        // For use in the filter function in addLayerToMap
+        // Will be run on an individual feature
+        // filterArray is the array of selected cover crop 
+        // species from speciesFilter
+        // plantedArray is the array created from splitting the comma
+        //  separated list of planted cover crops from the submitted surveys.
+        // Currently if *any* species in the filter is found planted then true is returned.k
+        // Thus the filter logic is *or* (is either 'kale' or 'flax' planted? True.)
+        var containsTargetSpecies = function (filterArray, plantedArray) {
+            for (i in plantedArray) {
+                if (filterArray.includes(plantedArray[i])) {
+                    return true;
+                }
+            } return false;
+        }
+
+
+        // var $select = $('#SpeciesFilter').selectize({valueField: "value", labelField: "label", options: pop_selectize_box(soilsLayer, "#SpeciesFilter", "cc_species_raw")})
 
 
         function addLayerToMap() {
@@ -588,12 +683,17 @@
                 filter: (feature) => {
 
                     // Filter each property by the selected filter value
-                    // If no filter, the 'All' option, then the filter value is true, hence the or statement
-                    const filt_year = (filter_values.year == "All") ? true : (feature.properties.year == filter_values.year);
-                    const filt_seeding = (filter_values.cc_seeding_method == "All") ? true : (feature.properties.cc_seeding_method == filter_values.cc_seeding_method);
-                    const filt_soiltext = (filter_values.dominant_soil_texture == "All") ? true : (feature.properties.dominant_soil_texture == filter_values.dominant_soil_texture);
-                    const filt_species = (filter_values.cc_species_raw == "All") ? true : (feature.properties.cc_species_raw.includes(filter_values.cc_species_raw));
-                    const filt_till = (filter_values.residue_remaining == "All") ? true : (feature.properties.residue_remaining == filter_values.residue_remaining);
+                    // If no filter, then length of array is 0, then the filter value is true, hence the or statement
+                    // BROKEN: currently this is will hit true only if *all* items in the filter array are present in the record
+                    // currently only affect cc_species_raw.
+                    // solution: special function to check if *any* of the contained species are present in the filter
+                    const filt_year = (filter_values.year.length == 0) ? true : (filter_values.year.includes(feature.properties.year));
+                    const filt_seeding = (filter_values.cc_seeding_method.length == 0) ? true : (filter_values.cc_seeding_method.includes(feature.properties.cc_seeding_method));
+                    const filt_soiltext = (filter_values.dominant_soil_texture.length == 0) ? true : (filter_values.dominant_soil_texture.includes(feature.properties.dominant_soil_texture));
+                    //const filt_species = (filter_values.cc_species_raw.length == 0) ? true : (filter_values.cc_species_raw.includes(feature.properties.cc_species_raw));
+                    const filt_species = (filter_values.cc_species_raw.length == 0) ? true : (containsTargetSpecies(filter_values.cc_species_raw, feature.properties.cc_species_raw.split(", ")));
+
+                    const filt_till = (filter_values.residue_remaining.length == 0) ? true : (filter_values.residue_remaining.includes(feature.properties.residue_remaining));
                     const filt_priorman = (filter_values.manure_prior == false) ? true : (feature.properties.manure_prior == "Yes");
                     const filt_postman = (filter_values.manure_post == false) ? true : (feature.properties.manure_post == "Yes");
 
