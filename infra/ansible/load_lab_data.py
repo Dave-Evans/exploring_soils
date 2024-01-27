@@ -1,28 +1,32 @@
 import pandas as pd
 import sqlalchemy
 import sys
+import os
 
 # "./data/wisc_cc_dat.tsv"
 
 
 def load_lab_data(fl, db, usr, pw):
+    tbl_name = os.path.splitext(os.path.basename(fl))[0]
     dat = pd.read_csv(fl, sep=",")
 
     dat = dat.rename(str.lower, axis="columns")
-    dat.columns = dat.columns.str.replace("%", "_perc_")
-    dat.columns = dat.columns.str.replace("#", "")
-    dat.columns = dat.columns.str.replace(" ", "_")
-    dat.columns = dat.columns.str.replace("-", "_")
-    dat.columns = dat.columns.str.replace("/", "_")
+    dat.columns = dat.columns.str.replace("%", "_perc_", regex=False)
+    dat.columns = dat.columns.str.replace("#", "", regex=False)
+    dat.columns = dat.columns.str.replace(" ", "_", regex=False)
+    dat.columns = dat.columns.str.replace("-", "_", regex=False)
+    dat.columns = dat.columns.str.replace("/", "_", regex=False)
 
-    dat.columns = dat.columns.str.replace("(", "_")
-    dat.columns = dat.columns.str.replace(")", "")
+    dat.columns = dat.columns.str.replace("(", "_", regex=False)
+    dat.columns = dat.columns.str.replace(")", "", regex=False)
+
+    dat.columns = dat.columns.str.replace(".", "", regex=False)
 
     engine = sqlalchemy.create_engine(
         f"postgresql+psycopg2://{usr}:{pw}@localhost:5432/{db}"
     )
 
-    dat.to_sql("lab_data_2023", engine, index=False, if_exists="replace")
+    dat.to_sql(tbl_name, engine, index=False, if_exists="replace")
 
 
 if __name__ == "__main__":

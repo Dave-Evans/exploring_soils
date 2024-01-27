@@ -397,6 +397,8 @@ def pull_all_years_together(f_output):
     df: for pandas dataframe"""
 
     query = """
+    -- bn05905_p_cover_crop2023_biomass for 2023 biomass
+    -- dairyland_labs_forage_analysis_data_2023 for 2023 forage data
 SELECT 
         stat.id
         , stat.year
@@ -763,19 +765,19 @@ SELECT
             left join wisccc_farmer wf 
             on live_dat.user_id = wf.user_id
             left join (
-	            select 
+				select 
 					surv.id,
 				
-					TO_DATE(lab.date_processed,'MM-DD-YYYY') as cc_biomass_collection_date,
+					TO_DATE(forage.date_processed,'MM-DD-YYYY') as cc_biomass_collection_date,
 					
-					lab.dry_matter as cc_biomass,
-					lab.cp as fq_cp,
-					lab.andf as fq_andf,
-					lab.undfom30 as fq_undfom30,
-					lab.ndfd30 as fq_ndfd30,
-					lab.tdn_adf as fq_tdn_adf,
-					lab.milk_ton_milk2013 as fq_milkton,
-					lab.rfq as fq_rfq
+					biomass.biomass_dry as cc_biomass,
+					forage.cp as fq_cp,
+					forage.andf as fq_andf,
+					forage.undfom30 as fq_undfom30,
+					forage.ndfd30 as fq_ndfd30,
+					forage.tdn_adf as fq_tdn_adf,
+					forage.milk_ton_milk2013 as fq_milkton,
+					forage.rfq as fq_rfq
 					
 				from (
 					select ws.id, 
@@ -789,11 +791,16 @@ SELECT
 					left join wisccc_farmer wf 
 					on ws.user_id = wf.user_id 
 				) as surv
-				inner join (
+				left join (
 					select substring(description1 for 9) as labid, *
-					from lab_data_2023 
-				) as lab
-				on surv.labid = lab.labid
+					from dairyland_labs_forage_analysis_data_2023 
+				) as forage
+				on surv.labid = forage.labid
+				left join (
+					select substring(grower_name for 9) as labid, *
+					from bn05905_p_cover_crop2023_biomass 
+				) as biomass
+				on surv.labid = biomass.labid
             ) as labdata
             on live_dat.id = labdata.id
             where live_dat.confirmed_accurate = TRUE
