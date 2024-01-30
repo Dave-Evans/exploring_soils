@@ -179,7 +179,7 @@ dat_20_21 %>%
   # Perhaps lump red clover and Dutch white clover together as clover
   #   lump radish mixes together?
   #   annual rye grass mix?
-  mutate(cc_species_raw = cc_species) %>%      
+  mutate(cc_species_raw = cc_species) %>%
   mutate(cc_functional_group_mod = case_when(
     cc_species == "annual ryegrass, radish" ~ "annual rye grass, radish",
     cc_species == "annual rye grass, radish" ~ "annual rye grass, radish",
@@ -355,6 +355,76 @@ dat_all <- dat_all %>%
     grepl("organic", tolower(tillage_system)) ~ "Conventional, <15% residue remaining",
     .default = tillage_system
   )) %>% 
+  mutate(cc_species_raw = case_when(
+    # when "multi" text is present, replace with empty string
+    grepl("multispecies mix (please list below): ", cc_species_raw, fixed=TRUE) ~
+      gsub("multispecies mix (please list below): ", "", cc_species_raw, fixed=TRUE),
+    # sorghum sudangrass to surghum-sudan 
+    grepl("sorghum sudangrass", cc_species_raw, fixed=TRUE) ~ 
+      gsub("sorghum sudangrass", "sorghum-sudan", cc_species_raw, fixed=TRUE),
+    # "rye" to "cereal (winter) rye"
+    grepl("sorghum sudangrass", cc_species_raw, fixed=TRUE) ~ 
+      gsub("sorghum sudangrass", "surghum-sudan", cc_species_raw, fixed=TRUE),    
+    # rapeseed to canola/rapeseed
+    grepl(" rapeseed", cc_species_raw, fixed=TRUE) ~ 
+      gsub(" rapeseed", " canola/rapeseed", cc_species_raw, fixed=TRUE),    
+    # "Rape" to canola/rapeseed
+    grepl("Rape", cc_species_raw, fixed=TRUE) ~ 
+      gsub("Rape", "canola/rapeseed", cc_species_raw, fixed=TRUE),        
+    # sunflowers to sunflower
+    grepl("sunflowers", cc_species_raw, fixed=TRUE) ~ 
+      gsub("sunflowers", "sunflower", cc_species_raw, fixed=TRUE),
+    # "winter wheat (vol)" to wheat (winter)
+    grepl("winter wheat (vol)", cc_species_raw, fixed=TRUE) ~ 
+      gsub("winter wheat (vol)", "wheat (winter)", cc_species_raw, fixed=TRUE),                
+    # "yellow sweet clover & plantain", break apart
+    grepl("yellow sweet clover & plantain", cc_species_raw, fixed=TRUE) ~ 
+      gsub("yellow sweet clover & plantain", "yellow sweet clover, plantain", cc_species_raw, fixed=TRUE),            
+    # "leftover seed corn" -> other
+    grepl("leftover seed corn", cc_species_raw, fixed=TRUE) ~ 
+      gsub("leftover seed corn", "other", cc_species_raw, fixed=TRUE),            
+    # "Winter wheat was regrowth from previous crop"
+    grepl("Winter wheat was regrowth from previous crop", cc_species_raw, fixed=TRUE) ~ 
+      gsub("Winter wheat was regrowth from previous crop", "wheat (winter)", cc_species_raw, fixed=TRUE),    
+    # "winter wheat" -> "wheat (winter)"
+    grepl("winter wheat", cc_species_raw, fixed=TRUE) ~ 
+      gsub("winter wheat", "wheat (winter)", cc_species_raw, fixed=TRUE),        
+    # Turnip to turnip
+    grepl("Turnip", cc_species_raw, fixed=TRUE) ~ 
+      gsub("Turnip", "turnip", cc_species_raw, fixed=TRUE),
+    # "japanese millet"
+    # grepl("japanese millet", cc_species_raw, fixed=TRUE) ~ 
+    #   gsub("japanese millet", "other", cc_species_raw, fixed=TRUE),    
+    # pearl millet
+    # grepl("pearl millet", cc_species_raw, fixed=TRUE) ~ 
+    #   gsub("pearl millet", "other", cc_species_raw, fixed=TRUE),
+    # "dwarf essex rape"
+    # grepl("dwarf essex rape", cc_species_raw, fixed=TRUE) ~ 
+    #   gsub("dwarf essex rape", "canola/rapeseed", cc_species_raw, fixed=TRUE),    
+    # balansa clover
+    # grepl("balansa clover", cc_species_raw, fixed=TRUE) ~ 
+    #   gsub("balansa clover", "other (legume)", cc_species_raw, fixed=TRUE),    
+    # rye
+    grepl("^rye$", cc_species_raw, fixed=FALSE) ~ 
+      gsub("^rye$", "annual ryegrass", cc_species_raw, fixed=FALSE),    
+    # "Terra life maizepro cover crop mix"
+    # "peas"
+    grepl("peas", cc_species_raw, fixed=TRUE) ~ 
+      gsub("peas", "field/forage pea", cc_species_raw, fixed=TRUE),    
+    # "winter pea"
+    # grepl("winter pea", cc_species_raw, fixed=TRUE) ~ 
+    #   gsub("winter pea", "field/forage pea", cc_species_raw, fixed=TRUE),        
+    # "."
+    grepl(".", cc_species_raw, fixed=TRUE) ~ 
+      gsub(".", NA, cc_species_raw, fixed=TRUE),            
+    # "Oats and 3 lb of raddish"
+    grepl("Oats and 3 lb of raddish", cc_species_raw, fixed=TRUE) ~ 
+      gsub("Oats and 3 lb of raddish", "oats, radish", cc_species_raw, fixed=TRUE),    
+    # flax
+    # grepl("flax", cc_species_raw, fixed=TRUE) ~ 
+    #   gsub("flax", "other", cc_species_raw, fixed=TRUE),            
+    .default = cc_species_raw
+  )) %>%  
   # group_by(tillage_system, residue_remaining) %>%
   # summarise(n= n()) %>%
   # select(tillage_system, residue_remaining, n) -> tst
@@ -387,6 +457,16 @@ dat_all <- dat_all %>%
 
 write_tsv(dat_all, "~/Documents/small_projects/wisc_cc/wisc_cc_dat.tsv")
 dat_all = read_tsv("~/Documents/small_projects/wisc_cc/wisc_cc_dat.tsv")
+
+# for finding unique list of all entered crops
+all_vals = unlist(
+  apply(
+    X=matrix(dat_all$cc_species_raw),
+    MARGIN=1,
+    FUN=str_split, ", ")
+  )
+dedupe = sort(unique(all_vals))
+
 
 dat_all %>%
   group_by(cc_species_raw, cc_species) %>%
