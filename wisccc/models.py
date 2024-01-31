@@ -756,3 +756,304 @@ class Survey(models.Model):
     # )
     class Meta:
         permissions = (("survery_manager", "Survey Manager"),)
+
+
+class SurveyField(models.Model):
+    # Timestamp
+    surveyfield_created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    notes_admin = models.TextField(
+        verbose_name="For survey admin to fill in",
+        null=True,
+    )
+    confirmed_accurate = models.BooleanField(null=True)
+
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE)
+
+    # Location
+    farm_location = geo_models.PointField(verbose_name="Farm location", null=True)
+
+    # In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
+    # 16 Closest zip code for this field (so we can determine appropriate climate data and generate a location map of participating fields). Field must be located in Wisconsin.
+    closest_zip_code = models.IntegerField(
+        verbose_name="Enter the closest zip code for this field.", null=True
+    )
+    # 17 What is this field(s) acreage?
+    field_acreage = models.SmallIntegerField(
+        verbose_name="What is this field's acreage?", null=True
+    )
+    # ??	Question about multiple year rotation?
+    # 18	"Please describe your crop rotation for this field including cover crops.
+    # 2021. Cash crop drop down        cover crop drop down
+    # 2022 Cash crop drop down        cover crop drop down
+    # 2023 Cash crop drop down        cover crop drop down
+    crop_rotation = models.TextField(
+        verbose_name="Please describe your crop rotation for this field, including cover crops."
+    )
+    # 18a.
+    crop_rotation_2021_cover_crop_species = models.CharField(
+        verbose_name="Cover crop species in 2021",
+        choices=CoverCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+
+    crop_rotation_2021_cash_crop_species = models.CharField(
+        verbose_name="Cash crop species 2021",
+        choices=CashCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    # 18b.
+    crop_rotation_2022_cover_crop_species = models.CharField(
+        verbose_name="Cover crop species in 2022",
+        choices=CoverCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+
+    crop_rotation_2022_cash_crop_species = models.CharField(
+        verbose_name="Cash crop species 2022",
+        choices=CashCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    # 18c.
+    crop_rotation_2023_cover_crop_species = models.CharField(
+        verbose_name="Cover crop species in 2023",
+        choices=CoverCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+
+    crop_rotation_2023_cash_crop_species = models.CharField(
+        verbose_name="Cash crop species 2023",
+        choices=CashCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+
+    # 19	"Please select any of the following that were planted as a cover crop in this field *this year*.
+
+    # 31	At what rate did you plant your cover crops (please type species and pounds per acre).
+
+    # Species 1
+    cover_crop_species_1 = models.CharField(
+        verbose_name="Cover crop species 1",
+        choices=CoverCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    cover_crop_planting_rate_1 = models.SmallIntegerField(
+        verbose_name="Cover crop planting rate, for species 1", null=True
+    )
+    cover_crop_planting_rate_1_units = models.CharField(
+        verbose_name="Units for cover crop 1 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
+    )
+
+    # Species 2
+    cover_crop_species_2 = models.CharField(
+        verbose_name="Cover crop species 2",
+        choices=CoverCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    cover_crop_planting_rate_2 = models.SmallIntegerField(
+        verbose_name="Cover crop planting rate, for species 2", null=True
+    )
+    cover_crop_planting_rate_2_units = models.CharField(
+        verbose_name="Units for cover crop 2 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
+    )
+    # Species 3
+    cover_crop_species_3 = models.CharField(
+        verbose_name="Cover crop species 3",
+        choices=CoverCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    cover_crop_planting_rate_3 = models.SmallIntegerField(
+        verbose_name="Cover crop planting rate, for species 3", null=True
+    )
+    cover_crop_planting_rate_3_units = models.CharField(
+        verbose_name="Units for cover crop 3 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
+    )
+    # Species 4
+    cover_crop_species_4 = models.CharField(
+        verbose_name="Cover crop species 4",
+        choices=CoverCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    cover_crop_planting_rate_4 = models.SmallIntegerField(
+        verbose_name="Cover crop planting rate, for species 4", null=True
+    )
+    cover_crop_planting_rate_4_units = models.CharField(
+        verbose_name="Units for cover crop 4 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
+    )
+    # Species 5
+    cover_crop_species_5 = models.CharField(
+        verbose_name="Cover crop species 5",
+        choices=CoverCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    cover_crop_planting_rate_5 = models.SmallIntegerField(
+        verbose_name="Cover crop planting rate, for species 5", null=True
+    )
+    cover_crop_planting_rate_5_units = models.CharField(
+        verbose_name="Units for cover crop 5 application rate",
+        null=True,
+        choices=CoverCropRateUnitsChoices.choices,
+        max_length=15,
+    )
+    cover_crop_species_and_rate_write_in = models.TextField(
+        verbose_name="Other cover crops planted and their rates, please specify in pounds per acre.",
+        null=True,
+    )
+
+    cover_crop_multispecies_mix_write_in = models.TextField(
+        verbose_name="details for multispecies mix", null=True
+    )
+
+    # 21	What date this year did you plant your cash crop in this field?
+    cash_crop_planting_date = models.DateField(
+        verbose_name="What date this year did you plant your cash crop in this field?",
+        null=True,
+    )
+    # 22	How many years have you been planting cover crops *in this field*?
+    years_with_cover_crops = models.SmallIntegerField(
+        verbose_name="How many years have you been planting cover crops *in this field*?",
+        null=True,
+    )
+    # 23	"Please choose the dominant soil texture of the field.
+    dominant_soil_texture = models.CharField(
+        verbose_name="Please select the dominant soil texture of this field.",
+        choices=SoilTextureClassChoices.choices,
+        max_length=15,
+        null=True,
+    )
+
+    # 24	Will you apply manure prior to seeding cover crops on this field, and at what rate?
+    manure_prior = models.BooleanField(
+        verbose_name="Will you apply manure prior to seeding cover crops on this field?",
+        null=True,
+    )
+    # 24a
+    manure_prior_rate = models.IntegerField(
+        verbose_name="At what rate will the manure be applied?", null=True
+    )
+    manure_prior_rate_units = models.CharField(
+        verbose_name="The units for the manure application rate",
+        choices=ManureApplicateUnitsChoices.choices,
+        max_length=15,
+        null=True,
+    )
+
+    # 25	Will manure be applied to the field after the cover crop is established?
+    manure_post = models.BooleanField(
+        verbose_name="Will manure be applied to the field after the cover crop is established?",
+        null=True,
+    )
+    # 25a
+    manure_post_rate = models.IntegerField(
+        verbose_name="At what rate will the manure be applied?", null=True
+    )
+    manure_post_rate_units = models.CharField(
+        verbose_name="The units for the manure application rate",
+        choices=ManureApplicateUnitsChoices.choices,
+        max_length=15,
+        null=True,
+    )
+    # 26	"What is your tillage system for the cash crop preceding the cover crop?
+    tillage_system_cash_crop = models.CharField(
+        verbose_name="Tillage system for cash crop preceding",
+        choices=TillageSystemChoices.choices,
+        max_length=15,
+        null=True,
+    )
+    # 27	"Primary tillage equipment (select all that apply) for a cash crop preceding a cover crop?
+    primary_tillage_equipment = models.CharField(
+        verbose_name="Primary tillage equipment",
+        choices=PrimaryTillageEquipmentChoices.choices,
+        max_length=30,
+        null=True,
+    )
+
+    primary_tillage_equipment_write_in = models.TextField(
+        verbose_name="Primary tillage equipment, write in",
+        null=True,
+    )
+    # 28	"Secondary tillage equipment (select all that apply) for cash crop preceding the cover crop?
+    secondary_tillage_equipment = models.CharField(
+        verbose_name="Secondary tillage equipment",
+        choices=SecondaryTillageEquipmentChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    secondary_tillage_equipment_write_in = models.TextField(
+        verbose_name="Secondary tillage equipment, write in",
+        null=True,
+    )
+
+    # 29	"Soil conditions in this field at cover crop seeding
+    soil_conditions_at_cover_crop_seeding = models.CharField(
+        verbose_name="Soil conditions in this field at cover crop seeding",
+        choices=SoilConditionsSeedingChoices.choices,
+        max_length=10,
+        null=True,
+    )
+
+    # 30	"Cover Crop Seeding Method.
+    cover_crop_seeding_method = models.CharField(
+        verbose_name="Cover crop seeding method",
+        choices=SeedingMethodChoices.choices,
+        max_length=30,
+        null=True,
+    )
+
+    cover_crop_seeding_method_write_in = models.TextField(
+        verbose_name="Cover crop seeding method, write in", null=True
+    )
+
+    # 32
+    cover_crop_seed_cost = models.IntegerField(
+        verbose_name="Estimated cover crop seed cost for this field ($/acre)", null=True
+    )
+    # 33	Estimated cover crop planting cost per acre in this field. Please use UW Extension Custom Rate Guide.(https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf)
+    cover_crop_planting_cost = models.IntegerField(
+        verbose_name="Estimated cover crop planting cost for this field ($/acre)",
+        null=True,
+    )
+    # 34	Cover crop planting date for this field (estimate is OK if not known).
+    cover_crop_planting_date = models.DateField(
+        verbose_name="Estimated cover crop planting date", null=True
+    )
+    # 35	"Estimated termination timing/method for this field.
+    cover_crop_estimated_termination = models.CharField(
+        verbose_name="Estimated termination timing/method for this field.",
+        choices=TerminationMethodTimingChoices.choices,
+        max_length=30,
+        null=True,
+    )
+
+    # 36	Number of days estimated between crop harvest and cover crop establishment in this field.
+    days_between_crop_hvst_and_cc_estd = models.SmallIntegerField(
+        verbose_name="Number of days estimated between crop harvest and cover crop establishment in this field.",
+        null=True,
+    )
+
+    class Meta:
+        permissions = (("survery_manager", "Survey Manager"),)
