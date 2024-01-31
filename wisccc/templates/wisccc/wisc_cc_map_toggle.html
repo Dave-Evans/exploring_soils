@@ -657,9 +657,23 @@
         // species from speciesFilter
         // plantedArray is the array created from splitting the comma
         //  separated list of planted cover crops from the submitted surveys.
-        // Currently if *any* species in the filter is found planted then true is returned.k
-        // Thus the filter logic is *or* (is either 'kale' or 'flax' planted? True.)
+        const isTrue = (currentValue) => currentValue == true;
         var containsTargetSpecies = function (filterArray, plantedArray) {
+            // an array as long as the filter array, with a true or false for if
+            //  the requested item in the filter is planted
+            var isPresent = [];
+            for (i in filterArray) {
+                if (plantedArray.includes(filterArray[i])) {
+                    isPresent.push(true);
+                } else {
+                    isPresent.push(false);
+                }
+            }
+            return isPresent.every(isTrue);
+        }
+        var containsTargetSpeciesOr = function (filterArray, plantedArray) {
+            // Currently if *any* species in the filter is found planted then true is returned.k
+            // Thus the filter logic is *or* (is either 'kale' or 'flax' planted? True.)
             for (i in plantedArray) {
                 if (filterArray.includes(plantedArray[i])) {
                     return true;
