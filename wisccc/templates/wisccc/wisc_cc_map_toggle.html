@@ -153,6 +153,10 @@
         .navbar-collapse {
             background-color: #fff;
         }
+
+        .navbar {
+            margin-bottom: 2px;
+        }
     </style>
 
     <!-- Used for  show/collapse panel functions -->
@@ -274,6 +278,7 @@
 
                             <select id="PropertySelection" class="PropSelector">
                                 <option value="cc_species">Cover crop species</option>
+                                <option value="previous_crop">Preceding crop</option>
                                 <option value="cc_biomass">Cover crop biomass (tons dm/acre)</option>
                                 <option value="fq_rfq">Relative forage quality</option>
                                 <option value="acc_gdd">Growing degree units</option>
@@ -694,6 +699,17 @@
                         fillColor: layer.feature.properties.cc_planting_season ? plantingSeasonScale(layer.feature.properties.cc_planting_season) : "#ccc"
                     })
                     updateLegend(plantingSeasonScale, "c")
+
+                    // layer.setStyle({
+                    //     fillColor: layer.feature.properties.cc_planting_date_mo ? plantingScale(layer.feature.properties.cc_planting_date_mo) : "#ccc"
+                    // })
+                    // updateLegend(plantingScale, "c")
+                } else if (property == "previous_crop") {
+
+                    layer.setStyle({
+                        fillColor: layer.feature.properties.previous_crop ? colorScalePriorCrops(layer.feature.properties.previous_crop) : "#ccc"
+                    })
+                    updateLegend(colorScalePriorCrops, "c")
 
                     // layer.setStyle({
                     //     fillColor: layer.feature.properties.cc_planting_date_mo ? plantingScale(layer.feature.properties.cc_planting_date_mo) : "#ccc"
