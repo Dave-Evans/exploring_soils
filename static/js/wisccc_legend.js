@@ -1,4 +1,4 @@
-
+// For original class
 // const speciesClasses = [
 //     "annual ryegrass or <br>annual ryegrass mix",
 //     "barley or barley mix",
@@ -21,29 +21,79 @@
 //     "#e41a1c",
 //     "#666666"
 // ]
-const speciesClasses = [
 
-    "winter cereal",
-    "spring cereal",
-    "annual legume",
-    "perennial legume",
-    "brassica",
-    "grass",
-    "multispecies mix",
-    "other"
+// For Gregg Sanford's class
+// const speciesClasses = [
+
+//     "winter cereal",
+//     "spring cereal",
+//     "annual legume",
+//     "perennial legume",
+//     "brassica",
+//     "grass",
+//     "multispecies mix",
+//     "other"
+// ]
+// const speciesColors = [
+//     "#1b9e77",
+//     "#d95f02",
+//     "#7570b3",
+//     "#e7298a",
+//     "#66a61e",
+//     "#e6ab02",
+//     "#a6761d",
+//     "#e41a1c"
+// ]
+
+// For Mrill's classes
+const speciesClasses = [
+    // Cereals/grasses
+    "Annual ryegrass",
+    "Cereal (winter) rye",
+    "Wheat (winter)",
+    "Oats",
+    "Rye mix (rye and barley/oats/wheat)",
+
+    // Legumes
+    "Legume and Brassica",
+    "Legume - typically perennial",
+
+    // Multi
+    "Multispecies mix (≥ 3)",
+
+    // Other
+    "other",
+    "other - escaped",
+
+    // sm grain and brassica
+    "Small grain and Brassica",
+
+    // sm grain and legume
+    "Small grain and Legume",
+
+    null
+
 ]
 const speciesColors = [
-    "#1b9e77",
-    "#d95f02",
-    "#7570b3",
-    "#e7298a",
-    "#66a61e",
-    "#e6ab02",
-    "#a6761d",
-    "#e41a1c"
+    "#fd8d3c",
+    "#f16913",
+    "#d94801",
+    "#a63603",
+    "#7f2704",
+
+    "#31a354",
+    "#006d2c",
+
+    "#7a0177",
+
+    "#f2f0f7",
+    "#dadaeb",
+
+    "#dadaeb",
+    "#bcbddc",
+    "#ccc"
+
 ]
-
-
 var speciesScale = d3.scaleOrdinal()
     .domain(speciesClasses)
     .range(speciesColors);

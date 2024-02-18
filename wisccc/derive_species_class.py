@@ -198,7 +198,7 @@ def derive_species_class_old(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
     # return "other - escaped"
 
 
-def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
+def derive_species_class_gregg(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
     """Takes a wisccc_survey object and classifies
     the given species into a reduced number of classes
     """
@@ -301,6 +301,306 @@ def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
     # for past years write in
     if cc_sp_1 == "Terra life maizepro cover crop mix":
         return "multispecies mix"
+
+    # keep null if all null
+    if not any([cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]):
+        return None
+
+    if cc_sp_1 in [
+        sp_dct["OTHER"],
+        sp_dct["OTHER_BROADLEAF"],
+    ]:
+        return "other"
+
+    # return "other"
+    return "other - escaped"
+
+
+def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
+    """Takes a wisccc_survey object and classifies
+    the given species into a reduced number of classes
+    """
+    # cc_sp_1 = survey_response.cover_crop_species_1
+    # cc_sp_2 = survey_response.cover_crop_species_2
+    # cc_sp_3 = survey_response.cover_crop_species_3
+    # cc_sp_4 = survey_response.cover_crop_species_4
+    # cc_sp_5 = survey_response.cover_crop_species_5
+    # keep null if all null
+    if cc_sp_1 is None or cc_sp_1 == ".":
+        return None
+
+    sp_dct = give_species_options(cc_sp_1.isupper())
+
+    # Cereals/Grasses
+    # Cereal (winter) rye
+    if (cc_sp_1 == sp_dct["CEREAL_RYE"]) and not any(
+        [cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]
+    ):
+        return "Cereal (winter) rye"
+    # Winter wheat
+    if (cc_sp_1 == sp_dct["WHEAT_WINTER"]) and not any(
+        [cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]
+    ):
+        return "Wheat (winter)"
+    # Spring wheat
+    if (cc_sp_1 == sp_dct["WHEAT_SPRING"]) and not any(
+        [cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]
+    ):
+        return "Wheat (spring)"
+    # Oats
+    if (cc_sp_1 == sp_dct["OATS"]) and not any([cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "Oats"
+    # Triticale
+    if (cc_sp_1 == sp_dct["TRITICALE"]) and not any(
+        [cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]
+    ):
+        return "Triticale"
+
+    # rye mix (rye and barley, oats, wheat) –  can all be one color
+    if (
+        (cc_sp_1 == sp_dct["CEREAL_RYE"])
+        and (
+            cc_sp_2
+            in [
+                sp_dct["BARLEY"],
+                sp_dct["OATS"],
+                sp_dct["WHEAT_WINTER"],
+                sp_dct["WHEAT_SPRING"],
+                "triticale",
+            ]
+        )
+        and not any([cc_sp_3, cc_sp_4, cc_sp_5])
+    ):
+        return "Rye mix (rye and barley/oats/wheat)"
+
+    # Annual Rye Grass
+    if (cc_sp_1 == sp_dct["ANNUAL_RYEGRASS"]) and not any(
+        [cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]
+    ):
+        return "Annual ryegrass"
+
+    # Other (Sorghum-Sudangrass)
+
+    # Legumes
+    # Alfalfa
+    # Clover and clover mix (typically a small grain or volunteer grain)
+    if (
+        cc_sp_1
+        in [
+            sp_dct["RED_CLOVER"],
+            sp_dct["CRIMSON_CLOVER"],
+            "Dutch white clover",
+            sp_dct["BERSEEM_CLOVER"],
+        ]
+    ) and (
+        cc_sp_2
+        in [
+            sp_dct["OATS"],
+            sp_dct["BARLEY"],
+            sp_dct["CEREAL_RYE"],
+            sp_dct["WHEAT_WINTER"],
+            sp_dct["WHEAT_SPRING"],
+        ]
+        and not any([cc_sp_3, cc_sp_4, cc_sp_5])
+    ):
+        return "Clover and clover mix"
+    if (
+        cc_sp_1
+        in [
+            sp_dct["OATS"],
+            sp_dct["BARLEY"],
+            sp_dct["CEREAL_RYE"],
+            sp_dct["WHEAT_WINTER"],
+            sp_dct["WHEAT_SPRING"],
+        ]
+    ) and (
+        cc_sp_2
+        in [
+            sp_dct["RED_CLOVER"],
+            sp_dct["CRIMSON_CLOVER"],
+            "Dutch white clover",
+            sp_dct["BERSEEM_CLOVER"],
+        ]
+        and not any([cc_sp_3, cc_sp_4, cc_sp_5])
+    ):
+        return "Clover and clover mix"
+
+        # Typically annual: Cow peas, sun hemp soybeans, Berseem clover, Balansa etc)
+    if (
+        cc_sp_1
+        in [
+            sp_dct["BERSEEM_CLOVER"],
+            sp_dct["COWPEA"],
+        ]
+    ) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "Legume - typically annual"
+        # Typically perennial: Crimson clover, red clover, alfalfa, hairy vetch, field peas etc.
+    if (
+        cc_sp_1
+        in [
+            sp_dct["RED_CLOVER"],
+            sp_dct["CRIMSON_CLOVER"],
+            "Dutch white clover",
+            sp_dct["FIELD_PEA"],
+            sp_dct["HAIRY_VETCH"],
+        ]
+    ) and not any([cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "Legume - typically perennial"
+    # Mix of 2 classes of species
+    # Legume & Brassica
+    if (
+        (
+            cc_sp_1
+            in [
+                sp_dct["RED_CLOVER"],
+                sp_dct["CRIMSON_CLOVER"],
+                "Dutch white clover",
+                sp_dct["FIELD_PEA"],
+                sp_dct["HAIRY_VETCH"],
+                sp_dct["BERSEEM_CLOVER"],
+                sp_dct["COWPEA"],
+            ]
+        )
+        and (
+            cc_sp_2
+            in [sp_dct["RADISH"], sp_dct["KALE"], sp_dct["CANOLA"], sp_dct["TURNIP"]]
+        )
+        and not any([cc_sp_3, cc_sp_4, cc_sp_5])
+    ):
+        return "Legume and Brassica"
+
+    if (
+        (
+            cc_sp_1
+            in [sp_dct["RADISH"], sp_dct["KALE"], sp_dct["CANOLA"], sp_dct["TURNIP"]]
+        )
+        and (
+            cc_sp_2
+            in [
+                sp_dct["RED_CLOVER"],
+                sp_dct["CRIMSON_CLOVER"],
+                "Dutch white clover",
+                sp_dct["FIELD_PEA"],
+                sp_dct["HAIRY_VETCH"],
+                sp_dct["BERSEEM_CLOVER"],
+                sp_dct["COWPEA"],
+            ]
+        )
+        and not any([cc_sp_3, cc_sp_4, cc_sp_5])
+    ):
+        return "Legume and Brassica"
+    # Small Grain & Brassica
+    if (
+        (
+            cc_sp_1
+            in [
+                sp_dct["WHEAT_WINTER"],
+                sp_dct["WHEAT_SPRING"],
+                sp_dct["OATS"],
+                sp_dct["BARLEY"],
+                sp_dct["CEREAL_RYE"],
+            ]
+        )
+        and (
+            cc_sp_2
+            in [sp_dct["RADISH"], sp_dct["KALE"], sp_dct["CANOLA"], sp_dct["TURNIP"]]
+        )
+        and not any([cc_sp_3, cc_sp_4, cc_sp_5])
+    ):
+        return "Small grain and Brassica"
+    if (
+        (
+            cc_sp_1
+            in [sp_dct["RADISH"], sp_dct["KALE"], sp_dct["CANOLA"], sp_dct["TURNIP"]]
+        )
+        and (
+            cc_sp_2
+            in [
+                sp_dct["WHEAT_WINTER"],
+                sp_dct["WHEAT_SPRING"],
+                sp_dct["OATS"],
+                sp_dct["BARLEY"],
+                sp_dct["CEREAL_RYE"],
+            ]
+        )
+        and not any([cc_sp_3, cc_sp_4, cc_sp_5])
+    ):
+        return "Small grain and Brassica"
+    # Legume and small grain
+    if (
+        (
+            cc_sp_1
+            in [
+                sp_dct["WHEAT_WINTER"],
+                sp_dct["WHEAT_SPRING"],
+                sp_dct["OATS"],
+                sp_dct["BARLEY"],
+                sp_dct["CEREAL_RYE"],
+            ]
+        )
+        and (
+            cc_sp_2
+            in [
+                sp_dct["RED_CLOVER"],
+                sp_dct["CRIMSON_CLOVER"],
+                "Dutch white clover",
+                sp_dct["FIELD_PEA"],
+                sp_dct["HAIRY_VETCH"],
+                sp_dct["BERSEEM_CLOVER"],
+                sp_dct["COWPEA"],
+            ]
+        )
+        and not any([cc_sp_3, cc_sp_4, cc_sp_5])
+    ):
+        return "Small grain and Legume"
+    if (
+        (
+            cc_sp_1
+            in [
+                sp_dct["RED_CLOVER"],
+                sp_dct["CRIMSON_CLOVER"],
+                "Dutch white clover",
+                sp_dct["FIELD_PEA"],
+                sp_dct["HAIRY_VETCH"],
+                sp_dct["BERSEEM_CLOVER"],
+                sp_dct["COWPEA"],
+            ]
+        )
+        and (
+            cc_sp_2
+            in [
+                sp_dct["WHEAT_WINTER"],
+                sp_dct["WHEAT_SPRING"],
+                sp_dct["OATS"],
+                sp_dct["BARLEY"],
+                sp_dct["CEREAL_RYE"],
+            ]
+        )
+        and not any([cc_sp_3, cc_sp_4, cc_sp_5])
+    ):
+        return "Small grain and Legume"
+    # Multispecies mix (≥ 3)
+
+    # Grouping the multispecies
+    # When there are five crops listed
+    if all([cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]):
+        return "Multispecies mix (≥ 3)"
+
+    # When there are four crops listed
+    if all([cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4]):
+        return "Multispecies mix (≥ 3)"
+
+    # When there are three crops listed
+    if all([cc_sp_1, cc_sp_2, cc_sp_3]):
+        return "Multispecies mix (≥ 3)"
+
+    # When mulitspecies is selected
+    if cc_sp_1 == sp_dct["MULITSPECIES"]:
+        return "Multispecies mix (≥ 3)"
+
+    # for past years write in
+    if cc_sp_1 == "Terra life maizepro cover crop mix":
+        return "Multispecies mix (≥ 3)"
 
     # keep null if all null
     if not any([cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5]):

@@ -827,7 +827,11 @@
                     .transition().duration(1000)
                     .attr("cx", function (d) { return scale(d.properties[property]); })
                     .attr("cy", function (d) { return yScale(d.properties.cc_biomass); })
-                    .style("fill", function (d) { return color_scale((d.properties[color_property])); })
+                    .style("fill", function (d) {
+
+                        return d.properties[color_property] ? color_scale((d.properties[color_property])) : "#ccc";
+
+                    })
 
 
                 svg.select(".myXAxis")
@@ -1334,6 +1338,8 @@
                 // .style("height", 400);
 
                 var legendSoil = d3.legendColor()
+                    .shapeWidth(30)
+                    // .cells(scale.domain().length - 2)
                     .scale(scale)
                 // .orient("horizontal");
 
