@@ -201,6 +201,12 @@
             border: 7px solid white;
 
         }
+
+        /* Selectize dropdowns */
+        .selectize-dropdown,
+        .selectize-input {
+            width: 200px !important;
+        }
     </style>
 
     <!-- code folding -->
@@ -275,7 +281,7 @@
                         <div style="text-align: left;">
                             <label style="font-size: medium;">Color</label>
                         </div>
-                        <select id="select_color" class="group-select">
+                        <select id="select_color" class="group-select selectize-control single selectize-input">
                             <option value="cc_species" selected>Cover crop species</option>
                             <option value="region">NOAA Climate Regions</option>
                             <option value="previous_crop">Cash crop prior</option>
@@ -302,8 +308,8 @@
                                     </select></td>
                             </tr>
                             <!-- <tr>
-                                <td>County Selectize</td>
-                                <td><select id="selectize_county" multiple placeholder="Select counties...">
+                                <td>County</td>
+                                <td><select id="selectize_county">
                                     </select></td>
                             </tr> -->
                             <tr>
@@ -353,7 +359,7 @@
                     </div> -->
                     <div class="col-md-4" id="x_axis_changer">
 
-                        <select id="xFactor" class="group-select">
+                        <select id="xFactor" class="group-select selectize-control single selectize-input">
                             <option value="total_precip" selected>Total precipitation</option>
                             <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_flat">Planting date</option>
@@ -375,7 +381,8 @@
                             <tr>
                                 <td>
                                     <div>
-                                        <select id="select_model_type" class="group-select">
+                                        <select id="select_model_type"
+                                            class="group-select  selectize-control single selectize-input">
                                             <option value="linear" selected>Linear</option>
                                             <option value="quadratic">Quadratic</option>
                                         </select>
@@ -592,8 +599,6 @@
                 cov_crop_planting_date.setMonth(data[i].properties.cc_planting_date.getMonth())
                 cov_crop_planting_date.setDate(data[i].properties.cc_planting_date.getDate())
 
-                console.log("Planting date: " + data[i].properties.cc_planting_date)
-
 
                 //Julian day calc
                 data[i].properties.julian_day = calcJulianDay(data[i].properties.cc_planting_date)
@@ -674,11 +679,47 @@
             }
 
 
+            // an object of the id of the select, and the field it targets
+            var boxes_select = {
+                "select_county": "county_single",
+                "select_species": "cc_species",
+                "select_soil_texture": "dominant_soil_texture",
+                "select_seeding_method": "cc_seeding_method",
+                "select_planting_year": "year",
+                "select_tillage": "residue_remaining"
+            }
+            // $('#select_model_type').selectize();
+            // $('#xFactor').selectize();
+            // $('#select_color').selectize();
+            for (k in Object.keys(boxes_select)) {
+
+                id_selector = Object.keys(boxes_select)[k];
+                target_field = boxes_select[id_selector]
+                $("#" + id_selector).selectize({
+                    plugins: ["remove_button"],
+                    delimiter: " - ",
+                    placeholder: "All",
+                    persist: false,
+                    closeAfterSelect: true,
+                    maxItems: null,
+                    valueField: "value",
+                    labelField: "label",
+                    searchField: ["value", "label"],
+                    options: pop_selectize_box(submission_data, id_selector, target_field),
+                    onChange: function (value, isOnInitialize) {
+                        updateChart(false)
+                    }
+                })
+            }
+
+
             // var $selectize_county = $(function () {
             //     $("#selectize_county").selectize({
             //         plugins: ["restore_on_backspace", "clear_button"],
             //         delimiter: " - ",
+            //         placeholder: "All counties...",
             //         persist: false,
+            //         closeAfterSelect: true,
             //         maxItems: null,
             //         valueField: "value",
             //         labelField: "label",
@@ -689,7 +730,7 @@
             //         }
             //     });
             // });
-            // var county_control = $selectize_county[0].selectize;
+            // // var county_control = $selectize_county[0].selectize;
             // var $selectize_species = $(function () {
             //     $("#select_species").selectize({
             //         plugins: ["restore_on_backspace", "clear_button"],
@@ -708,12 +749,12 @@
             // var species_control = $selectize_county[0].selectize;
             //pop_selectize_box(submission_data, "selectize_county", "county_single", control);
 
-            pop_select_box(submission_data, "select_species", "cc_species");
-            pop_select_box(submission_data, "select_soil_texture", "dominant_soil_texture");
-            pop_select_box(submission_data, "select_seeding_method", "cc_seeding_method")
-            pop_select_box(submission_data, "select_planting_year", "year");
-            pop_select_box(submission_data, "select_county", "county_single");
-            pop_select_box(submission_data, "select_tillage", "residue_remaining");
+            // pop_select_box(submission_data, "select_species", "cc_species");
+            // pop_select_box(submission_data, "select_soil_texture", "dominant_soil_texture");
+            // pop_select_box(submission_data, "select_seeding_method", "cc_seeding_method")
+            // pop_select_box(submission_data, "select_planting_year", "year");
+            // pop_select_box(submission_data, "select_county", "county_single");
+            // pop_select_box(submission_data, "select_tillage", "residue_remaining");
             // $('#select_species').selectize();
 
 
@@ -981,22 +1022,19 @@
 
             function getFilteredData(data) {
 
-                var filtered_data = filterDataYear(data)
-
-                filtered_data = filterDataSpecies(filtered_data)
-
-                filtered_data = filterDataCounty(filtered_data)
-                // filtered_data = filterDataCountySelectize(filtered_data)
-
-                filtered_data = filterDataSoilText(filtered_data)
-
-                filtered_data = filterDataSeedingMethod(filtered_data)
-
-                filtered_data = filterDataTillage(filtered_data)
-
-                filtered_data = filterDataManurePrior(filtered_data)
+                var filtered_data = filterDataManurePrior(data)
 
                 filtered_data = filterDataManurePost(filtered_data)
+
+                for (k in Object.keys(boxes_select)) {
+
+                    id_selector = Object.keys(boxes_select)[k];
+                    target_field = boxes_select[id_selector]
+
+                    filtered_data = filterDataSelectize(filtered_data, id_selector, target_field)
+                    console.log(filtered_data.length)
+
+                }
 
                 filtered_data = filterDataNulls(filtered_data)
 
@@ -1004,6 +1042,21 @@
 
                 return filtered_data;
 
+            }
+
+            function filterDataSelectize(data, id_selector, target_field) {
+
+                console.log("FilterDataSelectize for:", id_selector, target_field)
+                var array = $('#' + id_selector).selectize()[0].selectize.getValue()
+
+                if (array == null | array.length == 0) {
+                    return data
+                }
+                return data.filter(function (d) {
+
+                    return array.includes(d.properties[target_field])
+
+                });
             }
 
             function filterDataSoilText(data, sdd) {
@@ -1035,6 +1088,77 @@
                 });
             }
 
+            function filterDataYear(data, sdd) {
+                // Reminder, won't be real year, 2020 == 120
+                var selector;
+                selector = "#select_planting_year";
+
+                var year = d3.select(selector).node().value
+                if (year == "All") {
+                    return data
+                }
+                return data.filter(function (d) {
+                    return d.properties.year == year;
+                });
+
+            }
+
+            function filterDataSpecies(data, sdd) {
+                // Reminder, won't be real year, 2020 == 120
+                var selector;
+
+                selector = "#select_species";
+                var array = $(selector).selectize()[0].selectize.getValue()
+                // If null or of length 0, then no filtering
+                if (array == null | array.length == 0) {
+                    return data
+                }
+                return data.filter(function (d) {
+
+                    return array.includes(d.properties.cc_species)
+
+                })
+
+            }
+
+            function filterDataCounty(data, sdd) {
+
+                var selector;
+
+                selector = "#select_county";
+
+                var county_array = $('#select_county').selectize()[0].selectize.getValue()
+
+
+                if (county_array == null | county_array.length == 0) {
+                    return data
+                }
+                return data.filter(function (d) {
+                    var is_this_one = county_array.includes(d.properties.county_single)
+                    console.log(d.id, is_this_one)
+                    return county_array.includes(d.properties.county_single)
+                    // return d.properties.county_single === county;
+                });
+
+            }
+
+            function filterDataTillage(data, sdd) {
+                // Reminder, won't be real year, 2020 == 120
+                var selector;
+
+                selector = "#select_tillage";
+
+                var tillage_tier = d3.select(selector).node().value
+                console.log(tillage_tier)
+                if (tillage_tier == "All") {
+                    return data
+                }
+                return data.filter(function (d) {
+                    return d.properties.residue_remaining === tillage_tier;
+                });
+
+            }
+
             function filterDataManurePrior(data) {
 
                 var selector;
@@ -1061,93 +1185,6 @@
                 }
             }
 
-            function filterDataYear(data, sdd) {
-                // Reminder, won't be real year, 2020 == 120
-                var selector;
-                selector = "#select_planting_year";
-
-                var year = d3.select(selector).node().value
-                if (year == "All") {
-                    return data
-                }
-                return data.filter(function (d) {
-                    return d.properties.year == year;
-                });
-
-            }
-
-
-            function filterDataSpecies(data, sdd) {
-                // Reminder, won't be real year, 2020 == 120
-                var selector;
-
-                selector = "#select_species";
-
-                var species = d3.select(selector).node().value
-                console.log(species)
-                if (species == "All") {
-                    return data
-                }
-                return data.filter(function (d) {
-                    return d.properties.cc_species === species;
-                });
-
-            }
-
-            function filterDataCountySelectize(data, sdd) {
-
-                var selector;
-
-                selector = "#selectize_county";
-
-                var county_array = $('#selectize_county').selectize()[0].selectize.getValue()
-
-
-                if (county_array == null | county_array.length == 0) {
-                    return data
-                }
-                return data.filter(function (d) {
-                    var is_this_one = county_array.includes(d.properties.county_single)
-                    console.log(d.id, is_this_one)
-                    return county_array.includes(d.properties.county_single)
-                    // return d.properties.county_single === county;
-                });
-
-            }
-
-            function filterDataCounty(data, sdd) {
-
-                var selector;
-
-                selector = "#select_county";
-
-                var county = d3.select(selector).node().value
-                console.log(county + " County")
-                if (county == "All") {
-                    return data
-                }
-                return data.filter(function (d) {
-                    return d.properties.county_single === county;
-                });
-
-            }
-
-            function filterDataTillage(data, sdd) {
-                // Reminder, won't be real year, 2020 == 120
-                var selector;
-
-                selector = "#select_tillage";
-
-                var tillage_tier = d3.select(selector).node().value
-                console.log(tillage_tier)
-                if (tillage_tier == "All") {
-                    return data
-                }
-                return data.filter(function (d) {
-                    return d.properties.residue_remaining === tillage_tier;
-                });
-
-            }
 
             function filterDataNulls(data, sdd) {
                 // Removing points with null biomass
