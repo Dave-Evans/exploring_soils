@@ -756,7 +756,7 @@ SELECT
         wisc_cc_id as id,
         year,
         a.county,
-        null as county_single,
+        derived_county as county_single,
         years_experience::text as years_experience,
         closest_zip_code as zipcode,
         mod_crop_rotation_2023_cash_crop_species as previous_crop,

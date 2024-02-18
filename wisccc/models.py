@@ -790,7 +790,7 @@ class Survey(models.Model):
         if self.farm_location is not None:
             self.derived_county = lookup_county_from_loc(id)
         else:
-            self.derived_county = None
+            self.derived_county = ""
 
     # open_to_sharing = models.BooleanField(
     #     verbose_name="(Would you be open to having your cover cropping experience shared on our website for other interested farmers?)",
