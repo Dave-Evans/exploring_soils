@@ -800,8 +800,8 @@ SELECT
         
         null as anpp,
         cc_biomass_collection_date,
-        null as total_precip,
-        null as acc_gdd,
+        total_precip as total_precip,
+        acc_gdd as acc_gdd,
         null as days_from_plant_to_bio_hrvst,
 
         cc_biomass,
@@ -1077,7 +1077,9 @@ SELECT
 					lab.ndfd30 as fq_ndfd30,
 					lab.tdn_adf as fq_tdn_adf,
 					lab.milk_ton_milk2013 as fq_milkton,
-					lab.rfq as fq_rfq
+					lab.rfq as fq_rfq,
+                    lab.total_precip,
+                    lab.acc_gdd
 				from wisccc_survey ws
 				left join all_lab_data_2023 lab 
 				on ws.id = lab.id

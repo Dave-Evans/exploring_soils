@@ -1054,7 +1054,7 @@
                 }
                 return data.filter(function (d) {
 
-                    return array.includes(d.properties[target_field])
+                    return array.includes(d.properties[target_field].toString())
 
                 });
             }

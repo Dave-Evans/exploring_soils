@@ -436,6 +436,9 @@ while [ -n "$1" ]; do
     
 done
 
-
+# update .env files with new lambda
+# Need to escape forward slashes and leave off trailing forward slash
+# lambdaurl="https:\/\/e4z65myywd4yvd54d6cvqae37y0ratpa.lambda-url.us-east-2.on.aws"
+# sed -i "s/GDU_LAMBDA_URL=.*/GDU_LAMBDA_URL=$lambdaurl/g" .env (and local.env, dev.env, prod.env)
 
 
