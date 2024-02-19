@@ -84,7 +84,7 @@ for srvy in surveys:
         print(f"\tPlanting date {cc_planting_date}")
         print(f"\tcc_collection: {cc_collection}")
         print(f"\tFarm location: {farm_location}")
-        # return None
+        continue
 
     headers = {"Accept": "application/json"}
 
