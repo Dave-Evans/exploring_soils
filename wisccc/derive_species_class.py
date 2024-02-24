@@ -694,7 +694,10 @@ def pull_all_years_together(f_output):
     """f_output is format of the output:
     sql: for returning just the query
     json: for returning json
-    df: for pandas dataframe"""
+    df: for pandas dataframe
+    table: for creating 'wisc_cc_all_together' in db;
+        for testing purposes.
+    """
 
     query = """
     -- bn05905_p_cover_crop2023_biomass for 2023 biomass
@@ -1127,6 +1130,24 @@ SELECT
             data = json.loads(rows[0])
 
         return data
+
+    if f_output == "table":
+        table_name = "wisc_cc_all_together"
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"drop table {table_name};")
+            except:
+                print(f"{table_name} currently does not exist.")
+
+            print(f"Creating {table_name}")
+            cursor.execute(
+                """
+            create table {table_name} as
+                           {query}
+        """.format(
+                    table_name=table_name, query=query
+                )
+            )
 
     if f_output == "df":
         data = pd.read_sql(query, connection)

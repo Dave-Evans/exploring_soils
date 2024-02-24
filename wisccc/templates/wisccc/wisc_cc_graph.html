@@ -350,13 +350,7 @@
                         </table>
 
                     </div>
-                    <!-- <div class="col-md-4" id="color_changer">
-                        <select id="select_color" class="group-select">
-                            <option value="region" selected>Region</option>
-                            <option value="cc_species">Cover crop species</option>
-                            <option value="previous_crop">Cash crop prior</option>
-                        </select> <br>
-                    </div> -->
+
                     <div class="col-md-4" id="x_axis_changer">
 
                         <select id="xFactor" class="group-select selectize-control single selectize-input">
@@ -620,8 +614,16 @@
             var pop_selectize_box = function (geojson_data, id_selector, field_name) {
                 var all_instances = [];
                 for (item in geojson_data) {
+                    if (field_name == "cc_species_raw") {
+                        var cc_species_raw = geojson_data[item]['properties'][field_name]
+                        // Bombs if null
+                        if (cc_species_raw === null) { continue; }
 
-                    all_instances.push(geojson_data[item]['properties'][field_name])
+                        all_instances = all_instances.concat(cc_species_raw.split(", "));
+
+                    } else {
+                        all_instances.push(geojson_data[item]['properties'][field_name])
+                    }
 
                 }
                 // Deduplicating
@@ -682,7 +684,7 @@
             // an object of the id of the select, and the field it targets
             var boxes_select = {
                 "select_county": "county_single",
-                "select_species": "cc_species",
+                "select_species": "cc_species_raw",
                 "select_soil_texture": "dominant_soil_texture",
                 "select_seeding_method": "cc_seeding_method",
                 "select_planting_year": "year",
@@ -1044,6 +1046,26 @@
 
             }
 
+            // For use in the filter function in addLayerToMap
+            // Will be run on an individual feature
+            // filterArray is the array of selected cover crop 
+            // species from speciesFilter
+            // plantedArray is the array created from splitting the comma
+            //  separated list of planted cover crops from the submitted surveys.            
+            const isTrue = (currentValue) => currentValue == true;
+            var containsTargetSpecies = function (filterArray, plantedArray) {
+                // an array as long as the filter array, with a true or false for if
+                //  the requested item in the filter is planted
+                var isPresent = [];
+                for (i in filterArray) {
+                    if (plantedArray.includes(filterArray[i])) {
+                        isPresent.push(true);
+                    } else {
+                        isPresent.push(false);
+                    }
+                }
+                return isPresent.every(isTrue);
+            }
             function filterDataSelectize(data, id_selector, target_field) {
 
                 console.log("FilterDataSelectize for:", id_selector, target_field)
@@ -1052,10 +1074,19 @@
                 if (array == null | array.length == 0) {
                     return data
                 }
+                // Handle this separately
+                if (target_field == 'cc_species_raw') {
+                    return data.filter(function (d) {
+                        if (d.properties[target_field] == null) { return false }
+                        return containsTargetSpecies(array, d.properties[target_field].split(", "))
+                    });
+
+
+                }
+
                 return data.filter(function (d) {
-
+                    if (d.properties[target_field] == null) { return false }
                     return array.includes(d.properties[target_field].toString())
-
                 });
             }
 
