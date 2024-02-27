@@ -95,15 +95,21 @@ class CoverCropChoices(models.TextChoices):
 
     BLANK = "", ""
     ANNUAL_RYEGRASS = "ANNUAL_RYEGRASS", "annual ryegrass"  # winter
+    BALANSA_CLOVER = "BALANSA_CLOVER", "balansa clover"
     BARLEY = "BARLEY", "barley"  # spring
     BERSEEM_CLOVER = "BERSEEM_CLOVER", "berseem clover"  # legume
+    BUCKWHEAT = "BUCKWHEAT", "buckwheat"
     CANOLA = "CANOLA", "canola/rapeseed"  # brassica
     CEREAL_RYE = "CEREAL_RYE", "cereal (winter) rye"  # winter
     CRIMSON_CLOVER = "CRIMSON_CLOVER", "crimson clover"  # legume
     COWPEA = "COWPEA", "cowpea"  # legume
+    DUTCH_WHITE_CLOVER = "DUTCH_WHITE_CLOVER", "Dutch white clover"
     FIELD_PEA = "FIELD_PEA", "field/forage pea"  # legume
+    FLAX = "FLAX", "flax"
     HAIRY_VETCH = "HAIRY_VETCH", "hairy vetch"  # legume
     KALE = "KALE", "kale"  # brassica
+    MILLET = "MILLET", "millet"
+    PLANTAIN = "PLANTAIN", "plantain"
     OATS = "OATS", "oats"  # spring
     OTHER_LEGUME = "OTHER_LEGUME", "other (legume)"  #
     OTHER_GRASS = "OTHER_GRASS", "other (grass)"  #
@@ -113,10 +119,13 @@ class CoverCropChoices(models.TextChoices):
     SORGHUM = "SORGHUM", "sorghum"  # grass
     SORGHUM_SUDAN = "SORGHUM_SUDAN", "sorghum-sudan"  # grass
     SUNFLOWER = "SUNFLOWER", "sunflower"  #
-    TRITICALE = "TRITICALE", "Tritcale"  # winter
+    SUN_HEMP = "SUN_HEMP", "sun hemp"
+    TRITICALE = "TRITICALE", "triticale"  # winter
     TURNIP = "TURNIP", "turnip"  # brassica
     WHEAT_SPRING = "WHEAT_SPRING", "wheat (spring)"  # spring
     WHEAT_WINTER = "WHEAT_WINTER", "wheat (winter)"  # winter
+    WINTER_PEA = "WINTER_PEA", "winter pea"
+    YELLOW_SWEET_CLOVER = "YELLOW_SWEET_CLOVER", "yellow sweet clover"
     MULTISPECIES = "MULITSPECIES", "multispecies mix of 2 or more"
     OTHER = "OTHER", "other"
 

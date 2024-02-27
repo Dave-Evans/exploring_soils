@@ -46,54 +46,85 @@
 // ]
 
 // For Mrill's classes
+// const speciesClasses = [
+//     // Cereals/grasses
+//     "Annual ryegrass",
+//     "Cereal (winter) rye",
+//     "Wheat (winter)",
+//     "Oats",
+//     "Rye mix (rye and barley/oats/wheat)",
+
+//     // Legumes
+//     "Legume and Brassica",
+//     "Legume - typically perennial",
+
+//     // Multi
+//     "Multispecies mix (≥ 3)",
+
+//     // Other
+//     "other",
+//     "other - escaped",
+
+//     // sm grain and brassica
+//     "Small grain and Brassica",
+
+//     // sm grain and legume
+//     "Small grain and Legume",
+
+//     null
+
+// ]
+// const speciesColors = [
+//     "#fd8d3c",
+//     "#f16913",
+//     "#d94801",
+//     "#a63603",
+//     "#7f2704",
+
+//     "#31a354",
+//     "#006d2c",
+
+//     "#7a0177",
+
+//     "#f2f0f7",
+//     "#dadaeb",
+
+//     "#dadaeb",
+//     "#bcbddc",
+//     "#ccc"
+
+// ]
+
+
+// Species based on plant families
 const speciesClasses = [
-    // Cereals/grasses
-    "Annual ryegrass",
-    "Cereal (winter) rye",
-    "Wheat (winter)",
-    "Oats",
-    "Rye mix (rye and barley/oats/wheat)",
-
-    // Legumes
-    "Legume and Brassica",
-    "Legume - typically perennial",
-
-    // Multi
-    "Multispecies mix (≥ 3)",
-
-    // Other
+    "clovers, peas and other legumes",
+    "radishes, turnips, and other brassicas",
+    "cereal/grass (oats, wheat, and other cereal/grasses)",
+    "annual ryegrass",
+    "cereal (winter) rye",
+    "brassica and grass/cereal",
+    "brassica and legume",
+    "brassica and legume and grass/cereal",
+    "legume and grass/cereal",
     "other",
-    "other - escaped",
-
-    // sm grain and brassica
-    "Small grain and Brassica",
-
-    // sm grain and legume
-    "Small grain and Legume",
-
-    null
-
 ]
 const speciesColors = [
-    "#fd8d3c",
-    "#f16913",
-    "#d94801",
-    "#a63603",
-    "#7f2704",
-
-    "#31a354",
-    "#006d2c",
-
-    "#7a0177",
-
-    "#f2f0f7",
-    "#dadaeb",
-
-    "#dadaeb",
-    "#bcbddc",
-    "#ccc"
-
+    "#a6cee3",
+    "#1f78b4",
+    "#b2df8a",
+    "#33a02c",
+    "#fb9a99",
+    "#e31a1c",
+    "#fdbf6f",
+    "#ff7f00",
+    "#cab2d6",
+    "#6a3d9a",
+    "#ffff99",
+    "#b15928"
 ]
+
+
 var speciesScale = d3.scaleOrdinal()
     .domain(speciesClasses)
     .range(speciesColors);

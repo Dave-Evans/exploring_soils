@@ -10,28 +10,43 @@ def give_species_options(plumbing):
     but 2020-2022 will be formatted as human ready."""
     sp_dct = {
         "ANNUAL_RYEGRASS": "ANNUAL_RYEGRASS" if plumbing else "annual ryegrass",
+        "BALANSA_CLOVER": "BALANSA_CLOVER" if plumbing else "balansa clover",
         "BARLEY": "BARLEY" if plumbing else "barley",
         "BERSEEM_CLOVER": "BERSEEM_CLOVER" if plumbing else "berseem clover",
+        "BUCKWHEAT": "BUCKWHEAT" if plumbing else "buckwheat",
         "CANOLA": "CANOLA" if plumbing else "canola/rapeseed",
         "CEREAL_RYE": "CEREAL_RYE" if plumbing else "cereal (winter) rye",
         "CRIMSON_CLOVER": "CRIMSON_CLOVER" if plumbing else "crimson clover",
         "COWPEA": "COWPEA" if plumbing else "cowpea",
+        "DUTCH_WHITE_CLOVER": (
+            "DUTCH_WHITE_CLOVER" if plumbing else "Dutch white clover"
+        ),
         "FIELD_PEA": "FIELD_PEA" if plumbing else "field/forage pea",
+        "FLAX": "FLAX" if plumbing else "flax",
         "HAIRY_VETCH": "HAIRY_VETCH" if plumbing else "hairy vetch",
         "KALE": "KALE" if plumbing else "kale",
+        "MILLET": "MILLET" if plumbing else "millet",
+        "PEAS": "PEAS" if plumbing else "peas",
+        "PLANTAIN": "PLANTAIN" if plumbing else "plantain",
         "OATS": "OATS" if plumbing else "oats",
         "OTHER_LEGUME": "OTHER_LEGUME" if plumbing else "other (legume)",
         "OTHER_GRASS": "OTHER_GRASS" if plumbing else "other (grass)",
         "OTHER_BROADLEAF": "OTHER_BROADLEAF" if plumbing else "other (broadleaf)",
+        "PEARL_MILLET": "PEARL_MILLET" if plumbing else "pearl millet",
         "RADISH": "RADISH" if plumbing else "radish",
         "RED_CLOVER": "RED_CLOVER" if plumbing else "red clover",
         "SORGHUM": "SORGHUM" if plumbing else "sorghum",
         "SORGHUM_SUDAN": "SORGHUM_SUDAN" if plumbing else "sorghum-sudan",
         "SUNFLOWER": "SUNFLOWER" if plumbing else "sunflower",
-        "TRITICALE": "TRITICALE" if plumbing else "tritcale",
+        "SUN_HEMP": "SUN_HEMP" if plumbing else "sun hemp",
+        "TRITICALE": "TRITICALE" if plumbing else "triticale",
         "TURNIP": "TURNIP" if plumbing else "turnip",
         "WHEAT_SPRING": "WHEAT_SPRING" if plumbing else "wheat (spring)",
         "WHEAT_WINTER": "WHEAT_WINTER" if plumbing else "wheat (winter)",
+        "WINTER_PEA": "WINTER_PEA" if plumbing else "winter pea",
+        "YELLOW_SWEET_CLOVER": (
+            "YELLOW_SWEET_CLOVER" if plumbing else "yellow sweet clover"
+        ),
         "MULITSPECIES": "MULITSPECIES" if plumbing else "multispecies mix of 2 or more",
         "OTHER": "OTHER" if plumbing else "other",
     }
@@ -40,7 +55,7 @@ def give_species_options(plumbing):
 
 
 def derive_species_class_old(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
-    """Takes a wisccc_survey object and classifies
+    """Takes five wiscc survey species and classifies
     the given species into a reduced number of classes
     """
     # cc_sp_1 = survey_response.cover_crop_species_1
@@ -316,7 +331,7 @@ def derive_species_class_gregg(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
     return "other - escaped"
 
 
-def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
+def derive_species_class_gregg_mod(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
     """Takes a wisccc_survey object and classifies
     the given species into a reduced number of classes
     """
@@ -616,6 +631,146 @@ def derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
     return "other - escaped"
 
 
+def derive_species_class(list_species):
+    """Takes a wisccc_survey object and classifies
+    the given species into a reduced number of classes
+    """
+
+    # keep null if all null
+    if list_species is None or list_species[0] == "." or list_species[0] is None:
+        return None
+
+    sp_dct = give_species_options(list_species[0].isupper())
+
+    # for past years write in
+    if list_species[0] == sp_dct["MULITSPECIES"]:
+        return "brassica and legume and grass/cereal"
+
+    if list_species[0] == "Terra life maizepro cover crop mix":
+        return "brassica and legume and grass/cereal"
+
+    if list_species[0] in [
+        sp_dct["OTHER"],
+        sp_dct["OTHER_BROADLEAF"],
+    ]:
+        return "other"
+
+    # if only annual ryegrass
+    # For older years
+    if len(list_species) == 1:
+        if list_species == [sp_dct["ANNUAL_RYEGRASS"]]:
+            return "annual ryegrass"
+    # For 2023+ years
+    if len(list_species) == 5:
+        # Ensuring that all others are blank
+        if list_species[0] == sp_dct["ANNUAL_RYEGRASS"] and list_species[1:] == [
+            "",
+            "",
+            "",
+            "",
+        ]:
+            return "annual ryegrass"
+
+    # if only cereal rye
+    if len(list_species) == 1:
+        if list_species == [sp_dct["CEREAL_RYE"]]:
+            return "cereal (winter) rye"
+
+    if len(list_species) == 5:
+        if list_species[0] == sp_dct["CEREAL_RYE"] and list_species[1:] == [
+            "",
+            "",
+            "",
+            "",
+        ]:
+            return "cereal (winter) rye"
+
+    # Family based classese
+    list_family = [convert_to_plant_family(sp) for sp in list_species]
+
+    if (
+        "brassica" in list_family
+        and "grass_cereal" in list_family
+        and "legume" in list_family
+    ):
+        return "brassica and legume and grass/cereal"
+
+    if "brassica" in list_family and "grass_cereal" in list_family:
+        return "brassica and grass/cereal"
+
+    if "brassica" in list_family and "legume" in list_family:
+        return "brassica and legume"
+
+    if "grass_cereal" in list_family and "legume" in list_family:
+        return "legume and grass/cereal"
+
+    if "brassica" in list_family:
+        return "radishes, turnips, and other brassicas"
+
+    if "grass_cereal" in list_family:
+        return "cereal/grass (oats, wheat, and other cereal/grasses)"
+
+    if "legume" in list_family:
+        return "clovers, peas and other legumes"
+
+    # return "other"
+    return "other - escaped"
+
+
+def convert_to_plant_family(species):
+    """For converting a cc species
+    to its plant 'family'
+
+    """
+    sp_dct = give_species_options(species.isupper())
+
+    dct_family = {
+        "brassica": ["TURNIP", "RADISH", "KALE", "CANOLA"],
+        "legume": [
+            "BALANSA_CLOVER",
+            "BERSEEM_CLOVER",
+            "COWPEA",
+            "CRIMSON_CLOVER",
+            "DUTCH_WHITE_CLOVER",
+            "FIELD_PEA",
+            "PEAS",
+            "HAIRY_VETCH",
+            "OTHER_LEGUME",
+            "RED_CLOVER",
+            "YELLOW_SWEET_CLOVER",
+        ],
+        "grass_cereal": [
+            "ANNUAL_RYEGRASS",
+            "BARLEY",
+            "BUCKWHEAT",
+            "CEREAL_RYE",
+            "FLAX",
+            "OATS",
+            "OTHER_GRASS",
+            "PEARL_MILLET",
+            "SORGHUM",
+            "SORGHUM_SUDAN",
+            "SUNFLOWER",
+            "TRITICALE",
+            "WHEAT_SPRING",
+            "WHEAT_WINTER",
+            "PLANTAIN",
+            "OTHER_BROADLEAF",
+        ],
+    }
+
+    for family in dct_family:
+        for specie_family in dct_family[family]:
+            if species == sp_dct[specie_family]:
+                # print(f"\t{species} is classed as {family}")
+                return family
+
+    if species == "dwarf essex rape":
+        return "brassica"
+
+    return None
+
+
 def update_static_species(id, species):
     from django.db import connection
 
@@ -652,15 +807,15 @@ def update_2020_2022():
             print("Null for", cc[1])
             continue
         id = cc[1]
+        # if id in ["53034-RH-22", "54733-AB-20"]:
+        #     break
         old_class = cc[-4]
-        cc_sps = cc[-3].split(", ")[:5]
-        # We need five cc species,
-        #   this is to pad the list with Nones
-        cc_sps = cc_sps + (5 - len(cc_sps)) * [None]
-        cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5 = cc_sps
 
-        species = derive_species_class(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5)
-        update_static_species(id, species)
+        cc_sps = cc[-3].split(", ")
+
+        species_class = derive_species_class(cc_sps)
+
+        update_static_species(id, species_class)
 
 
 def update_2023_plus():
@@ -668,18 +823,32 @@ def update_2023_plus():
 
     surveys = Survey.objects.all()
     for survey_response in surveys:
+
         cc_sp_1 = survey_response.cover_crop_species_1
         cc_sp_2 = survey_response.cover_crop_species_2
         cc_sp_3 = survey_response.cover_crop_species_3
         cc_sp_4 = survey_response.cover_crop_species_4
         cc_sp_5 = survey_response.cover_crop_species_5
-        survey_response.derived_species_class = derive_species_class(
+        list_sp = [
             survey_response.cover_crop_species_1,
             survey_response.cover_crop_species_2,
             survey_response.cover_crop_species_3,
             survey_response.cover_crop_species_4,
             survey_response.cover_crop_species_5,
-        )
+        ]
+
+        species_class = derive_species_class(list_sp)
+        # if species_class == "other - escaped":
+        #     print("_________________")
+        #     print("Escaped:")
+        #     print(list_sp)
+        #     print(survey_response.cover_crop_species_and_rate_write_in)
+        #     print(survey_response.cover_crop_multispecies_mix_write_in)
+        #     print("_________________")
+        # else:
+        #     print(species_class)
+
+        survey_response.derived_species_class = species_class
         survey_response.save()
 
 
@@ -863,7 +1032,7 @@ SELECT
                 when live_dat.cover_crop_species_1 = 'SORGHUM' then 'sorghum'
                 when live_dat.cover_crop_species_1 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
                 when live_dat.cover_crop_species_1 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_1 = 'TRITICALE' then 'Tritcale'
+                when live_dat.cover_crop_species_1 = 'TRITICALE' then 'triticale'
                 when live_dat.cover_crop_species_1 = 'TURNIP' then 'turnip'
                 when live_dat.cover_crop_species_1 = 'WHEAT_SPRING' then 'wheat (spring)'
                 when live_dat.cover_crop_species_1 = 'WHEAT_WINTER' then 'wheat (winter)'
@@ -890,7 +1059,7 @@ SELECT
                 when live_dat.cover_crop_species_2 = 'SORGHUM' then 'sorghum'
                 when live_dat.cover_crop_species_2 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
                 when live_dat.cover_crop_species_2 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_2 = 'TRITICALE' then 'Tritcale'
+                when live_dat.cover_crop_species_2 = 'TRITICALE' then 'triticale'
                 when live_dat.cover_crop_species_2 = 'TURNIP' then 'turnip'
                 when live_dat.cover_crop_species_2 = 'WHEAT_SPRING' then 'wheat (spring)'
                 when live_dat.cover_crop_species_2 = 'WHEAT_WINTER' then 'wheat (winter)'
@@ -917,7 +1086,7 @@ SELECT
                 when live_dat.cover_crop_species_3 = 'SORGHUM' then 'sorghum'
                 when live_dat.cover_crop_species_3 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
                 when live_dat.cover_crop_species_3 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_3 = 'TRITICALE' then 'Tritcale'
+                when live_dat.cover_crop_species_3 = 'TRITICALE' then 'triticale'
                 when live_dat.cover_crop_species_3 = 'TURNIP' then 'turnip'
                 when live_dat.cover_crop_species_3 = 'WHEAT_SPRING' then 'wheat (spring)'
                 when live_dat.cover_crop_species_3 = 'WHEAT_WINTER' then 'wheat (winter)'
@@ -944,7 +1113,7 @@ SELECT
                 when live_dat.cover_crop_species_4 = 'SORGHUM' then 'sorghum'
                 when live_dat.cover_crop_species_4 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
                 when live_dat.cover_crop_species_4 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_4 = 'TRITICALE' then 'Tritcale'
+                when live_dat.cover_crop_species_4 = 'TRITICALE' then 'triticale'
                 when live_dat.cover_crop_species_4 = 'TURNIP' then 'turnip'
                 when live_dat.cover_crop_species_4 = 'WHEAT_SPRING' then 'wheat (spring)'
                 when live_dat.cover_crop_species_4 = 'WHEAT_WINTER' then 'wheat (winter)'
@@ -971,7 +1140,7 @@ SELECT
                 when live_dat.cover_crop_species_5 = 'SORGHUM' then 'sorghum'
                 when live_dat.cover_crop_species_5 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
                 when live_dat.cover_crop_species_5 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_5 = 'TRITICALE' then 'Tritcale'
+                when live_dat.cover_crop_species_5 = 'TRITICALE' then 'triticale'
                 when live_dat.cover_crop_species_5 = 'TURNIP' then 'turnip'
                 when live_dat.cover_crop_species_5 = 'WHEAT_SPRING' then 'wheat (spring)'
                 when live_dat.cover_crop_species_5 = 'WHEAT_WINTER' then 'wheat (winter)'
@@ -1053,7 +1222,7 @@ SELECT
                 when live_dat.crop_rotation_2023_cash_crop_species = 'WHEAT' then 'wheat'
                 when live_dat.crop_rotation_2023_cash_crop_species = 'OATS' then 'oats'
                 when live_dat.crop_rotation_2023_cash_crop_species = 'BARLEY' then 'barley'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'TRITICALE' then 'Tritcale'
+                when live_dat.crop_rotation_2023_cash_crop_species = 'TRITICALE' then 'triticale'
                 when live_dat.crop_rotation_2023_cash_crop_species = 'SORGHUM' then 'sorghum'
                 when live_dat.crop_rotation_2023_cash_crop_species = 'SORGHUM_SUDAN' then 'sorghum-sudan'
                 when live_dat.crop_rotation_2023_cash_crop_species = 'ALFALFA' then 'alfalfa'
@@ -1089,7 +1258,6 @@ SELECT
             ) as labdata
             on live_dat.id = labdata.id
             where live_dat.confirmed_accurate = TRUE
-
     ) as a
     """
 

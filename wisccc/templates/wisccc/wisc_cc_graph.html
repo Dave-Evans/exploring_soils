@@ -567,7 +567,13 @@
             }))
             // Converting dates to times
             var dParserYmd = d3.timeParse("%Y-%m-%d")
+            var null_indices = [];
             for (let i = 0; i < data.length; i++) {
+
+                // grabbing the indices of the null cover crops
+                if (data[i].properties.cc_species_raw == null) {
+                    null_indices.push(i)
+                }
 
                 // Coding counties to regions
                 data[i].properties.region = getRegion(data[i].properties.county_single)
@@ -608,12 +614,20 @@
                 data[i].properties.cc_planting_date_flat = cov_crop_planting_date
 
             }
+
+
             // Hack to limit the graphs to just 2020 and 2021 (years flattened so just need  == 2020)
             // data = data.filter(function (d) { return d.properties.cc_planting_date_flat.getFullYear() == 2020 })
-            submission_data = data;
+            submission_data = data.filter(function (el) { return el.properties.cc_biomass != null });
+            submission_data = submission_data.filter(function (el) { return el.properties.cc_species_raw != null });
             var pop_selectize_box = function (geojson_data, id_selector, field_name) {
                 var all_instances = [];
                 for (item in geojson_data) {
+                    // If no biomass, then don't look at the data at all, skip it.
+                    if (geojson_data[item]['properties']['cc_biomass'] == null) {
+                        continue
+                    }
+
                     if (field_name == "cc_species_raw") {
                         var cc_species_raw = geojson_data[item]['properties'][field_name]
                         // Bombs if null
@@ -1407,6 +1421,8 @@
 
                 var legendSoil = d3.legendColor()
                     .shapeWidth(30)
+                    .labelWrap(150)
+                    .cellFilter(function (d) { return d.label !== null })
                     // .cells(scale.domain().length - 2)
                     .scale(scale)
                 // .orient("horizontal");
