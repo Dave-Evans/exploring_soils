@@ -98,30 +98,55 @@
 
 // Species based on plant families
 const speciesClasses = [
-    "clovers, peas and other legumes",
-    "radishes, turnips, and other brassicas",
-    "cereal/grass (oats, wheat, and other cereal/grasses)",
-    "annual ryegrass",
+
     "cereal (winter) rye",
-    "brassica and grass/cereal",
-    "brassica and legume",
+    "annual ryegrass",
+    "clovers, peas and other legumes",
+    "cereal/grass (oats, wheat, and other cereal/grasses)",
+
     "brassica and legume and grass/cereal",
     "legume and grass/cereal",
+    "brassica and grass/cereal",
+    "brassica and legume",
     "other",
+    // Drop
+    // "radishes, turnips, and other brassicas"
 ]
 const speciesColors = [
-    "#a6cee3",
-    "#1f78b4",
-    "#b2df8a",
+
+    // green
     "#33a02c",
-    "#fb9a99",
+    // red
     "#e31a1c",
-    "#fdbf6f",
-    "#ff7f00",
-    "#cab2d6",
+    // blue
+    "#1f78b4",
+    // purple
     "#6a3d9a",
-    "#ffff99",
-    "#b15928"
+
+    // light green
+    "#b2df8a",
+    // light blue
+    "#a6cee3",
+    // pink
+    "#fa9fb5", // middle of RdPu
+    // "#fb9a99", // lighter red in paired pal
+    // light purple
+    "#cab2d6",
+
+    // lighter color category - grey?
+    "#ccc"
+    // "#a6cee3",
+    // "#1f78b4",
+    // "#b2df8a",
+    // "#33a02c",
+    // "#fb9a99",
+    // "#e31a1c",
+    // "#fdbf6f",
+    // "#ff7f00",
+    // "#cab2d6",
+    // "#6a3d9a",
+    // "#ffff99",
+    // "#b15928"
 ]
 
 
