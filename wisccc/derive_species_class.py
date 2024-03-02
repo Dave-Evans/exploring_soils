@@ -634,6 +634,14 @@ def derive_species_class_gregg_mod(cc_sp_1, cc_sp_2, cc_sp_3, cc_sp_4, cc_sp_5):
 def derive_species_class(list_species):
     """Takes a wisccc_survey object and classifies
     the given species into a reduced number of classes
+    cereal (winter) rye only
+    annual ryegrass only
+    legumes
+    grasses/cereals
+    mix of legumes + grass/cereal + brassica
+    mix of legumes + grass/cereal
+    mix of grass/cereal + brassica
+    other
     """
 
     # keep null if all null
@@ -644,10 +652,10 @@ def derive_species_class(list_species):
 
     # for past years write in
     if list_species[0] == sp_dct["MULITSPECIES"]:
-        return "brassica and legume and grass/cereal"
+        return "mix of legumes + grass/cereal + brassica"
 
     if list_species[0] == "Terra life maizepro cover crop mix":
-        return "brassica and legume and grass/cereal"
+        return "mix of legumes + grass/cereal + brassica"
 
     if list_species[0] in [
         sp_dct["OTHER"],
@@ -659,7 +667,7 @@ def derive_species_class(list_species):
     # For older years
     if len(list_species) == 1:
         if list_species == [sp_dct["ANNUAL_RYEGRASS"]]:
-            return "annual ryegrass"
+            return "annual ryegrass only"
     # For 2023+ years
     if len(list_species) == 5:
         # Ensuring that all others are blank
@@ -669,12 +677,12 @@ def derive_species_class(list_species):
             "",
             "",
         ]:
-            return "annual ryegrass"
+            return "annual ryegrass only"
 
     # if only cereal rye
     if len(list_species) == 1:
         if list_species == [sp_dct["CEREAL_RYE"]]:
-            return "cereal (winter) rye"
+            return "cereal (winter) rye only"
 
     if len(list_species) == 5:
         if list_species[0] == sp_dct["CEREAL_RYE"] and list_species[1:] == [
@@ -683,7 +691,7 @@ def derive_species_class(list_species):
             "",
             "",
         ]:
-            return "cereal (winter) rye"
+            return "cereal (winter) rye only"
 
     # Family based classese
     list_family = [convert_to_plant_family(sp) for sp in list_species]
@@ -693,25 +701,25 @@ def derive_species_class(list_species):
         and "grass_cereal" in list_family
         and "legume" in list_family
     ):
-        return "brassica and legume and grass/cereal"
+        return "mix of legumes + grass/cereal + brassica"
 
     if "brassica" in list_family and "grass_cereal" in list_family:
-        return "brassica and grass/cereal"
+        return "mix of grass/cereal + brassica"
 
     if "brassica" in list_family and "legume" in list_family:
-        return "brassica and legume"
+        return "mix of legumes + brassica"
 
     if "grass_cereal" in list_family and "legume" in list_family:
-        return "legume and grass/cereal"
+        return "mix of legumes + grass/cereal"
 
     if "brassica" in list_family:
         return "radishes, turnips, and other brassicas"
 
     if "grass_cereal" in list_family:
-        return "cereal/grass (oats, wheat, and other cereal/grasses)"
+        return "grasses/cereals"
 
     if "legume" in list_family:
-        return "clovers, peas and other legumes"
+        return "legumes"
 
     # return "other"
     return "other - escaped"
@@ -725,6 +733,8 @@ def convert_to_plant_family(species):
     sp_dct = give_species_options(species.isupper())
 
     dct_family = {
+        # leaving this out for now
+        # "broadleaf": ["PHACELIA", "SUNFLOWER"],
         "brassica": ["TURNIP", "RADISH", "KALE", "CANOLA"],
         "legume": [
             "BALANSA_CLOVER",
@@ -762,7 +772,7 @@ def convert_to_plant_family(species):
     for family in dct_family:
         for specie_family in dct_family[family]:
             if species == sp_dct[specie_family]:
-                # print(f"\t{species} is classed as {family}")
+                print(f"\t{species} is classed as {family}")
                 return family
 
     if species == "dwarf essex rape":

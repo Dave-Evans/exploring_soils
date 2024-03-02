@@ -98,19 +98,18 @@
 
 // Species based on plant families
 const speciesClasses = [
+    "cereal (winter) rye only",
+    "annual ryegrass only",
 
-    "cereal (winter) rye",
-    "annual ryegrass",
-    "clovers, peas and other legumes",
-    "cereal/grass (oats, wheat, and other cereal/grasses)",
+    "legumes",
+    "grasses/cereals",
 
-    "brassica and legume and grass/cereal",
-    "legume and grass/cereal",
-    "brassica and grass/cereal",
-    "brassica and legume",
-    "other",
-    // Drop
-    // "radishes, turnips, and other brassicas"
+    "mix of legumes + grass/cereal + brassica",
+    "mix of legumes + grass/cereal",
+    "mix of legumes + brassica",
+    "mix of grass/cereal + brassica",
+    "other"
+
 ]
 const speciesColors = [
 
@@ -129,7 +128,7 @@ const speciesColors = [
     "#a6cee3",
     // pink
     "#fa9fb5", // middle of RdPu
-    // "#fb9a99", // lighter red in paired pal
+    "#fec44f", // middle orange in oranges
     // light purple
     "#cab2d6",
 
@@ -252,15 +251,18 @@ const priorcrop_list = [
 ]
 
 const priorcropColors = [
-    '#e41a1c',
-    '#377eb8',
-    '#4daf4a',
-    '#984ea3',
-    '#ff7f00',
-    '#ffff33',
-    '#a65628',
-    '#f781bf',
-    '#999999'
+    "#8dd3c7",
+    "#ffffb3",
+    "#bebada",
+    "#fb8072",
+    "#80b1d3",
+    "#fdb462",
+    "#b3de69",
+    "#fccde5",
+    "#d9d9d9",
+    "#bc80bd",
+    "#ccebc5",
+    "#ffed6f"
 ]
 
 
