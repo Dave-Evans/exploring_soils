@@ -298,7 +298,7 @@
                                 <option value="cc_planting_date_mo">Planting date</option>
                             </select>
                             <div id="legend">
-                                <svg width="260px" height="300px"></svg>
+                                <svg width="260px" height="250px"></svg>
                                 <p>Actual locations have been<br>obscured to protect landowner's privacy.</p>
                             </div>
 
@@ -782,17 +782,22 @@
 
         function updateStyle(property) {
             geojsonObject.eachLayer(function (layer) {
-                createNullLgend()
+                removeLegend(".nullLegend");
                 if (property == "acc_gdd") {
                     layer.setStyle({
                         fillColor: layer.feature.properties.acc_gdd ? gddScale(layer.feature.properties.acc_gdd) : "#ccc"
                     })
                     updateLegend(gddScale, ".0f")
+
+
+                    createNullLgend("translate(20, 147)")
                 } else if (property == "cc_biomass") {
                     layer.setStyle({
                         fillColor: layer.feature.properties.cc_biomass ? biomassScale(layer.feature.properties.cc_biomass) : "#ccc"
                     })
                     updateLegend(biomassScale, ".1f")
+
+                    createNullLgend("translate(20, 130)")
                 } else if (property == "fq_rfq") {
                     layer.setStyle({
                         fillColor: layer.feature.properties.rfq_bin ? rfqBinsScale(layer.feature.properties.rfq_bin) : "#ccc"
@@ -829,6 +834,7 @@
                     //     fillColor: layer.feature.properties.cc_planting_date_mo ? plantingScale(layer.feature.properties.cc_planting_date_mo) : "#ccc"
                     // })
                     // updateLegend(plantingScale, "c")
+
                 }
 
 

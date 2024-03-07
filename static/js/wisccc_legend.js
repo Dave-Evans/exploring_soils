@@ -108,7 +108,8 @@ const speciesClasses = [
     "mix of legumes + grass/cereal",
     "mix of legumes + brassica",
     "mix of grass/cereal + brassica",
-    "other"
+    "other",
+    "not reported"
 
 ]
 const speciesColors = [
@@ -191,14 +192,17 @@ const rfqBins = [
     "Prime",
     "Grade 1",
     "Grade 2",
-    "Grade 3"
+    "Grade 3",
+    "Not reported"
+
 ]
 
 const rfqColors = [
     "#238b45",
     "#74c476",
     "#bae4b3",
-    "#edf8e9"
+    "#edf8e9",
+    "#ccc"
 ]
 
 var rfqBinsScale = d3.scaleOrdinal()
@@ -209,7 +213,8 @@ const plantingSeasons = [
     "Winter",
     "Spring",
     "Summer",
-    "Fall"
+    "Fall",
+    "Not reported"
 ]
 
 const plantingSeasonColors = [
@@ -217,7 +222,8 @@ const plantingSeasonColors = [
     "#2c7bb6", // winter
     "#c2e699", // spring
     "#d94701", // summer
-    "#ffffd4" // fall
+    "#ffffd4", // fall
+    "#ccc"
     // "#2c7bb6", // winter
     // "#fdae61", // spring
     // "#d7191c", // summer
@@ -247,6 +253,9 @@ const priorcrop_list = [
     'other forage',
     'winter wheat',
     'other small grains',
+    'livestock feeding/grazing',
+    'other grain',
+    'not reported'
     // '.',
 ]
 
@@ -262,7 +271,8 @@ const priorcropColors = [
     "#d9d9d9",
     "#bc80bd",
     "#ccebc5",
-    "#ffed6f"
+    "#ffed6f",
+    "#ccc"
 ]
 
 
@@ -322,7 +332,7 @@ var gddScale = d3.scaleThreshold()
 
 var biomassScale = d3.scaleThreshold()
     .domain([0.5, 1, 1.5, 2, 2.5, 3, 3.5])
-    .range(d3.schemePuOr[7]);
+    .range(d3.schemeYlGn[7]);
 
 
 
@@ -338,7 +348,7 @@ function updateLegend(myscale, fmt_string) {
 
     svg.append("g")
         .attr("class", "legendSoil")
-        .attr("transform", "translate(20,30)")
+        .attr("transform", "translate(20,10)")
         .style("height", 300);
 
     var legendSoil = d3.legendColor()
@@ -363,18 +373,20 @@ function updateLegend(myscale, fmt_string) {
 // For representing nulls in the legend. 
 // We just add this legend first and build a 
 //  legend based on the data after.
-function createNullLgend() {
+function createNullLgend(trnslte = "translate(20, 130)") {
 
     removeLegend(".nullLegend");
 
     var svg = d3.select("#legend svg");
     var nullOrdScale = d3.scaleOrdinal()
-        .domain(["Null"])
+        .domain(["Not analyzed"])
         .range(["#ccc"]);
 
     svg.append("g")
         .attr("class", "nullLegend")
-        .attr("transform", "translate(20,10)");
+        // for biomass "translate(20, 130)"
+        // for GDU "translate(20, 147)"
+        .attr("transform", trnslte);
 
     var nullValLegend = d3.legendColor()
         .shapeWidth(30)
