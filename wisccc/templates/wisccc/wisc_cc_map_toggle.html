@@ -254,6 +254,22 @@
                 <div id="panelContent" class="container-fluid">
                     <div style="border: black; font-size:12px; width:400px">
 
+                        <h4>Display Options</h4>
+
+                        <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
+                            <option value="cc_species">Cover crop types</option>
+                            <option value="previous_crop">Prior crop</option>
+                            <option value="cc_biomass">Cover crop biomass (tons dm/acre)</option>
+                            <option value="fq_rfq">Relative forage quality</option>
+                            <option value="acc_gdd">Growing degree units</option>
+                            <option value="cc_planting_date_mo">Planting date</option>
+                        </select>
+                        <div id="legend">
+                            <svg width="260px" height="225px"></svg>
+                            <p>Actual locations have been<br>obscured to protect landowner's privacy.</p>
+                        </div>
+
+
                         <h4>Filters</h4>
 
                         <span>Year
@@ -272,7 +288,7 @@
                             <select id="SeedingFilter" class="SeedingSelector">
                             </select>
                         </span><br>
-                        <span>Cover Crop Species
+                        <span>Cover crop species
                             <select id="SpeciesFilter" class="SpeciesSelector">
                             </select>
                         </span><br>
@@ -286,21 +302,6 @@
                         </span>
 
 
-                        <h4>Select display property</h5>
-
-                            <select id="PropertySelection"
-                                class="PropSelector selectize-control single selectize-input">
-                                <option value="cc_species">Cover crop type</option>
-                                <option value="previous_crop">Prior cash crop</option>
-                                <option value="cc_biomass">Cover crop biomass (tons dm/acre)</option>
-                                <option value="fq_rfq">Relative forage quality</option>
-                                <option value="acc_gdd">Growing degree units</option>
-                                <option value="cc_planting_date_mo">Planting date</option>
-                            </select>
-                            <div id="legend">
-                                <svg width="260px" height="250px"></svg>
-                                <p>Actual locations have been<br>obscured to protect landowner's privacy.</p>
-                            </div>
 
                     </div>
 
@@ -422,6 +423,11 @@
             } else {
                 var planting_date = feature.properties.cc_planting_date.toLocaleDateString();
             }
+            var planting_rate = feature.properties.cc_planting_rate;
+            if (planting_rate === null | planting_rate == ".") {
+                planting_rate = "Not reported";
+            }
+
 
             var biomass_val = feature.properties.cc_biomass;
 
@@ -429,14 +435,14 @@
             var popupContent = "<dl>" +
                 // "<dt>ID</dt> <dd>" + feature.id + "</dd>" +
                 "<dt>Cover crops</dt> <dd>" + feature.properties.cc_species_raw + "</dd>" +
-                "<dt>Seeding Rate</dt> <dd>" + feature.properties.cc_planting_rate + "</dd>" +
+                "<dt>Seeding rate</dt> <dd>" + planting_rate + "</dd>" +
+                "<dt>Seeding method</dt> <dd>" + feature.properties.cc_seeding_method + "</dd>" +
                 "<dt>Previous crop</dt> <dd>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</dd>" +
                 "<dt>Planting date</dt> <dd>" + planting_date + "</dd>" +
                 "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
                 "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
                 "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
-                "</dl>";// +
-            // "*This point is not the actual location of the farm. Locations have been obscured to protect landowner's privacy.";
+                "</dl>";
 
 
             if (feature.properties && feature.properties.popupContent) {

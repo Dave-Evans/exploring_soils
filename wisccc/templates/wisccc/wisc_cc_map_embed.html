@@ -192,7 +192,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
         var popupContent = "<dl>" +
             "<dt>Cover crop</dt> <dd>" + feature.properties.cc_species + "</dd>" +
-            "<dt>Cover Crop Species and Seeding Rate</dt> <dd>" + feature.properties.cc_species + "<br>" + feature.properties.cc_planting_rate + "</dd>" +
+            "<dt>Cover crop species and seeding rate</dt> <dd>" + feature.properties.cc_species + "<br>" + feature.properties.cc_planting_rate + "</dd>" +
             "<dt>Previous crop</dt> <dd>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</dd>" +
             "<dt>Planting date</dt> <dd>" + planting_date + "</dd>" +
             "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
