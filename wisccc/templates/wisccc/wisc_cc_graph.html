@@ -714,9 +714,7 @@
                 "select_planting_year": "year",
                 "select_tillage": "residue_remaining"
             }
-            // $('#select_model_type').selectize();
-            // $('#xFactor').selectize();
-            // $('#select_color').selectize();
+
             for (k in Object.keys(boxes_select)) {
 
                 id_selector = Object.keys(boxes_select)[k];
@@ -737,52 +735,6 @@
                     }
                 })
             }
-
-
-            // var $selectize_county = $(function () {
-            //     $("#selectize_county").selectize({
-            //         plugins: ["restore_on_backspace", "clear_button"],
-            //         delimiter: " - ",
-            //         placeholder: "All counties...",
-            //         persist: false,
-            //         closeAfterSelect: true,
-            //         maxItems: null,
-            //         valueField: "value",
-            //         labelField: "label",
-            //         searchField: ["value", "label"],
-            //         options: pop_selectize_box(submission_data, "selectize_county", "county_single"),
-            //         onChange: function (value, isOnInitialize) {
-            //             updateChart(false)
-            //         }
-            //     });
-            // });
-            // // var county_control = $selectize_county[0].selectize;
-            // var $selectize_species = $(function () {
-            //     $("#select_species").selectize({
-            //         plugins: ["restore_on_backspace", "clear_button"],
-            //         delimiter: " - ",
-            //         persist: false,
-            //         maxItems: null,
-            //         valueField: "value",
-            //         labelField: "label",
-            //         searchField: ["value", "label"],
-            //         options: pop_selectize_box(submission_data, "select_species", "cc_species"),
-            //         onChange: function (value, isOnInitialize) {
-            //             updateChart(false)
-            //         }
-            //     });
-            // });
-            // var species_control = $selectize_county[0].selectize;
-            //pop_selectize_box(submission_data, "selectize_county", "county_single", control);
-
-            // pop_select_box(submission_data, "select_species", "cc_species");
-            // pop_select_box(submission_data, "select_soil_texture", "dominant_soil_texture");
-            // pop_select_box(submission_data, "select_seeding_method", "cc_seeding_method")
-            // pop_select_box(submission_data, "select_planting_year", "year");
-            // pop_select_box(submission_data, "select_county", "county_single");
-            // pop_select_box(submission_data, "select_tillage", "residue_remaining");
-            // $('#select_species').selectize();
-
 
             // Add X axis
             var xScaleLinear = d3.scaleLinear()
@@ -1114,106 +1066,6 @@
                 });
             }
 
-            function filterDataSoilText(data, sdd) {
-
-                var selector;
-                selector = "#select_soil_texture";
-
-                var soil_texture = d3.select(selector).node().value
-                if (soil_texture == "All") {
-                    return data
-                }
-                return data.filter(function (d) {
-                    return d.properties.dominant_soil_texture == soil_texture;
-                });
-
-            }
-
-            function filterDataSeedingMethod(data) {
-
-                var selector;
-                selector = "#select_seeding_method";
-
-                var seeding_method = d3.select(selector).node().value
-                if (seeding_method == "All") {
-                    return data
-                }
-                return data.filter(function (d) {
-                    return d.properties.cc_seeding_method == seeding_method;
-                });
-            }
-
-            function filterDataYear(data, sdd) {
-                // Reminder, won't be real year, 2020 == 120
-                var selector;
-                selector = "#select_planting_year";
-
-                var year = d3.select(selector).node().value
-                if (year == "All") {
-                    return data
-                }
-                return data.filter(function (d) {
-                    return d.properties.year == year;
-                });
-
-            }
-
-            function filterDataSpecies(data, sdd) {
-                // Reminder, won't be real year, 2020 == 120
-                var selector;
-
-                selector = "#select_species";
-                var array = $(selector).selectize()[0].selectize.getValue()
-                // If null or of length 0, then no filtering
-                if (array == null | array.length == 0) {
-                    return data
-                }
-                return data.filter(function (d) {
-
-                    return array.includes(d.properties.cc_species)
-
-                })
-
-            }
-
-            function filterDataCounty(data, sdd) {
-
-                var selector;
-
-                selector = "#select_county";
-
-                var county_array = $('#select_county').selectize()[0].selectize.getValue()
-
-
-                if (county_array == null | county_array.length == 0) {
-                    return data
-                }
-                return data.filter(function (d) {
-                    var is_this_one = county_array.includes(d.properties.county_single)
-                    console.log(d.id, is_this_one)
-                    return county_array.includes(d.properties.county_single)
-                    // return d.properties.county_single === county;
-                });
-
-            }
-
-            function filterDataTillage(data, sdd) {
-                // Reminder, won't be real year, 2020 == 120
-                var selector;
-
-                selector = "#select_tillage";
-
-                var tillage_tier = d3.select(selector).node().value
-                console.log(tillage_tier)
-                if (tillage_tier == "All") {
-                    return data
-                }
-                return data.filter(function (d) {
-                    return d.properties.residue_remaining === tillage_tier;
-                });
-
-            }
-
             function filterDataManurePrior(data) {
 
                 var selector;
@@ -1282,50 +1134,6 @@
                 updateChart(false);
 
             })
-
-            // Filter actions
-            d3.select("#select_county").on("change", function () {
-                console.log("Changed county to: " + this.value);
-
-                updateChart(false);
-
-            })
-
-            d3.select("#select_species").on("change", function () {
-                console.log("Changed species to: " + this.value);
-
-                updateChart(false);
-
-            })
-
-            d3.select("#select_tillage").on("change", function () {
-                console.log("Changed tillage to: " + this.value);
-
-                updateChart(false);
-
-            })
-
-            d3.select("#select_planting_year").on("change", function () {
-
-                console.log("Changed to: " + this.value)
-                updateChart(false);
-
-            })
-
-            d3.select("#select_seeding_method").on("change", function () {
-
-                console.log("Changed to: " + this.value)
-                updateChart(false);
-
-            })
-
-            d3.select("#select_soil_texture").on("change", function () {
-
-                console.log("Changed to: " + this.value)
-                updateChart(false);
-
-            })
-
 
 
             d3.select("#checkbox_linreg_line").on("change", function () {
