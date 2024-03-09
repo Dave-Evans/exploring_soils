@@ -318,13 +318,18 @@
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Planting Year</td>
+                                <td>Planting year</td>
                                 <td><select id="select_planting_year" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Soil Texture</td>
+                                <td>Soil texture</td>
                                 <td><select id="select_soil_texture" class="group-select">
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Prior crop</td>
+                                <td><select id="select_prior_crop" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
@@ -333,7 +338,7 @@
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Seeding Method</td>
+                                <td>Seeding method</td>
                                 <td><select id="select_seeding_method" class="group-select">
                                     </select></td>
                             </tr>
@@ -532,8 +537,13 @@
             var tool_tip_string =
                 //"Total precip: " + feature.properties.total_precip + " in" + "<br/>" +
                 feature.properties.county_single + " County" + "<br/>" +
-                feature.properties.cc_species_raw + "<br/>" +
-                feature.properties.cc_planting_rate + "<br/>"
+                feature.properties.cc_species_raw + "<br/>"
+            if (feature.properties.cc_planting_rate == '.' | feature.properties.cc_planting_rate == null) {
+                tool_tip_string += "Not reported <br/>"
+            } else {
+                tool_tip_string += feature.properties.cc_planting_rate + "<br/>"
+            }
+
 
             // Add manure prior and manure post if else statements here for new data
             if (feature.properties.manure_value | feature.properties.manure_value > 0) {
@@ -699,6 +709,7 @@
                 "select_county": "county_single",
                 "select_species": "cc_species_raw",
                 "select_soil_texture": "dominant_soil_texture",
+                "select_prior_crop": "previous_crop",
                 "select_seeding_method": "cc_seeding_method",
                 "select_planting_year": "year",
                 "select_tillage": "residue_remaining"
