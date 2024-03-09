@@ -282,6 +282,10 @@
                             <select id="SoilTextFilter" class="SoilSelector">
                             </select>
                         </span><br>
+                        <span>Prior crop
+                            <select id="PriorCropFilter" class="PriorCropSelector">
+                            </select>
+                        </span><br>
                         <span>Tillage type
                             <select id="TillageFilter" class="TillageSelector">
                             </select>
@@ -568,6 +572,7 @@
             var boxes_select = {
 
                 "SpeciesFilter": "cc_species_raw",
+                "PriorCropFilter": "previous_crop",
                 "SoilTextFilter": "dominant_soil_texture",
                 "SeedingFilter": "cc_seeding_method",
                 "YearFilter": "year",
@@ -683,6 +688,7 @@
 
             filter_values['cc_seeding_method'] = $("#SeedingFilter").selectize()[0].selectize.getValue();
             filter_values['dominant_soil_texture'] = $("#SoilTextFilter").selectize()[0].selectize.getValue();
+            filter_values['previous_crop'] = $("#PriorCropFilter").selectize()[0].selectize.getValue();
             filter_values['cc_species_raw'] = $("#SpeciesFilter").selectize()[0].selectize.getValue();
             filter_values['residue_remaining'] = $("#TillageFilter").selectize()[0].selectize.getValue();
             filter_values['manure_prior'] = prior_manure;
@@ -744,6 +750,7 @@
                     const filt_year = (filter_values.year.length == 0) ? true : (filter_values.year.includes(feature.properties.year));
                     const filt_seeding = (filter_values.cc_seeding_method.length == 0) ? true : (filter_values.cc_seeding_method.includes(feature.properties.cc_seeding_method));
                     const filt_soiltext = (filter_values.dominant_soil_texture.length == 0) ? true : (filter_values.dominant_soil_texture.includes(feature.properties.dominant_soil_texture));
+                    const filt_priorcrop = (filter_values.previous_crop.length == 0) ? true : (filter_values.previous_crop.includes(feature.properties.previous_crop));
                     //const filt_species = (filter_values.cc_species_raw.length == 0) ? true : (filter_values.cc_species_raw.includes(feature.properties.cc_species_raw));
                     const filt_species = (filter_values.cc_species_raw.length == 0) ? true : (containsTargetSpecies(filter_values.cc_species_raw, feature.properties.cc_species_raw.split(", ")));
 
@@ -751,7 +758,7 @@
                     const filt_priorman = (filter_values.manure_prior == false) ? true : (feature.properties.manure_prior == "Yes");
                     const filt_postman = (filter_values.manure_post == false) ? true : (feature.properties.manure_post == "Yes");
 
-                    return filt_year && filt_seeding && filt_soiltext && filt_species && filt_till && filt_priorman && filt_postman //only true if both are true
+                    return filt_year && filt_seeding && filt_soiltext && filt_species && filt_till && filt_priorman && filt_postman && filt_priorcrop//only true if both are true
                 },
 
                 pointToLayer: function (feature, latlng) {
@@ -781,6 +788,11 @@
             addLayerToMap();
         });
         $("#SoilTextFilter").on("input", function () {
+            filterer()
+            //add the layer to the map again, now that we have changed the filter value. 
+            addLayerToMap();
+        });
+        $("#PriorCropFilter").on("input", function () {
             filterer()
             //add the layer to the map again, now that we have changed the filter value. 
             addLayerToMap();
