@@ -17,7 +17,90 @@
             target="_blank" rel="noopener noreferrer">Michael Fields Agricultural Institute
           </a> website.
         </p>
-        <div class="card-deck">
+
+        <!-- Begin experiment -->
+
+        <!-- Map -->
+        <div class="card mb-3">
+          <a href="{% url 'wisc_cc_map' %}">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="{% static 'img/display_wisc_cc_map2.png' %}" alt="Map of participating farmers"
+                  class="img-fluid rounded-start" />
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title" style="color:#212529;">Map of cover crop practices & results by farm</h5>
+                  <p class="card-text" style="color:#212529;">
+                    Each colored dot on this map represents a field from a participating citizen science farmer.
+                    Farmers completed a survey and collected crop samples in Fall 2020, 2021, 2022, or 2023.
+                    <b>Click</b> each colored dot for a popup box with cover crop types, seeding rate, fertility
+                    management and biomass (how much
+                    plant grew), and more.
+                  </p>
+
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Graph  -->
+        <div class="card mb-3">
+          <a href="{% url 'wisc_cc_graph' %}">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="{% static 'img/display_wisc_cc_graph.png' %}" alt="Graph photo"
+                  class="img-fluid rounded-start" />
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title" style="color:#212529;">Cover Crop Graphs</h5>
+                  <p class="card-text" style="color:#212529;">
+                    Change variables to explore locations, species, tillage and more.
+                  </p>
+
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+
+        <!-- Survey -->
+        <div class="card mb-3">
+          <a href="{% url 'wisc_cc_survey' %}">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="{% static 'img/oats_berseem.jpg' %}" alt="Oats photo" class="img-fluid rounded-start" />
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title" style="color:#212529;">Cover Crop Survey</h5>
+                  <p class="card-text" style="color:#212529;">
+                    Click here if you've registered to participate in this year's survey.
+                  </p>
+
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <hr>
+        <p>Interested in participating? We welcome growers with all levels of experience and types of production
+          systems. Click <a href="https://forms.gle/xPC9b78eCVKPmk6B6">HERE to register.</a></p>
+        <img style="display: block; margin-left: auto; margin-right: auto; width: 25%;"
+          src="{% static 'img/qrcode_for_further.png' %}" />
+        <hr>
+        <br>
+        <p>We are grateful to our collaborating Wisconsin farmers and our Soil Health Agricultural Research & Education
+          (SHARE) project partners: the USDA-ARS Dairy Forage Research Center, The Nature Conservancy, UW-Madison's
+        </p>
+
+        <!-- End Experiment -->
+
+        <!-- <div class="card-deck">
 
           <div class="card">
             <a href="{% url 'wisc_cc_survey' %}">
@@ -37,8 +120,14 @@
               <img class="card-img-top" width="200" height="200" src="{% static 'img/display_wisc_cc_map2.png' %}"
                 alt="Card image cap">
               <div class="card-body">
-                <h5 class="card-title">Map-based visualization of cover crop practices and biomass results by farm</h5>
-                <p class="card-text"></p>
+                <h5 class="card-title">Map of cover crop practices & results by farm</h5>
+                <p class="card-text">
+                  Each colored dot on this map represents a field from a participating citizen science farmer. Farmers
+                  completed a survey and collected crop samples in Fall 2020, 2021, 2022, or 2023. <b>Click</b> each
+                  colored
+                  dot for a popup box with cover crop types, seeding rate, fertility management and biomass (how much
+                  plant grew), and more.
+                </p>
 
               </div>
             </a>
@@ -66,7 +155,7 @@
         <br>
         <p>We are grateful to our collaborating Wisconsin farmers and our Soil Health Agricultural Research & Education
           (SHARE) project partners: the USDA-ARS Dairy Forage Research Center, The Nature Conservancy, UW-Madison's
-        </p>
+        </p> -->
         {% if perms.wisccc.survery_manager %}
         <br>
         <div class="card">
