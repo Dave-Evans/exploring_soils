@@ -16,78 +16,61 @@
 
         </p>
 
-        <!-- Begin experiment -->
+        <!-- Begin other experiment -->
+        <div class="card-group">
 
-        <!-- Map -->
-        <div class="card mb-3">
-          <a href="{% url 'wisc_cc_map' %}">
-            <div class="row g-0">
-              <div class="col-md-4">
-                <img src="{% static 'img/display_wisc_cc_map2.png' %}" alt="Map of participating farmers"
-                  class="img-fluid rounded-start" />
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h5 class="card-title" style="color:#212529;">Map of participating citizen science farmers.</h5>
-                  <p class="card-text" style="color:#212529;">
-                    Do you see your dot? <b>Click</b> each location for a popup box with cover crop types, seeding rate,
-                    fertility management biomass (how much plant grew), and more.
 
-                  </p>
-
-                </div>
-              </div>
+          <div class="card">
+            <img class="card-img-top" src="{% static 'img/display_wisc_cc_map2.png' %}"
+              alt="Map of participating farmers">
+            <div class="card-body">
+              <h5 class="card-title">Map of participating citizen science farmers. </h5>
+              <p class="card-text">Do you see your dot? <b>Click</b> each location for a popup box with cover crop
+                types, seeding rate,
+                fertility management biomass (how much plant grew), and more.</p>
+              <a href="{% url 'wisc_cc_map' %}" class="btn btn-primary">Go to the map</a>
             </div>
-          </a>
-        </div>
+          </div>
 
-        <!-- Graph  -->
-        <div class="card mb-3">
-          <a href="{% url 'wisc_cc_graph' %}">
-            <div class="row g-0">
-              <div class="col-md-4">
-                <img src="{% static 'img/display_wisc_cc_graph.png' %}" alt="Graph photo"
-                  class="img-fluid rounded-start" />
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h5 class="card-title" style="color:#212529;">Cover Crop Graphs</h5>
-                  <p class="card-text" style="color:#212529;">
-                    Change variables to explore locations, species, tillage and more.
-                  </p>
 
-                </div>
-              </div>
+          <div class="card">
+            <img class="card-img-top" src="{% static 'img/display_wisc_cc_graph.png' %}" alt="Graph photo">
+            <div class="card-body">
+              <h5 class="card-title">Cover Crop Graphs</h5>
+              <p class="card-text">Change variables to explore locations, species, tillage and
+                more.</p>
+              <a href="{% url 'wisc_cc_graph' %}" class="btn btn-primary">Go to graph</a>
             </div>
-          </a>
+          </div>
+
+
         </div>
+        <div class="card-group">
 
 
-        <!-- Survey -->
-        <div class="card mb-3">
-          <a href="{% url 'wisc_cc_survey' %}">
-            <div class="row g-0">
-              <div class="col-md-4">
-                <img src="{% static 'img/oats_berseem.jpg' %}" alt="Oats photo" class="img-fluid rounded-start" />
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h5 class="card-title" style="color:#212529;">Cover Crop Survey</h5>
-                  <p class="card-text" style="color:#212529;">
-                    Click here if you've registered to participate in this year's survey.
-                  </p>
-
-                </div>
-              </div>
+          <div class="card">
+            <img class="card-img-top" src="{% static 'img/oats_berseem.jpg' %}" alt="Oats photo">
+            <div class="card-body">
+              <h5 class="card-title">Cover Crop Survey </h5>
+              <p class="card-text">Click here if you've registered to participate in this year's survey.</p>
+              <a href="{% url 'wisc_cc_survey' %}" class="btn btn-primary">Go to survey</a>
             </div>
-          </a>
-        </div>
+          </div>
 
-        <hr>
-        <p>Interested in participating? We welcome growers with all levels of experience and types of production
-          systems. Click <a href="https://forms.gle/xPC9b78eCVKPmk6B6">HERE to register.</a></p>
-        <img style="display: block; margin-left: auto; margin-right: auto; width: 25%;"
-          src="{% static 'img/qrcode_for_further.png' %}" />
+
+          <div class="card">
+            <img class="card-img-top" src="{% static 'img/qrcode_for_further.png' %}" alt="">
+            <div class="card-body">
+              <h5 class="card-title">Interested in participating?</h5>
+              <p class="card-text">We welcome growers with all levels of experience and types of production
+                systems. </p>
+              <a href="https://forms.gle/xPC9b78eCVKPmk6B6" class="btn btn-primary">Click here to register</a>
+            </div>
+          </div>
+
+
+        </div>
+        <br>
         <hr>
         <br>
         <p> For more information on the project please visit the <a href="https://www.michaelfields.org/soil-health"
@@ -191,3 +174,81 @@
     </div>
   </div>
   {% endblock %}
+
+
+
+  <!--          Begin 1 col 4 row layout 
+
+  Map
+  <div class="card mb-3">
+    <a href="{% url 'wisc_cc_map' %}">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{% static 'img/display_wisc_cc_map2.png' %}" alt="Map of participating farmers"
+            class="img-fluid rounded-start" />
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title" style="color:#212529;">Map of participating citizen science farmers.</h5>
+            <p class="card-text" style="color:#212529;">
+              Do you see your dot? <b>Click</b> each location for a popup box with cover crop types, seeding rate,
+              fertility management biomass (how much plant grew), and more.
+
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+   Graph  
+  <div class="card mb-3">
+    <a href="{% url 'wisc_cc_graph' %}">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{% static 'img/display_wisc_cc_graph.png' %}" alt="Graph photo"
+            class="img-fluid rounded-start" />
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title" style="color:#212529;">Cover Crop Graphs</h5>
+            <p class="card-text" style="color:#212529;">
+              Change variables to explore locations, species, tillage and more.
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+
+   Survey 
+  <div class="card mb-3">
+    <a href="{% url 'wisc_cc_survey' %}">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{% static 'img/oats_berseem.jpg' %}" alt="Oats photo" class="img-fluid rounded-start" />
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title" style="color:#212529;">Cover Crop Survey</h5>
+            <p class="card-text" style="color:#212529;">
+              Click here if you've registered to participate in this year's survey.
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <hr>
+  <p>Interested in participating? We welcome growers with all levels of experience and types of production
+    systems. Click <a href="https://forms.gle/xPC9b78eCVKPmk6B6">HERE to register.</a></p>
+  <img style="display: block; margin-left: auto; margin-right: auto; width: 25%;"
+    src="{% static 'img/qrcode_for_further.png' %}" /> 
+  <hr>
+
+  -->
