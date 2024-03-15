@@ -187,19 +187,27 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         } else {
             var planting_date = feature.properties.cc_planting_date.toLocaleDateString();
         }
+        var planting_rate = feature.properties.cc_planting_rate;
+        if (planting_rate === null | planting_rate == ".") {
+            planting_rate = "Not reported";
+        }
+
+
         var biomass_val = feature.properties.cc_biomass;
 
         var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
         var popupContent = "<dl>" +
-            "<dt>Cover crop</dt> <dd>" + feature.properties.cc_species + "</dd>" +
-            "<dt>Cover crop species and seeding rate</dt> <dd>" + feature.properties.cc_species + "<br>" + feature.properties.cc_planting_rate + "</dd>" +
+            // "<dt>ID</dt> <dd>" + feature.id + "</dd>" +
+            "<dt>Cover crops</dt> <dd>" + feature.properties.cc_species_raw + "</dd>" +
+            "<dt>Seeding rate</dt> <dd>" + planting_rate + "</dd>" +
+            "<dt>Seeding method</dt> <dd>" + feature.properties.cc_seeding_method + "</dd>" +
             "<dt>Previous crop</dt> <dd>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</dd>" +
             "<dt>Planting date</dt> <dd>" + planting_date + "</dd>" +
             "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
             "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
             "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
             "</dl>" +
-            "Collection locations have been obscured to protect landowner's privacy.";
+            "Locations have been obscured to protect landowner's privacy.";
 
 
         if (feature.properties && feature.properties.popupContent) {
