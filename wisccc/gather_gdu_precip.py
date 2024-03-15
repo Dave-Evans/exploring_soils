@@ -107,7 +107,7 @@ for srvy in surveys:
         print("Error: " + resp.text)
 
     if gdu is not None:
-        update_record(srvy.id, "acc_gdd", gdu)
+        update_record(srvy.id, "acc_gdd", round(gdu, 1))
 
     data = {
         "target": "PRE",

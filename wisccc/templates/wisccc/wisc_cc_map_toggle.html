@@ -267,7 +267,7 @@
                             <option value="cc_planting_date_mo">Planting date</option>
                         </select>
                         <div id="legend">
-                            <svg width="260px" height="225px"></svg>
+                            <svg width="260px" height="180px"></svg>
                             <p>Actual locations have been<br>obscured to protect landowner's privacy.</p>
                         </div>
 
@@ -471,11 +471,7 @@
                 "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
                 "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
                 "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
-                "</dl>" +
-                "<hr>" +
-                "<a xlink:href='#0' class='second_popup' data-toggle='modal' data-target='#helpInformation'>" +
-                '<svg width="24" height="24" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"><path d=" M 507 497C 537 497 561 521 561 551C 562 582 536 606 507 606C 476 606 453 579 452 551C 452 521 477 497 507 497C 507 497 507 497 507 497M 508 181C 598 181 645 242 645 315C 645 388 608 394 576 415C 560 424 549 444 550 460C 550 472 546 480 537 479C 537 479 478 479 478 479C 468 479 460 465 460 457C 460 408 464 397 489 372C 516 348 555 339 555 314C 555 293 542 266 503 265C 480 263 467 271 442 305C 434 314 423 320 414 314C 414 314 375 285 375 285C 368 277 364 266 370 256C 407 201 435 181 508 181C 508 181 508 181 508 181M 150 125C 136 125 125 136 125 150C 125 150 125 650 125 650C 125 664 136 675 150 675C 150 675 325 675 325 675C 339 675 350 686 350 700C 350 700 350 833 350 833C 350 833 481 684 481 684C 486 678 493 675 500 675C 500 675 850 675 850 675C 864 675 875 664 875 650C 875 650 875 150 875 150C 875 136 864 125 850 125C 850 125 150 125 150 125M 147 75C 147 75 150 75 150 75C 150 75 850 75 850 75C 891 75 925 109 925 150C 925 150 925 650 925 650C 925 691 891 725 850 725C 850 725 511 725 511 725C 511 725 344 916 344 916C 337 924 326 927 316 923C 306 920 300 910 300 900C 300 900 300 725 300 725C 300 725 150 725 150 725C 109 725 75 691 75 650C 75 650 75 150 75 150C 75 110 107 77 147 75C 147 75 147 75 147 75"/></svg>' +
-                "</a>"
+                "</dl>"
 
 
             if (feature.properties && feature.properties.popupContent) {

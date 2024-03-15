@@ -329,8 +329,8 @@ dat_all <- dat_all %>%
   )) %>%
   mutate(
     cc_seeding_method = case_when(
-      cc_seeding_method %in% c("drill","drilled","No till drilled") ~ "drill",
-      cc_seeding_method == "broadcast, no incorporation" ~ "broadcast",
+      cc_seeding_method %in% c("drill","drilled","No till drilled") ~ "drilled",
+      cc_seeding_method == "broadcast, no incorporation" ~ "broadcast, no incorporation",
       cc_seeding_method %in% c("broadcast + incorporation",
                             "broadcast, roll the field",
                             "Broadcast then rolled",
@@ -339,7 +339,7 @@ dat_all <- dat_all %>%
                             "brillion_bdcst") ~ "broadcast + incorporation",
       cc_seeding_method %in% c("late interseeded -- aerial", "interseeded aerial August 26", "late interseeded -- broadcast") ~ "interseed (late)",
       cc_seeding_method == "early interseeded -- broadcast" ~ "interseed (early)",
-      cc_seeding_method == "frost seeded" ~ "frost seed",
+      cc_seeding_method == "frost seeded" ~ "frost seeded",
       cc_seeding_method == "I don’t remember which field we r talking about." ~ NA,
       cc_seeding_method == "planter_15in" ~ NA,
       .default = cc_seeding_method
@@ -454,8 +454,8 @@ dat_all <- dat_all %>%
 #     tillage_system = ifelse( tolower(gsub("-", "", gsub(" ", "", tillage_system))) == "notill", "no till", tillage_system),
 #     tillage_equip_primary = ifelse( tillage_equip_primary %in% c('n/a', '.', 'nothing', 'None notill'), NA, tillage_equip_primary)
     
-
-write_tsv(dat_all, "~/Documents/small_projects/wisc_cc/wisc_cc_dat.tsv")
+write_tsv(dat_all, "~/Documents/exploring_soils/data/wisc_cc_dat.tsv")
+# write_tsv(dat_all, "~/Documents/small_projects/wisc_cc/wisc_cc_dat.tsv")
 dat_all = read_tsv("~/Documents/small_projects/wisc_cc/wisc_cc_dat.tsv")
 
 # for finding unique list of all entered crops
