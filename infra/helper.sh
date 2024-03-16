@@ -428,7 +428,7 @@ while [ -n "$1" ]; do
             ansible-playbook -i ./ansible/hosts ./ansible/apply_elastic_ip.yml
             ;;
         *)
-            ERROR "Usage: bash helper.sh create_vars|spinup_infra|teardown|deploy|ssh|opensite|dumpdb|bkup"
+            ERROR "Usage: bash helper.sh create_vars|spinup_infra|teardown|deploy|ssh|opensite|dumpdb|bkup|promote_tier"
             exit 1        
             ;;
     esac
