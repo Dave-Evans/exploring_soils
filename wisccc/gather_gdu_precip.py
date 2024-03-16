@@ -101,7 +101,7 @@ for srvy in surveys:
         data=data,
     )
     gdu = None
-    if resp.status_code == 200:
+    if resp.status_code == 200 or resp.text != "null":
         gdu = resp.json()["body"]["cumulative_gdd"]
     else:
         print("Error: " + resp.text)
