@@ -1191,7 +1191,7 @@ SELECT
                 when live_dat.tillage_system_cash_crop = 'MULCH_TILL' then 
                     'Conservation, >30% residue remaining'
                 when live_dat.tillage_system_cash_crop = 'STRIP_TILL' then 'Conservation, >30% residue remaining'
-                when live_dat.tillage_system_cash_crop = 'NO_TILL' then 'No till'    
+                when live_dat.tillage_system_cash_crop = 'NO_TILL' then 'Conservation, >30% residue remaining'    
             end as mod_residue_remaining
             , case 
                 when live_dat.cover_crop_seeding_method = 'FROST' then'frost seeded'
