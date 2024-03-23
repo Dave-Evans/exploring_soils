@@ -76,7 +76,6 @@ def check_section_completed(user_id, section):
 def get_survey_data():
     """For getting survey data and returning an excel doc"""
     query = """
-
         select 
             s.user_id
             , s.id as response_id
@@ -167,11 +166,33 @@ def get_survey_data():
             , s.where_to_start as "50. Where would you tell another grower to start with cover crops? Why?"
             , s.additional_thoughts as "51. Any additional thoughts or questions? Any important survey questions we should ask next time?"
             , s.survey_created
+            , s.confirmed_accurate
+            , s.notes_admin
+            , s.derived_county
+            , s.derived_species_class
+            , labdata.*
         from wisccc_survey s 
         left join wisccc_farmer f
         on s.user_id = f.user_id 
         left join auth_user as u
-        on s.user_id = u.id"""
+        on s.user_id = u.id
+        left join (
+            select 
+                id,
+                TO_DATE(date_processed,'MM-DD-YYYY') as cc_biomass_collection_date,
+                cc_biomass,
+                cp as fq_cp,
+                andf as fq_andf,
+                undfom30 as fq_undfom30,
+                ndfd30 as fq_ndfd30,
+                tdn_adf as fq_tdn_adf,
+                milk_ton_milk2013 as fq_milkton,
+                rfq as fq_rfq,
+                total_precip,
+                acc_gdd
+            from all_lab_data_2023 lab 
+        ) as labdata
+        on s.id = labdata.id"""
     dat = pd.read_sql(query, connection)
     return dat
 
