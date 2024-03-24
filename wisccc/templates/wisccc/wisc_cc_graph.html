@@ -207,8 +207,55 @@
         .selectize-input {
             width: 200px !important;
         }
+
+        .selectize-short {
+            width: 150px !important
+        }
     </style>
 
+    <style>
+        .helptip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #2f2f2f;
+        }
+
+        .helptip .helptiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #2f2f2f;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -60px;
+
+            /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .helptip:hover .helptiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .helptip .helptiptext::after {
+            content: " ";
+            position: absolute;
+            top: 100%;
+            /* At the bottom of the tooltip */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #2f2f2f transparent transparent transparent;
+        }
+    </style>
     <!-- code folding -->
 
 
@@ -279,15 +326,21 @@
                     <div class="col-md-2" id="legend">
                         <br>
                         <div style="text-align: left;">
-                            <label style="font-size: medium;">Color</label>
+                            <label style="font-size: medium;">Color
+                                <div class="helptip"><img width="25"
+                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                    <span style="font-size: small;" class="helptiptext">
+                                        You can change the dot colors to explore results by climate region, cover crop
+                                        type, or crop planted prior to cover crop.
+                                    </span>
+                                </div>
+                            </label>
                         </div>
                         <select id="select_color" class="group-select selectize-control single selectize-input">
                             <option value="previous_crop">Cash crop prior</option>
                             <option value="cc_species" selected>Cover crop types</option>
                             <option value="region">NOAA Climate Regions</option>
-
                         </select>
-
                         <svg width="200px" height="250px"></svg>
                         <br>
 
@@ -297,59 +350,141 @@
                 </div>
 
                 <div class="row" style="text-align: left;">
-                    <div class=" col-md-6"><label style="font-size: medium;">Filters</label></div>
-                    <div class=" col-md-4"><label style="font-size: medium;">X axis</label></div>
+                    <div class=" col-md-6"><label style="font-size: medium;">Filters
+                            <div class="helptip"><img width="25"
+                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                <span style="font-size: smaller;" class="helptiptext">
+                                    Use the filters below to show only certain data points.
+                                    Note that our database is built from about 100 farms, and if you select many filters
+                                    at once, you may end up with very few or no data points to display.
+                                </span>
+                            </div>
+                        </label></div>
+                    <div class=" col-md-4"><label style="font-size: medium;">X axis</label>
+                        <div class="helptip"><img width="25"
+                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                            <span class="helptiptext">
+                                Cover crop biomass is a measure of how well the cover crop grew before sampling.
+                                Samples are dried and then weighed, and reported as “ton DM/acre” or tons of
+                                drymatter per acre.
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div class="row" style="text-align: left;">
                     <div class=" col-md-6" id="filters">
                         <table>
                             <tr>
-                                <td>Cover crop species</td>
+                                <td>Cover crop species
+                                    <div class="helptip"><img width="25"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                        <span class="helptiptext">
+                                            When you check more than one species, all selected cover crops planted at
+                                            that time will show on the graph.
+                                            For example if you select "barley" and "red clover" then only fields where
+                                            both barley and red clover are present are shown.
+                                            Cases when barley was planted alone will be filtered out.
+                                            Other species may be present but the field will contain both barley and red
+                                            clover together.
+                                            If no points are displayed on the graph then no participating farmer planted
+                                            that combination of cover crops.
+                                        </span>
+                                    </div>
+                                </td>
+
                                 <td><select id="select_species" class="group-select">
                                     </select></td>
                             </tr>
-                            <!-- <tr>
-                                <td>County</td>
-                                <td><select id="selectize_county">
-                                    </select></td>
-                            </tr> -->
                             <tr>
-                                <td>County</td>
+                                <td>County <div class="helptip"><img width="25"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                        <span class="helptiptext">
+                                            Select counties of interest to limit which dots are displayed on the map.
+
+                                        </span>
+                                    </div>
+                                </td>
                                 <td><select id="select_county" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Planting year</td>
+                                <td>Planting year<div class="helptip"><img width="25"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                        <span class="helptiptext">Select what planting years to display.</span>
+                                    </div>
+                                </td>
                                 <td><select id="select_planting_year" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Soil texture</td>
+                                <td>Soil texture <div class="helptip"><img width="25"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                        <span class="helptiptext">
+                                            Filter based on the reported soil texture of field.
+                                        </span>
+                                    </div>
+                                </td>
                                 <td><select id="select_soil_texture" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Prior crop</td>
+                                <td>Prior crop<div class="helptip"><img width="25"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                        <span class="helptiptext">
+                                            Select the crop which was planted before the cover crop was planted.
+                                        </span>
+                                    </div>
+                                </td>
                                 <td><select id="select_prior_crop" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Tillage</td>
+                                <td>Tillage
+                                    <div class="helptip"><img width="25"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                        <span class="helptiptext">
+                                            Filter based on the kind of tillage used in the operation.
+                                        </span>
+                                    </div>
+                                </td>
                                 <td><select id="select_tillage" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Seeding method</td>
+                                <td>Seeding method
+                                    <div class="helptip"><img width="25"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                        <span class="helptiptext">
+                                            Filter based on how the cover crop seeds were planted.
+                                        </span>
+                                    </div>
+                                </td>
                                 <td><select id="select_seeding_method" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
                                 <td>Manure applied prior to cover crop</td>
-                                <td><input type="checkbox" id="checkbox_manure_prior" class="group-select"></td>
+                                <td><input type="checkbox" id="checkbox_manure_prior" class="group-select">
+                                    <div class="helptip"><img width="25"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                        <span class="helptiptext">
+                                            Check this box to select only points where manure was applied before cover
+                                            crop planting.
+                                        </span>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td>Manure applied post cover crop establishment</td>
-                                <td><input type="checkbox" id="checkbox_manure_post" class="group-select"></td>
+                                <td><input type="checkbox" id="checkbox_manure_post" class="group-select">
+                                    <div class="helptip"><img width="25"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                        <span class="helptiptext">
+                                            Check this box to select only points where manure was applied after cover
+                                            crops were planted.
+                                        </span>
+                                    </div>
+                                </td>
 
                             </tr>
 
@@ -366,6 +501,7 @@
 
                         </select>
 
+
                     </div>
 
                     <div class="col-md-4" id="lin_reg">
@@ -374,6 +510,16 @@
                         <table>
                             <br>
                             <label style="font-size: medium;">Regression line</label>
+                            <div class="helptip"><img width="25"
+                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                <span class="helptiptext">
+                                    Toggle to visualize the statistical relationship between cover crop biomass and the
+                                    selected growth variable.
+                                    When checked, you will see a regression line, an equation representing the
+                                    statistical relationship of the variables, and a brief sentence describing how much
+                                    variation is explained by the select growth factor.
+                                </span>
+                            </div>
                             <tr>
                                 <td>Add regression line</td>
                                 <td><input type="checkbox" id="checkbox_linreg_line" class="group-select"></td>
@@ -755,7 +901,7 @@
 
             // Add Y axis
             var yScale = d3.scaleLinear()
-                .domain([0, 3.5])
+                .domain([0, 4.25])
                 .range([height, 0]);
 
             var yAxis = d3.axisLeft(yScale);
