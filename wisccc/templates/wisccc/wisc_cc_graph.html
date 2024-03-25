@@ -85,7 +85,7 @@
 
     <style type="text/css">
         .main-container {
-            max-width: 940px;
+            max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -209,7 +209,7 @@
         }
 
         .selectize-short {
-            width: 150px !important
+            width: 175px !important
         }
     </style>
 
@@ -313,17 +313,19 @@
                 data-target="#helpInformation">
                 How to use this graph
             </button>
+            <p>Hover over question marks for hints and more information</p>
+
         </div>
         <br>
         <!-- <iframe id="iframe_wisc_cc_map" title="map of participating farmers" width=300 height=400
             src="http://dev.evansgeospatial.com/wisc_cc_map_embed"></iframe> -->
-        <div id=" data-collection" class="section level2">
+        <div id="data-collection" class="section level2">
 
             <div class="figure" style="text-align: center">
 
 
                 <div class="row">
-                    <div class="col-md-2" id="legend">
+                    <div class="col-lg-2" id="legend">
                         <br>
                         <div style="text-align: left;">
                             <label style="font-size: medium;">Color
@@ -336,16 +338,41 @@
                                 </div>
                             </label>
                         </div>
-                        <select id="select_color" class="group-select selectize-control single selectize-input">
-                            <option value="previous_crop">Cash crop prior</option>
-                            <option value="cc_species" selected>Cover crop types</option>
-                            <option value="region">NOAA Climate Regions</option>
-                        </select>
+                        <div class="row" style="text-align: left; white-space: nowrap;">
+                            <select id="select_color"
+                                class="group-select selectize-control single selectize-input selectize-short">
+                                <option value="previous_crop">Cash crop prior</option>
+                                <option value="cc_species" selected>Cover crop types</option>
+                                <option value="region">NOAA Climate Regions</option>
+                            </select>
+                            <div class="helptip"><img width="25"
+                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                <span style="font-size: small; white-space: wrap;" class="helptiptext">
+                                    <p>
+                                        <a
+                                            href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">Climate
+                                            regions</a> are areas delineated by the National Oceanic and Atmospheric
+                                        Administration (NOAA) to create areas of similar temperature and precipitation.
+                                    </p>
+                                    <p>
+                                        The cover crop types represent a classification of cover crops based upon the
+                                        plant familys of the covers.
+                                    </p>
+                                    <p>
+                                        Cash crop prior will display what crop was planted before the cover crop.
+                                    </p>
+
+                                </span>
+                            </div>
+
+                        </div>
+
+
                         <svg width="200px" height="250px"></svg>
                         <br>
 
                     </div>
-                    <div class="col-md-10" id="my_dataviz">
+                    <div class="col-lg-10" id="my_dataviz">
                     </div>
                 </div>
 
@@ -360,13 +387,11 @@
                                 </span>
                             </div>
                         </label></div>
-                    <div class=" col-md-4"><label style="font-size: medium;">X axis</label>
+                    <div class="col-md-4"><label style="font-size: medium;">X axis</label>
                         <div class="helptip"><img width="25"
                                 src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
                             <span class="helptiptext">
-                                Cover crop biomass is a measure of how well the cover crop grew before sampling.
-                                Samples are dried and then weighed, and reported as “ton DM/acre” or tons of
-                                drymatter per acre.
+                                Select a property to change the horizontal axis of the graph.
                             </span>
                         </div>
                     </div>
@@ -500,6 +525,23 @@
                             <option value="cc_planting_date_flat">Planting date</option>
 
                         </select>
+                        <div class="helptip"><img width="25"
+                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                            <span style="font-size: small; white-space: wrap;" class="helptiptext">
+                                <p>
+                                    Total precipitation is the amount of rainfall that fell from when the cover crop was
+                                    planted, until the cover crop biomass was harvested.
+                                </p>
+                                <p>
+                                    Growing degree units are the amount of heat the cover crop received from the when
+                                    the cover crop was planted to when the cover crop biomass was harvested.
+                                </p>
+                                <p>
+                                    Planting date displays the data according to when the cover crop was planted.
+                                </p>
+
+                            </span>
+                        </div>
 
 
                     </div>
