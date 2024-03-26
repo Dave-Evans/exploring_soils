@@ -1250,7 +1250,10 @@ SELECT
 				select 
 					ws.id,
 				
-					TO_DATE(lab.date_processed,'MM-DD-YYYY') as cc_biomass_collection_date,
+					COALESCE(
+                        TO_DATE(lab.date_reported_biomass,'YYYY-MM-DD'),
+                        TO_DATE(lab.date_processed,'YYYY-MM-DD')
+                    ) as cc_biomass_collection_date,
 					
 					lab.cc_biomass,
 					lab.cp as fq_cp,

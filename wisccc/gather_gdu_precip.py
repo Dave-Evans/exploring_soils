@@ -13,7 +13,10 @@ def get_collection_date(id):
         cursor.execute(
             f"""
             select 
-            TO_DATE(lab.date_processed,'MM-DD-YYYY') as cc_biomass_collection_date
+                COALESCE(
+                    TO_DATE(lab.date_reported_biomass,'YYYY-MM-DD'),
+                    TO_DATE(lab.date_processed,'YYYY-MM-DD')
+                ) as cc_biomass_collection_date
             from all_lab_data_2023 lab 
             where id = {id}"""
         )
