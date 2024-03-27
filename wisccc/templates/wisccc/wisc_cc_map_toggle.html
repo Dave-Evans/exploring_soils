@@ -213,6 +213,57 @@
             width: 200px !important;
         }
     </style>
+    <style>
+        /* https://www.w3schools.com/css/tryit.asp?filename=trycss_tooltip_bottom */
+        .helptip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #2f2f2f;
+        }
+
+        .bottomtip {
+            top: 100%
+        }
+
+        .toptip {
+            bottom: 100%
+        }
+
+        .helptip .helptiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #2f2f2f;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            left: 50%;
+            margin-left: -80px;
+
+            /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .helptip:hover .helptiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .helptip .helptiptext::after {
+            content: " ";
+            position: absolute;
+            bottom: 100%;
+            /* At the bottom of the tooltip */
+            left: 30%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent#2f2f2f transparent;
+        }
+    </style>
 </head>
 
 <body>
@@ -256,7 +307,8 @@
                 <div id="panelContent" class="container-fluid">
                     <div style="border: black; font-size:12px; width:400px">
 
-                        <h4>Display Options</h4>
+                        <h4>Display options</h4>
+
 
                         <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
                             <option value="cc_biomass">Cover crop biomass (tons dm/acre)</option>
@@ -266,6 +318,14 @@
                             <option value="previous_crop">Prior crop</option>
                             <option value="fq_rfq">Relative forage quality</option>
                         </select>
+                        <div class="helptip"><sup><img width="13"
+                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                            <span class="helptiptext bottomtip">
+                                Use the filters below to show only certain data points.
+                                Note that our database is built from about 100 farms, and if you select many filters
+                                at once, you may end up with very few or no data points to display.
+                            </span>
+                        </div>
                         <div id="legend">
                             <svg width="260px" height="180px"></svg>
                             <p>Actual locations have been<br>obscured to protect landowner's privacy.</p>
@@ -342,7 +402,7 @@
             </div>
         </div>
     </div>
-    <script></script>
+
     <script>
 
         mapLink =
@@ -840,7 +900,7 @@
                     })
                     updateLegend(biomassScale, ".1f")
 
-                    createNullLgend("translate(20, 130)")
+                    createNullLgend("translate(20, 147)")
                 } else if (property == "fq_rfq") {
                     layer.setStyle({
                         fillColor: layer.feature.properties.rfq_bin ? rfqBinsScale(layer.feature.properties.rfq_bin) : "#ccc"

@@ -311,9 +311,9 @@
 
             <button type="button" style="border: 1px solid;" class="btn btn-secondary btn-lg" data-toggle="modal"
                 data-target="#helpInformation">
-                How to use this graph
+                About this graph
             </button>
-            <p>Hover over question marks for hints and more information</p>
+
 
         </div>
         <br>
@@ -328,12 +328,25 @@
                     <div class="col-lg-2" id="legend">
                         <br>
                         <div style="text-align: left;">
-                            <label style="font-size: medium;">Color
-                                <div class="helptip"><img width="25"
-                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                            <label style="font-size: medium;">Display options
+                                <div class="helptip"><sup><img width="13"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
                                     <span style="font-size: small;" class="helptiptext">
-                                        You can change the dot colors to explore results by climate region, cover crop
-                                        type, or crop planted prior to cover crop.
+                                        <p>
+                                            <a
+                                                href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">Climate
+                                                regions</a> are areas delineated by the National Oceanic and Atmospheric
+                                            Administration (NOAA) to create areas of similar temperature and
+                                            precipitation.
+                                        </p>
+                                        <p>
+                                            The cover crop types represent a classification of cover crops based upon
+                                            the
+                                            plant familys of the covers.
+                                        </p>
+                                        <p>
+                                            Cash crop prior will display what crop was planted before the cover crop.
+                                        </p>
                                     </span>
                                 </div>
                             </label>
@@ -345,28 +358,9 @@
                                 <option value="cc_species" selected>Cover crop types</option>
                                 <option value="region">NOAA Climate Regions</option>
                             </select>
-                            <div class="helptip"><img width="25"
-                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
-                                <span style="font-size: small; white-space: wrap;" class="helptiptext">
-                                    <p>
-                                        <a
-                                            href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">Climate
-                                            regions</a> are areas delineated by the National Oceanic and Atmospheric
-                                        Administration (NOAA) to create areas of similar temperature and precipitation.
-                                    </p>
-                                    <p>
-                                        The cover crop types represent a classification of cover crops based upon the
-                                        plant familys of the covers.
-                                    </p>
-                                    <p>
-                                        Cash crop prior will display what crop was planted before the cover crop.
-                                    </p>
 
-                                </span>
-                            </div>
 
                         </div>
-
 
                         <svg width="200px" height="250px"></svg>
                         <br>
@@ -378,8 +372,8 @@
 
                 <div class="row" style="text-align: left;">
                     <div class=" col-md-6"><label style="font-size: medium;">Filters
-                            <div class="helptip"><img width="25"
-                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                            <div class="helptip"><sup><img width="13"
+                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
                                 <span style="font-size: smaller;" class="helptiptext">
                                     Use the filters below to show only certain data points.
                                     Note that our database is built from about 100 farms, and if you select many filters
@@ -388,12 +382,6 @@
                             </div>
                         </label></div>
                     <div class="col-md-4"><label style="font-size: medium;">X axis</label>
-                        <div class="helptip"><img width="25"
-                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
-                            <span class="helptiptext">
-                                Select a property to change the horizontal axis of the graph.
-                            </span>
-                        </div>
                     </div>
                 </div>
                 <div class="row" style="text-align: left;">
@@ -401,8 +389,8 @@
                         <table>
                             <tr>
                                 <td>Cover crop species
-                                    <div class="helptip"><img width="25"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                    <div class="helptip"><sup><img width="13"
+                                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
                                         <span class="helptiptext">
                                             When you check more than one species, all selected cover crops planted at
                                             that time will show on the graph.
@@ -421,40 +409,26 @@
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>County <div class="helptip"><img width="25"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
-                                        <span class="helptiptext">
-                                            Select counties of interest to limit which dots are displayed on the map.
-
-                                        </span>
-                                    </div>
+                                <td>County
                                 </td>
                                 <td><select id="select_county" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Planting year<div class="helptip"><img width="25"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
-                                        <span class="helptiptext">Select what planting years to display.</span>
-                                    </div>
+                                <td>Planting year
                                 </td>
                                 <td><select id="select_planting_year" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Soil texture <div class="helptip"><img width="25"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
-                                        <span class="helptiptext">
-                                            Filter based on the reported soil texture of field.
-                                        </span>
-                                    </div>
+                                <td>Soil texture
                                 </td>
                                 <td><select id="select_soil_texture" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Prior crop<div class="helptip"><img width="25"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                                <td>Prior crop<div class="helptip"><sup><img width="13"
+                                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
                                         <span class="helptiptext">
                                             Select the crop which was planted before the cover crop was planted.
                                         </span>
@@ -465,24 +439,12 @@
                             </tr>
                             <tr>
                                 <td>Tillage
-                                    <div class="helptip"><img width="25"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
-                                        <span class="helptiptext">
-                                            Filter based on the kind of tillage used in the operation.
-                                        </span>
-                                    </div>
                                 </td>
                                 <td><select id="select_tillage" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
                                 <td>Seeding method
-                                    <div class="helptip"><img width="25"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
-                                        <span class="helptiptext">
-                                            Filter based on how the cover crop seeds were planted.
-                                        </span>
-                                    </div>
                                 </td>
                                 <td><select id="select_seeding_method" class="group-select">
                                     </select></td>
@@ -490,25 +452,11 @@
                             <tr>
                                 <td>Manure applied prior to cover crop</td>
                                 <td><input type="checkbox" id="checkbox_manure_prior" class="group-select">
-                                    <div class="helptip"><img width="25"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
-                                        <span class="helptiptext">
-                                            Check this box to select only points where manure was applied before cover
-                                            crop planting.
-                                        </span>
-                                    </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Manure applied post cover crop establishment</td>
                                 <td><input type="checkbox" id="checkbox_manure_post" class="group-select">
-                                    <div class="helptip"><img width="25"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
-                                        <span class="helptiptext">
-                                            Check this box to select only points where manure was applied after cover
-                                            crops were planted.
-                                        </span>
-                                    </div>
                                 </td>
 
                             </tr>
@@ -525,8 +473,8 @@
                             <option value="cc_planting_date_flat">Planting date</option>
 
                         </select>
-                        <div class="helptip"><img width="25"
-                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                        <div class="helptip"><sup><img width="13"
+                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
                             <span style="font-size: small; white-space: wrap;" class="helptiptext">
                                 <p>
                                     Total precipitation is the amount of rainfall that fell from when the cover crop was
@@ -552,8 +500,8 @@
                         <table>
                             <br>
                             <label style="font-size: medium;">Regression line</label>
-                            <div class="helptip"><img width="25"
-                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nO3WvUuVURwH8I9vERS4CBcJs8FwcZE2I8FNUDcV/4KgQcVBEMRZbHFOmh2DonDUclEkaGoQAh10aA1fQHzhwjNcTueiLd3nyPnAmZ7f8P3yvP3IsizLsizqMbrQgWYJaMIw1nGE65pzgR0soaKEnuFbELreOcF0Ubg04Y/vGL72vFUS25Fwv7CKuSLo1zolRhodfjASagWtkdkxnAWz3zXYchDo8y3zi5HCTzXQuyDMq1vmn0cKDGmg0eITWQ2ycYf5StkKVHXjZZ3nPjRUtkfoXzQXd6k2/H4qf+m2yPtSPW8koBd7kfCf0KLkXherQxj+Ix4pudlI8FPMlGkPqqcPl5G/bo9ErAXhf6JdQnaDAhMScxAU6JSYzZrwv1N4aUMv8AOHmPrrapbdfwP4gq1inUjKE/wJPqPjEjIZ2YHeS0g/roIC8xKzgPOiyAc8lKAHqS1wWZZlWeZ/uwHWzJoVvfsbsAAAAABJRU5ErkJggg==">
+                            <div class="helptip"><sup><img width="13"
+                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
                                 <span class="helptiptext">
                                     Toggle to visualize the statistical relationship between cover crop biomass and the
                                     selected growth variable.
