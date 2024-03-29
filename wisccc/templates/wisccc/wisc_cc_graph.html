@@ -313,6 +313,14 @@
                 data-target="#helpInformation">
                 About this graph
             </button>
+            <br>
+            Hover over
+            <div class="helptip"><sup><img width="13"
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                <span style="font-size: small;" class="helptiptext">
+                    Like this!
+                </span>
+            </div> for more information
 
 
         </div>
@@ -369,7 +377,7 @@
                     <div class="col-lg-10" id="my_dataviz">
                     </div>
                 </div>
-
+                <hr>
                 <div class="row" style="text-align: left;">
                     <div class=" col-md-6"><label style="font-size: medium;">Filters
                             <div class="helptip"><sup><img width="13"
@@ -381,7 +389,24 @@
                                 </span>
                             </div>
                         </label></div>
-                    <div class="col-md-4"><label style="font-size: medium;">X axis</label>
+                    <div class="col-md-4"><label style="font-size: medium;">Horizontal axis</label>
+                        <div class="helptip"><sup><img width="13"
+                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                            <span id="xFactor_helptip" style="font-size: small; white-space: wrap;" class="helptiptext">
+                                <p>
+                                    Total precipitation is the amount of rainfall that fell from when the cover crop was
+                                    planted, until the cover crop biomass was harvested.
+                                </p>
+                                <p>
+                                    Growing degree units are the amount of heat the cover crop received from the when
+                                    the cover crop was planted to when the cover crop biomass was harvested.
+                                </p>
+                                <p>
+                                    Planting date displays the data according to when the cover crop was planted.
+                                </p>
+
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="row" style="text-align: left;">
@@ -427,12 +452,7 @@
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Prior crop<div class="helptip"><sup><img width="13"
-                                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
-                                        <span class="helptiptext">
-                                            Select the crop which was planted before the cover crop was planted.
-                                        </span>
-                                    </div>
+                                <td>Prior crop
                                 </td>
                                 <td><select id="select_prior_crop" class="group-select">
                                     </select></td>
@@ -473,23 +493,7 @@
                             <option value="cc_planting_date_flat">Planting date</option>
 
                         </select>
-                        <div class="helptip"><sup><img width="13"
-                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
-                            <span style="font-size: small; white-space: wrap;" class="helptiptext">
-                                <p>
-                                    Total precipitation is the amount of rainfall that fell from when the cover crop was
-                                    planted, until the cover crop biomass was harvested.
-                                </p>
-                                <p>
-                                    Growing degree units are the amount of heat the cover crop received from the when
-                                    the cover crop was planted to when the cover crop biomass was harvested.
-                                </p>
-                                <p>
-                                    Planting date displays the data according to when the cover crop was planted.
-                                </p>
 
-                            </span>
-                        </div>
 
 
                     </div>
@@ -869,6 +873,7 @@
                     options: pop_selectize_box(submission_data, id_selector, target_field),
                     onChange: function (value, isOnInitialize) {
                         updateChart(false)
+                        updateHelpTipText()
                     }
                 })
             }
@@ -1033,6 +1038,24 @@
                 var day = Math.floor(diff / oneDay);
 
                 return day
+            }
+
+            function updateHelpTipText(property) {
+                console.log("updateHelpTipText firing!. Property: " + property)
+                var text = ""
+                if (property == "acc_gdd") {
+                    text = "Cumulative growing degree units are a measure of the growing conditions of a crop. "
+                    text += "The growing degree units accumulate from the cover crop planting date to when the biomass was collected. "
+
+                }
+                if (property == "total_precip") {
+                    text = "Total precipitation is the cumulative amount of precipitation that fell from the cover crop planting date to when the biomass was collected. "
+
+                }
+                if (property == "cc_planting_date_flat") {
+                    text = "This displays the data according the date when the cover crop was planted."
+                }
+                $("#xFactor_helptip").html(text);
             }
 
             function getDataForModel(data, xproperty) {
@@ -1261,6 +1284,7 @@
                 console.log("Changed x to: " + this.value);
 
                 updateChart(false);
+                updateHelpTipText(this.value)
 
             })
 
@@ -1388,6 +1412,7 @@
 
             $(document).ready(function () {
                 updateChart(false)
+                updateHelpTipText(d3.select("#xFactor").node().value)
             });
 
         })

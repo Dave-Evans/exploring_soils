@@ -314,13 +314,13 @@
                             <option value="cc_biomass">Cover crop biomass (tons dm/acre)</option>
                             <option value="cc_species">Cover crop types</option>
                             <option value="acc_gdd">Growing degree units</option>
-                            <option value="cc_planting_date_mo">Planting date</option>
+                            <option value="cc_planting_date_mo">Planting season</option>
                             <option value="previous_crop">Prior crop</option>
                             <option value="fq_rfq">Relative forage quality</option>
                         </select>
                         <div class="helptip"><sup><img width="13"
                                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
-                            <span class="helptiptext bottomtip">
+                            <span id="prop_select_helptip" class="helptiptext bottomtip">
                                 Use the filters below to show only certain data points.
                                 Note that our database is built from about 100 farms, and if you select many filters
                                 at once, you may end up with very few or no data points to display.
@@ -355,8 +355,24 @@
                             </select>
                         </span><br>
                         <span>Cover crop species
+                            <div class="helptip"><sup><img width="13"
+                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                                <span class="helptiptext toptip">
+                                    When you check more than one species, all selected cover crops planted at that time
+                                    will show on the graph.
+                                    For example if you select 'barley' and 'red clover' then only fields where both
+                                    barley and red clover are present are shown.
+                                    Cases when barley was planted alone will be filtered out.
+                                    Other species may be present but the field will contain both barley and red clover
+                                    together.
+                                    If no points are displayed on the graph then no participating farmer planted that
+                                    combination of cover crops.
+                                </span>
+                            </div>
                             <select id="SpeciesFilter" class="SpeciesSelector">
                             </select>
+
+
                         </span><br>
 
                         <span>Manure applied prior to cover crop
@@ -830,6 +846,7 @@
             }).addTo(map);
             var selected_property = $('#PropertySelection').val();
             updateStyle(selected_property);
+            updateHelpTipText(selected_property);
             console.log(Object.keys(geojsonObject._layers).length + " locations after filtering.")
         }
 
@@ -882,6 +899,38 @@
             addLayerToMap();
         });
 
+        function updateHelpTipText(property) {
+            console.log("updateHelpTipText firing!. Property: " + property)
+            var text = ""
+            if (property == "acc_gdd") {
+                text = "Cumulative growing degree units are a measure of the growing conditions of a crop."
+            }
+            if (property == "cc_biomass") {
+                text = "Cover crop biomass shows the amount of plant material that was produced from when the cover crop was planted to when it was collected."
+            }
+            if (property == "fq_rfq") {
+                text = "Relative forage quality is a measure of how good the harvested cover crop was for use as forage for livestock."
+                text += 'The grades are based on a scale from <a href="https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-10-2023/">UW Extension</a>.'
+                text += "<br>   Prime (> 151 RFV/RFQ)<br>"
+                text += "Grade 1 (125 to 150 RFV/RFQ)<br>"
+                text += "Grade 2 (103 to 124 RFV/RFQ)<br>"
+                text += "Grade 3 (87 to 102 RFV/RFQ)"
+            }
+            if (property == "cc_species") {
+                text = "The cover crop type is a classification derived from the mix of cover crops planted and is based on the plant families."
+            }
+            if (property == "previous_crop") {
+                text = "The crop preceding the cover crop."
+            }
+            if (property == "cc_planting_date_mo") {
+                text = "The season the cover crop was planted."
+                text += "Winter is considered December, January, and February. <br> "
+                text += "Spring is considered March, April, and May. <br>"
+                text += "Summer is considered June, July, and August. <br> "
+                text += "Fall is considered September, October, and November."
+            }
+            $("#prop_select_helptip").html(text);
+        }
 
         function updateStyle(property) {
             geojsonObject.eachLayer(function (layer) {
@@ -955,6 +1004,8 @@
         $('body').on('change', '#PropertySelection', function () {
             var selected_property = $('#PropertySelection').val();
             updateStyle(selected_property);
+
+            updateHelpTipText(selected_property);
         });
 
         new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
@@ -963,18 +1014,6 @@
             map.setMaxZoom(parseInt(selected_zoom))
         });
 
-        $('body').on('click', '#info-button', function () {
-            showInfoWindow();
-        });
-
-        function showInfoWindow() {
-            var winInfo = L.control.window(map,
-                {
-                    title: 'MOSH Cover crop growth data project',
-                    content: 'Click on data points to view the amount of green cover produced by cover crops. To view other basemaps or toggle the county boundaries, use the menu in the upper righthand counter. Learn more about the MN Office for Soil Health at <a href="https://mosh.umn.edu">mosh.umn.edu</a>',
-                    visible: true
-                })
-        }
 
     </script>
 
