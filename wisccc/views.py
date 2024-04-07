@@ -179,7 +179,10 @@ def get_survey_data():
         left join (
             select 
                 id,
-                TO_DATE(date_processed,'MM-DD-YYYY') as cc_biomass_collection_date,
+                COALESCE(
+                   TO_DATE(lab.date_reported_biomass,'YYYY-MM-DD'),
+                   TO_DATE(lab.date_processed,'YYYY-MM-DD')
+                ) as cc_biomass_collection_date,
                 cc_biomass,
                 cp as fq_cp,
                 andf as fq_andf,
@@ -211,6 +214,9 @@ def check_user_has_registered(user_id):
 
 def wisc_cc_home(request):
     return render(request, "wisccc/wisc_cc_home.html")
+
+def wisc_cc_research_partner(request):
+    return render(request, "wisccc/wisc_cc_research_partner.html")
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)

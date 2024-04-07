@@ -15,6 +15,11 @@ urlpatterns = [
     ),
     re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),
     re_path(
+        r"^wisc-cc-research-partner$",
+        wisccc_views.wisc_cc_research_partner,
+        name="wisc_cc_research_partner",
+    ),
+    re_path(
         r"^wisc-cc-survey/0$", wisccc_views.wisc_cc_survey0, name="wisc_cc_survey0"
     ),
     re_path(
