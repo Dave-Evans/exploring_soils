@@ -538,7 +538,13 @@
                 popupContent += feature.properties.popupContent;
             }
 
-            layer.bindTooltip(popupContent);
+            layer.bindPopup(popupContent);
+            layer.on('mouseover', function (e) {
+                this.openPopup(e.latlng);
+            });
+            layer.on('mouseout', function (e) {
+                this.closePopup();
+            });
         }
 
         var geojsonMarkerOptions = {
