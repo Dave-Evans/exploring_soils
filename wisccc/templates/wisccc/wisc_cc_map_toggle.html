@@ -112,8 +112,9 @@
 
         div#panelContent {
             opacity: 1;
-            height: inherit;
             /* better than height: 100% */
+            height: inherit;
+            /* height: 100%; */
             width: 100%;
             overflow: auto;
             -webkit-transition: opacity 0.6s;
@@ -399,29 +400,7 @@
             <div class="col-xs-12" id="map"></div>
         </div>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="helpInformation" tabindex="-1" role="dialog" aria-labelledby="helpInformationLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">About this!
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </h3>
-                </div>
-                <div class="modal-body">
-                    <p>Text!
-                    </p>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
 
@@ -450,6 +429,7 @@
             maxZoom: max_zoom,
             zoomControl: false
         }).setView([44.6373, -90.012], 7);
+
         $("#map").css("zIndex", 1)
 
 
@@ -558,7 +538,7 @@
                 popupContent += feature.properties.popupContent;
             }
 
-            layer.bindPopup(popupContent);
+            layer.bindTooltip(popupContent);
         }
 
         var geojsonMarkerOptions = {
