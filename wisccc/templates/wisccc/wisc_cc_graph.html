@@ -85,7 +85,7 @@
 
     <style type="text/css">
         .main-container {
-            max-width: 940px;
+            max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -207,8 +207,55 @@
         .selectize-input {
             width: 200px !important;
         }
+
+        .selectize-short {
+            width: 175px !important
+        }
     </style>
 
+    <style>
+        .helptip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #2f2f2f;
+        }
+
+        .helptip .helptiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #2f2f2f;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -60px;
+
+            /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .helptip:hover .helptiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .helptip .helptiptext::after {
+            content: " ";
+            position: absolute;
+            top: 100%;
+            /* At the bottom of the tooltip */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #2f2f2f transparent transparent transparent;
+        }
+    </style>
     <!-- code folding -->
 
 
@@ -264,92 +311,173 @@
 
             <button type="button" style="border: 1px solid;" class="btn btn-secondary btn-lg" data-toggle="modal"
                 data-target="#helpInformation">
-                How to use this graph
+                About this graph
             </button>
+            <br>
+            Hover over
+            <div class="helptip"><sup><img width="13"
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                <span style="font-size: small;" class="helptiptext">
+                    Like this!
+                </span>
+            </div> for more information
+
+
         </div>
         <br>
         <!-- <iframe id="iframe_wisc_cc_map" title="map of participating farmers" width=300 height=400
             src="http://dev.evansgeospatial.com/wisc_cc_map_embed"></iframe> -->
-        <div id=" data-collection" class="section level2">
+        <div id="data-collection" class="section level2">
 
             <div class="figure" style="text-align: center">
 
 
                 <div class="row">
-                    <div class="col-md-2" id="legend">
+                    <div class="col-lg-2" id="legend">
                         <br>
                         <div style="text-align: left;">
-                            <label style="font-size: medium;">Color</label>
+                            <label style="font-size: medium;">Display options
+                                <div class="helptip"><sup><img width="13"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                                    <span style="font-size: small;" class="helptiptext">
+                                        <p>
+                                            <a
+                                                href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">Climate
+                                                regions</a> are areas delineated by the National Oceanic and Atmospheric
+                                            Administration (NOAA) to create areas of similar temperature and
+                                            precipitation.
+                                        </p>
+                                        <p>
+                                            The cover crop types represent a classification of cover crops based upon
+                                            the
+                                            plant familys of the covers.
+                                        </p>
+                                        <p>
+                                            Cash crop prior will display what crop was planted before the cover crop.
+                                        </p>
+                                    </span>
+                                </div>
+                            </label>
                         </div>
-                        <select id="select_color" class="group-select selectize-control single selectize-input">
-                            <option value="previous_crop">Cash crop prior</option>
-                            <option value="cc_species" selected>Cover crop types</option>
-                            <option value="region">NOAA Climate Regions</option>
+                        <div class="row" style="text-align: left; white-space: nowrap;">
+                            <select id="select_color"
+                                class="group-select selectize-control single selectize-input selectize-short">
+                                <option value="previous_crop">Cash crop prior</option>
+                                <option value="cc_species" selected>Cover crop types</option>
+                                <option value="region">NOAA Climate Regions</option>
+                            </select>
 
-                        </select>
+
+                        </div>
 
                         <svg width="200px" height="250px"></svg>
                         <br>
 
                     </div>
-                    <div class="col-md-10" id="my_dataviz">
+                    <div class="col-lg-10" id="my_dataviz">
                     </div>
                 </div>
-
+                <hr>
                 <div class="row" style="text-align: left;">
-                    <div class=" col-md-6"><label style="font-size: medium;">Filters</label></div>
-                    <div class=" col-md-4"><label style="font-size: medium;">X axis</label></div>
+                    <div class=" col-md-6"><label style="font-size: medium;">Filters
+                            <div class="helptip"><sup><img width="13"
+                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                                <span style="font-size: smaller;" class="helptiptext">
+                                    Use the filters below to show only certain data points.
+                                    Note that our database is built from about 100 farms, and if you select many filters
+                                    at once, you may end up with very few or no data points to display.
+                                </span>
+                            </div>
+                        </label></div>
+                    <div class="col-md-4"><label style="font-size: medium;">Horizontal axis</label>
+                        <div class="helptip"><sup><img width="13"
+                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                            <span id="xFactor_helptip" style="font-size: small; white-space: wrap;" class="helptiptext">
+                                <p>
+                                    Total precipitation is the amount of rainfall that fell from when the cover crop was
+                                    planted, until the cover crop biomass was harvested.
+                                </p>
+                                <p>
+                                    Growing degree units are the amount of heat the cover crop received from the when
+                                    the cover crop was planted to when the cover crop biomass was harvested.
+                                </p>
+                                <p>
+                                    Planting date displays the data according to when the cover crop was planted.
+                                </p>
+
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div class="row" style="text-align: left;">
                     <div class=" col-md-6" id="filters">
                         <table>
                             <tr>
-                                <td>Cover crop species</td>
+                                <td>Cover crop species
+                                    <div class="helptip"><sup><img width="13"
+                                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                                        <span class="helptiptext">
+                                            When you check more than one species, all selected cover crops planted at
+                                            that time will show on the graph.
+                                            For example if you select "barley" and "red clover" then only fields where
+                                            both barley and red clover are present are shown.
+                                            Cases when barley was planted alone will be filtered out.
+                                            Other species may be present but the field will contain both barley and red
+                                            clover together.
+                                            If no points are displayed on the graph then no participating farmer planted
+                                            that combination of cover crops.
+                                        </span>
+                                    </div>
+                                </td>
+
                                 <td><select id="select_species" class="group-select">
                                     </select></td>
                             </tr>
-                            <!-- <tr>
-                                <td>County</td>
-                                <td><select id="selectize_county">
-                                    </select></td>
-                            </tr> -->
                             <tr>
-                                <td>County</td>
+                                <td>County
+                                </td>
                                 <td><select id="select_county" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Planting year</td>
+                                <td>Planting year
+                                </td>
                                 <td><select id="select_planting_year" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Soil texture</td>
+                                <td>Soil texture
+                                </td>
                                 <td><select id="select_soil_texture" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Prior crop</td>
+                                <td>Prior crop
+                                </td>
                                 <td><select id="select_prior_crop" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Tillage</td>
+                                <td>Tillage
+                                </td>
                                 <td><select id="select_tillage" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
-                                <td>Seeding method</td>
+                                <td>Seeding method
+                                </td>
                                 <td><select id="select_seeding_method" class="group-select">
                                     </select></td>
                             </tr>
                             <tr>
                                 <td>Manure applied prior to cover crop</td>
-                                <td><input type="checkbox" id="checkbox_manure_prior" class="group-select"></td>
+                                <td><input type="checkbox" id="checkbox_manure_prior" class="group-select">
+                                </td>
                             </tr>
                             <tr>
                                 <td>Manure applied post cover crop establishment</td>
-                                <td><input type="checkbox" id="checkbox_manure_post" class="group-select"></td>
+                                <td><input type="checkbox" id="checkbox_manure_post" class="group-select">
+                                </td>
 
                             </tr>
 
@@ -366,6 +494,8 @@
 
                         </select>
 
+
+
                     </div>
 
                     <div class="col-md-4" id="lin_reg">
@@ -374,6 +504,16 @@
                         <table>
                             <br>
                             <label style="font-size: medium;">Regression line</label>
+                            <div class="helptip"><sup><img width="13"
+                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                                <span class="helptiptext">
+                                    Toggle to visualize the statistical relationship between cover crop biomass and the
+                                    selected growth variable.
+                                    When checked, you will see a regression line, an equation representing the
+                                    statistical relationship of the variables, and a brief sentence describing how much
+                                    variation is explained by the select growth factor.
+                                </span>
+                            </div>
                             <tr>
                                 <td>Add regression line</td>
                                 <td><input type="checkbox" id="checkbox_linreg_line" class="group-select"></td>
@@ -733,6 +873,7 @@
                     options: pop_selectize_box(submission_data, id_selector, target_field),
                     onChange: function (value, isOnInitialize) {
                         updateChart(false)
+                        updateHelpTipText()
                     }
                 })
             }
@@ -755,7 +896,7 @@
 
             // Add Y axis
             var yScale = d3.scaleLinear()
-                .domain([0, 3.5])
+                .domain([0, 4.25])
                 .range([height, 0]);
 
             var yAxis = d3.axisLeft(yScale);
@@ -897,6 +1038,24 @@
                 var day = Math.floor(diff / oneDay);
 
                 return day
+            }
+
+            function updateHelpTipText(property) {
+                console.log("updateHelpTipText firing!. Property: " + property)
+                var text = ""
+                if (property == "acc_gdd") {
+                    text = "Cumulative growing degree units are a measure of the growing conditions of a crop. "
+                    text += "The growing degree units accumulate from the cover crop planting date to when the biomass was collected. "
+
+                }
+                if (property == "total_precip") {
+                    text = "Total precipitation is the cumulative amount of precipitation that fell from the cover crop planting date to when the biomass was collected. "
+
+                }
+                if (property == "cc_planting_date_flat") {
+                    text = "This displays the data according the date when the cover crop was planted."
+                }
+                $("#xFactor_helptip").html(text);
             }
 
             function getDataForModel(data, xproperty) {
@@ -1125,6 +1284,7 @@
                 console.log("Changed x to: " + this.value);
 
                 updateChart(false);
+                updateHelpTipText(this.value)
 
             })
 
@@ -1252,6 +1412,7 @@
 
             $(document).ready(function () {
                 updateChart(false)
+                updateHelpTipText(d3.select("#xFactor").node().value)
             });
 
         })

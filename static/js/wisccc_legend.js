@@ -302,7 +302,7 @@ var getRegion = function (county) {
         if (o_region_cty_lu[region].includes(county)) { return region }
     }
 
-    return "Other";
+    // return "Other";
 }
 
 var colorScaleCounty = d3.scaleOrdinal()
@@ -331,8 +331,8 @@ var gddScale = d3.scaleThreshold()
 
 
 var biomassScale = d3.scaleThreshold()
-    .domain([0.5, 1, 1.5, 2, 2.5, 3, 3.5])
-    .range(d3.schemeYlGn[7]);
+    .domain([0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4.0])
+    .range(d3.schemeYlGn[8]);
 
 
 
