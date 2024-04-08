@@ -211,7 +211,7 @@
         /* Selectize dropdowns */
         .selectize-dropdown,
         .selectize-input {
-            width: 200px !important;
+            width: 220px !important;
         }
     </style>
     <style>
@@ -232,7 +232,7 @@
 
         .helptip .helptiptext {
             visibility: hidden;
-            width: 250px;
+            width: 200px;
             background-color: #2f2f2f;
             color: #fff;
             text-align: center;
@@ -312,15 +312,17 @@
 
 
                         <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
-                            <option value="cc_biomass">Cover crop biomass (tons dm/acre)</option>
+                            <option value="cc_biomass">Cover crop biomass (tons/acre)</option>
                             <option value="cc_species">Cover crop types</option>
                             <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_mo">Planting season</option>
                             <option value="previous_crop">Prior crop</option>
                             <option value="fq_rfq">Relative forage quality</option>
                         </select>
-                        <div class="helptip"><sup><img width="13"
-                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                        <div class="helptip"><sup>
+                                <img width="20"
+                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
+                            </sup>
                             <span id="prop_select_helptip" class="helptiptext bottomtip">
                                 Use the filters below to show only certain data points.
                                 Note that our database is built from about 100 farms, and if you select many filters
@@ -360,8 +362,10 @@
                             </select>
                         </span><br>
                         <span>Cover crop species
-                            <div class="helptip"><sup><img width="13"
-                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nGNgwAMCq7ZLgjADOSCh+1hT6cLbr0sW3X6V2H28gWQDcmdevt69/cN/EM6deeUayQZkTD13DGZAxpTzR0k2IL5nn3HqxNObUyed2RTRvtuQaI0+9ZtEYjoOtiLjqLb9PkQbEFCxxbh00e3/jWufgZ0PwqkTTi0hxQVcIEMSe45tIMsAGABpGjXgFHlhAEsHCd1HTsIMALFBYiA5ggbA0kH9qicoGCQGkiPGBeB0gA2D5NA1AAD4McVLnxvmmgAAAABJRU5ErkJggg=="></sup>
+                            <div class="helptip"><sup>
+                                    <img width="20"
+                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
+                                </sup>
                                 <span class="helptiptext toptip">
                                     When you check more than one species, all selected cover crops planted at that time
                                     will show on the graph.
@@ -539,12 +543,14 @@
             }
 
             layer.bindPopup(popupContent);
-            layer.on('mouseover', function (e) {
-                this.openPopup(e.latlng);
-            });
-            layer.on('mouseout', function (e) {
-                this.closePopup();
-            });
+            // Turning off the hover because it recenters the map automatically
+            //  causing some jarring movement. Perhaps this can be salvaged?
+            // layer.on('mouseover', function (e) {
+            //     this.openPopup(e.latlng);
+            // });
+            // layer.on('mouseout', function (e) {
+            //     this.closePopup();
+            // });
         }
 
         var geojsonMarkerOptions = {
@@ -896,7 +902,7 @@
                 text = "Cumulative growing degree units are a measure of the growing conditions of a crop."
             }
             if (property == "cc_biomass") {
-                text = "Cover crop biomass shows the amount of plant material that was produced from when the cover crop was planted to when it was collected."
+                text = "Cover crop biomass shows the amount of aboveground plant material that was produced from when the cover crop was planted to when it was collected."
             }
             if (property == "fq_rfq") {
                 text = "Relative forage quality is a measure of how good the harvested cover crop was for use as forage for livestock."
