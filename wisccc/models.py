@@ -285,6 +285,9 @@ class Survey(models.Model):
     survey_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    survey_year = models.IntegerField(
+        null=True, verbose_name="Year in which survey was released."
+    )
     notes_admin = models.TextField(
         verbose_name="Questions or comments about nutrient management and cover crops",
         null=True,
@@ -297,8 +300,11 @@ class Survey(models.Model):
     farm_location = geo_models.PointField(verbose_name="Farm location", null=True)
 
     # 1. Years Experience
-    years_experience = models.PositiveSmallIntegerField(
-        verbose_name="Years experience of farming", null=True
+    # Changing this to char field to accomodate previous years data which contained ranges
+    years_experience = models.CharField(
+        verbose_name="Years experience of farming",
+        max_length=50,
+        null=True,
     )
 
     # 2. Total acres of cover crops
@@ -637,8 +643,9 @@ class Survey(models.Model):
     )
 
     # 24	Will you apply manure prior to seeding cover crops on this field, and at what rate?
-    manure_prior = models.BooleanField(
+    manure_prior = models.CharField(
         verbose_name="Will you apply manure prior to seeding cover crops on this field?",
+        max_length=30,
         null=True,
     )
     # 24a
@@ -653,8 +660,9 @@ class Survey(models.Model):
     )
 
     # 25	Will manure be applied to the field after the cover crop is established?
-    manure_post = models.BooleanField(
+    manure_post = models.CharField(
         verbose_name="Will manure be applied to the field after the cover crop is established?",
+        max_length=30,
         null=True,
     )
     # 25a
