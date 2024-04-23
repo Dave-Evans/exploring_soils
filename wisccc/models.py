@@ -344,19 +344,19 @@ class Survey(models.Model):
     info_source_nutrient_mgmt_1 = models.CharField(
         verbose_name="Top information source for nutrient management",
         choices=NutrientMgmtSourcesChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
     info_source_nutrient_mgmt_2 = models.CharField(
         verbose_name="Top information source for nutrient management",
         choices=NutrientMgmtSourcesChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
     info_source_nutrient_mgmt_3 = models.CharField(
         verbose_name="Top information source for nutrient management",
         choices=NutrientMgmtSourcesChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
 
@@ -375,21 +375,21 @@ class Survey(models.Model):
     info_source_cover_crops_1 = models.CharField(
         verbose_name="Top information source for cover crops",
         choices=CoverCropInfoSourcesChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
 
     info_source_cover_crops_2 = models.CharField(
         verbose_name="Top information source for cover crops",
         choices=CoverCropInfoSourcesChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
 
     info_source_cover_crops_3 = models.CharField(
         verbose_name="Top information source for cover crops",
         choices=CoverCropInfoSourcesChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
 
@@ -456,9 +456,10 @@ class Survey(models.Model):
         null=True,
     )
     # 14. Does planting a cover crop delay when you would otherwise plant your cash crop?
-    cover_crops_delay_cash_crop = models.BooleanField(
+    cover_crops_delay_cash_crop = models.CharField(
         verbose_name="Does planting a cover crop delay when you would otherwise plant your cash crop?",
         null=True,
+        max_length=60,
     )
 
     # 15a. Do you save cover crop seed?
@@ -538,28 +539,28 @@ class Survey(models.Model):
     cover_crop_species_1 = models.CharField(
         verbose_name="Cover crop species 1",
         choices=CoverCropChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
-    cover_crop_planting_rate_1 = models.SmallIntegerField(
-        verbose_name="Cover crop planting rate, for species 1", null=True
+    cover_crop_planting_rate_1 = models.CharField(
+        verbose_name="Cover crop planting rate, for species 1", null=True, max_length=60
     )
     cover_crop_planting_rate_1_units = models.CharField(
         verbose_name="Units for cover crop 1 application rate",
         null=True,
         choices=CoverCropRateUnitsChoices.choices,
-        max_length=15,
+        max_length=60,
     )
 
     # Species 2
     cover_crop_species_2 = models.CharField(
         verbose_name="Cover crop species 2",
         choices=CoverCropChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
-    cover_crop_planting_rate_2 = models.SmallIntegerField(
-        verbose_name="Cover crop planting rate, for species 2", null=True
+    cover_crop_planting_rate_2 = models.CharField(
+        verbose_name="Cover crop planting rate, for species 2", null=True, max_length=60
     )
     cover_crop_planting_rate_2_units = models.CharField(
         verbose_name="Units for cover crop 2 application rate",
@@ -571,49 +572,49 @@ class Survey(models.Model):
     cover_crop_species_3 = models.CharField(
         verbose_name="Cover crop species 3",
         choices=CoverCropChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
-    cover_crop_planting_rate_3 = models.SmallIntegerField(
-        verbose_name="Cover crop planting rate, for species 3", null=True
+    cover_crop_planting_rate_3 = models.CharField(
+        verbose_name="Cover crop planting rate, for species 3", null=True, max_length=60
     )
     cover_crop_planting_rate_3_units = models.CharField(
         verbose_name="Units for cover crop 3 application rate",
         null=True,
         choices=CoverCropRateUnitsChoices.choices,
-        max_length=15,
+        max_length=60,
     )
     # Species 4
     cover_crop_species_4 = models.CharField(
         verbose_name="Cover crop species 4",
         choices=CoverCropChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
-    cover_crop_planting_rate_4 = models.SmallIntegerField(
-        verbose_name="Cover crop planting rate, for species 4", null=True
+    cover_crop_planting_rate_4 = models.CharField(
+        verbose_name="Cover crop planting rate, for species 4", null=True, max_length=60
     )
     cover_crop_planting_rate_4_units = models.CharField(
         verbose_name="Units for cover crop 4 application rate",
         null=True,
         choices=CoverCropRateUnitsChoices.choices,
-        max_length=15,
+        max_length=60,
     )
     # Species 5
     cover_crop_species_5 = models.CharField(
         verbose_name="Cover crop species 5",
         choices=CoverCropChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
-    cover_crop_planting_rate_5 = models.SmallIntegerField(
-        verbose_name="Cover crop planting rate, for species 5", null=True
+    cover_crop_planting_rate_5 = models.CharField(
+        verbose_name="Cover crop planting rate, for species 5", null=True, max_length=60
     )
     cover_crop_planting_rate_5_units = models.CharField(
         verbose_name="Units for cover crop 5 application rate",
         null=True,
         choices=CoverCropRateUnitsChoices.choices,
-        max_length=15,
+        max_length=60,
     )
     cover_crop_species_and_rate_write_in = models.TextField(
         verbose_name="Other cover crops planted and their rates, please specify in pounds per acre.",
@@ -625,9 +626,10 @@ class Survey(models.Model):
     )
 
     # 21	What date this year did you plant your cash crop in this field?
-    cash_crop_planting_date = models.DateField(
+    cash_crop_planting_date = models.CharField(
         verbose_name="What date this year did you plant your cash crop in this field?",
         null=True,
+        max_length=50,
     )
     # 22	How many years have you been planting cover crops *in this field*?
     years_with_cover_crops = models.SmallIntegerField(
@@ -638,14 +640,14 @@ class Survey(models.Model):
     dominant_soil_texture = models.CharField(
         verbose_name="Please select the dominant soil texture of this field.",
         choices=SoilTextureClassChoices.choices,
-        max_length=15,
+        max_length=60,
         null=True,
     )
 
     # 24	Will you apply manure prior to seeding cover crops on this field, and at what rate?
     manure_prior = models.CharField(
         verbose_name="Will you apply manure prior to seeding cover crops on this field?",
-        max_length=30,
+        max_length=120,
         null=True,
     )
     # 24a
@@ -662,7 +664,7 @@ class Survey(models.Model):
     # 25	Will manure be applied to the field after the cover crop is established?
     manure_post = models.CharField(
         verbose_name="Will manure be applied to the field after the cover crop is established?",
-        max_length=30,
+        max_length=120,
         null=True,
     )
     # 25a
@@ -679,14 +681,14 @@ class Survey(models.Model):
     tillage_system_cash_crop = models.CharField(
         verbose_name="Tillage system for cash crop preceding",
         choices=TillageSystemChoices.choices,
-        max_length=15,
+        max_length=125,
         null=True,
     )
     # 27	"Primary tillage equipment (select all that apply) for a cash crop preceding a cover crop?
     primary_tillage_equipment = models.CharField(
         verbose_name="Primary tillage equipment",
         choices=PrimaryTillageEquipmentChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
 
@@ -698,7 +700,7 @@ class Survey(models.Model):
     secondary_tillage_equipment = models.CharField(
         verbose_name="Secondary tillage equipment",
         choices=SecondaryTillageEquipmentChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
     secondary_tillage_equipment_write_in = models.TextField(
@@ -718,7 +720,7 @@ class Survey(models.Model):
     cover_crop_seeding_method = models.CharField(
         verbose_name="Cover crop seeding method",
         choices=SeedingMethodChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
 
@@ -736,14 +738,14 @@ class Survey(models.Model):
         null=True,
     )
     # 34	Cover crop planting date for this field (estimate is OK if not known).
-    cover_crop_planting_date = models.DateField(
-        verbose_name="Estimated cover crop planting date", null=True
+    cover_crop_planting_date = models.CharField(
+        verbose_name="Estimated cover crop planting date", null=True, max_length=50
     )
     # 35	"Estimated termination timing/method for this field.
     cover_crop_estimated_termination = models.CharField(
         verbose_name="Estimated termination timing/method for this field.",
         choices=TerminationMethodTimingChoices.choices,
-        max_length=30,
+        max_length=120,
         null=True,
     )
 
