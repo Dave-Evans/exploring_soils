@@ -217,12 +217,22 @@ def wisc_cc_home(request):
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
-def wisccc_download_data(request):
-    # qs = Survey.objects.raw(query)
-    # return djqscsv.render_to_csv_response(qs)
-    df = get_survey_data()
+def wisc_cc_manager_home(request):
+    return render(request, "wisccc/wisc_cc_manager_home.html")
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisccc_download_data(request, opt):
+    # opt == 1 then full survey with qualitative
+    # opt == 2 then display data
+    if opt == 1:
+        df = get_survey_data()
+        filename = "full_survey_questions.csv"
+    elif opt == 2:
+        df = pull_all_years_together("df")
+        filename = "cleaned_data_from_display.csv"
     resp = HttpResponse(content_type="text/csv")
-    resp["Content-Disposition"] = "attachment; filename=survey_data.csv"
+    resp["Content-Disposition"] = f"attachment; filename={filename}"
 
     df.to_csv(path_or_buf=resp, sep=",", index=False)
     return resp

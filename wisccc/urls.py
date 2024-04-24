@@ -5,11 +5,31 @@ from wisccc import views as wisccc_views
 urlpatterns = [
     re_path(r"^wisc-cc-home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
     re_path(r"^wisc_cc_home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
+    re_path(
+        r"^wisc_cc_manager_home$",
+        wisccc_views.wisc_cc_manager_home,
+        name="wisc_cc_manager_home",
+    ),
+    re_path(
+        r"^wisc_cc_manager$",
+        wisccc_views.wisc_cc_manager_home,
+        name="wisc_cc_manager_home",
+    ),
+    re_path(
+        r"^wisc_cc_admin$",
+        wisccc_views.wisc_cc_manager_home,
+        name="wisc_cc_manager_home",
+    ),
     path("update_response/<id>", wisccc_views.update_response, name="update_response"),
     path("delete_response/<id>", wisccc_views.delete_response, name="delete_response"),
     re_path(r"^response_table$", wisccc_views.response_table, name="response_table"),
-    re_path(
-        r"^wisccc_download_data$",
+    # re_path(
+    #     r"^wisccc_download_data/<int:opt>$",
+    #     wisccc_views.wisccc_download_data,
+    #     name="wisccc_download_data",
+    # ),
+    path(
+        "wisccc_download_data/<int:opt>",
         wisccc_views.wisccc_download_data,
         name="wisccc_download_data",
     ),
