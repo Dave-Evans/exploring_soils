@@ -320,22 +320,22 @@ class Survey(models.Model):
     # 4. Do you know the dominant soil series on your farm? If so, please list them below in order of how widely distributed (ex. Plano silt loam).
     dominant_soil_series_1 = models.CharField(
         verbose_name="Soil series with the greatest distribution on your farm",
-        max_length=50,
+        max_length=150,
         null=True,
     )
     dominant_soil_series_2 = models.CharField(
         verbose_name="Soil series with the second greatest distribution on your farm",
-        max_length=50,
+        max_length=150,
         null=True,
     )
     dominant_soil_series_3 = models.CharField(
         verbose_name="Soil series with the third greatest distribution on your farm",
-        max_length=50,
+        max_length=150,
         null=True,
     )
     dominant_soil_series_4 = models.CharField(
         verbose_name="Soil series with the fourth greatest distribution on your farm",
-        max_length=50,
+        max_length=150,
         null=True,
     )
 
@@ -403,21 +403,21 @@ class Survey(models.Model):
     support_cover_crops_1 = models.CharField(
         verbose_name="Support for cover cropping",
         choices=CoverCropSupportChoices.choices,
-        max_length=25,
+        max_length=150,
         null=True,
     )
 
     support_cover_crops_2 = models.CharField(
         verbose_name="Support for cover cropping",
         choices=CoverCropSupportChoices.choices,
-        max_length=25,
+        max_length=150,
         null=True,
     )
 
     support_cover_crops_3 = models.CharField(
         verbose_name="Support for cover cropping",
         choices=CoverCropSupportChoices.choices,
-        max_length=25,
+        max_length=150,
         null=True,
     )
 
@@ -459,7 +459,7 @@ class Survey(models.Model):
     cover_crops_delay_cash_crop = models.CharField(
         verbose_name="Does planting a cover crop delay when you would otherwise plant your cash crop?",
         null=True,
-        max_length=60,
+        max_length=260,
     )
 
     # 15a. Do you save cover crop seed?
@@ -543,7 +543,9 @@ class Survey(models.Model):
         null=True,
     )
     cover_crop_planting_rate_1 = models.CharField(
-        verbose_name="Cover crop planting rate, for species 1", null=True, max_length=60
+        verbose_name="Cover crop planting rate, for species 1",
+        null=True,
+        max_length=160,
     )
     cover_crop_planting_rate_1_units = models.CharField(
         verbose_name="Units for cover crop 1 application rate",
@@ -681,7 +683,7 @@ class Survey(models.Model):
     tillage_system_cash_crop = models.CharField(
         verbose_name="Tillage system for cash crop preceding",
         choices=TillageSystemChoices.choices,
-        max_length=125,
+        max_length=225,
         null=True,
     )
     # 27	"Primary tillage equipment (select all that apply) for a cash crop preceding a cover crop?
@@ -712,7 +714,7 @@ class Survey(models.Model):
     soil_conditions_at_cover_crop_seeding = models.CharField(
         verbose_name="Soil conditions in this field at cover crop seeding",
         choices=SoilConditionsSeedingChoices.choices,
-        max_length=10,
+        max_length=100,
         null=True,
     )
 
@@ -745,7 +747,7 @@ class Survey(models.Model):
     cover_crop_estimated_termination = models.CharField(
         verbose_name="Estimated termination timing/method for this field.",
         choices=TerminationMethodTimingChoices.choices,
-        max_length=120,
+        max_length=250,
         null=True,
     )
 
