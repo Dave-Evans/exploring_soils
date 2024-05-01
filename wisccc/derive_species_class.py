@@ -926,7 +926,7 @@ SELECT
         , stat.fq_tdn_adf
         , stat.fq_milkton
         , stat.fq_rfq
-        
+        , NULL as total_nitrogen
         , stat.cc_rate_and_species
         , stat.cc_species
         , stat.cc_species_raw
