@@ -1263,6 +1263,7 @@ SELECT
 					lab.tdn_adf as fq_tdn_adf,
 					lab.milk_ton_milk2013 as fq_milkton,
 					lab.rfq as fq_rfq,
+                    total_nitrogen,
                     lab.total_precip,
                     lab.acc_gdd
 				from wisccc_survey ws

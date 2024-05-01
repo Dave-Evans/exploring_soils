@@ -191,6 +191,7 @@ def get_survey_data():
                 tdn_adf as fq_tdn_adf,
                 milk_ton_milk2013 as fq_milkton,
                 rfq as fq_rfq,
+                total_nitrogen,
                 total_precip,
                 acc_gdd
             from all_lab_data_2023 lab 
