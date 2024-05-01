@@ -994,7 +994,7 @@ SELECT
         fq_tdn_adf,
         fq_milkton,
         fq_rfq,
-        
+        total_nitrogen,
         concat(		
             concat(  cover_crop_planting_rate_1, ' ', mod_cover_crop_planting_rate_1_units, ' ', mod_cover_crop_species_1),
             nullif(concat(  ', ', cover_crop_planting_rate_2, ' ', mod_cover_crop_planting_rate_2_units, ' ', mod_cover_crop_species_2), ',   '),
