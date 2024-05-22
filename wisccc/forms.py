@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.gis import forms as geo_forms
-from wisccc.models import Survey, Farmer
+from wisccc.models import Survey, Farmer, SurveyPhoto
 from wisccc.models import (
     CashCropChoices,
     CoverCropChoices,
@@ -1290,3 +1290,36 @@ class FullSurveyForm(forms.ModelForm):
             "confirmed_accurate",
             "notes_admin",
         )
+
+
+class SurveyPhotoForm(forms.ModelForm):
+
+    image_1 = forms.FileField(label="Photo 1", required=False)
+    caption_photo_1 = forms.CharField(
+        label="Add a caption to be displayed with photo 1.",
+        required=False,
+        max_length=50,
+        initial="",
+    )
+    image_2 = forms.FileField(label="Photo 2", required=False)
+    caption_photo_2 = forms.CharField(
+        label="Add a caption to be displayed with photo 2.",
+        required=False,
+        max_length=50,
+        initial="",
+    )
+
+    notes = forms.CharField(
+        label="Add any notes about these photos, notes will not be displayed.",
+        widget=forms.TextInput(
+            attrs={
+                "type": "text",
+                "class": "form-control form-control-lg",
+            },
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = SurveyPhoto
+        fields = ["image_1", "caption_photo_1", "image_2", "caption_photo_2", "notes"]

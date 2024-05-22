@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models as geo_models
 from .derive_species_class import derive_species_class
+from exploring_soils.storage_backends import WiscCCPhotoStorage
 
 
 class Farmer(models.Model):
@@ -807,3 +808,18 @@ class Survey(models.Model):
     # )
     class Meta:
         permissions = (("survery_manager", "Survey Manager"),)
+
+
+class SurveyPhoto(models.Model):
+
+    survey_response = models.ForeignKey(Survey, on_delete=models.CASCADE, null=True)
+    uploaded_time = models.DateTimeField(auto_now_add=True)
+    image_1 = models.ImageField(storage=WiscCCPhotoStorage(), null=True)
+    caption_photo_1 = models.CharField(
+        max_length=50, verbose_name="Caption about photo 1", null=True
+    )
+    image_2 = models.ImageField(storage=WiscCCPhotoStorage(), null=True)
+    caption_photo_2 = models.CharField(
+        max_length=50, verbose_name="Caption about photo 2", null=True
+    )
+    notes = models.TextField(verbose_name="Notes about photo", null=True)

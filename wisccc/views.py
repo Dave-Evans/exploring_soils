@@ -26,8 +26,9 @@ from wisccc.forms import (
     SurveyForm3,
     FarmerForm,
     FullSurveyForm,
+    SurveyPhotoForm,
 )
-from wisccc.models import Survey, Farmer
+from wisccc.models import Survey, Farmer, SurveyPhoto
 from wisccc.derive_species_class import pull_all_years_together
 import pandas as pd
 
@@ -607,25 +608,71 @@ def update_response(request, id):
     # field names as keys
     context = {}
 
-    # fetch the object related to passed id
+    # fetch the survey object related to passed id
     obj = get_object_or_404(Survey, id=id)
 
+    # Get farmer associated with user id of survey response
     farmer = Farmer.objects.filter(user_id=obj.user_id).first()
 
     # pass the object as instance in form
     form = FullSurveyForm(request.POST or None, instance=obj)
 
+    # Get any uploaded photos for this survey response
+    # dummy for now!!
+    survey_photo = SurveyPhoto.objects.filter(survey_response=id).first()
+
     farmer_form = FarmerForm(request.POST or None, instance=farmer)
+
+    survey_photo_form = SurveyPhotoForm(request.POST or None, instance=survey_photo)
     # save the data from the form and
     # redirect to detail_view
-    if form.is_valid() and farmer_form.is_valid():
+
+    if form.is_valid() and farmer_form.is_valid() and survey_photo_form.is_valid():
+
         form.save()
         # Here verify county
         # Here calc gdu?
         farmer_form.save()
+
+        new_survey_photo = survey_photo_form.save()
+        new_survey_photo.survey_response_id = id
+        if "image_1" in request.FILES.keys():
+            new_survey_photo.image_1 = request.FILES["image_1"]
+        if "image_2" in request.FILES.keys():
+            new_survey_photo.image_2 = request.FILES["image_2"]
+
+        new_survey_photo.save()
+
         return redirect("response_table")
     # add form dictionary to context
     context["form"] = form
     context["farmer_form"] = farmer_form
+    context["survey_photo_form"] = survey_photo_form
 
     return render(request, "wisccc/survey_review.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def upload_photo(request, id):
+    """For uploading photos for survey response"""
+    ###############################################
+    # GRAB current record!
+    ###############################################
+    if request.method == "POST":
+        form_photo = SurveyPhotoForm(request.POST, request.FILES)
+        if form_photo.is_valid():
+            new_photo = form_photo.save()
+            new_photo.save()
+
+            return redirect("kanopy_thanks")
+    else:
+        form_photo = SurveyPhotoForm()
+
+    template = "wisccc/photo_upload.html"
+    return render(
+        request,
+        template,
+        {
+            "form": form_photo,
+        },
+    )

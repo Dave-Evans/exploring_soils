@@ -20,9 +20,12 @@ urlpatterns = [
         wisccc_views.wisc_cc_manager_home,
         name="wisc_cc_manager_home",
     ),
+    path("upload_photo/<id>", wisccc_views.upload_photo, name="upload_photo"),
     path("update_response/<id>", wisccc_views.update_response, name="update_response"),
     path("delete_response/<id>", wisccc_views.delete_response, name="delete_response"),
     re_path(r"^response_table$", wisccc_views.response_table, name="response_table"),
+    # path("create_photo/<id>", wisccc_views.update_response, name="create_photo"),
+    # path("update_photo/<id>", wisccc_views.update_response, name="update_photo"),
     # re_path(
     #     r"^wisccc_download_data/<int:opt>$",
     #     wisccc_views.wisccc_download_data,
