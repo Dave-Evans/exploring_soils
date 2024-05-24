@@ -438,6 +438,25 @@ def get_wi_counties(request):
 
 def get_wisc_cc_data(request):
     data = pull_all_years_together("json")
+    # retrieve signed url for accessing private s3 images
+    # There is probably a better way to do this but while there aren't many
+    #   submissions this is fine.
+    for feat in data["features"]:
+        if feat["properties"]["response_id"]:
+            response_id = feat["properties"]["response_id"]
+        else:
+            continue
+
+        try:
+            survey_photo = SurveyPhoto.objects.get(survey_response_id=response_id)
+        except SurveyPhoto.DoesNotExist:
+            print(f"Survey photo does not exist for {response_id}")
+            continue
+
+        if survey_photo.image_1:
+            feat["properties"]["image_1_url"] = survey_photo.image_1.url
+        if survey_photo.image_2:
+            feat["properties"]["image_2_url"] = survey_photo.image_2.url
 
     return JsonResponse(list(data["features"]), safe=False)
 
@@ -618,7 +637,6 @@ def update_response(request, id):
     form = FullSurveyForm(request.POST or None, instance=obj)
 
     # Get any uploaded photos for this survey response
-    # dummy for now!!
     survey_photo = SurveyPhoto.objects.filter(survey_response=id).first()
 
     farmer_form = FarmerForm(request.POST or None, instance=farmer)
@@ -655,24 +673,34 @@ def update_response(request, id):
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def upload_photo(request, id):
     """For uploading photos for survey response"""
-    ###############################################
-    # GRAB current record!
-    ###############################################
-    if request.method == "POST":
-        form_photo = SurveyPhotoForm(request.POST, request.FILES)
-        if form_photo.is_valid():
-            new_photo = form_photo.save()
-            new_photo.save()
+    context = {}
 
-            return redirect("kanopy_thanks")
-    else:
-        form_photo = SurveyPhotoForm()
+    # Get any uploaded photos for this survey response
+
+    survey_photo = SurveyPhoto.objects.filter(survey_response=id).first()
+
+    survey_photo_form = SurveyPhotoForm(request.POST or None, instance=survey_photo)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if survey_photo_form.is_valid():
+
+        new_survey_photo = survey_photo_form.save()
+        new_survey_photo.survey_response_id = id
+        if "image_1" in request.FILES.keys():
+            new_survey_photo.image_1 = request.FILES["image_1"]
+        if "image_2" in request.FILES.keys():
+            new_survey_photo.image_2 = request.FILES["image_2"]
+
+        new_survey_photo.save()
+
+        return redirect("response_table")
 
     template = "wisccc/photo_upload.html"
     return render(
         request,
         template,
         {
-            "form": form_photo,
+            "survey_photo_form": survey_photo_form,
         },
     )

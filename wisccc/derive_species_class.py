@@ -881,8 +881,9 @@ def pull_all_years_together(f_output):
     query = """
     -- bn05905_p_cover_crop2023_biomass for 2023 biomass
     -- dairyland_labs_forage_analysis_data_2023 for 2023 forage data
-SELECT 
-        stat.id
+    SELECT
+        null as response_id 
+        , stat.id
         , stat.year
         , stat.county
         , stat.county_single
@@ -930,11 +931,16 @@ SELECT
         , stat.cc_rate_and_species
         , stat.cc_species
         , stat.cc_species_raw
+        , null as image_1
+        , null as caption_photo_1
+        , null as image_2
+        , null as caption_photo_1
     from wisc_cc as stat
 
     union all
 
     select
+        response_id,
         wisc_cc_id as id,
         year,
         a.county,
@@ -1009,10 +1015,15 @@ SELECT
             nullif(concat(', ', mod_cover_crop_species_3), ', '), 
             nullif(concat(', ', mod_cover_crop_species_4), ', '), 
             nullif(concat(', ', mod_cover_crop_species_5), ', ')
-        ) as cc_species_raw
+        ) as cc_species_raw,
+        image_1,
+        caption_photo_1,
+        image_2,
+        caption_photo_1
     from (
         select
             *,
+            live_dat.id as response_id,
             concat(
                 live_dat.closest_zip_code,
                 '-',
@@ -1242,10 +1253,11 @@ SELECT
                 when live_dat.crop_rotation_2023_cash_crop_species = 'LIVESTOCK' then 'livestock feeding/grazing'	    	
             end as mod_crop_rotation_2023_cash_crop_species
             
-            
             from wisccc_survey as live_dat
             left join wisccc_farmer wf 
             on live_dat.user_id = wf.user_id
+            left join wisccc_surveyphoto as photo
+            on live_dat.id = photo.survey_response_id
             left join (
 				select 
 					ws.id,
@@ -1273,6 +1285,7 @@ SELECT
             on live_dat.id = labdata.id
             where live_dat.confirmed_accurate = TRUE
     ) as a
+    
     """
 
     if f_output == "sql":

@@ -392,6 +392,11 @@
                             <input type="checkbox" id="PostManFilter" class="PreManSelector">
                         </span>
                         <br>
+
+                        <span>Filter for points with photos
+                            <input type="checkbox" id="HasPhotoFilter" class="HasPhotoFilter">
+                        </span>
+                        <br>
                         <a href="{% url 'wisc_cc_graph' %}" class="btn btn-primary">Go to graph</a>
 
                     </div>
@@ -525,6 +530,14 @@
             var biomass_val = feature.properties.cc_biomass;
 
             var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
+            var image_1 = ""
+            var image_2 = ""
+            if (feature.properties.image_1_url != null) {
+                image_1 = "<dt>" + feature.properties.caption_photo_1 + "</dt> <dd>" + '<img src="' + feature.properties.image_1_url + '" width="250" height="250">' + "</dd>"
+            }
+            if (feature.properties.image_2_url != null) {
+                image_2 = "<dt>" + feature.properties.caption_photo_2 + "</dt> <dd>" + '<img src="' + feature.properties.image_2_url + '" width="250" height="250">' + "</dd>"
+            }
             var popupContent = "<dl>" +
                 // "<dt>ID</dt> <dd>" + feature.id + "</dd>" +
                 "<dt>Cover crops</dt> <dd>" + feature.properties.cc_species_raw + "</dd>" +
@@ -535,14 +548,20 @@
                 "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
                 "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
                 "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
+                image_1 +
+                image_2 +
                 "</dl>"
 
 
             if (feature.properties && feature.properties.popupContent) {
                 popupContent += feature.properties.popupContent;
             }
+            var popup = L.popup({
 
-            layer.bindPopup(popupContent);
+                maxHeight: 400
+            })
+            popup.setContent(popupContent)
+            layer.bindPopup(popup);
             // Turning off the hover because it recenters the map automatically
             //  causing some jarring movement. Perhaps this can be salvaged?
             // layer.on('mouseover', function (e) {
@@ -747,7 +766,8 @@
                 year: false,
                 cc_species_raw: false,
                 manure_prior: false,
-                manure_post: false
+                manure_post: false,
+                has_photo: false
             }
 
 
@@ -761,6 +781,8 @@
             filter_values['residue_remaining'] = $("#TillageFilter").selectize()[0].selectize.getValue();
             filter_values['manure_prior'] = prior_manure;
             filter_values['manure_post'] = post_manure;
+
+            filter_values['has_photo'] = has_photo;
 
 
         }
@@ -826,7 +848,9 @@
                     const filt_priorman = (filter_values.manure_prior == false) ? true : (feature.properties.manure_prior == "Yes");
                     const filt_postman = (filter_values.manure_post == false) ? true : (feature.properties.manure_post == "Yes");
 
-                    return filt_year && filt_seeding && filt_soiltext && filt_species && filt_till && filt_priorman && filt_postman && filt_priorcrop//only true if both are true
+                    const filt_hasphoto = (filter_values.has_photo == false) ? true : (feature.properties.image_1_url != null);
+
+                    return filt_year && filt_seeding && filt_soiltext && filt_species && filt_till && filt_priorman && filt_postman && filt_priorcrop && filt_hasphoto//only true if both are true
                 },
 
                 pointToLayer: function (feature, latlng) {
@@ -889,6 +913,15 @@
         $("#PostManFilter").on("input", function () {
 
             post_manure = document.getElementById('PostManFilter').checked
+
+            filterer()
+            //add the layer to the map again, now that we have changed the filter value. 
+            addLayerToMap();
+        });
+        let has_photo = document.getElementById('HasPhotoFilter').checked;
+        $("#HasPhotoFilter").on("input", function () {
+
+            has_photo = document.getElementById('HasPhotoFilter').checked
 
             filterer()
             //add the layer to the map again, now that we have changed the filter value. 

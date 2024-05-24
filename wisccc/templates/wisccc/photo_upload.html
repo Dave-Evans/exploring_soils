@@ -1,0 +1,34 @@
+{% extends 'wisccc/base_survey.html' %}
+
+{% block title %}Upload photo{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+{% block form %}
+
+<head>
+    {{ form_photo.media }}
+</head>
+<script>
+    //https://stackoverflow.com/questions/140460/client-js-framework-for-unsaved-data-protection
+</script>
+
+<h3 class="card-title">Upload photo for survey</h3>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+
+    {% include 'wisccc/includes/form_photo.html' %}
+
+    <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
+    <a href="{% url 'wisc_cc_survey' %}"><button type="button" class="warn btn btn-secondary">Back to survey home
+            page</button></a>
+
+
+</form>
+
+
+
+{% endblock %}

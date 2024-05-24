@@ -29,13 +29,15 @@ from wisccc.models import Survey, Farmer
 
 
 class ResponseTable(tables.Table):
-    username = tables.Column()
+    first_name = tables.Column()
+    last_name = tables.Column()
+    # username = tables.Column()
     email = tables.Column()
     survey_created = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column.html")
+    upload_photo = TemplateColumn(template_name="wisccc/upload_photo_column.html")
     # delete = TemplateColumn(template_name="wisccc/delete_column.html")
 
-    # delete = TemplateColumn(template_name="wisccc/delete_column.html")
     class Meta:
         template_name = "django_tables2/bootstrap4.html"
 
@@ -43,12 +45,14 @@ class ResponseTable(tables.Table):
 
         row_attrs = {
             # For highlighting rows according to if confirmed good
-            "class": lambda record: "table-success"
-            if record["confirmed_accurate"] == True
-            else (
-                "table-danger"
-                if record["confirmed_accurate"] == False
-                else "table-warning"
+            "class": lambda record: (
+                "table-success"
+                if record["confirmed_accurate"] == True
+                else (
+                    "table-danger"
+                    if record["confirmed_accurate"] == False
+                    else "table-warning"
+                )
             )
         }
 
