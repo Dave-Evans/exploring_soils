@@ -934,7 +934,7 @@ def pull_all_years_together(f_output):
         , null as image_1
         , null as caption_photo_1
         , null as image_2
-        , null as caption_photo_1
+        , null as caption_photo_2
     from wisc_cc as stat
 
     union all
@@ -1019,7 +1019,7 @@ def pull_all_years_together(f_output):
         image_1,
         caption_photo_1,
         image_2,
-        caption_photo_1
+        caption_photo_2
     from (
         select
             *,
