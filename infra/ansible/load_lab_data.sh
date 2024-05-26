@@ -7,7 +7,7 @@ fl_labdata_2023="/home/ubuntu/exploring_soils/data/all_lab_data_2023.tsv"
 
 # Download survey data form 2020 through 2022
 ## VARIABLIZE ##
-# aws s3 cp s3://davemike-backup-dev/db/lab_data_2023/$(basename $fl_labdata_2023) $fl_labdata_2023
+# aws s3 cp s3://davemike-backup/db/labdata_2023/$(basename $fl_labdata_2023) $fl_labdata_2023
 aws s3 cp s3://$4/db/labdata_2023/$(basename $fl_labdata_2023) $fl_labdata_2023
 
 source myvenv/bin/activate

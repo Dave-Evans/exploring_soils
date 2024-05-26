@@ -223,6 +223,10 @@ def wisc_cc_manager_home(request):
     return render(request, "wisccc/wisc_cc_manager_home.html")
 
 
+def wisc_cc_about(request):
+    return render(request, "wisccc/wisc_cc_about.html")
+
+
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def wisccc_download_data(request, opt):
     # opt == 1 then full survey with qualitative
