@@ -119,6 +119,7 @@ class CoverCropChoices(models.TextChoices):
     RED_CLOVER = "RED_CLOVER", "red clover"  # legume
     SORGHUM = "SORGHUM", "sorghum"  # grass
     SORGHUM_SUDAN = "SORGHUM_SUDAN", "sorghum-sudan"  # grass
+    SOYBEANS = "SOYBEANS", "soybeans"  # legume
     SUNFLOWER = "SUNFLOWER", "sunflower"  #
     SUN_HEMP = "SUN_HEMP", "sun hemp"
     TRITICALE = "TRITICALE", "triticale"  # winter
