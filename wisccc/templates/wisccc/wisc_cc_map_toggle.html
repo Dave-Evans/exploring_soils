@@ -312,7 +312,7 @@
 
 
                         <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
-                            <option value="cc_biomass">Cover crop biomass (tons/acre)</option>
+                            <option value="cc_biomass">Cover crop biomass (tons DM/ac)</option>
                             <option value="cc_species">Cover crop types</option>
                             <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_mo">Planting season</option>
@@ -932,10 +932,10 @@
             console.log("updateHelpTipText firing!. Property: " + property)
             var text = ""
             if (property == "acc_gdd") {
-                text = "Cumulative growing degree units are a measure of the growing conditions of a crop."
+                text = "Cumulative growing degree units measure the amount of growth-producing warmth a crop plant receives by a certain date."
             }
             if (property == "cc_biomass") {
-                text = "Cover crop biomass shows the amount of aboveground plant material that was produced from when the cover crop was planted to when it was collected."
+                text = "Biomass is the weight of aboveground plant material at time of collection, and ton DM/acre = tons of dry matter of biomass per acre (please note this is tons not pounds!)"
             }
             if (property == "fq_rfq") {
                 text = "Relative forage quality is a measure of how good the harvested cover crop was for use as forage for livestock."
