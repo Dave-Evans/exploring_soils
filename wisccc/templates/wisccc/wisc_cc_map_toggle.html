@@ -285,6 +285,7 @@
                 <li><a href="{% url 'wisc_cc_home' %}">Home</a></li>
                 <li><a href="{% url 'wisc_cc_graph' %}">Graph</a></li>
                 <li><a href="{% url 'wisc_cc_survey' %}">Survey</a></li>
+                <li><a href="{% url 'wisc_cc_about' %}">About</a></li>
             </ul>
 
         </div>
@@ -927,6 +928,9 @@
             //add the layer to the map again, now that we have changed the filter value. 
             addLayerToMap();
         });
+
+
+
 
         function updateHelpTipText(property) {
             console.log("updateHelpTipText firing!. Property: " + property)
