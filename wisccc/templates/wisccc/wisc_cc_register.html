@@ -1,0 +1,53 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+{% block title %}Welcome to Wisconsin Growers Citizen Science Network {% endblock %}
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- <a class="nav-link" href="{% url 'wisc_cc_home' %}">
+                    <h3 class="card-title">Wisconsin Cover Crop Citizen Science Network</h3>
+                </a> -->
+                <h5>Register</h5>
+                <p>Privacy commitment:
+                    We appreciate your interest in improving cover crops and aim to protect your privacy and respect
+                    your time: Any field data you provide will never be associated with any personal information.
+                    We'll provide you cover crop analysis specific to your farm as well as a summary of statewide
+                    findings.
+                    Your participation is voluntary and you can leave the project at any time.
+                    Reach out to Dan Smith at <a href="mailto:dhsmith@wisc.edu">dhsmith@wisc.edu</a> or Mrill Ingram at
+                    <a href="mailto:mingram@wisc.edu">mingram@wisc.edu</a> with any questions.
+                    If all the above is agreeable to you, provide your contact info.
+                </p>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% if user.is_authenticated %}
+                    Welcome {{ user.email }}
+                    {% endif %}
+                    <hr>
+                    {% include 'wisccc/includes/form_farmer.html' %}
+                    <hr>
+                    {% include 'wisccc/includes/form_registration.html' %}
+
+                    <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
+                    <a href="{% url 'wisc_cc_survey' %}"><button type="button" class="warn btn btn-secondary">Back to
+                            survey home
+                            page</button></a>
+
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}

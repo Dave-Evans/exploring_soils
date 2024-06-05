@@ -1,11 +1,15 @@
+import json
+import djqscsv
+import pandas as pd
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.db import connection
-import json
-import djqscsv
+from django.contrib import messages
 from django.http import JsonResponse
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import (
     TemplateView,
@@ -27,10 +31,11 @@ from wisccc.forms import (
     FarmerForm,
     FullSurveyForm,
     SurveyPhotoForm,
+    CustomUserCreationForm,
+    SurveyRegistrationForm,
 )
-from wisccc.models import Survey, Farmer, SurveyPhoto
+from wisccc.models import Survey, Farmer, SurveyPhoto, SurveyRegistration
 from wisccc.derive_species_class import pull_all_years_together
-import pandas as pd
 
 
 def check_section_completed(user_id, section):
@@ -302,6 +307,7 @@ def wisc_cc_survey0(request):
 @login_required
 def wisc_cc_survey1(request):
     try:
+        # Survey.objects.get(farmer = Farmer.objects.get(user_id = 110))
         instance = Survey.objects.filter(user_id=request.user.id).earliest(
             "last_updated"
         )
@@ -672,6 +678,75 @@ def update_response(request, id):
     context["survey_photo_form"] = survey_photo_form
 
     return render(request, "wisccc/survey_review.html", context)
+
+
+def wisc_cc_signup(request):
+    """For creating an account with wisc cc"""
+    signup_form = CustomUserCreationForm(request.POST)
+    if signup_form.is_valid():
+
+        new_user = signup_form.save()
+        auth_login(request, new_user)
+        messages.success(request, "Account created successfully")
+        return redirect("wisc_cc_home")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_signup.html",
+        {"form": signup_form},
+    )
+
+
+def wisc_cc_register(request):
+    """Registering for Wisc CC survey"""
+    # TODO:
+    #   Grab user info if they are logged in
+    #   Grab farmer info if they are logged in and have a farmer attached to userid
+    #   Grab registration info if they have already registered
+
+    print("ID from request is:", request.user.id)
+    user = User.objects.get(id=request.user.id)
+    try:
+        farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
+        print("Farmer id:", farmer_instance.id)
+    except:
+        print("In the except in farmer")
+        farmer_instance = None
+
+    farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
+
+    try:
+        registration_instance = SurveyRegistration.objects.filter(
+            farmer_id=farmer_instance.id
+        ).first()
+    except:
+        print("In the except in registration")
+        registration_instance = None
+
+    registration_form = SurveyRegistrationForm(
+        request.POST or None, instance=registration_instance
+    )
+
+    if farmer_form.is_valid() and registration_form.is_valid():
+
+        new_farmer = farmer_form.save(commit=False)
+        new_register = registration_form.save(commit=False)
+        new_farmer.user = user
+        new_farmer.save()
+        new_register.farmer = new_farmer
+        new_register.save()
+
+        messages.success(request, "Account created successfully")
+        return redirect("wisc_cc_home")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_register.html",
+        {
+            "farmer_form": farmer_form,
+            "registration_form": registration_form,
+        },
+    )
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)

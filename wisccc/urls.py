@@ -1,6 +1,8 @@
 from django.urls import re_path, path
 from django.views.generic import RedirectView
+from django.contrib.auth import views as auth_views
 from wisccc import views as wisccc_views
+from wisccc.forms import UserLoginForm
 
 urlpatterns = [
     re_path(r"^wisc-cc-home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
@@ -24,6 +26,25 @@ urlpatterns = [
         r"^wisc_cc_admin$",
         wisccc_views.wisc_cc_manager_home,
         name="wisc_cc_manager_home",
+    ),
+    re_path(
+        r"^wisc_cc_register$",
+        wisccc_views.wisc_cc_register,
+        name="wisc_cc_register",
+    ),
+    # For creating an account
+    re_path(
+        r"^wisc_cc_signup$",
+        wisccc_views.wisc_cc_signup,
+        name="wisc_cc_signup",
+    ),
+    # For Logging in when one already has an account
+    re_path(
+        r"wisc_cc_login/",
+        auth_views.LoginView.as_view(
+            template_name="wisccc/wisc_cc_login.html", authentication_form=UserLoginForm
+        ),
+        name="wisc_cc_login",
     ),
     path("upload_photo/<id>", wisccc_views.upload_photo, name="upload_photo"),
     path("update_response/<id>", wisccc_views.update_response, name="update_response"),

@@ -1,8 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.gis.db import models as geo_models
 from .derive_species_class import derive_species_class
 from exploring_soils.storage_backends import WiscCCPhotoStorage
+
+
+# For making User's email non-unique
+User._meta.get_field("email")._unique = True
+
+
+class StateAbrevChoices(models.TextChoices):
+    """In case someone doesn't exactly in WI"""
+
+    WI = "WI", "WI"
+    MN = "MN", "MN"
+    IL = "IL", "IL"
+    MI = "MI", "MI"
+    IA = "IA", "IA"
 
 
 class Farmer(models.Model):
@@ -11,6 +26,19 @@ class Farmer(models.Model):
     last_name = models.CharField(max_length=250, blank=True)
     farm_name = models.CharField(max_length=250, blank=True)
     county = models.TextField(verbose_name="County of farm", null=True)
+    address_street = models.CharField(max_length=250, blank=True)
+    address_municipality = models.CharField(max_length=250, blank=True)
+    address_state = models.CharField(
+        choices=StateAbrevChoices.choices,
+        default=StateAbrevChoices.WI,
+        max_length=2,
+        null=True,
+    )
+    address_zipcode = models.PositiveIntegerField(
+        null=True, validators=[MaxValueValidator(99999), MinValueValidator(1)]
+    )
+
+    phone_number = models.CharField(max_length=13, blank=True)
 
 
 class NutrientMgmtSourcesChoices(models.TextChoices):
@@ -293,7 +321,9 @@ class Survey(models.Model):
     )
     confirmed_accurate = models.BooleanField(null=True)
 
+    # Foreign key to farmer rather than user
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, null=True)
 
     # Location
     farm_location = geo_models.PointField(verbose_name="Farm location", null=True)
@@ -824,3 +854,18 @@ class SurveyPhoto(models.Model):
         max_length=50, verbose_name="Caption about photo 2", null=True
     )
     notes = models.TextField(verbose_name="Notes about photo", null=True)
+
+
+class SurveyRegistration(models.Model):
+    """For folks registering to take survey"""
+
+    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, null=True)
+    signup_timestamp = models.DateTimeField(auto_now_add=True)
+    belong_to_groups = models.TextField(
+        verbose_name="Do you belong to producer led watershed groups?", null=True
+    )
+    howd_you_hear = models.TextField(
+        verbose_name="How'd you hear about this project?", null=True
+    )
+    honorarium_amount = models.PositiveIntegerField(null=True)
+    notes = models.TextField(null=True)
