@@ -40,11 +40,11 @@ urlpatterns = [
     ),
     # For Logging in when one already has an account
     re_path(
-        r"wisc_cc_login/",
+        r"login/",
         auth_views.LoginView.as_view(
             template_name="wisccc/wisc_cc_login.html", authentication_form=UserLoginForm
         ),
-        name="wisc_cc_login",
+        name="login",
     ),
     path("upload_photo/<id>", wisccc_views.upload_photo, name="upload_photo"),
     path("update_response/<id>", wisccc_views.update_response, name="update_response"),

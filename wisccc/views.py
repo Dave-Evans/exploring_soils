@@ -697,6 +697,7 @@ def wisc_cc_signup(request):
     )
 
 
+@login_required
 def wisc_cc_register(request):
     """Registering for Wisc CC survey"""
     # TODO:

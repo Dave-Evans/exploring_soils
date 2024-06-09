@@ -55,13 +55,18 @@ class FarmerForm(forms.ModelForm):
     first_name = forms.CharField(max_length=250, required=True)
     last_name = forms.CharField(max_length=250, required=True)
     phone_number = forms.CharField(max_length=13, required=True)
-    address_street = forms.CharField(max_length=250, required=True)
-    address_municipality = forms.CharField(max_length=250, required=True)
+    address_street = forms.CharField(
+        label="Street Address", max_length=250, required=True
+    )
+    address_municipality = forms.CharField(
+        label="Municipality", max_length=250, required=True
+    )
     address_state = forms.ChoiceField(
+        label="State",
         choices=StateAbrevChoices.choices,
         required=True,
     )
-    address_zipcode = forms.IntegerField(required=True)
+    address_zipcode = forms.IntegerField(label="Zip code", required=True)
     farm_name = forms.CharField(max_length=250, required=False)
     county = forms.CharField(
         max_length=500,
@@ -1372,7 +1377,12 @@ class SurveyPhotoForm(forms.ModelForm):
 
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.CharField(max_length=254, required=True, widget=forms.EmailInput())
+    email = forms.CharField(
+        label="Email (this will be your username as well)",
+        max_length=254,
+        required=True,
+        widget=forms.EmailInput(),
+    )
 
     class Meta:
         model = User
@@ -1419,6 +1429,12 @@ class SurveyRegistrationForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
+    previous_participation = forms.CharField(
+        label="Have you participated in this project in previous years?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=250,
+    )
     howd_you_hear = forms.CharField(
         label="How did you hear about the project?",
         required=False,
@@ -1428,4 +1444,4 @@ class SurveyRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = SurveyRegistration
-        fields = ["belong_to_groups", "howd_you_hear"]
+        fields = ["belong_to_groups", "howd_you_hear", "previous_participation"]

@@ -10,4 +10,9 @@
         {{ registration_form.howd_you_hear|as_crispy_field }}
     </div>
 </div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ registration_form.previous_participation|as_crispy_field }}
+    </div>
+</div>
 {{ registration_form.errors}}

@@ -859,8 +859,10 @@ class SurveyPhoto(models.Model):
 class SurveyRegistration(models.Model):
     """For folks registering to take survey"""
 
+    survey_year = models.IntegerField(null=True)
     farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, null=True)
     signup_timestamp = models.DateTimeField(auto_now_add=True)
+    previous_participation = models.CharField(max_length=250, null=True)
     belong_to_groups = models.TextField(
         verbose_name="Do you belong to producer led watershed groups?", null=True
     )
