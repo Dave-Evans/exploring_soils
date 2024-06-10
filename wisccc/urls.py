@@ -50,6 +50,11 @@ urlpatterns = [
     path("update_response/<id>", wisccc_views.update_response, name="update_response"),
     path("delete_response/<id>", wisccc_views.delete_response, name="delete_response"),
     re_path(r"^response_table$", wisccc_views.response_table, name="response_table"),
+    re_path(
+        r"^registration_table$",
+        wisccc_views.registration_table,
+        name="registration_table",
+    ),
     # path("create_photo/<id>", wisccc_views.update_response, name="create_photo"),
     # path("update_photo/<id>", wisccc_views.update_response, name="update_photo"),
     # re_path(
