@@ -34,7 +34,7 @@ class ResponseTable(tables.Table):
     # username = tables.Column()
     email = tables.Column()
     survey_created = tables.Column()
-    edit = TemplateColumn(template_name="wisccc/update_column.html")
+    edit = TemplateColumn(template_name="wisccc/update_column_response.html")
     upload_photo = TemplateColumn(template_name="wisccc/upload_photo_column.html")
     # delete = TemplateColumn(template_name="wisccc/delete_column.html")
 
@@ -63,8 +63,7 @@ class RegistrationTable(tables.Table):
     email = tables.Column()
     belong_to_groups = tables.Column()
     notes = tables.Column()
-    # edit = TemplateColumn(template_name="wisccc/update_column.html")
-    # upload_photo = TemplateColumn(template_name="wisccc/upload_photo_column.html")
+    edit = TemplateColumn(template_name="wisccc/update_column_registration.html")
     # delete = TemplateColumn(template_name="wisccc/delete_column.html")
 
     class Meta:

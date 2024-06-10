@@ -1443,7 +1443,31 @@ class SurveyRegistrationForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
+    notes = forms.CharField(
+        label="Admin notes",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=1000,
+    )
+
+    honorarium_amount = forms.IntegerField(
+        label="Honorarium amount",
+        required=False
+    )
 
     class Meta:
         model = SurveyRegistration
-        fields = ["belong_to_groups", "howd_you_hear", "previous_participation"]
+        fields = [
+            "belong_to_groups",
+            "howd_you_hear",
+            "previous_participation",
+            "notes",
+            "honorarium_amount",
+        ]
+
+
+class UserInfoForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ["username", "email"]

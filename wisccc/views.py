@@ -31,6 +31,7 @@ from wisccc.forms import (
     SurveyPhotoForm,
     CustomUserCreationForm,
     SurveyRegistrationForm,
+    UserInfoForm,
 )
 from wisccc.models import Survey, Farmer, SurveyPhoto, SurveyRegistration
 from wisccc.derive_species_class import pull_all_years_together
@@ -618,13 +619,15 @@ def registration_table(request):
         """For getting registration data"""
         query = """
             select
-                signup_timestamp
+                ws.id
+                , signup_timestamp
                 , wf.farm_name
                 , wf.first_name 
                 , wf.last_name 
                 , wf.address_zipcode
                 , au.email
                 , ws.belong_to_groups
+                , ws.notes
                 , howd_you_hear	
             from wisccc_surveyregistration ws 
             inner join wisccc_farmer wf 
@@ -648,6 +651,54 @@ def registration_table(request):
         "wisccc/registration_table.html",
         {"table": table, "total_regs": 3},
     )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def update_registration(request, id):
+    """For updating registration"""
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the survey object related to passed id
+    registration = get_object_or_404(SurveyRegistration, id=id)
+
+    # Get farmer associated with registrant
+    farmer = registration.farmer
+
+    # Get user associated with registrant
+    user = registration.farmer.user
+
+    # pass the object as instance in form
+    registration_form = SurveyRegistrationForm(
+        request.POST or None, instance=registration
+    )
+
+    farmer_form = FarmerForm(request.POST or None, instance=farmer)
+
+    user_info_form = UserInfoForm(request.POST or None, instance=user)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if (
+        registration_form.is_valid()
+        and farmer_form.is_valid()
+        and user_info_form.is_valid()
+    ):
+
+        registration_form.save()
+
+        farmer_form.save()
+
+        user_info_form.save()
+
+        return redirect("registration_table")
+    # add form dictionary to context
+    context["registration_form"] = registration_form
+    context["farmer_form"] = farmer_form
+    context["user_info_form"] = user_info_form
+
+    return render(request, "wisccc/wisc_cc_registration_review.html", context)
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)

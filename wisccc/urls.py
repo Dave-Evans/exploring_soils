@@ -55,6 +55,16 @@ urlpatterns = [
         wisccc_views.registration_table,
         name="registration_table",
     ),
+    path(
+        "update_registration/<id>",
+        wisccc_views.update_registration,
+        name="update_registration",
+    ),
+    # path(
+    #     "delete_registration/<id>",
+    #     wisccc_views.delete_registration,
+    #     name="delete_registration",
+    # ),
     # path("create_photo/<id>", wisccc_views.update_response, name="create_photo"),
     # path("update_photo/<id>", wisccc_views.update_response, name="update_photo"),
     # re_path(
