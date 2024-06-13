@@ -31,7 +31,8 @@ from wisccc.forms import (
     FullSurveyForm,
     SurveyPhotoForm,
     CustomUserCreationForm,
-    SurveyRegistrationForm,
+    SurveyRegistrationFullForm,
+    SurveyRegistrationPartialForm,
     UserInfoForm,
 )
 from wisccc.models import Survey, Farmer, SurveyPhoto, SurveyRegistration
@@ -671,7 +672,7 @@ def update_registration(request, id):
     user = registration.farmer.user
 
     # pass the object as instance in form
-    registration_form = SurveyRegistrationForm(
+    registration_form = SurveyRegistrationFullForm(
         request.POST or None, instance=registration
     )
 
@@ -815,14 +816,10 @@ def wisc_cc_register_2(request):
     #   Grab user info if they are logged in
     #   Grab farmer info if they are logged in and have a farmer attached to userid
     #   Grab registration info if they have already registered
-
-    print("ID from request is:", request.user.id)
     user = User.objects.get(id=request.user.id)
     try:
         farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
-        print("Farmer id:", farmer_instance.id)
     except:
-        print("In the except in farmer")
         farmer_instance = None
 
     farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
@@ -831,12 +828,10 @@ def wisc_cc_register_2(request):
         registration_instance = SurveyRegistration.objects.filter(
             farmer_id=farmer_instance.id
         ).first()
-        print(registration_instance.notes)
     except:
-        print("In the except in registration")
         registration_instance = None
 
-    registration_form = SurveyRegistrationForm(
+    registration_form = SurveyRegistrationPartialForm(
         request.POST or None, instance=registration_instance
     )
 
@@ -848,10 +843,6 @@ def wisc_cc_register_2(request):
         new_farmer.user = user
         new_farmer.save()
 
-        if registration_instance is not None:
-            new_register.notes = registration_instance.notes
-            new_register.honorarium_amount = registration_instance.honorarium_amount
-        print("New notes:", new_register.notes)
         new_register.farmer = new_farmer
         new_register.survey_year = 2024
         new_register.save()

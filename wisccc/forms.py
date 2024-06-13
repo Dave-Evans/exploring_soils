@@ -1422,8 +1422,8 @@ class CustomUserCreationForm(UserCreationForm):
         return user
 
 
-class SurveyRegistrationForm(forms.ModelForm):
-    """For signing up for survey and biomass kit"""
+class SurveyRegistrationFullForm(forms.ModelForm):
+    """For updating or reviewing signing up for survey and biomass kit"""
 
     belong_to_groups = forms.CharField(
         label="If you belong to a producer-led watershed protection group or other agricultural conservation group what is the name of the group?",
@@ -1450,10 +1450,7 @@ class SurveyRegistrationForm(forms.ModelForm):
         max_length=1000,
     )
 
-    honorarium_amount = forms.IntegerField(
-        label="Honorarium amount",
-        required=False
-    )
+    honorarium_amount = forms.IntegerField(label="Honorarium amount", required=False)
 
     class Meta:
         model = SurveyRegistration
@@ -1463,6 +1460,37 @@ class SurveyRegistrationForm(forms.ModelForm):
             "previous_participation",
             "notes",
             "honorarium_amount",
+        ]
+
+
+class SurveyRegistrationPartialForm(forms.ModelForm):
+    """For updating or reviewing signing up for survey and biomass kit"""
+
+    belong_to_groups = forms.CharField(
+        label="If you belong to a producer-led watershed protection group or other agricultural conservation group what is the name of the group?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    previous_participation = forms.CharField(
+        label="Have you participated in this project in previous years?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=250,
+    )
+    howd_you_hear = forms.CharField(
+        label="How did you hear about the project?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    class Meta:
+        model = SurveyRegistration
+        fields = [
+            "belong_to_groups",
+            "howd_you_hear",
+            "previous_participation",
         ]
 
 
