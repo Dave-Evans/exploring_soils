@@ -28,9 +28,19 @@ urlpatterns = [
         name="wisc_cc_manager_home",
     ),
     re_path(
-        r"^wisc_cc_register$",
-        wisccc_views.wisc_cc_register,
-        name="wisc_cc_register",
+        r"^wisc_cc_register_1$",
+        wisccc_views.wisc_cc_register_1,
+        name="wisc_cc_register_1",
+    ),
+    re_path(
+        r"^wisc_cc_register_2$",
+        wisccc_views.wisc_cc_register_2,
+        name="wisc_cc_register_2",
+    ),
+    re_path(
+        r"^wisc_cc_register_3$",
+        wisccc_views.wisc_cc_register_3,
+        name="wisc_cc_register_3",
     ),
     # For creating an account
     re_path(
@@ -45,6 +55,14 @@ urlpatterns = [
             template_name="wisccc/wisc_cc_login.html", authentication_form=UserLoginForm
         ),
         name="login",
+    ),
+    re_path(
+        r"register_1a/",
+        auth_views.LoginView.as_view(
+            template_name="wisccc/wisc_cc_register_1_login.html",
+            authentication_form=UserLoginForm,
+        ),
+        name="register_1a",
     ),
     path("upload_photo/<id>", wisccc_views.upload_photo, name="upload_photo"),
     path("update_response/<id>", wisccc_views.update_response, name="update_response"),

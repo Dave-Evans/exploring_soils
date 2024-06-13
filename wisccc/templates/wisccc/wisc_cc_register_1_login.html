@@ -1,0 +1,16 @@
+{% extends 'wisccc/wisc_cc_register_1.html' %}
+{% load static %}
+
+{% block register_1 %}
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{% url 'wisc_cc_register_2' %}">
+    {% include 'includes/form.html' %}
+    <button type="submit" class="btn btn-primary btn-block">Log in</button>
+</form>
+
+<div class="card-footer text-muted text-center">
+    New to our program? <a href="{% url 'wisc_cc_signup' %}">Sign up</a>
+</div>
+{% endblock register_1 %}

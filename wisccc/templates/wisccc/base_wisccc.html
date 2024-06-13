@@ -81,8 +81,9 @@
       </div>
     </div>
   </div>
+
   {% block content %}
-  {% endblock %}
+  {% endblock content%}
 </div>
 <script>
   updateActive = function () {
@@ -107,3 +108,4 @@
 </script>
 
 {% endblock %}
+{% block title %}Welcome to Wisconsin Growers Citizen Science Network {% endblock title %}

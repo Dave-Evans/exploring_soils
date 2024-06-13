@@ -1,0 +1,32 @@
+{% extends 'wisccc/wisc_cc_register_1.html' %}
+{% load static %}
+
+{% block register_1 %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% include 'wisccc/includes/form_wisc_signup.html' %}
+
+    <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
+    <a href="{% url 'register_1a' %}">
+        <button type="button" class="noprompt-required btn btn-primary">
+            Already have an account? Login here
+        </button>
+    </a>
+    <div class="text-center py-2">
+        <small>
+            <a href="{% url 'password_reset' %}" class="text-muted">Reset password?</a>
+        </small>
+    </div>
+
+</form>
+
+
+{% endblock register_1 %}

@@ -1,7 +1,7 @@
 {% extends 'wisccc/base_wisccc.html' %}
 {% load static %}
 
-{% block title %}Welcome to Wisconsin Growers Citizen Science Network {% endblock %}
+
 
 {% block content %}
 <style>
@@ -28,25 +28,11 @@
                     <a href="mailto:mingram@wisc.edu">mingram@wisc.edu</a> with any questions.
                     If all the above is agreeable to you, provide your contact info.
                 </p>
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {% if user.is_authenticated %}
-                    Welcome {{ user.email }}
-                    {% endif %}
-                    <hr>
-                    {% include 'wisccc/includes/form_farmer.html' %}
-                    <hr>
-                    {% include 'wisccc/includes/form_registration.html' %}
 
-                    <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
-                    <a href="{% url 'wisc_cc_survey' %}"><button type="button" class="warn btn btn-secondary">Back to
-                            survey home
-                            page</button></a>
-
-
-                </form>
+                {% block register_1 %}
+                {% endblock register_1 %}
 
             </div>
         </div>
     </div>
-    {% endblock %}
+    {% endblock content %}

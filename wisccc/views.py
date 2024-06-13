@@ -10,6 +10,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from wisccc.forms import UserLoginForm
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import (
     TemplateView,
@@ -787,9 +788,29 @@ def wisc_cc_signup(request):
     )
 
 
+def wisc_cc_register_1(request):
+    """Registering for Wisc CC survey, assumes no previous account"""
+    if request.user.id is not None:
+        return redirect("wisc_cc_register_2")
+
+    signup_form = CustomUserCreationForm(request.POST)
+    if signup_form.is_valid():
+
+        new_user = signup_form.save()
+        auth_login(request, new_user)
+        messages.success(request, "Account created successfully")
+        return redirect("wisc_cc_register_2")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_register_1_signup.html",
+        {"form": signup_form},
+    )
+
+
 @login_required
-def wisc_cc_register(request):
-    """Registering for Wisc CC survey"""
+def wisc_cc_register_2(request):
+
     # TODO:
     #   Grab user info if they are logged in
     #   Grab farmer info if they are logged in and have a farmer attached to userid
@@ -810,6 +831,7 @@ def wisc_cc_register(request):
         registration_instance = SurveyRegistration.objects.filter(
             farmer_id=farmer_instance.id
         ).first()
+        print(registration_instance.notes)
     except:
         print("In the except in registration")
         registration_instance = None
@@ -822,23 +844,35 @@ def wisc_cc_register(request):
 
         new_farmer = farmer_form.save(commit=False)
         new_register = registration_form.save(commit=False)
+
         new_farmer.user = user
         new_farmer.save()
+
+        if registration_instance is not None:
+            new_register.notes = registration_instance.notes
+            new_register.honorarium_amount = registration_instance.honorarium_amount
+        print("New notes:", new_register.notes)
         new_register.farmer = new_farmer
         new_register.survey_year = 2024
         new_register.save()
 
         messages.success(request, "Account created successfully")
-        return redirect("wisc_cc_home")
+        return redirect("wisc_cc_register_3")
 
     return render(
         request,
-        "wisccc/wisc_cc_register.html",
+        "wisccc/wisc_cc_register_2.html",
         {
             "farmer_form": farmer_form,
             "registration_form": registration_form,
         },
     )
+
+
+@login_required
+def wisc_cc_register_3(request):
+
+    return render(request, "wisccc/wisc_cc_register_3.html")
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
