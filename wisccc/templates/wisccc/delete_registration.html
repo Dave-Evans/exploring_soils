@@ -1,14 +1,13 @@
 {% extends 'wisccc/base_wisccc.html' %}
 {% load static %}
 
-
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10 col-sm-12">
 
         <div class="card">
             <div class="card-body">
-                <h3 class="card-title">Delete this survey response?</h3>
+                <h3 class="card-title">Delete this registration?</h3>
 
                 <!-- Create a Form -->
                 <form method="POST">
@@ -17,7 +16,7 @@
                     Are you want to delete this item?
                     <br>
                     <input type="submit" value="Yes" />
-                    <a href="{% url 'response_table' %}">Cancel </a>
+                    <a href="{% url 'registration_table' %}">Cancel </a>
                 </form>
             </div>
         </div>

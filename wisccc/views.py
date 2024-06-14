@@ -704,6 +704,25 @@ def update_registration(request, id):
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
+def delete_registration(request, id):
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(SurveyRegistration, id=id)
+
+    if request.method == "POST":
+        # delete object
+        obj.delete()
+        # after deleting redirect to
+        # home page
+        return redirect("registration_table")
+
+    return render(request, "wisccc/delete_registration.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
 def delete_response(request, id):
     # dictionary for initial data with
     # field names as keys

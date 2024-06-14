@@ -64,7 +64,7 @@ class RegistrationTable(tables.Table):
     belong_to_groups = tables.Column()
     notes = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column_registration.html")
-    # delete = TemplateColumn(template_name="wisccc/delete_column.html")
+    delete = TemplateColumn(template_name="wisccc/delete_registration_column.html")
 
     class Meta:
 
