@@ -9,7 +9,7 @@
 {% block body %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a style="font-family: Helvetica" class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Growers Citizen
+  <a style="font-family: Helvetica" class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Citizen
     Science Network</a>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
@@ -65,17 +65,12 @@
   </div>
 </nav>
 <div class="container">
-  <h1 class="text-center logo my-4">
-    <img class="logoimg" src="{% static 'img/logo_wisc_cc_affiliations.png' %}" />
-    <!-- <img class="left logoimg" src="{% static 'img/mosh_logo.png' %}" />
-    <img class="right logoimg" src="{% static 'img/vertMrnM.gif' %}" /> -->
-  </h1>
   <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10 col-sm-12">
       <div class="card">
         <div class="card-body">
           <h1 class="card-title logo text-center">
-            <a href="{% url 'wisc_cc_home' %}">Wisconsin Growers<br>Citizen Science Network</a>
+            <a href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop<br>Citizen Science Network</a>
           </h1>
         </div>
       </div>
@@ -84,6 +79,7 @@
 
   {% block content %}
   {% endblock content%}
+
 </div>
 <script>
   updateActive = function () {
