@@ -29,7 +29,8 @@
         <a class="nav-link" href="{% url 'wisc_cc_map' %}">Map</a>
       </li>
       <li class="nav-item" id="nav-survey">
-        <a class="nav-link" href="{% url 'wisc_cc_survey' %}">Survey</a>
+        <!-- <a class="nav-link" href="{% url 'wisc_cc_survey' %}">Survey</a> -->
+        <a class="nav-link" href="">Survey</a>
       </li>
       <li class="nav-item" id="nav-about">
         <a class="nav-link" href="{% url 'wisc_cc_about' %}">About</a>
@@ -64,6 +65,7 @@
     </span>
   </div>
 </nav>
+<br>
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10 col-sm-12">
@@ -97,11 +99,15 @@
     if (whichpage.includes("map")) {
       $("#nav-map").addClass("active");
     }
+    if (whichpage.includes("map")) {
+      $("#nav-about").addClass("active");
+    }
 
   }
   updateActive()
 
 </script>
+
 <h1 class="text-center logo my-4">
   <img width="700" height="230" src="{% static 'img/logo_wisc_cc_affiliations_2.png' %}" />
 </h1>
