@@ -819,3 +819,58 @@ class Survey(models.Model):
     # )
     class Meta:
         permissions = (("survery_manager", "Survey Manager"),)
+
+
+class AncillaryData(models.Model):
+
+    survey_response = models.ForeignKey(Survey, on_delete=models.SET_NULL, null=True)
+    biomass_collection_date = models.DateField(null=True)
+    cp = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="Crude protein", null=True
+    )
+    andf = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    undfom30 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    ndfd30 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    tdn_adf = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    milk_ton_milk2013 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    rfq = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Relative forage quality",
+        null=True,
+    )
+    cc_biomass = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Cover crop biomass, english tons dry matter per acre",
+        null=True,
+    )
+    total_nitrogen = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="Total nitrogen", null=True
+    )
+    acc_gdd = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Accumulated growing degree units",
+        null=True,
+    )
+    total_precip = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Total precipitation, in inches",
+        null=True,
+    )
+    spring_biomass_collection_date = models.DateField(null=True)
+    spring_cc_biomass = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )

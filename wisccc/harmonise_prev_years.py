@@ -1,7 +1,125 @@
-from wisccc.models import Survey, Farmer
+from wisccc.models import Survey, Farmer, AncillaryData
 from django.contrib.auth import get_user_model
-
+from django.contrib.gis.db import models as geo_models
+from django.contrib.gis.geos import GEOSGeometry, Point
 import pandas as pd
+
+
+# TODO:
+# add the mrill id to to admin notes. Format it like *id* so it can easily be split out.
+# Grab location information from modified previous years and slot in here
+# Get contact info (do not have from Mrill yet)
+# In models, build out ancillary data table
+#   contains lab data
+#   precip
+#   GDU
+#
+
+
+def grab_farm_location(mrill_id):
+    """Looks in the table wisc_cc to grab site_lat and site_lon"""
+    from django.db import connection
+
+    with connection.cursor() as cursor:
+
+        cursor.execute(
+            f"""
+                select site_lon, site_lat 
+                from wisc_cc
+                where id = '{mrill_id}'
+                """
+        )
+
+        location = cursor.fetchall()
+
+    if len(location) > 1:
+        raise
+
+    longitude = location[0][0]
+    latitude = location[0][1]
+
+    pt = GEOSGeometry(f"POINT({longitude} {latitude})")
+    pt.srid = 4326
+    return pt
+    # return {"longitude": location[0][0], "latitude": location[0][1]}
+
+
+def get_2020_2021_ancillary(mrill_id, property):
+    """Looks up ancillary data and pulls out appropriate value based on
+    the provided ID (of the form zip-Intials-YY).
+    property can be cc_biomass,
+    """
+    if property == "cc_biomass":
+        sheet_title = "Table 1"
+        val_col = "Unnamed: 7"
+    elif property == "biomass_collection_date":
+        sheet_title = "Table 1"
+        # Fuck Excel, but yes, this is col name for the date
+        val_col = "CC Biomass"
+
+    fl = "~/Documents/small_projects/wisc_cc/data_from_mrill/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
+    #
+    anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
+    # id Column is always the first one in this spreadsheet
+    id_col_name = anc.columns.tolist()[0]
+
+    val = anc[val_col][anc[id_col_name] == mrill_id]
+
+    if len(val) == 0:
+        return None
+    else:
+        return val.iloc[0]
+
+
+def get_2022_ancillary(mrill_id, property):
+    """Looks up ancillary data and pulls out appropriate value based on
+    the provided ID (of the form zip-Intials-YY).
+    property can be cc_biomass,
+    """
+    if property == "cc_biomass":
+        sheet_title = "Table 1"
+        val_col = "Unnamed: 7"
+    elif property == "biomass_collection_date":
+        sheet_title = "Table 1"
+        # Fuck Excel, but yes, this is col name for the date
+        val_col = "CC Biomass"
+    elif property == "cp":
+        sheet_title = "Forage Quality"
+        val_col = "CP"
+    elif property == "andf":
+        sheet_title = "Forage Quality"
+        val_col = "aNDF"
+    elif property == "undfom30":
+        sheet_title = "Forage Quality"
+        val_col = "uNDFom30"
+    elif property == "ndfd30":
+        sheet_title = "Forage Quality"
+        val_col = "NDFD30"
+    elif property == "tdn_adf":
+        sheet_title = "Forage Quality"
+        val_col = "TDN_ADF"
+    elif property == "milk_ton_milk2013":
+        sheet_title = "Forage Quality"
+        val_col = "Milk/Ton_Milk2013"
+    elif property == "rfq":
+        sheet_title = "Forage Quality"
+        val_col = "RFQ"
+
+    fl = "~/Documents/small_projects/wisc_cc/data_from_mrill/Table 1. DS draft 2.13.22 CCROP Citizen Science Data 2022 with termination.xlsx"
+    #
+    anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
+    # id Column is always the first one in this spreadsheet
+    id_col_name = anc.columns.tolist()[0]
+
+    val = anc[val_col][anc[id_col_name] == mrill_id]
+
+    if len(val) == 0:
+        return None
+
+    if pd.isna(val.iloc[0]):
+        return None
+
+    return val.iloc[0]
 
 
 def ingest_2022_data():
@@ -111,6 +229,9 @@ def ingest_2022_data():
         return ranked_options
 
     for i in range(len(full_data)):
+
+        mrill_id = full_data.iloc[i][1]
+
         # i = 0
         # ------------------------------------------------ #
         # Where do you go for nutrient management recommendations? Select and rank all that apply.
@@ -327,7 +448,7 @@ def ingest_2022_data():
             where_to_start=None,
             additional_thoughts=full_data.iloc[i][82],
             user=unassigned_user,
-            farm_location=None,
+            farm_location=grab_farm_location(mrill_id),
             last_updated=None,
             survey_created=None,
             confirmed_accurate=True,
@@ -337,7 +458,27 @@ def ingest_2022_data():
             cover_crop_planting_rate_3_units=None,
             cover_crop_planting_rate_4_units=None,
             cover_crop_planting_rate_5_units=None,
-            notes_admin=None,
+            notes_admin=mrill_id + ";",
+        )
+
+        ancillary_data = AncillaryData.objects.create(
+            biomass_collection_date=get_2022_ancillary(
+                mrill_id, "biomass_collection_date"
+            ),
+            cp=get_2022_ancillary(mrill_id, "cp"),
+            andf=get_2022_ancillary(mrill_id, "andf"),
+            undfom30=get_2022_ancillary(mrill_id, "undfom30"),
+            ndfd30=get_2022_ancillary(mrill_id, "ndfd30"),
+            tdn_adf=get_2022_ancillary(mrill_id, "tdn_adf"),
+            milk_ton_milk2013=get_2022_ancillary(mrill_id, "milk_ton_milk2013"),
+            rfq=get_2022_ancillary(mrill_id, "rfq"),
+            cc_biomass=get_2022_ancillary(mrill_id, "cc_biomass"),
+            total_nitrogen=None,
+            acc_gdd=None,
+            total_precip=None,
+            spring_biomass_collection_date=None,
+            spring_cc_biomass=None,
+            survey_response=new_survey,
         )
 
 
@@ -371,6 +512,7 @@ def ingest_2020_1_data():
         print(f"{i}: {col}")
 
     for i in range(len(full_data)):
+        mrill_id = full_data.iloc[i][1] + "-" + str(full_data.iloc[i][0])[2:]
         # i = 0
         # info source nutrient management
         info_source_nutrient_mgmt = full_data.iloc[i][57].split(", ")
@@ -535,12 +677,35 @@ def ingest_2020_1_data():
                 full_data.iloc[i][68] if not pd.isna(full_data.iloc[i][68]) else None
             ),
             user=unassigned_user,
-            farm_location=None,
+            farm_location=grab_farm_location(mrill_id),
             confirmed_accurate=False,
             cover_crop_planting_rate_1_units="lbs/acre",
             cover_crop_planting_rate_2_units="lbs/acre",
             cover_crop_planting_rate_3_units="lbs/acre",
             cover_crop_planting_rate_4_units="lbs/acre",
             cover_crop_planting_rate_5_units="lbs/acre",
-            notes_admin="Added automatically. Note manure rates and units are assigned to both pre and post values because it was unspecified during these survey years.",
+            notes_admin=mrill_id
+            + ";Added automatically. Note manure rates and units are assigned to both pre and post values because it was unspecified during these survey years.",
+        )
+
+        ancillary_data = AncillaryData.objects.create(
+            biomass_collection_date=(
+                full_data.iloc[i][26] if (not pd.isna(full_data.iloc[i][26])) and (not full_data.iloc[i][26] == '.') else None
+            ),
+            cp=None,
+            andf=None,
+            undfom30=None,
+            ndfd30=None,
+            tdn_adf=None,
+            milk_ton_milk2013=None,
+            rfq=None,
+            cc_biomass=(
+                full_data.iloc[i][37] if (not pd.isna(full_data.iloc[i][37])) and (not full_data.iloc[i][37] == '.') else None
+            ),
+            total_nitrogen=None,
+            acc_gdd=None,
+            total_precip=None,
+            spring_biomass_collection_date=None,
+            spring_cc_biomass=None,
+            survey_response=new_survey,
         )
