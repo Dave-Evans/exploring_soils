@@ -233,7 +233,7 @@ class ManureApplicateUnitsChoices(models.TextChoices):
     """Choices for manure application units"""
 
     BLANK = "", ""
-    POUNDS_ACRE = "POUNDS_ACRE", "lbs/acre"
+    POUNDS_ACRE = "TONS_ACRE", "tons/acre"
     GALLONS = "GALLONS", "gallons/acre"
 
 
