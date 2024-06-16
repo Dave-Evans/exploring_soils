@@ -25,18 +25,14 @@ where manure_prior_rate_units = 'POUNDS_ACRE';
 with connection.cursor() as cursor:
     print("Adjusting prior rate...")
     cursor.execute(q_adj_rate_prior)
-    rows = cursor.fetchall()
-    print(rows)
+
     print("\n------\n")
     print("Updating notes...")
     cursor.execute(q_notes_prior)
-    rows = cursor.fetchall()
-    print(rows)
+
     print("\n------\n")
     print("Updating units...")
     cursor.execute(q_adj_units_prior)
-    rows = cursor.fetchall()
-    print(rows)
 
 
 q_adj_rate_post = """
