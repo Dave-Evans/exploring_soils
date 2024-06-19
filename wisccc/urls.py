@@ -28,6 +28,11 @@ urlpatterns = [
         name="wisc_cc_manager_home",
     ),
     re_path(
+        r"^wisc_cc_register$",
+        wisccc_views.wisc_cc_register_1,
+        name="wisc_cc_register_1",
+    ),
+    re_path(
         r"^wisc_cc_register_1$",
         wisccc_views.wisc_cc_register_1,
         name="wisc_cc_register_1",
