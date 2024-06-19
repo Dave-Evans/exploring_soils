@@ -1474,7 +1474,6 @@ class SurveyRegistrationFullForm(forms.ModelForm):
             "howd_you_hear",
             "previous_participation",
             "notes",
-            "honorarium_amount",
             "biomass_or_just_survey",
             "do_you_have_a_biomas_kit",
             "prefer_paper_survey",
