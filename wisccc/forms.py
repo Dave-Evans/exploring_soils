@@ -1431,12 +1431,6 @@ class SurveyRegistrationFullForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
-    previous_participation = forms.CharField(
-        label="Have you participated in this project in previous years?",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=250,
-    )
     howd_you_hear = forms.CharField(
         label="How did you hear about the project?",
         required=False,
@@ -1461,10 +1455,11 @@ class SurveyRegistrationFullForm(forms.ModelForm):
         required=True,
         widget=forms.RadioSelect,
     )
-    prefer_paper_survey = forms.ChoiceField(
-        label="I would vastly prefer to fill out this survey on paper",
-        required=True,
-        choices=TRUE_FALSE_CHOICES,
+    do_you_need_assistance = forms.CharField(
+        label="If you prefer a paper copy of the survey mailed to you, or would like assistance with filling out the online survey, or with biomass collection, please let us know in the box below.?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
     )
 
     class Meta:
@@ -1472,11 +1467,10 @@ class SurveyRegistrationFullForm(forms.ModelForm):
         fields = [
             "belong_to_groups",
             "howd_you_hear",
-            "previous_participation",
             "notes",
             "biomass_or_just_survey",
             "do_you_have_a_biomas_kit",
-            "prefer_paper_survey",
+            "do_you_need_assistance",
         ]
 
 
@@ -1488,12 +1482,6 @@ class SurveyRegistrationPartialForm(forms.ModelForm):
         required=False,
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
-    )
-    previous_participation = forms.CharField(
-        label="Have you participated in this project in previous years?",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=250,
     )
     howd_you_hear = forms.CharField(
         label="How did you hear about the project?",
@@ -1513,10 +1501,11 @@ class SurveyRegistrationPartialForm(forms.ModelForm):
         required=True,
         widget=forms.RadioSelect,
     )
-    prefer_paper_survey = forms.ChoiceField(
-        label="I would vastly prefer to fill out this survey on paper",
-        required=True,
-        choices=TRUE_FALSE_CHOICES,
+    do_you_need_assistance = forms.CharField(
+        label="If you prefer a paper copy of the survey mailed to you, or would like assistance with filling out the online survey, or with biomass collection, please let us know in the box below.?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
     )
 
     class Meta:
@@ -1524,10 +1513,9 @@ class SurveyRegistrationPartialForm(forms.ModelForm):
         fields = [
             "belong_to_groups",
             "howd_you_hear",
-            "previous_participation",
             "biomass_or_just_survey",
             "do_you_have_a_biomas_kit",
-            "prefer_paper_survey",
+            "do_you_need_assistance",
         ]
 
 

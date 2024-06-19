@@ -882,7 +882,6 @@ class SurveyRegistration(models.Model):
     survey_year = models.IntegerField(null=True)
     farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, null=True)
     signup_timestamp = models.DateTimeField(auto_now_add=True)
-    previous_participation = models.CharField(max_length=250, null=True)
     belong_to_groups = models.TextField(
         verbose_name="Do you belong to producer led watershed groups?", null=True
     )
@@ -902,8 +901,7 @@ class SurveyRegistration(models.Model):
         max_length=250,
         null=True,
     )
-    prefer_paper_survey = models.CharField(
-        verbose_name="I would vastly prefer to fill out this survey on paper",
-        max_length=30,
+    do_you_need_assistance = models.TextField(
+        verbose_name="I need some assistance",
         null=True,
     )
