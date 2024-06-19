@@ -1450,7 +1450,24 @@ class SurveyRegistrationFullForm(forms.ModelForm):
         max_length=1000,
     )
 
-    honorarium_amount = forms.IntegerField(label="Honorarium amount", required=False)
+    honorarium_amount = (forms.IntegerField(label="Honorarium amount", required=False),)
+    biomass_or_just_survey = forms.ChoiceField(
+        label="Are you interested in sampling for biomass in addition to filling out a survey?",
+        required=True,
+        choices=SurveyRegistration.BiomassOrJustSurveyChoices.choices,
+        widget=forms.RadioSelect,
+    )
+    do_you_have_a_biomas_kit = forms.ChoiceField(
+        label="If you have agreed to sample, do you have a biomass sampling kit from previous years?",
+        choices=SurveyRegistration.HaveAKit.choices,
+        required=True,
+        widget=forms.RadioSelect,
+    )
+    prefer_paper_survey = forms.ChoiceField(
+        label="I would vastly prefer to fill out this survey on paper",
+        required=True,
+        choices=TRUE_FALSE_CHOICES,
+    )
 
     class Meta:
         model = SurveyRegistration
@@ -1460,6 +1477,9 @@ class SurveyRegistrationFullForm(forms.ModelForm):
             "previous_participation",
             "notes",
             "honorarium_amount",
+            "biomass_or_just_survey",
+            "do_you_have_a_biomas_kit",
+            "prefer_paper_survey",
         ]
 
 
@@ -1484,6 +1504,23 @@ class SurveyRegistrationPartialForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
+    biomass_or_just_survey = forms.ChoiceField(
+        label="Are you interested in sampling for biomass in addition to filling out a survey?",
+        required=True,
+        choices=SurveyRegistration.BiomassOrJustSurveyChoices.choices,
+        widget=forms.RadioSelect,
+    )
+    do_you_have_a_biomas_kit = forms.ChoiceField(
+        label="If you have agreed to sample, do you have a biomass sampling kit from previous years?",
+        choices=SurveyRegistration.HaveAKit.choices,
+        required=True,
+        widget=forms.RadioSelect,
+    )
+    prefer_paper_survey = forms.ChoiceField(
+        label="I would vastly prefer to fill out this survey on paper",
+        required=True,
+        choices=TRUE_FALSE_CHOICES,
+    )
 
     class Meta:
         model = SurveyRegistration
@@ -1491,6 +1528,9 @@ class SurveyRegistrationPartialForm(forms.ModelForm):
             "belong_to_groups",
             "howd_you_hear",
             "previous_participation",
+            "biomass_or_just_survey",
+            "do_you_have_a_biomas_kit",
+            "prefer_paper_survey",
         ]
 
 

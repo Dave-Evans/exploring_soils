@@ -859,6 +859,26 @@ class SurveyPhoto(models.Model):
 class SurveyRegistration(models.Model):
     """For folks registering to take survey"""
 
+    class BiomassOrJustSurveyChoices(models.TextChoices):
+        BIOMASS_AND_SURVEY = (
+            "BIOMASS_AND_SURVEY",
+            "I am willing to collect fall and spring cover crop samples from one of my fields, and complete a fall survey on cover crop practices ($100 honorarium plus biomass and nutrient quality analysis of samples).",
+        )
+        JUST_SURVEY = (
+            "JUST_SURVEY",
+            "I can share my cover cropping experiences in a survey ($25 honorarium) but prefer not to sample my fields.",
+        )
+
+    class HaveAKit(models.TextChoices):
+        HAVE_A_KIT = (
+            "HAVE_A_KIT",
+            "I have a biomass sampling kit from previous years’ participation. You will send me reminder instructions & prepaid addressed envelopes for my 2024-5 samples.",
+        )
+        NEED_A_KIT = (
+            "NEED_A_KIT",
+            "I need a biomass sampling kit sent to the address above along with instructions & prepaid addressed envelopes for my 2024-5 samples.",
+        )
+
     survey_year = models.IntegerField(null=True)
     farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, null=True)
     signup_timestamp = models.DateTimeField(auto_now_add=True)
@@ -871,3 +891,20 @@ class SurveyRegistration(models.Model):
     )
     honorarium_amount = models.PositiveIntegerField(null=True)
     notes = models.TextField(null=True)
+    biomass_or_just_survey = models.CharField(
+        verbose_name="Biomass and survey or just survey",
+        null=True,
+        max_length=20,
+        choices=BiomassOrJustSurveyChoices.choices,
+    )
+    do_you_have_a_biomas_kit = models.CharField(
+        verbose_name="Do you have a biomass sampling kit from previous years?",
+        choices=HaveAKit.choices,
+        max_length=250,
+        null=True,
+    )
+    prefer_paper_survey = models.CharField(
+        verbose_name="I would vastly prefer to fill out this survey on paper",
+        max_length=30,
+        null=True,
+    )
