@@ -1449,8 +1449,6 @@ class SurveyRegistrationFullForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 10}),
         max_length=1000,
     )
-
-    honorarium_amount = (forms.IntegerField(label="Honorarium amount", required=False),)
     biomass_or_just_survey = forms.ChoiceField(
         label="Are you interested in sampling for biomass in addition to filling out a survey?",
         required=True,

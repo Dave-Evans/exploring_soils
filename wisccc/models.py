@@ -889,7 +889,6 @@ class SurveyRegistration(models.Model):
     howd_you_hear = models.TextField(
         verbose_name="How'd you hear about this project?", null=True
     )
-    honorarium_amount = models.PositiveIntegerField(null=True)
     notes = models.TextField(null=True)
     biomass_or_just_survey = models.CharField(
         verbose_name="Biomass and survey or just survey",
