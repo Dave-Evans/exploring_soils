@@ -879,8 +879,6 @@ def pull_all_years_together(f_output):
     """
 
     query = """
-    -- bn05905_p_cover_crop2023_biomass for 2023 biomass
-    -- dairyland_labs_forage_analysis_data_2023 for 2023 forage data
 SELECT 
         stat.id
         , stat.year
@@ -930,6 +928,8 @@ SELECT
         , stat.cc_rate_and_species
         , stat.cc_species
         , stat.cc_species_raw
+        , null as survey_response_id
+        , null as survey_field_id
     from wisc_cc as stat
 
     union all
@@ -942,19 +942,19 @@ SELECT
         years_experience::text as years_experience,
         closest_zip_code as zipcode,
         mod_crop_rotation_2023_cash_crop_species as previous_crop,
-        cash_crop_planting_date,
+        cash_crop_planting_date::timestamp,
         lower(replace(dominant_soil_texture, '_', ' ')) as dominant_soil_texture,
         -- Make this yes no? Or change static to boolean?
         case
-            when manure_prior = true then 'Yes'
-            when manure_prior = false then 'No'
+            when manure_prior = 'true' then 'Yes'
+            when manure_prior = 'false' then 'No'
             when manure_prior is null then 'No'
         end as manure_prior,
         manure_prior_rate,
         mod_manure_prior_rate_units as manure_prior_rate_units,
         case
-            when manure_post = true then 'Yes'
-            when manure_post = false then 'No'
+            when manure_post = 'true' then 'Yes'
+            when manure_post = 'false' then 'No'
             when manure_post is null then 'No'
         end as manure_post,
         manure_post_rate,
@@ -976,24 +976,25 @@ SELECT
         ) as cc_planting_rate,
         mod_cover_crop_estimated_termination as cc_termination,
         null as days_between_crop_hvst_and_cc_estd,
-	    ST_X(farm_location) as site_lon,
-	    ST_Y(farm_location) as site_lat,                
-        cover_crop_planting_date as cc_planting_date,
+	    ST_X(field_location) as site_lon,
+	    ST_Y(field_location) as site_lat,                
+        cover_crop_planting_date::timestamp as cc_planting_date,
         
         null as anpp,
-        cc_biomass_collection_date,
+        biomass_collection_date as cc_biomass_collection_date,
         total_precip as total_precip,
         acc_gdd as acc_gdd,
         null as days_from_plant_to_bio_hrvst,
 
         cc_biomass,
-        fq_cp,
-        fq_andf,
-        fq_undfom30,
-        fq_ndfd30,
-        fq_tdn_adf,
-        fq_milkton,
-        fq_rfq,
+        cp as fq_cp,
+        andf as fq_andf,
+        undfom30 as fq_undfom30,
+        ndfd30 as fq_ndfd30,
+        tdn_adf as fq_tdn_adf,
+        milk_ton_milk2013 as fq_milkton,
+        rfq as fq_rfq,
+
         
         concat(		
             concat(  cover_crop_planting_rate_1, ' ', mod_cover_crop_planting_rate_1_units, ' ', mod_cover_crop_species_1),
@@ -1009,269 +1010,260 @@ SELECT
             nullif(concat(', ', mod_cover_crop_species_3), ', '), 
             nullif(concat(', ', mod_cover_crop_species_4), ', '), 
             nullif(concat(', ', mod_cover_crop_species_5), ', ')
-        ) as cc_species_raw
+        ) as cc_species_raw,
+        survey_response_id,
+        survey_field_id
     from (
         select
-            *,
+            surveyfield.*,
+            surveyfarm.*,
+            fieldfarm.*,
+            farmer.*,
+            ancil.*,
             concat(
-                live_dat.closest_zip_code,
+                fieldfarm.closest_zip_code,
                 '-',
-                upper(substring(wf.first_name, 1, 1)),
-                upper(substring(wf.last_name,  1, 1)),
+                upper(substring(farmer.first_name, 1, 1)),
+                upper(substring(farmer.last_name,  1, 1)),
                 '-',
-                '23'
+                surveyfarm.survey_year
             ) as wisc_cc_id,
-            date_part('year', live_dat.cover_crop_planting_date) as year,
+            surveyfarm.survey_year as year,
             case
-                when live_dat.cover_crop_species_1 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
-                when live_dat.cover_crop_species_1 = 'BARLEY' then 'barley'
-                when live_dat.cover_crop_species_1 = 'BERSEEM_CLOVER' then 'berseem clover'
-                when live_dat.cover_crop_species_1 = 'CANOLA' then 'canola/rapeseed'
-                when live_dat.cover_crop_species_1 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when live_dat.cover_crop_species_1 = 'CRIMSON_CLOVER' then 'crimson clover'
-                when live_dat.cover_crop_species_1 = 'COWPEA' then 'cowpea'
-                when live_dat.cover_crop_species_1 = 'FIELD_PEA' then 'field/forage pea'
-                when live_dat.cover_crop_species_1 = 'HAIRY_VETCH' then 'hairy vetch'
-                when live_dat.cover_crop_species_1 = 'KALE' then 'kale'
-                when live_dat.cover_crop_species_1 = 'OATS' then 'oats'
-                when live_dat.cover_crop_species_1 = 'OTHER_LEGUME' then 'other (legume)'
-                when live_dat.cover_crop_species_1 = 'OTHER_GRASS' then 'other (grass)'
-                when live_dat.cover_crop_species_1 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when live_dat.cover_crop_species_1 = 'RADISH' then 'radish'
-                when live_dat.cover_crop_species_1 = 'RED_CLOVER' then 'red clover'
-                when live_dat.cover_crop_species_1 = 'SORGHUM' then 'sorghum'
-                when live_dat.cover_crop_species_1 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
-                when live_dat.cover_crop_species_1 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_1 = 'TRITICALE' then 'triticale'
-                when live_dat.cover_crop_species_1 = 'TURNIP' then 'turnip'
-                when live_dat.cover_crop_species_1 = 'WHEAT_SPRING' then 'wheat (spring)'
-                when live_dat.cover_crop_species_1 = 'WHEAT_WINTER' then 'wheat (winter)'
-                when live_dat.cover_crop_species_1 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
-                when live_dat.cover_crop_species_1 = 'OTHER' then 'other'		
+                when surveyfield.cover_crop_species_1 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_1 = 'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_1 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_1 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_1 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_1 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_1 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_1 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_1 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_1 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_1 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_1 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_1 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_1 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_1 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_1 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_1 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_1 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_1 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_1 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_1 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_1 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_1 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_1 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_1 = 'OTHER' then 'other'		
             end as mod_cover_crop_species_1,
             case
-                when live_dat.cover_crop_species_2 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
-                when live_dat.cover_crop_species_2 = 'BARLEY' then 'barley'
-                when live_dat.cover_crop_species_2 = 'BERSEEM_CLOVER' then 'berseem clover'
-                when live_dat.cover_crop_species_2 = 'CANOLA' then 'canola/rapeseed'
-                when live_dat.cover_crop_species_2 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when live_dat.cover_crop_species_2 = 'CRIMSON_CLOVER' then 'crimson clover'
-                when live_dat.cover_crop_species_2 = 'COWPEA' then 'cowpea'
-                when live_dat.cover_crop_species_2 = 'FIELD_PEA' then 'field/forage pea'
-                when live_dat.cover_crop_species_2 = 'HAIRY_VETCH' then 'hairy vetch'
-                when live_dat.cover_crop_species_2 = 'KALE' then 'kale'
-                when live_dat.cover_crop_species_2 = 'OATS' then 'oats'
-                when live_dat.cover_crop_species_2 = 'OTHER_LEGUME' then 'other (legume)'
-                when live_dat.cover_crop_species_2 = 'OTHER_GRASS' then 'other (grass)'
-                when live_dat.cover_crop_species_2 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when live_dat.cover_crop_species_2 = 'RADISH' then 'radish'
-                when live_dat.cover_crop_species_2 = 'RED_CLOVER' then 'red clover'
-                when live_dat.cover_crop_species_2 = 'SORGHUM' then 'sorghum'
-                when live_dat.cover_crop_species_2 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
-                when live_dat.cover_crop_species_2 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_2 = 'TRITICALE' then 'triticale'
-                when live_dat.cover_crop_species_2 = 'TURNIP' then 'turnip'
-                when live_dat.cover_crop_species_2 = 'WHEAT_SPRING' then 'wheat (spring)'
-                when live_dat.cover_crop_species_2 = 'WHEAT_WINTER' then 'wheat (winter)'
-                when live_dat.cover_crop_species_2 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
-                when live_dat.cover_crop_species_2 = 'OTHER' then 'other'		
+                when surveyfield.cover_crop_species_2 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_2 = 'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_2 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_2 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_2 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_2 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_2 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_2 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_2 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_2 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_2 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_2 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_2 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_2 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_2 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_2 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_2 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_2 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_2 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_2 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_2 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_2 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_2 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_2 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_2 = 'OTHER' then 'other'		
             end as mod_cover_crop_species_2,
             case
-                when live_dat.cover_crop_species_3 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
-                when live_dat.cover_crop_species_3 =  'BARLEY' then 'barley'
-                when live_dat.cover_crop_species_3 = 'BERSEEM_CLOVER' then 'berseem clover'
-                when live_dat.cover_crop_species_3 = 'CANOLA' then 'canola/rapeseed'
-                when live_dat.cover_crop_species_3 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when live_dat.cover_crop_species_3 = 'CRIMSON_CLOVER' then 'crimson clover'
-                when live_dat.cover_crop_species_3 = 'COWPEA' then 'cowpea'
-                when live_dat.cover_crop_species_3 = 'FIELD_PEA' then 'field/forage pea'
-                when live_dat.cover_crop_species_3 = 'HAIRY_VETCH' then 'hairy vetch'
-                when live_dat.cover_crop_species_3 = 'KALE' then 'kale'
-                when live_dat.cover_crop_species_3 = 'OATS' then 'oats'
-                when live_dat.cover_crop_species_3 = 'OTHER_LEGUME' then 'other (legume)'
-                when live_dat.cover_crop_species_3 = 'OTHER_GRASS' then 'other (grass)'
-                when live_dat.cover_crop_species_3 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when live_dat.cover_crop_species_3 = 'RADISH' then 'radish'
-                when live_dat.cover_crop_species_3 = 'RED_CLOVER' then 'red clover'
-                when live_dat.cover_crop_species_3 = 'SORGHUM' then 'sorghum'
-                when live_dat.cover_crop_species_3 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
-                when live_dat.cover_crop_species_3 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_3 = 'TRITICALE' then 'triticale'
-                when live_dat.cover_crop_species_3 = 'TURNIP' then 'turnip'
-                when live_dat.cover_crop_species_3 = 'WHEAT_SPRING' then 'wheat (spring)'
-                when live_dat.cover_crop_species_3 = 'WHEAT_WINTER' then 'wheat (winter)'
-                when live_dat.cover_crop_species_3 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
-                when live_dat.cover_crop_species_3 = 'OTHER' then 'other'		
+                when surveyfield.cover_crop_species_3 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_3 =  'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_3 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_3 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_3 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_3 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_3 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_3 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_3 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_3 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_3 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_3 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_3 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_3 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_3 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_3 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_3 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_3 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_3 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_3 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_3 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_3 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_3 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_3 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_3 = 'OTHER' then 'other'		
             end as mod_cover_crop_species_3,
             case
-                when live_dat.cover_crop_species_4 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
-                when live_dat.cover_crop_species_4 = 'BARLEY' then 'barley'
-                when live_dat.cover_crop_species_4 = 'BERSEEM_CLOVER' then 'berseem clover'
-                when live_dat.cover_crop_species_4 = 'CANOLA' then 'canola/rapeseed'
-                when live_dat.cover_crop_species_4 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when live_dat.cover_crop_species_4 = 'CRIMSON_CLOVER' then 'crimson clover'
-                when live_dat.cover_crop_species_4 = 'COWPEA' then 'cowpea'
-                when live_dat.cover_crop_species_4 = 'FIELD_PEA' then 'field/forage pea'
-                when live_dat.cover_crop_species_4 = 'HAIRY_VETCH' then 'hairy vetch'
-                when live_dat.cover_crop_species_4 = 'KALE' then 'kale'
-                when live_dat.cover_crop_species_4 = 'OATS' then 'oats'
-                when live_dat.cover_crop_species_4 = 'OTHER_LEGUME' then 'other (legume)'
-                when live_dat.cover_crop_species_4 = 'OTHER_GRASS' then 'other (grass)'
-                when live_dat.cover_crop_species_4 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when live_dat.cover_crop_species_4 = 'RADISH' then 'radish'
-                when live_dat.cover_crop_species_4 = 'RED_CLOVER' then 'red clover'
-                when live_dat.cover_crop_species_4 = 'SORGHUM' then 'sorghum'
-                when live_dat.cover_crop_species_4 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
-                when live_dat.cover_crop_species_4 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_4 = 'TRITICALE' then 'triticale'
-                when live_dat.cover_crop_species_4 = 'TURNIP' then 'turnip'
-                when live_dat.cover_crop_species_4 = 'WHEAT_SPRING' then 'wheat (spring)'
-                when live_dat.cover_crop_species_4 = 'WHEAT_WINTER' then 'wheat (winter)'
-                when live_dat.cover_crop_species_4 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
-                when live_dat.cover_crop_species_4 = 'OTHER' then 'other'		
+                when surveyfield.cover_crop_species_4 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_4 = 'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_4 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_4 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_4 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_4 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_4 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_4 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_4 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_4 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_4 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_4 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_4 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_4 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_4 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_4 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_4 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_4 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_4 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_4 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_4 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_4 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_4 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_4 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_4 = 'OTHER' then 'other'		
             end as mod_cover_crop_species_4,
             case
-                when live_dat.cover_crop_species_5 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
-                when live_dat.cover_crop_species_5 = 'BARLEY' then 'barley'
-                when live_dat.cover_crop_species_5 = 'BERSEEM_CLOVER' then 'berseem clover'
-                when live_dat.cover_crop_species_5 = 'CANOLA' then 'canola/rapeseed'
-                when live_dat.cover_crop_species_5 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when live_dat.cover_crop_species_5 = 'CRIMSON_CLOVER' then 'crimson clover'
-                when live_dat.cover_crop_species_5 = 'COWPEA' then 'cowpea'
-                when live_dat.cover_crop_species_5 = 'FIELD_PEA' then 'field/forage pea'
-                when live_dat.cover_crop_species_5 = 'HAIRY_VETCH' then 'hairy vetch'
-                when live_dat.cover_crop_species_5 = 'KALE' then 'kale'
-                when live_dat.cover_crop_species_5 = 'OATS' then 'oats'
-                when live_dat.cover_crop_species_5 = 'OTHER_LEGUME' then 'other (legume)'
-                when live_dat.cover_crop_species_5 = 'OTHER_GRASS' then 'other (grass)'
-                when live_dat.cover_crop_species_5 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when live_dat.cover_crop_species_5 = 'RADISH' then 'radish'
-                when live_dat.cover_crop_species_5 = 'RED_CLOVER' then 'red clover'
-                when live_dat.cover_crop_species_5 = 'SORGHUM' then 'sorghum'
-                when live_dat.cover_crop_species_5 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
-                when live_dat.cover_crop_species_5 = 'SUNFLOWER' then 'sunflower'
-                when live_dat.cover_crop_species_5 = 'TRITICALE' then 'triticale'
-                when live_dat.cover_crop_species_5 = 'TURNIP' then 'turnip'
-                when live_dat.cover_crop_species_5 = 'WHEAT_SPRING' then 'wheat (spring)'
-                when live_dat.cover_crop_species_5 = 'WHEAT_WINTER' then 'wheat (winter)'
-                when live_dat.cover_crop_species_5 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
-                when live_dat.cover_crop_species_5 = 'OTHER' then 'other'		
+                when surveyfield.cover_crop_species_5 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_5 = 'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_5 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_5 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_5 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_5 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_5 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_5 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_5 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_5 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_5 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_5 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_5 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_5 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_5 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_5 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_5 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_5 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_5 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_5 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_5 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_5 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_5 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_5 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_5 = 'OTHER' then 'other'		
             end as mod_cover_crop_species_5,
             case
-                when live_dat.cover_crop_planting_rate_1_units = 'POUNDS_ACRE' then 'lbs/acre' 
-                when live_dat.cover_crop_planting_rate_1_units = 'BUSHELS_ACRE' then 'bu/acre' 
+                when surveyfield.cover_crop_planting_rate_1_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_1_units = 'BUSHELS_ACRE' then 'bu/acre' 
             end as mod_cover_crop_planting_rate_1_units,	
             case
-                when live_dat.cover_crop_planting_rate_2_units = 'POUNDS_ACRE' then 'lbs/acre' 
-                when live_dat.cover_crop_planting_rate_2_units = 'BUSHELS_ACRE' then 'bu/acre' 
+                when surveyfield.cover_crop_planting_rate_2_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_2_units = 'BUSHELS_ACRE' then 'bu/acre' 
             end as mod_cover_crop_planting_rate_2_units,	
             case
-                when live_dat.cover_crop_planting_rate_3_units = 'POUNDS_ACRE' then 'lbs/acre' 
-                when live_dat.cover_crop_planting_rate_3_units = 'BUSHELS_ACRE' then 'bu/acre' 
+                when surveyfield.cover_crop_planting_rate_3_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_3_units = 'BUSHELS_ACRE' then 'bu/acre' 
             end as mod_cover_crop_planting_rate_3_units,	
             case
-                when live_dat.cover_crop_planting_rate_4_units = 'POUNDS_ACRE' then 'lbs/acre' 
-                when live_dat.cover_crop_planting_rate_4_units = 'BUSHELS_ACRE' then 'bu/acre' 
+                when surveyfield.cover_crop_planting_rate_4_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_4_units = 'BUSHELS_ACRE' then 'bu/acre' 
             end as mod_cover_crop_planting_rate_4_units,	
             case
-                when live_dat.cover_crop_planting_rate_5_units = 'POUNDS_ACRE' then 'lbs/acre' 
-                when live_dat.cover_crop_planting_rate_5_units = 'BUSHELS_ACRE' then 'bu/acre' 
+                when surveyfield.cover_crop_planting_rate_5_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_5_units = 'BUSHELS_ACRE' then 'bu/acre' 
             end as mod_cover_crop_planting_rate_5_units
             , case	        
-                when live_dat.tillage_system_cash_crop  = 'CONVENTIONAL' then 'conventional tillage (<15% residue)'
-                when live_dat.tillage_system_cash_crop = 'REDUCED' then 'reduced tillage (15-30% residue)'
-                when live_dat.tillage_system_cash_crop = 'MULCH_TILL' then 
+                when surveyfield.tillage_system_cash_crop  = 'CONVENTIONAL' then 'conventional tillage (<15% residue)'
+                when surveyfield.tillage_system_cash_crop = 'REDUCED' then 'reduced tillage (15-30% residue)'
+                when surveyfield.tillage_system_cash_crop = 'MULCH_TILL' then 
                     'conservation tillage (>30% residue) - mulch till/vertical tillage'
-                when live_dat.tillage_system_cash_crop = 'STRIP_TILL' then 'conservation tillage (>30% residue) - strip till'
-                when live_dat.tillage_system_cash_crop = 'NO_TILL' then 'conservation tillage (>30% residue) - no till'    
+                when surveyfield.tillage_system_cash_crop = 'STRIP_TILL' then 'conservation tillage (>30% residue) - strip till'
+                when surveyfield.tillage_system_cash_crop = 'NO_TILL' then 'conservation tillage (>30% residue) - no till'    
             end as mod_tillage_system_cash_crop
             , case	        
-                when live_dat.tillage_system_cash_crop = 'CONVENTIONAL' then 'Conventional, <15% residue remaining'
-                when live_dat.tillage_system_cash_crop = 'REDUCED' then 'Reduced, 15-30% residue remaining'
-                when live_dat.tillage_system_cash_crop = 'MULCH_TILL' then 
+                when surveyfield.tillage_system_cash_crop = 'CONVENTIONAL' then 'Conventional, <15% residue remaining'
+                when surveyfield.tillage_system_cash_crop = 'REDUCED' then 'Reduced, 15-30% residue remaining'
+                when surveyfield.tillage_system_cash_crop = 'MULCH_TILL' then 
                     'Conservation, >30% residue remaining'
-                when live_dat.tillage_system_cash_crop = 'STRIP_TILL' then 'Conservation, >30% residue remaining'
-                when live_dat.tillage_system_cash_crop = 'NO_TILL' then 'Conservation, >30% residue remaining'    
+                when surveyfield.tillage_system_cash_crop = 'STRIP_TILL' then 'Conservation, >30% residue remaining'
+                when surveyfield.tillage_system_cash_crop = 'NO_TILL' then 'Conservation, >30% residue remaining'    
             end as mod_residue_remaining
             , case 
-                when live_dat.cover_crop_seeding_method = 'FROST' then'frost seeded'
-                when live_dat.cover_crop_seeding_method = 'DRILLED' then 'drilled'
-                when live_dat.cover_crop_seeding_method = 'BROADCAST_NO_INCORP' then 'broadcast, no incorporation'
-                when live_dat.cover_crop_seeding_method = 'EARLY_INTERSEED' then 'early interseeded -- broadcast'
-                when live_dat.cover_crop_seeding_method = 'LATE_INTERSEED_BROADCAST' then 'late interseeded -- broadcast'
-                when live_dat.cover_crop_seeding_method = 'LATE_INTERSEED_AERIAL' then 'late interseeded -- aerial'
-                when live_dat.cover_crop_seeding_method = 'BROADCAST_INCORPORATION' then 'broadcast + incorporation'
-                when live_dat.cover_crop_seeding_method = 'FERT_BROADCAST_INCORP' then 'cover crop seed mixed with fertilizer + broadcast + incorporation'
-                when live_dat.cover_crop_seeding_method = 'OTHER' then 'other'
+                when surveyfield.cover_crop_seeding_method = 'FROST' then'frost seeded'
+                when surveyfield.cover_crop_seeding_method = 'DRILLED' then 'drilled'
+                when surveyfield.cover_crop_seeding_method = 'BROADCAST_NO_INCORP' then 'broadcast, no incorporation'
+                when surveyfield.cover_crop_seeding_method = 'EARLY_INTERSEED' then 'early interseeded -- broadcast'
+                when surveyfield.cover_crop_seeding_method = 'LATE_INTERSEED_BROADCAST' then 'late interseeded -- broadcast'
+                when surveyfield.cover_crop_seeding_method = 'LATE_INTERSEED_AERIAL' then 'late interseeded -- aerial'
+                when surveyfield.cover_crop_seeding_method = 'BROADCAST_INCORPORATION' then 'broadcast + incorporation'
+                when surveyfield.cover_crop_seeding_method = 'FERT_BROADCAST_INCORP' then 'cover crop seed mixed with fertilizer + broadcast + incorporation'
+                when surveyfield.cover_crop_seeding_method = 'OTHER' then 'other'
             end as mod_cc_seeding_method
             , case 
-                when live_dat.manure_prior_rate_units = 'GALLONS' then 'gal/acre'
-                when live_dat.manure_prior_rate_units = 'POUNDS_ACRE' then 'lbs/acre'
+                when surveyfield.manure_prior_rate_units = 'GALLONS' then 'gal/acre'
+                when surveyfield.manure_prior_rate_units = 'POUNDS_ACRE' then 'lbs/acre'
             end as mod_manure_prior_rate_units
             , case 
-                when live_dat.manure_post_rate_units = 'GALLONS' then 'gal/acre'
-                when live_dat.manure_post_rate_units = 'POUNDS_ACRE' then 'lbs/acre'
+                when surveyfield.manure_post_rate_units = 'GALLONS' then 'gal/acre'
+                when surveyfield.manure_post_rate_units = 'POUNDS_ACRE' then 'lbs/acre'
             end as mod_manure_post_rate_units
             , case 
-                when live_dat.cover_crop_estimated_termination = 'GRAZE_FALL' then 'graze fall'
-                when live_dat.cover_crop_estimated_termination = 'WINTERKILL' then 'little to no cover crop growth in spring'
-                when live_dat.cover_crop_estimated_termination = 'FALLKILL' then 'killing frost (fall)'
-                when live_dat.cover_crop_estimated_termination = 'GRAZE_SPRING' then 'graze spring'
-                when live_dat.cover_crop_estimated_termination = 'SPRING_HERBICIDE' then 'early spring, herbicide application (14 plus days prior to crop establishment)'
+                when surveyfield.cover_crop_estimated_termination = 'GRAZE_FALL' then 'graze fall'
+                when surveyfield.cover_crop_estimated_termination = 'WINTERKILL' then 'little to no cover crop growth in spring'
+                when surveyfield.cover_crop_estimated_termination = 'FALLKILL' then 'killing frost (fall)'
+                when surveyfield.cover_crop_estimated_termination = 'GRAZE_SPRING' then 'graze spring'
+                when surveyfield.cover_crop_estimated_termination = 'SPRING_HERBICIDE' then 'early spring, herbicide application (14 plus days prior to crop establishment)'
                 
-                when live_dat.cover_crop_estimated_termination = 'FORAGE' then 'harvest for forage'
-                when live_dat.cover_crop_estimated_termination = 'GREEN_HERBICIDE' then 'plant green, herbicide termination'
-                when live_dat.cover_crop_estimated_termination = 'SPRING_ROLLER_CRIMPER' then 'early spring, roller-crimper termination'
-                when live_dat.cover_crop_estimated_termination = 'GREEN_ROLLER_CRIMPER' then 'plant green, roller-crimper termination'
-                when live_dat.cover_crop_estimated_termination = 'OTHER' then 'other'
+                when surveyfield.cover_crop_estimated_termination = 'FORAGE' then 'harvest for forage'
+                when surveyfield.cover_crop_estimated_termination = 'GREEN_HERBICIDE' then 'plant green, herbicide termination'
+                when surveyfield.cover_crop_estimated_termination = 'SPRING_ROLLER_CRIMPER' then 'early spring, roller-crimper termination'
+                when surveyfield.cover_crop_estimated_termination = 'GREEN_ROLLER_CRIMPER' then 'plant green, roller-crimper termination'
+                when surveyfield.cover_crop_estimated_termination = 'OTHER' then 'other'
             end as mod_cover_crop_estimated_termination,
             case 
-                when live_dat.crop_rotation_2023_cash_crop_species = 'CORN_FOR_GRAIN' then 'corn for grain'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'CORN_SILAGE' then 'corn silage'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'SOYBEANS' then 'soybeans'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'WHEAT' then 'wheat'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'OATS' then 'oats'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'BARLEY' then 'barley'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'TRITICALE' then 'triticale'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'SORGHUM' then 'sorghum'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'SORGHUM_SUDAN' then 'sorghum-sudan'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'ALFALFA' then 'alfalfa'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'VEGETABLE_CROP' then 'vegetable crop'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'OTHER_GRAIN' then 'other grain'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'OTHER_FORAGE' then 'other forage'
-                when live_dat.crop_rotation_2023_cash_crop_species = 'LIVESTOCK' then 'livestock feeding/grazing'	    	
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'CORN_FOR_GRAIN' then 'corn for grain'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'CORN_SILAGE' then 'corn silage'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'SOYBEANS' then 'soybeans'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'WHEAT' then 'wheat'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'OATS' then 'oats'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'BARLEY' then 'barley'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'TRITICALE' then 'triticale'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'SORGHUM' then 'sorghum'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'ALFALFA' then 'alfalfa'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'VEGETABLE_CROP' then 'vegetable crop'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'OTHER_GRAIN' then 'other grain'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'OTHER_FORAGE' then 'other forage'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'LIVESTOCK' then 'livestock feeding/grazing'	   	
             end as mod_crop_rotation_2023_cash_crop_species
             
-            
-            from wisccc_survey as live_dat
-            left join wisccc_farmer wf 
-            on live_dat.user_id = wf.user_id
-            left join (
-				select 
-					ws.id,
-				
-					COALESCE(
-                        TO_DATE(lab.date_reported_biomass,'YYYY-MM-DD'),
-                        TO_DATE(lab.date_processed,'YYYY-MM-DD')
-                    ) as cc_biomass_collection_date,
-					
-					lab.cc_biomass,
-					lab.cp as fq_cp,
-					lab.andf as fq_andf,
-					lab.undfom30 as fq_undfom30,
-					lab.ndfd30 as fq_ndfd30,
-					lab.tdn_adf as fq_tdn_adf,
-					lab.milk_ton_milk2013 as fq_milkton,
-					lab.rfq as fq_rfq,
-                    lab.total_precip,
-                    lab.acc_gdd
-				from wisccc_survey ws
-				left join all_lab_data_2023 lab 
-				on ws.id = lab.id
-            ) as labdata
-            on live_dat.id = labdata.id
-            where live_dat.confirmed_accurate = TRUE
-    ) as a
+			from wisccc_surveyfarm as surveyfarm
+			left join wisccc_surveyfield as surveyfield
+			on surveyfarm.id = surveyfield.survey_farm_id
+			left join wisccc_fieldfarm as fieldfarm
+			on surveyfield.field_farm_id = fieldfarm.id
+			left join wisccc_ancillarydata as ancil
+			on surveyfield.id = ancil.survey_field_id  
+			left join wisccc_farmer as farmer
+			on surveyfarm.farmer_id = farmer.id
+			where surveyfarm.survey_year >= 2023
+                and surveyfarm.confirmed_accurate = TRUE
+	) as a
+ 
+ 
+ 
     """
 
     if f_output == "sql":
