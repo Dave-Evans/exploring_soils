@@ -12,18 +12,6 @@
       <div class="card-body">
         <h3 class="card-title">Welcome {{ user.username }}</h3>
 
-        {% if not b_registered %}
-
-        <div class="alert alert-warning" role="alert">
-          Have you registered to fill out this survey? We do not recognize
-          the email address you have used to create this account.
-          <br>
-          For your survey response to be accepted we need you to register <a href="https://forms.gle/N7SzjedFwGJFXPUJ9"
-            target="_blank" rel="noopener noreferrer">here</a>.
-        </div>
-
-        {% endif %}
-
         {% if completed_0 and completed_1 and completed_2 and completed_3 %}
 
         <h4>Thank you!</h4>

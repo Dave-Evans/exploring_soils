@@ -1,0 +1,939 @@
+import json
+import pandas as pd
+
+from django.db import connection
+from wisccc.models import SurveyFarm, SurveyField, FieldFarm, AncillaryData, Farmer
+from wisccc.models import (
+    CashCropChoices,
+    CoverCropChoices,
+    CoverCropInfoSourcesChoices,
+    CoverCropSupportChoices,
+    CoverCropReasonsChoices,
+    ManureApplicateUnitsChoices,
+    NutrientMgmtSourcesChoices,
+    PrimaryTillageEquipmentChoices,
+    SecondaryTillageEquipmentChoices,
+    SeedingMethodChoices,
+    SoilConditionsSeedingChoices,
+    SoilTextureClassChoices,
+    TerminationMethodTimingChoices,
+    TillageSystemChoices,
+    CoverCropRateUnitsChoices,
+)
+
+from django.contrib.auth.models import User
+
+
+def convert_to_human_readable(column, choices_object):
+    """Takes a column and a choices objects and converts it to
+    the human readable format"""
+    dict_choices = dict(choices_object.choices)
+    try:
+        new_version = dict_choices[column]
+    except KeyError as e:
+        new_version = column
+
+    return new_version
+
+
+def get_survey_data():
+    # Grabbing all agronomic data with new structure and ORM
+    survey_fields = (
+        SurveyField.objects.all()
+        .select_related("survey_farm")
+        .select_related("field_farm")
+    )
+
+    ancillary_data = (
+        AncillaryData.objects.all()
+        .select_related("survey_field")
+        .select_related("survey_field__survey_farm")
+        .select_related("survey_field__field_farm")
+        .select_related("survey_field__survey_farm__farmer")
+        .select_related("survey_field__survey_farm__farmer__user")
+    )
+    ## Leaving off
+    # survey_field__survey_farm__support_cover_crops_2 and support_cover_crops_2
+    # survey_field__survey_farm__support_cover_crops_3 and support_cover_crops_3
+    dct_choices = {
+        "info_source_nutrient_mgmt_1": NutrientMgmtSourcesChoices,
+        "info_source_nutrient_mgmt_2": NutrientMgmtSourcesChoices,
+        "info_source_nutrient_mgmt_3": NutrientMgmtSourcesChoices,
+        "info_source_cover_crops_1": CoverCropInfoSourcesChoices,
+        "info_source_cover_crops_2": CoverCropInfoSourcesChoices,
+        "info_source_cover_crops_3": CoverCropInfoSourcesChoices,
+        "support_cover_crops_1": CoverCropSupportChoices,
+        "crop_rotation_2021_cover_crop_species": CoverCropChoices,
+        "crop_rotation_2021_cash_crop_species": CashCropChoices,
+        "crop_rotation_2022_cover_crop_species": CoverCropChoices,
+        "crop_rotation_2022_cash_crop_species": CashCropChoices,
+        "crop_rotation_2023_cover_crop_species": CoverCropChoices,
+        "crop_rotation_2023_cash_crop_species": CashCropChoices,
+        "cover_crop_species_1": CoverCropChoices,
+        "cover_crop_species_2": CoverCropChoices,
+        "cover_crop_species_3": CoverCropChoices,
+        "cover_crop_species_4": CoverCropChoices,
+        "cover_crop_species_5": CoverCropChoices,
+        "cover_crop_planting_rate_1_units": CoverCropRateUnitsChoices,
+        "cover_crop_planting_rate_2_units": CoverCropRateUnitsChoices,
+        "cover_crop_planting_rate_3_units": CoverCropRateUnitsChoices,
+        "cover_crop_planting_rate_4_units": CoverCropRateUnitsChoices,
+        "cover_crop_planting_rate_5_units": CoverCropRateUnitsChoices,
+        "dominant_soil_texture": SoilTextureClassChoices,
+        "manure_prior_rate_units": ManureApplicateUnitsChoices,
+        "manure_post_rate_units": ManureApplicateUnitsChoices,
+        "tillage_system_cash_crop": TillageSystemChoices,
+        "primary_tillage_equipment": PrimaryTillageEquipmentChoices,
+        "secondary_tillage_equipment": SecondaryTillageEquipmentChoices,
+        "soil_conditions_at_cover_crop_seeding": SoilConditionsSeedingChoices,
+        "cover_crop_seeding_method": SeedingMethodChoices,
+        "cover_crop_estimated_termination": TerminationMethodTimingChoices,
+    }
+
+    df = pd.DataFrame(
+        list(
+            ancillary_data.values_list(
+                # From User
+                "survey_field__survey_farm__farmer__user__email",
+                # From Farmer
+                "survey_field__survey_farm__farmer__first_name",
+                "survey_field__survey_farm__farmer__last_name",
+                "survey_field__survey_farm__farmer__farm_name",
+                "survey_field__survey_farm__farmer__county",
+                # From SurveyFarm
+                "survey_field__survey_farm__survey_created",
+                "survey_field__survey_farm__last_updated",
+                "survey_field__survey_farm__survey_year",
+                "survey_field__survey_farm__notes_admin",
+                "survey_field__survey_farm__confirmed_accurate",
+                "survey_field__survey_farm__years_experience",
+                "survey_field__survey_farm__total_acres",
+                "survey_field__survey_farm__percent_of_farm_cc",
+                "survey_field__survey_farm__dominant_soil_series_1",
+                "survey_field__survey_farm__dominant_soil_series_2",
+                "survey_field__survey_farm__dominant_soil_series_3",
+                "survey_field__survey_farm__dominant_soil_series_4",
+                "survey_field__survey_farm__info_source_nutrient_mgmt_1",
+                "survey_field__survey_farm__info_source_nutrient_mgmt_2",
+                "survey_field__survey_farm__info_source_nutrient_mgmt_3",
+                "survey_field__survey_farm__source_nutrient_mgmt_write_in",
+                "survey_field__survey_farm__cov_crops_for_ntrnt_mgmt_comments_questions",
+                "survey_field__survey_farm__info_source_cover_crops_1",
+                "survey_field__survey_farm__info_source_cover_crops_2",
+                "survey_field__survey_farm__info_source_cover_crops_3",
+                "survey_field__survey_farm__info_source_cover_crops_write_in",
+                "survey_field__survey_farm__support_cover_crops_1",
+                "survey_field__survey_farm__support_cover_crops_write_in",
+                "survey_field__survey_farm__lacking_any_info_cover_crops",
+                "survey_field__survey_farm__barriers_to_expansion",
+                "survey_field__survey_farm__quit_planting_cover_crops",
+                "survey_field__survey_farm__if_use_crop_insurance",
+                "survey_field__survey_farm__why_cover_crops_write_in",
+                "survey_field__survey_farm__cover_crops_delay_cash_crop",
+                "survey_field__survey_farm__save_cover_crop_seed",
+                "survey_field__survey_farm__source_cover_crop_seed",
+                "survey_field__survey_farm__interesting_tales",
+                "survey_field__survey_farm__where_to_start",
+                "survey_field__survey_farm__additional_thoughts",
+                # From SurveyField
+                "survey_field__crop_rotation",
+                "survey_field__crop_rotation_2021_cover_crop_species",
+                "survey_field__crop_rotation_2021_cash_crop_species",
+                "survey_field__crop_rotation_2022_cover_crop_species",
+                "survey_field__crop_rotation_2022_cash_crop_species",
+                "survey_field__crop_rotation_2023_cover_crop_species",
+                "survey_field__crop_rotation_2023_cash_crop_species",
+                "survey_field__cover_crop_species_1",
+                "survey_field__cover_crop_planting_rate_1",
+                "survey_field__cover_crop_planting_rate_1_units",
+                "survey_field__cover_crop_species_2",
+                "survey_field__cover_crop_planting_rate_2",
+                "survey_field__cover_crop_planting_rate_2_units",
+                "survey_field__cover_crop_species_3",
+                "survey_field__cover_crop_planting_rate_3",
+                "survey_field__cover_crop_planting_rate_3_units",
+                "survey_field__cover_crop_species_4",
+                "survey_field__cover_crop_planting_rate_4",
+                "survey_field__cover_crop_planting_rate_4_units",
+                "survey_field__cover_crop_species_5",
+                "survey_field__cover_crop_planting_rate_5",
+                "survey_field__cover_crop_planting_rate_5_units",
+                "survey_field__cover_crop_species_and_rate_write_in",
+                "survey_field__cover_crop_multispecies_mix_write_in",
+                "survey_field__cash_crop_planting_date",
+                "survey_field__years_with_cover_crops",
+                "survey_field__dominant_soil_texture",
+                "survey_field__manure_prior",
+                "survey_field__manure_prior_rate",
+                "survey_field__manure_prior_rate_units",
+                "survey_field__manure_post",
+                "survey_field__manure_post_rate",
+                "survey_field__manure_post_rate_units",
+                "survey_field__tillage_system_cash_crop",
+                "survey_field__primary_tillage_equipment",
+                "survey_field__primary_tillage_equipment_write_in",
+                "survey_field__secondary_tillage_equipment",
+                "survey_field__secondary_tillage_equipment_write_in",
+                "survey_field__soil_conditions_at_cover_crop_seeding",
+                "survey_field__cover_crop_seeding_method",
+                "survey_field__cover_crop_seeding_method_write_in",
+                "survey_field__cover_crop_seed_cost",
+                "survey_field__cover_crop_planting_cost",
+                "survey_field__cover_crop_planting_date",
+                "survey_field__cover_crop_estimated_termination",
+                "survey_field__days_between_crop_hvst_and_cc_estd",
+                "survey_field__derived_species_class",
+                "survey_field__derived_county",
+                # From FieldFarm
+                "survey_field__field_farm__field_name",
+                "survey_field__field_farm__closest_zip_code",
+                "survey_field__field_farm__field_acreage",
+                "survey_field__field_farm__field_location",
+                # From Ancillary Data
+                # "id",
+                "biomass_collection_date",
+                "cp",
+                "andf",
+                "undfom30",
+                "ndfd30",
+                "tdn_adf",
+                "milk_ton_milk2013",
+                "rfq",
+                "cc_biomass",
+                "total_nitrogen",
+                "acc_gdd",
+                "total_precip",
+                "spring_biomass_collection_date",
+                "spring_cc_biomass",
+            )
+        ),
+        columns=[
+            # From User
+            "email",
+            # From Farmer
+            "first_name",
+            "last_name",
+            "farm_name",
+            "county",
+            # From SurveyFarm
+            "survey_created",
+            "last_updated",
+            "survey_year",
+            "notes_admin",
+            "confirmed_accurate",
+            "years_experience",
+            "total_acres",
+            "percent_of_farm_cc",
+            "dominant_soil_series_1",
+            "dominant_soil_series_2",
+            "dominant_soil_series_3",
+            "dominant_soil_series_4",
+            "info_source_nutrient_mgmt_1",
+            "info_source_nutrient_mgmt_2",
+            "info_source_nutrient_mgmt_3",
+            "source_nutrient_mgmt_write_in",
+            "cov_crops_for_ntrnt_mgmt_comments_questions",
+            "info_source_cover_crops_1",
+            "info_source_cover_crops_2",
+            "info_source_cover_crops_3",
+            "info_source_cover_crops_write_in",
+            "support_cover_crops_1",
+            "support_cover_crops_write_in",
+            "lacking_any_info_cover_crops",
+            "barriers_to_expansion",
+            "quit_planting_cover_crops",
+            "if_use_crop_insurance",
+            "why_cover_crops_write_in",
+            "cover_crops_delay_cash_crop",
+            "save_cover_crop_seed",
+            "source_cover_crop_seed",
+            "interesting_tales",
+            "where_to_start",
+            "additional_thoughts",
+            # From SurveyField
+            "crop_rotation",
+            "crop_rotation_2021_cover_crop_species",
+            "crop_rotation_2021_cash_crop_species",
+            "crop_rotation_2022_cover_crop_species",
+            "crop_rotation_2022_cash_crop_species",
+            "crop_rotation_2023_cover_crop_species",
+            "crop_rotation_2023_cash_crop_species",
+            "cover_crop_species_1",
+            "cover_crop_planting_rate_1",
+            "cover_crop_planting_rate_1_units",
+            "cover_crop_species_2",
+            "cover_crop_planting_rate_2",
+            "cover_crop_planting_rate_2_units",
+            "cover_crop_species_3",
+            "cover_crop_planting_rate_3",
+            "cover_crop_planting_rate_3_units",
+            "cover_crop_species_4",
+            "cover_crop_planting_rate_4",
+            "cover_crop_planting_rate_4_units",
+            "cover_crop_species_5",
+            "cover_crop_planting_rate_5",
+            "cover_crop_planting_rate_5_units",
+            "cover_crop_species_and_rate_write_in",
+            "cover_crop_multispecies_mix_write_in",
+            "cash_crop_planting_date",
+            "years_with_cover_crops",
+            "dominant_soil_texture",
+            "manure_prior",
+            "manure_prior_rate",
+            "manure_prior_rate_units",
+            "manure_post",
+            "manure_post_rate",
+            "manure_post_rate_units",
+            "tillage_system_cash_crop",
+            "primary_tillage_equipment",
+            "primary_tillage_equipment_write_in",
+            "secondary_tillage_equipment",
+            "secondary_tillage_equipment_write_in",
+            "soil_conditions_at_cover_crop_seeding",
+            "cover_crop_seeding_method",
+            "cover_crop_seeding_method_write_in",
+            "cover_crop_seed_cost",
+            "cover_crop_planting_cost",
+            "cover_crop_planting_date",
+            "cover_crop_estimated_termination",
+            "days_between_crop_hvst_and_cc_estd",
+            "derived_species_class",
+            "derived_county",
+            # From FieldFarm
+            "field_name",
+            "closest_zip_code",
+            "field_acreage",
+            "field_location",
+            # From Ancillary Data
+            # "id",
+            "biomass_collection_date",
+            "cp",
+            "andf",
+            "undfom30",
+            "ndfd30",
+            "tdn_adf",
+            "milk_ton_milk2013",
+            "rfq",
+            "cc_biomass",
+            "total_nitrogen",
+            "acc_gdd",
+            "total_precip",
+            "spring_biomass_collection_date",
+            "spring_cc_biomass",
+        ],
+    )
+
+    for col in dct_choices:
+        df[col] = df[col].apply(convert_to_human_readable, args=(dct_choices[col],))
+
+    return df
+
+
+def pull_all_years_together(f_output):
+    """f_output is format of the output:
+    sql: for returning just the query
+    json: for returning json
+    df: for pandas dataframe
+    table: for creating 'wisc_cc_all_together' in db;
+        for testing purposes.
+    """
+
+    query = """
+SELECT 
+        stat.id
+        , stat.year
+        , stat.county
+        , stat.county_single
+        , stat.years_experience
+        , stat.zipcode
+        , stat.previous_crop
+        , stat.cash_crop_planting_date 
+        , stat.dominant_soil_texture
+        , stat.manure_prior 
+        , null as manure_prior_rate
+        , null as manure_prior_rate_units
+        , stat.manure_post
+        , null manure_post_rate
+        , null as manure_post_rate_units
+        , stat.manure_rate 
+        , stat.manure_value 
+        , stat.tillage_system 
+        , stat.tillage_equip_primary
+        , stat.tillage_equip_secondary
+        , stat.residue_remaining
+        , stat.soil_conditions
+        , stat.cc_seeding_method
+        , stat.cc_planting_rate
+        , stat.cc_termination
+        , stat.days_between_crop_hvst_and_cc_estd
+        , stat.site_lon
+        , stat.site_lat        
+        , stat.cc_planting_date
+        
+        , stat.anpp
+        , stat.cc_biomass_collection_date
+        , stat.total_precip
+        , stat.acc_gdd
+        , stat.days_from_plant_to_bio_hrvst
+
+        , stat.cc_biomass
+        , stat.fq_cp
+        , stat.fq_andf
+        , stat.fq_undfom30
+        , stat.fq_ndfd30
+        , stat.fq_tdn_adf
+        , stat.fq_milkton
+        , stat.fq_rfq
+        
+        , stat.cc_rate_and_species
+        , stat.cc_species
+        , stat.cc_species_raw
+        , null as survey_response_id
+        , null as survey_field_id
+    from wisc_cc as stat
+
+    union all
+
+    select
+        wisc_cc_id as id,
+        year,
+        a.county,
+        derived_county as county_single,
+        years_experience::text as years_experience,
+        closest_zip_code as zipcode,
+        mod_crop_rotation_2023_cash_crop_species as previous_crop,
+        cash_crop_planting_date::timestamp,
+        lower(replace(dominant_soil_texture, '_', ' ')) as dominant_soil_texture,
+        -- Make this yes no? Or change static to boolean?
+        case
+            when manure_prior = 'true' then 'Yes'
+            when manure_prior = 'false' then 'No'
+            when manure_prior is null then 'No'
+        end as manure_prior,
+        manure_prior_rate,
+        mod_manure_prior_rate_units as manure_prior_rate_units,
+        case
+            when manure_post = 'true' then 'Yes'
+            when manure_post = 'false' then 'No'
+            when manure_post is null then 'No'
+        end as manure_post,
+        manure_post_rate,
+        mod_manure_post_rate_units as mod_manure_post_rate_units,	
+        null as manure_rate, 
+        null as manure_value, 	
+        mod_tillage_system_cash_crop as tillage_system,
+        primary_tillage_equipment as tillage_equip_primary,
+        secondary_tillage_equipment as tillage_equip_secondary,
+        mod_residue_remaining as residue_remaining,	
+        lower(soil_conditions_at_cover_crop_seeding) as soil_conditions,
+        mod_cc_seeding_method as cc_seeding_method,
+        concat(		
+            concat(  cover_crop_planting_rate_1, ' ', mod_cover_crop_planting_rate_1_units, ' ', mod_cover_crop_species_1),
+            nullif(concat(  ', ', cover_crop_planting_rate_2, ' ', mod_cover_crop_planting_rate_2_units, ' ', mod_cover_crop_species_2), ',   '),
+            nullif(concat(  ', ', cover_crop_planting_rate_3, ' ', mod_cover_crop_planting_rate_3_units, ' ', mod_cover_crop_species_3), ',   '),
+            nullif(concat(  ', ', cover_crop_planting_rate_4, ' ', mod_cover_crop_planting_rate_4_units, ' ', mod_cover_crop_species_4), ',   '),
+            nullif(concat(  ', ', cover_crop_planting_rate_5, ' ', mod_cover_crop_planting_rate_5_units, ' ', mod_cover_crop_species_5), ',   ')
+        ) as cc_planting_rate,
+        mod_cover_crop_estimated_termination as cc_termination,
+        null as days_between_crop_hvst_and_cc_estd,
+	    ST_X(field_location) as site_lon,
+	    ST_Y(field_location) as site_lat,                
+        cover_crop_planting_date::timestamp as cc_planting_date,
+        
+        null as anpp,
+        biomass_collection_date as cc_biomass_collection_date,
+        total_precip as total_precip,
+        acc_gdd as acc_gdd,
+        null as days_from_plant_to_bio_hrvst,
+
+        cc_biomass,
+        cp as fq_cp,
+        andf as fq_andf,
+        undfom30 as fq_undfom30,
+        ndfd30 as fq_ndfd30,
+        tdn_adf as fq_tdn_adf,
+        milk_ton_milk2013 as fq_milkton,
+        rfq as fq_rfq,
+
+        
+        concat(		
+            concat(  cover_crop_planting_rate_1, ' ', mod_cover_crop_planting_rate_1_units, ' ', mod_cover_crop_species_1),
+            nullif(concat(  ', ', cover_crop_planting_rate_2, ' ', mod_cover_crop_planting_rate_2_units, ' ', mod_cover_crop_species_2), ',   '),
+            nullif(concat(  ', ', cover_crop_planting_rate_3, ' ', mod_cover_crop_planting_rate_3_units, ' ', mod_cover_crop_species_3), ',   '),
+            nullif(concat(  ', ', cover_crop_planting_rate_4, ' ', mod_cover_crop_planting_rate_4_units, ' ', mod_cover_crop_species_4), ',   '),
+            nullif(concat(  ', ', cover_crop_planting_rate_5, ' ', mod_cover_crop_planting_rate_5_units, ' ', mod_cover_crop_species_5), ',   ')
+        ) as cc_rate_and_species,
+        derived_species_class as cc_species,		
+        concat(
+            mod_cover_crop_species_1, 
+            nullif(concat(', ', mod_cover_crop_species_2), ', '), 
+            nullif(concat(', ', mod_cover_crop_species_3), ', '), 
+            nullif(concat(', ', mod_cover_crop_species_4), ', '), 
+            nullif(concat(', ', mod_cover_crop_species_5), ', ')
+        ) as cc_species_raw,
+        survey_response_id,
+        survey_field_id
+    from (
+        select
+            surveyfield.*,
+            surveyfarm.*,
+            fieldfarm.*,
+            farmer.*,
+            ancil.*,
+            concat(
+                fieldfarm.closest_zip_code,
+                '-',
+                upper(substring(farmer.first_name, 1, 1)),
+                upper(substring(farmer.last_name,  1, 1)),
+                '-',
+                surveyfarm.survey_year
+            ) as wisc_cc_id,
+            surveyfarm.survey_year as year,
+            case
+                when surveyfield.cover_crop_species_1 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_1 = 'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_1 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_1 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_1 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_1 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_1 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_1 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_1 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_1 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_1 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_1 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_1 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_1 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_1 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_1 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_1 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_1 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_1 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_1 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_1 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_1 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_1 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_1 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_1 = 'OTHER' then 'other'		
+            end as mod_cover_crop_species_1,
+            case
+                when surveyfield.cover_crop_species_2 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_2 = 'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_2 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_2 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_2 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_2 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_2 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_2 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_2 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_2 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_2 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_2 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_2 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_2 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_2 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_2 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_2 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_2 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_2 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_2 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_2 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_2 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_2 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_2 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_2 = 'OTHER' then 'other'		
+            end as mod_cover_crop_species_2,
+            case
+                when surveyfield.cover_crop_species_3 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_3 =  'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_3 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_3 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_3 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_3 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_3 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_3 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_3 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_3 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_3 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_3 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_3 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_3 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_3 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_3 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_3 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_3 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_3 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_3 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_3 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_3 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_3 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_3 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_3 = 'OTHER' then 'other'		
+            end as mod_cover_crop_species_3,
+            case
+                when surveyfield.cover_crop_species_4 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_4 = 'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_4 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_4 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_4 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_4 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_4 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_4 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_4 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_4 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_4 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_4 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_4 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_4 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_4 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_4 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_4 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_4 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_4 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_4 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_4 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_4 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_4 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_4 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_4 = 'OTHER' then 'other'		
+            end as mod_cover_crop_species_4,
+            case
+                when surveyfield.cover_crop_species_5 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_5 = 'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_5 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_5 = 'CANOLA' then 'canola/rapeseed'
+                when surveyfield.cover_crop_species_5 = 'CEREAL_RYE' then 'cereal (winter) rye'
+                when surveyfield.cover_crop_species_5 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_5 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_5 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_5 = 'HAIRY_VETCH' then 'hairy vetch'
+                when surveyfield.cover_crop_species_5 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_5 = 'OATS' then 'oats'
+                when surveyfield.cover_crop_species_5 = 'OTHER_LEGUME' then 'other (legume)'
+                when surveyfield.cover_crop_species_5 = 'OTHER_GRASS' then 'other (grass)'
+                when surveyfield.cover_crop_species_5 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
+                when surveyfield.cover_crop_species_5 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_5 = 'RED_CLOVER' then 'red clover'
+                when surveyfield.cover_crop_species_5 = 'SORGHUM' then 'sorghum'
+                when surveyfield.cover_crop_species_5 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_5 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_5 = 'TRITICALE' then 'triticale'
+                when surveyfield.cover_crop_species_5 = 'TURNIP' then 'turnip'
+                when surveyfield.cover_crop_species_5 = 'WHEAT_SPRING' then 'wheat (spring)'
+                when surveyfield.cover_crop_species_5 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_5 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
+                when surveyfield.cover_crop_species_5 = 'OTHER' then 'other'		
+            end as mod_cover_crop_species_5,
+            case
+                when surveyfield.cover_crop_planting_rate_1_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_1_units = 'BUSHELS_ACRE' then 'bu/acre' 
+            end as mod_cover_crop_planting_rate_1_units,	
+            case
+                when surveyfield.cover_crop_planting_rate_2_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_2_units = 'BUSHELS_ACRE' then 'bu/acre' 
+            end as mod_cover_crop_planting_rate_2_units,	
+            case
+                when surveyfield.cover_crop_planting_rate_3_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_3_units = 'BUSHELS_ACRE' then 'bu/acre' 
+            end as mod_cover_crop_planting_rate_3_units,	
+            case
+                when surveyfield.cover_crop_planting_rate_4_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_4_units = 'BUSHELS_ACRE' then 'bu/acre' 
+            end as mod_cover_crop_planting_rate_4_units,	
+            case
+                when surveyfield.cover_crop_planting_rate_5_units = 'POUNDS_ACRE' then 'lbs/acre' 
+                when surveyfield.cover_crop_planting_rate_5_units = 'BUSHELS_ACRE' then 'bu/acre' 
+            end as mod_cover_crop_planting_rate_5_units
+            , case	        
+                when surveyfield.tillage_system_cash_crop  = 'CONVENTIONAL' then 'conventional tillage (<15% residue)'
+                when surveyfield.tillage_system_cash_crop = 'REDUCED' then 'reduced tillage (15-30% residue)'
+                when surveyfield.tillage_system_cash_crop = 'MULCH_TILL' then 
+                    'conservation tillage (>30% residue) - mulch till/vertical tillage'
+                when surveyfield.tillage_system_cash_crop = 'STRIP_TILL' then 'conservation tillage (>30% residue) - strip till'
+                when surveyfield.tillage_system_cash_crop = 'NO_TILL' then 'conservation tillage (>30% residue) - no till'    
+            end as mod_tillage_system_cash_crop
+            , case	        
+                when surveyfield.tillage_system_cash_crop = 'CONVENTIONAL' then 'Conventional, <15% residue remaining'
+                when surveyfield.tillage_system_cash_crop = 'REDUCED' then 'Reduced, 15-30% residue remaining'
+                when surveyfield.tillage_system_cash_crop = 'MULCH_TILL' then 
+                    'Conservation, >30% residue remaining'
+                when surveyfield.tillage_system_cash_crop = 'STRIP_TILL' then 'Conservation, >30% residue remaining'
+                when surveyfield.tillage_system_cash_crop = 'NO_TILL' then 'Conservation, >30% residue remaining'    
+            end as mod_residue_remaining
+            , case 
+                when surveyfield.cover_crop_seeding_method = 'FROST' then'frost seeded'
+                when surveyfield.cover_crop_seeding_method = 'DRILLED' then 'drilled'
+                when surveyfield.cover_crop_seeding_method = 'BROADCAST_NO_INCORP' then 'broadcast, no incorporation'
+                when surveyfield.cover_crop_seeding_method = 'EARLY_INTERSEED' then 'early interseeded -- broadcast'
+                when surveyfield.cover_crop_seeding_method = 'LATE_INTERSEED_BROADCAST' then 'late interseeded -- broadcast'
+                when surveyfield.cover_crop_seeding_method = 'LATE_INTERSEED_AERIAL' then 'late interseeded -- aerial'
+                when surveyfield.cover_crop_seeding_method = 'BROADCAST_INCORPORATION' then 'broadcast + incorporation'
+                when surveyfield.cover_crop_seeding_method = 'FERT_BROADCAST_INCORP' then 'cover crop seed mixed with fertilizer + broadcast + incorporation'
+                when surveyfield.cover_crop_seeding_method = 'OTHER' then 'other'
+            end as mod_cc_seeding_method
+            , case 
+                when surveyfield.manure_prior_rate_units = 'GALLONS' then 'gal/acre'
+                when surveyfield.manure_prior_rate_units = 'POUNDS_ACRE' then 'lbs/acre'
+            end as mod_manure_prior_rate_units
+            , case 
+                when surveyfield.manure_post_rate_units = 'GALLONS' then 'gal/acre'
+                when surveyfield.manure_post_rate_units = 'POUNDS_ACRE' then 'lbs/acre'
+            end as mod_manure_post_rate_units
+            , case 
+                when surveyfield.cover_crop_estimated_termination = 'GRAZE_FALL' then 'graze fall'
+                when surveyfield.cover_crop_estimated_termination = 'WINTERKILL' then 'little to no cover crop growth in spring'
+                when surveyfield.cover_crop_estimated_termination = 'FALLKILL' then 'killing frost (fall)'
+                when surveyfield.cover_crop_estimated_termination = 'GRAZE_SPRING' then 'graze spring'
+                when surveyfield.cover_crop_estimated_termination = 'SPRING_HERBICIDE' then 'early spring, herbicide application (14 plus days prior to crop establishment)'
+                
+                when surveyfield.cover_crop_estimated_termination = 'FORAGE' then 'harvest for forage'
+                when surveyfield.cover_crop_estimated_termination = 'GREEN_HERBICIDE' then 'plant green, herbicide termination'
+                when surveyfield.cover_crop_estimated_termination = 'SPRING_ROLLER_CRIMPER' then 'early spring, roller-crimper termination'
+                when surveyfield.cover_crop_estimated_termination = 'GREEN_ROLLER_CRIMPER' then 'plant green, roller-crimper termination'
+                when surveyfield.cover_crop_estimated_termination = 'OTHER' then 'other'
+            end as mod_cover_crop_estimated_termination,
+            case 
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'CORN_FOR_GRAIN' then 'corn for grain'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'CORN_SILAGE' then 'corn silage'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'SOYBEANS' then 'soybeans'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'WHEAT' then 'wheat'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'OATS' then 'oats'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'BARLEY' then 'barley'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'TRITICALE' then 'triticale'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'SORGHUM' then 'sorghum'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'ALFALFA' then 'alfalfa'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'VEGETABLE_CROP' then 'vegetable crop'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'OTHER_GRAIN' then 'other grain'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'OTHER_FORAGE' then 'other forage'
+                when surveyfield.crop_rotation_2023_cash_crop_species = 'LIVESTOCK' then 'livestock feeding/grazing'	   	
+            end as mod_crop_rotation_2023_cash_crop_species
+            
+			from wisccc_surveyfarm as surveyfarm
+			left join wisccc_surveyfield as surveyfield
+			on surveyfarm.id = surveyfield.survey_farm_id
+			left join wisccc_fieldfarm as fieldfarm
+			on surveyfield.field_farm_id = fieldfarm.id
+			left join wisccc_ancillarydata as ancil
+			on surveyfield.id = ancil.survey_field_id  
+			left join wisccc_farmer as farmer
+			on surveyfarm.farmer_id = farmer.id
+			where surveyfarm.survey_year >= 2023
+                and surveyfarm.confirmed_accurate = TRUE
+	) as a
+ 
+ 
+ 
+    """
+
+    if f_output == "sql":
+        return query
+
+    if f_output == "json":
+        query_json = """
+            SELECT jsonb_build_object(
+                'type',     'FeatureCollection',
+                'features', jsonb_agg(features.feature)
+            )
+            FROM (
+            SELECT jsonb_build_object(
+                'type',       'Feature',
+                'id',         id,
+                'geometry',   ST_AsGeoJSON(farmlocation)::jsonb,
+                'properties', to_jsonb(inputs) - 'id' - 'farmlocation'
+            ) AS feature
+            FROM (
+                select 
+                    *, ST_GeometryN(ST_GeneratePoints(geom.b_farmlocation, 1), 1) as farmlocation 
+                from (
+                    select
+                        *, ST_Buffer(ST_SetSRID(ST_MakePoint(site_lon, site_lat), 4326), 0.02) as b_farmlocation
+                    from (
+                        {query}
+                        ) as b
+                    ) as geom
+                ) as inputs
+            ) features;""".format(
+            query=query
+        )
+
+        with connection.cursor() as cursor:
+            cursor.execute(query_json)
+            rows = cursor.fetchone()
+            data = json.loads(rows[0])
+
+        return data
+
+    if f_output == "table":
+        table_name = "wisc_cc_all_together"
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"drop table {table_name};")
+            except:
+                print(f"{table_name} currently does not exist.")
+
+            print(f"Creating {table_name}")
+            cursor.execute(
+                """
+            create table {table_name} as
+                           {query}
+        """.format(
+                    table_name=table_name, query=query
+                )
+            )
+
+    if f_output == "df":
+        data = pd.read_sql(query, connection)
+        # df.value_counts(['cc_species', 'cc_species_raw'])
+        return data
+
+
+# From Ancillary Data
+"id",
+"biomass_collection_date",
+"cp",
+"andf",
+"undfom30",
+"ndfd30",
+"tdn_adf",
+"milk_ton_milk2013",
+"rfq",
+"cc_biomass",
+"total_nitrogen",
+"acc_gdd",
+"total_precip",
+"spring_biomass_collection_date",
+"spring_cc_biomass",
+"survey_response_id",
+"survey_field_id",
+
+# From Farmer
+"id",
+"first_name",
+"last_name",
+"farm_name",
+"county",
+"user_id"
+
+
+# From SurveyFarm
+"id",
+"survey_created",
+"last_updated",
+"survey_year",
+"notes_admin",
+"confirmed_accurate",
+"years_experience",
+"total_acres",
+"percent_of_farm_cc",
+"dominant_soil_series_1",
+"dominant_soil_series_2",
+"dominant_soil_series_3",
+"dominant_soil_series_4",
+"info_source_nutrient_mgmt_1",
+"info_source_nutrient_mgmt_2",
+"info_source_nutrient_mgmt_3",
+"source_nutrient_mgmt_write_in",
+"cov_crops_for_ntrnt_mgmt_comments_questions",
+"info_source_cover_crops_1",
+"info_source_cover_crops_2",
+"info_source_cover_crops_3",
+"info_source_cover_crops_write_in",
+"support_cover_crops_1",
+"support_cover_crops_2",
+"support_cover_crops_3",
+"support_cover_crops_write_in",
+"lacking_any_info_cover_crops",
+"barriers_to_expansion",
+"quit_planting_cover_crops",
+"if_use_crop_insurance",
+"why_cover_crops_write_in",
+"cover_crops_delay_cash_crop",
+"save_cover_crop_seed",
+"source_cover_crop_seed",
+"interesting_tales",
+"where_to_start",
+"additional_thoughts",
+"farmer_id",
+"user_id",
+
+
+# From SurveyField
+"id",
+"created_time",
+"last_updated",
+"crop_rotation",
+"crop_rotation_2021_cover_crop_species",
+"crop_rotation_2021_cash_crop_species",
+"crop_rotation_2022_cover_crop_species",
+"crop_rotation_2022_cash_crop_species",
+"crop_rotation_2023_cover_crop_species",
+"crop_rotation_2023_cash_crop_species",
+"cover_crop_species_1",
+"cover_crop_planting_rate_1",
+"cover_crop_planting_rate_1_units",
+"cover_crop_species_2",
+"cover_crop_planting_rate_2",
+"cover_crop_planting_rate_2_units",
+"cover_crop_species_3",
+"cover_crop_planting_rate_3",
+"cover_crop_planting_rate_3_units",
+"cover_crop_species_4",
+"cover_crop_planting_rate_4",
+"cover_crop_planting_rate_4_units",
+"cover_crop_species_5",
+"cover_crop_planting_rate_5",
+"cover_crop_planting_rate_5_units",
+"cover_crop_species_and_rate_write_in",
+"cover_crop_multispecies_mix_write_in",
+"cash_crop_planting_date",
+"years_with_cover_crops",
+"dominant_soil_texture",
+"manure_prior",
+"manure_prior_rate",
+"manure_prior_rate_units",
+"manure_post",
+"manure_post_rate",
+"manure_post_rate_units",
+"tillage_system_cash_crop",
+"primary_tillage_equipment",
+"primary_tillage_equipment_write_in",
+"secondary_tillage_equipment",
+"secondary_tillage_equipment_write_in",
+"soil_conditions_at_cover_crop_seeding",
+"cover_crop_seeding_method",
+"cover_crop_seeding_method_write_in",
+"cover_crop_seed_cost",
+"cover_crop_planting_cost",
+"cover_crop_planting_date",
+"cover_crop_estimated_termination",
+"days_between_crop_hvst_and_cc_estd",
+"derived_species_class",
+"derived_county",
+"field_farm_id",
+"survey_farm_id",
+
+
+# From FieldFarm
+"id",
+"created_time",
+"last_updated",
+"field_name",
+"closest_zip_code",
+"field_acreage",
+"field_location",
+"farmer_id",
+
+
+# From User
+"id",
+"password",
+"last_login",
+"is_superuser",
+"username",
+"first_name",
+"last_name",
+"email",
+"is_staff",
+"is_active",
+"date_joined",
