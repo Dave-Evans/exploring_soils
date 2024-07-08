@@ -88,6 +88,11 @@ urlpatterns = [
         wisccc_views.delete_registration,
         name="delete_registration",
     ),
+    path(
+        "download_registrants",
+        wisccc_views.download_registrants,
+        name="download_registrants",
+    ),
     # path("create_photo/<id>", wisccc_views.update_response, name="create_photo"),
     # path("update_photo/<id>", wisccc_views.update_response, name="update_photo"),
     # re_path(
