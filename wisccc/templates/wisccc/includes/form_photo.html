@@ -1,0 +1,25 @@
+{% load crispy_forms_tags %}
+<h4>Add photo to survey</h4>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_photo_form.image_1|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_photo_form.caption_photo_1|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_photo_form.image_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_photo_form.caption_photo_2|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_photo_form.notes|as_crispy_field }}
+    </div>
+</div>
+<hr>
+{{ survey_photo_form.errors }}

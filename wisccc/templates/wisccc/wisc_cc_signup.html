@@ -1,0 +1,42 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+{% block title %}Welcome to Wisconsin Growers Citizen Science Network {% endblock %}
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- <a class="nav-link" href="{% url 'wisc_cc_home' %}">
+                    <h3 class="card-title">Wisconsin Cover Crop Citizen Science Network</h3>
+                </a> -->
+                <h5>Sign up</h5>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% include 'wisccc/includes/form_wisc_signup.html' %}
+
+                    <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
+                    <a href="{% url 'wisc_cc_survey' %}"><button type="button" class="warn btn btn-secondary">Back to
+                            survey home
+                            page</button></a>
+                    <div class="text-center py-2">
+                        <small>
+                            <a href="{% url 'password_reset' %}" class="text-muted">Reset password?</a>
+                        </small>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}

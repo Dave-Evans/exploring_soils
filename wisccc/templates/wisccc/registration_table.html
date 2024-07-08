@@ -1,6 +1,6 @@
 {% extends 'wisccc/base_wisccc.html' %}
 {% load static %}
-{% block title %}Wisconsin Cover Crop Citizen Science Network{% endblock %}
+{% block title %}Wisconsin Growers Citizen Science Network {% endblock %}
 
 {% load render_table from django_tables2 %}
 {% load bootstrap4 %}
@@ -20,10 +20,10 @@
 
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">Survey Responses</h3>
+        <h3 class="card-title">Registered for Survey</h3>
         <h7 class="card-title">
-          <span><a href="{% url 'wisccc_download_data' 1 %}">Download all data</a></span>
-          <span style="float: right">{{ completed_surveys }} completed/{{ total_surveys }} initiated</span>
+
+          <!-- <span style="float: right">{{ total_regs }} registered</span> -->
         </h7>
         <div class="col-md-12">
           {% render_table table %}

@@ -1,11 +1,16 @@
+import json
+import djqscsv
+import pandas as pd
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.db import connection
-import json
-import djqscsv
+from django.contrib import messages
 from django.http import JsonResponse
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from wisccc.forms import UserLoginForm
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import (
     TemplateView,
@@ -17,17 +22,21 @@ from django.views.generic import (
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django_tables2 import RequestConfig
-from wisccc.tables import (
-    ResponseTable,
-)
+from wisccc.tables import ResponseTable, RegistrationTable
 from wisccc.forms import (
     SurveyForm1,
     SurveyForm2,
     SurveyForm3,
     FarmerForm,
     FullSurveyForm,
+    SurveyPhotoForm,
+    CustomUserCreationForm,
+    SurveyRegistrationFullForm,
+    SurveyRegistrationPartialForm,
+    UserInfoForm,
 )
-from wisccc.models import Survey, Farmer
+
+from wisccc.models import Survey, Farmer, SurveyPhoto, SurveyRegistration
 from wisccc.data_mgmt import pull_all_years_together, get_survey_data
 import pandas as pd
 
@@ -80,12 +89,26 @@ def wisc_cc_home(request):
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
-def wisccc_download_data(request):
-    # qs = Survey.objects.raw(query)
-    # return djqscsv.render_to_csv_response(qs)
-    df = get_survey_data()
+def wisc_cc_manager_home(request):
+    return render(request, "wisccc/wisc_cc_manager_home.html")
+
+
+def wisc_cc_about(request):
+    return render(request, "wisccc/wisc_cc_about.html")
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisccc_download_data(request, opt):
+    # opt == 1 then full survey with qualitative
+    # opt == 2 then display data
+    if opt == 1:
+        df = get_survey_data()
+        filename = "full_survey_questions.csv"
+    elif opt == 2:
+        df = pull_all_years_together("df")
+        filename = "cleaned_data_from_display.csv"
     resp = HttpResponse(content_type="text/csv")
-    resp["Content-Disposition"] = "attachment; filename=survey_data.csv"
+    resp["Content-Disposition"] = f"attachment; filename={filename}"
 
     df.to_csv(path_or_buf=resp, sep=",", index=False)
     return resp
@@ -146,6 +169,7 @@ def wisc_cc_survey0(request):
 @login_required
 def wisc_cc_survey1(request):
     try:
+        # Survey.objects.get(farmer = Farmer.objects.get(user_id = 110))
         instance = Survey.objects.filter(user_id=request.user.id).earliest(
             "last_updated"
         )
@@ -286,6 +310,25 @@ def get_wi_counties(request):
 
 def get_wisc_cc_data(request):
     data = pull_all_years_together("json")
+    # retrieve signed url for accessing private s3 images
+    # There is probably a better way to do this but while there aren't many
+    #   submissions this is fine.
+    for feat in data["features"]:
+        if feat["properties"]["response_id"]:
+            response_id = feat["properties"]["response_id"]
+        else:
+            continue
+
+        try:
+            survey_photo = SurveyPhoto.objects.get(survey_response_id=response_id)
+        except SurveyPhoto.DoesNotExist:
+            print(f"Survey photo does not exist for {response_id}")
+            continue
+
+        if survey_photo.image_1:
+            feat["properties"]["image_1_url"] = survey_photo.image_1.url
+        if survey_photo.image_2:
+            feat["properties"]["image_2_url"] = survey_photo.image_2.url
 
     return JsonResponse(list(data["features"]), safe=False)
 
@@ -433,6 +476,116 @@ def response_table(request):
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
+def registration_table(request):
+    """List wisc registration entries"""
+
+    # all_regs = SurveyRegistration.objects.prefetch_related("farmer__user")
+    def get_table_data():
+        """For getting registration data"""
+        query = """
+            select
+                ws.id
+                , signup_timestamp
+                , wf.farm_name
+                , wf.first_name 
+                , wf.last_name 
+                , wf.address_zipcode
+                , au.email
+                , ws.belong_to_groups
+                , ws.notes
+                , howd_you_hear	
+            from wisccc_surveyregistration ws 
+            inner join wisccc_farmer wf 
+            on ws.farmer_id = wf.id
+            inner join auth_user au 
+            on wf.user_id = au.id"""
+        dat = pd.read_sql(query, connection)
+        dat = dat.to_dict("records")
+
+        return dat
+
+    data = get_table_data()
+    # total_regs = data.count()
+
+    # table = ResponseTable(Survey.objects.all())
+    table = RegistrationTable(data)
+    RequestConfig(request, paginate={"per_page": 15}).configure(table)
+
+    return render(
+        request,
+        "wisccc/registration_table.html",
+        {"table": table, "total_regs": 3},
+    )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def update_registration(request, id):
+    """For updating registration"""
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the survey object related to passed id
+    registration = get_object_or_404(SurveyRegistration, id=id)
+
+    # Get farmer associated with registrant
+    farmer = registration.farmer
+
+    # Get user associated with registrant
+    user = registration.farmer.user
+
+    # pass the object as instance in form
+    registration_form = SurveyRegistrationFullForm(
+        request.POST or None, instance=registration
+    )
+
+    farmer_form = FarmerForm(request.POST or None, instance=farmer)
+
+    user_info_form = UserInfoForm(request.POST or None, instance=user)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if (
+        registration_form.is_valid()
+        and farmer_form.is_valid()
+        and user_info_form.is_valid()
+    ):
+
+        registration_form.save()
+
+        farmer_form.save()
+
+        user_info_form.save()
+
+        return redirect("registration_table")
+    # add form dictionary to context
+    context["registration_form"] = registration_form
+    context["farmer_form"] = farmer_form
+    context["user_info_form"] = user_info_form
+
+    return render(request, "wisccc/wisc_cc_registration_review.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def delete_registration(request, id):
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(SurveyRegistration, id=id)
+
+    if request.method == "POST":
+        # delete object
+        obj.delete()
+        # after deleting redirect to
+        # home page
+        return redirect("registration_table")
+
+    return render(request, "wisccc/delete_registration.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
 def delete_response(request, id):
     # dictionary for initial data with
     # field names as keys
@@ -458,25 +611,174 @@ def update_response(request, id):
     # field names as keys
     context = {}
 
-    # fetch the object related to passed id
+    # fetch the survey object related to passed id
     obj = get_object_or_404(Survey, id=id)
 
+    # Get farmer associated with user id of survey response
     farmer = Farmer.objects.filter(user_id=obj.user_id).first()
 
     # pass the object as instance in form
     form = FullSurveyForm(request.POST or None, instance=obj)
 
+    # Get any uploaded photos for this survey response
+    survey_photo = SurveyPhoto.objects.filter(survey_response=id).first()
+
     farmer_form = FarmerForm(request.POST or None, instance=farmer)
+
+    survey_photo_form = SurveyPhotoForm(request.POST or None, instance=survey_photo)
     # save the data from the form and
     # redirect to detail_view
-    if form.is_valid() and farmer_form.is_valid():
+
+    if form.is_valid() and farmer_form.is_valid() and survey_photo_form.is_valid():
+
         form.save()
         # Here verify county
         # Here calc gdu?
         farmer_form.save()
+
+        new_survey_photo = survey_photo_form.save()
+        new_survey_photo.survey_response_id = id
+        if "image_1" in request.FILES.keys():
+            new_survey_photo.image_1 = request.FILES["image_1"]
+        if "image_2" in request.FILES.keys():
+            new_survey_photo.image_2 = request.FILES["image_2"]
+
+        new_survey_photo.save()
+
         return redirect("response_table")
     # add form dictionary to context
     context["form"] = form
     context["farmer_form"] = farmer_form
+    context["survey_photo_form"] = survey_photo_form
 
     return render(request, "wisccc/survey_review.html", context)
+
+
+def wisc_cc_signup(request):
+    """For creating an account with wisc cc"""
+    signup_form = CustomUserCreationForm(request.POST)
+    if signup_form.is_valid():
+
+        new_user = signup_form.save()
+        auth_login(request, new_user)
+        messages.success(request, "Account created successfully")
+        return redirect("wisc_cc_home")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_signup.html",
+        {"form": signup_form},
+    )
+
+
+def wisc_cc_register_1(request):
+    """Registering for Wisc CC survey, assumes no previous account"""
+    if request.user.id is not None:
+        return redirect("wisc_cc_register_2")
+
+    signup_form = CustomUserCreationForm(request.POST)
+    if signup_form.is_valid():
+
+        new_user = signup_form.save()
+        auth_login(request, new_user)
+        messages.success(request, "Account created successfully")
+        return redirect("wisc_cc_register_2")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_register_1_signup.html",
+        {"form": signup_form},
+    )
+
+
+@login_required
+def wisc_cc_register_2(request):
+
+    # TODO:
+    #   Grab user info if they are logged in
+    #   Grab farmer info if they are logged in and have a farmer attached to userid
+    #   Grab registration info if they have already registered
+    user = User.objects.get(id=request.user.id)
+    try:
+        farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
+    except:
+        farmer_instance = None
+
+    farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
+
+    try:
+        registration_instance = SurveyRegistration.objects.filter(
+            farmer_id=farmer_instance.id
+        ).first()
+    except:
+        registration_instance = None
+
+    registration_form = SurveyRegistrationPartialForm(
+        request.POST or None, instance=registration_instance
+    )
+
+    if farmer_form.is_valid() and registration_form.is_valid():
+
+        new_farmer = farmer_form.save(commit=False)
+        new_register = registration_form.save(commit=False)
+
+        new_farmer.user = user
+        new_farmer.save()
+
+        new_register.farmer = new_farmer
+        new_register.survey_year = 2024
+        new_register.save()
+
+        messages.success(request, "Account created successfully")
+        return redirect("wisc_cc_register_3")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_register_2.html",
+        {
+            "farmer_form": farmer_form,
+            "registration_form": registration_form,
+        },
+    )
+
+
+@login_required
+def wisc_cc_register_3(request):
+
+    return render(request, "wisccc/wisc_cc_register_3.html")
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def upload_photo(request, id):
+    """For uploading photos for survey response"""
+    context = {}
+
+    # Get any uploaded photos for this survey response
+
+    survey_photo = SurveyPhoto.objects.filter(survey_response=id).first()
+
+    survey_photo_form = SurveyPhotoForm(request.POST or None, instance=survey_photo)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if survey_photo_form.is_valid():
+
+        new_survey_photo = survey_photo_form.save()
+        new_survey_photo.survey_response_id = id
+        if "image_1" in request.FILES.keys():
+            new_survey_photo.image_1 = request.FILES["image_1"]
+        if "image_2" in request.FILES.keys():
+            new_survey_photo.image_2 = request.FILES["image_2"]
+
+        new_survey_photo.save()
+
+        return redirect("response_table")
+
+    template = "wisccc/photo_upload.html"
+    return render(
+        request,
+        template,
+        {
+            "survey_photo_form": survey_photo_form,
+        },
+    )

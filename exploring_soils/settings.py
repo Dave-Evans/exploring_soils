@@ -26,13 +26,22 @@ SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
+
 DEPLOYED = config("DEPLOYED", default=False, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
+
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 # For uploaded files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
+print(f"Allowed hosts: {ALLOWED_HOSTS}")
+print(f"Debug state: {DEBUG}")
+print(f"Deployed state: {DEPLOYED}")
+print(f"CSRF origins: {CSRF_TRUSTED_ORIGINS}")
+print(f"Base dir: {BASE_DIR}")
 
 # Application definition
 
@@ -171,7 +180,7 @@ LEAFLET_CONFIG = {
     "OVERLAYS": [
         ("Cadastral", "http://server/a/{z}/{x}/{y}.png", {"attribution": "&copy; IGN"})
     ],
-    "MINIMAP": True
+    "MINIMAP": True,
     # 'DEFAULT_CENTER': (-94.0, 46.0),
     # 'DEFAULT_ZOOM': 14,
     # 'MIN_ZOOM': 3,
@@ -184,6 +193,7 @@ AWS_DEFAULT_ACL = None  # try private?
 AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
+AWS_WISC_CC_PHOTO_LOCATION = config("AWS_WISC_CC_PHOTO_LOCATION")
 AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME")
 AWS_S3_CUSTOM_DOMAIN = "%s.s3.amazonaws.com" % AWS_STORAGE_BUCKET_NAME
 

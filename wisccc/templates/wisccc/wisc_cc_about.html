@@ -1,0 +1,99 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+{% block title %}Wisconsin Cover Crop Citizen Science Network{% endblock %}
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- <a class="nav-link" href="{% url 'wisc_cc_home' %}">
+                    <h3 class="card-title">Wisconsin Cover Crop Citizen Science Network</h3>
+                </a> -->
+                <h5>Project Overview</h5>
+                <div>
+                    <p>
+                        Since 2020 this project, a collaboration between Michael Fields, UW-Madison, and The Nature
+                        Conservancy, has addressed the need for locally relevant information on cover cropping as a key
+                        strategy to build soil health and protect water quality in Wisconsin.
+                        We see farmers as taking the lead in experimenting and
+                        fine-tuning cover cropping to fit into Wisconsin's farm systems and
+                        particular locations.
+                        Our aim is to support farmers' creative adaptive capacity by providing them robust data and
+                        stories from other farmers around the state who are working with cover crops.
+                    </p>
+                    <p>
+                        Each year participating farmers provide information on their cover crop practices as well as
+                        motivations, sources of support, and perceived benefits and barriers to cover cropping.
+                        They also provide fall and spring biomass samples. As a participatory research effort, we are
+                        learning
+                        from growers about benefits, challenges, and results. We are using this data to inform policy,
+                        research, and outreach to develop workable cover cropping strategies in Wisconsin's diverse
+                        cropping systems, soil types, and microclimates.
+                        We are also aggregating this information from around the state into other cover crop data sets
+                        to improve decision support tools like SnapPlus, and to guide
+                        practical cover crop recommendations.
+                        Participating farmers receive personalized data on the amount of biomass their cover crop
+                        produced as well as forage and nutrient analyses.
+                        Please explore our <a href="{% url 'wisc_cc_graph' %}">citizen science dashboard</a>.
+                    </p>
+
+
+                    <p>
+                        <em>
+                            "What matters to me is, when the ground is frozen and it rains, would I stick a glass in the
+                            stream
+                            and drink it? I went to the Gulf of Mexico and sat on the beach with my wife and knew some
+                            part of
+                            that water was from my farm. I think about that."
+                        </em>
+                    </p>
+
+                    <p>-Project participant</p>
+
+                    <p>A few highlights from our project:
+                    <ul>
+                        <li> Over a hundred farmers in over 60 counties around the state.</li>
+                        <li> Biomass production in northern counties can be competitive with more southern farms.</li>
+                        <li> Cereal rye and oats are favored, reliable cover crops, but multispecies mixes, often
+                            including a legume, are the most popular cover crop among respondents.</li>
+                        <li> Neighbors and producer-led grower groups are at the top of the list as sources of
+                            information on cover cropping.</li>
+                        <li>More data on the impacts of cover cropping on nutrient management is of interest to many
+                            participants.</li>
+                    </ul>
+                    </p>
+
+                    <h5>Project Protocol</h5>
+                    <p>
+                        Each summer we send out invitations to join the survey via email to extension agricultural
+                        educators, producer-led groups, land and water conservation county offices, and others.
+                        Beginning in October, participating producers complete an online 35 question form regarding
+                        cover cropping experiments and experience, including crops planted, dates,
+                        seeding rates, fertility management and tillage.
+                        We also ask about key sources of information and motivations to cover crop.
+                        Beginning in Fall 2024, we provided participating farmers with a sampling kit, with a pvc pipe
+                        2x2 foot quadrat and clippers, along with instructions on how to cut a representative sample of
+                        a fall cover crop
+                        at the soil surface.
+                        Any weeds present are not separated from the samples.
+                        We also include a scale and pre-addressed envelopes so
+                        that plant samples can be weighed in the field and then easily
+                        shipped to labs for a biomass estimate as well as nutrient and forage analysis.
+                        At the end of the growing season we provide participants with
+                        $100 honorarium as well as their personal biomass estimates and
+                        nutrient information.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}

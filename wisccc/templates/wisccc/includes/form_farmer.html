@@ -12,9 +12,28 @@
     <div class="form-group col-md-8 mb-0">
         {{ farmer_form.farm_name|as_crispy_field }}
     </div>
+    <div class="form-group col-md-8 mb-0">
+        {{ farmer_form.phone_number|as_crispy_field }}
+    </div>
 </div>
 <div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ farmer_form.address_street|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ farmer_form.address_municipality|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ farmer_form.address_state|as_crispy_field }}
+    </div>
     <div class="form-group col-md-4 mb-0">
+        {{ farmer_form.address_zipcode|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
         {{ farmer_form.county|as_crispy_field }}
     </div>
 </div>

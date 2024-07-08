@@ -1,0 +1,48 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h5>How it Works</h5>
+                <p>
+                    We welcome Wisconsin growers with all levels of experience and production systems.
+                    As a participant you fill out a survey on your cover cropping experiences,
+                    and gather a Fall and Spring sample from one cover cropped field.
+                    We provide you with a free sampling kit and addressed/stamped mailers so you can send your samples
+                    to labs for analysis.
+                    In return, we send you $100 honorarium along with your personal biomass production and nutrient
+                    quality analyses for that cover crop. We also release regular project reports on statewide findings
+                    and maintain our <a href="{% url 'wisc_cc_map' %}">interactive cover crop dashboard</a>. As a
+                    commitment to your
+                    privacy we promise that all field data we gather will never be made public in association with any
+                    personal information without your consent.
+                    Your participation is voluntary and you can leave the project at any time.
+                    If all the above is agreeable to you, please proceed and welcome!
+                </p>
+                <p>
+                    Reach out to Dan Marzu at <a href="mailto:dan.marzu@wisc.edu">dan.marzu@wisc.edu</a>
+                    or Mrill Ingram at
+                    <a href="mailto:mingram@wisc.edu">mingram@wisc.edu</a> with any questions.
+
+                </p>
+
+                {% block register_1 %}
+                {% endblock register_1 %}
+
+            </div>
+        </div>
+    </div>
+    {% endblock content %}

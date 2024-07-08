@@ -1,7 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.gis.db import models as geo_models
 from .derive_species_class import derive_species_class
+from exploring_soils.storage_backends import WiscCCPhotoStorage
+
+
+# For making User's email non-unique
+User._meta.get_field("email")._unique = True
+
+
+class StateAbrevChoices(models.TextChoices):
+    """In case someone doesn't exactly in WI"""
+
+    WI = "WI", "WI"
+    MN = "MN", "MN"
+    IL = "IL", "IL"
+    MI = "MI", "MI"
+    IA = "IA", "IA"
 
 
 class Farmer(models.Model):
@@ -10,6 +26,19 @@ class Farmer(models.Model):
     last_name = models.CharField(max_length=250, blank=True)
     farm_name = models.CharField(max_length=250, blank=True)
     county = models.TextField(verbose_name="County of farm", null=True)
+    address_street = models.CharField(max_length=250, blank=True)
+    address_municipality = models.CharField(max_length=250, blank=True)
+    address_state = models.CharField(
+        choices=StateAbrevChoices.choices,
+        default=StateAbrevChoices.WI,
+        max_length=2,
+        null=True,
+    )
+    address_zipcode = models.PositiveIntegerField(
+        null=True, validators=[MaxValueValidator(99999), MinValueValidator(1)]
+    )
+
+    phone_number = models.CharField(max_length=13, blank=True)
 
 
 class NutrientMgmtSourcesChoices(models.TextChoices):
@@ -118,6 +147,7 @@ class CoverCropChoices(models.TextChoices):
     RED_CLOVER = "RED_CLOVER", "red clover"  # legume
     SORGHUM = "SORGHUM", "sorghum"  # grass
     SORGHUM_SUDAN = "SORGHUM_SUDAN", "sorghum-sudan"  # grass
+    SOYBEANS = "SOYBEANS", "soybeans"  # legume
     SUNFLOWER = "SUNFLOWER", "sunflower"  #
     SUN_HEMP = "SUN_HEMP", "sun hemp"
     TRITICALE = "TRITICALE", "triticale"  # winter
@@ -203,7 +233,7 @@ class ManureApplicateUnitsChoices(models.TextChoices):
     """Choices for manure application units"""
 
     BLANK = "", ""
-    POUNDS_ACRE = "POUNDS_ACRE", "lbs/acre"
+    POUNDS_ACRE = "TONS_ACRE", "tons/acre"
     GALLONS = "GALLONS", "gallons/acre"
 
 
@@ -294,7 +324,9 @@ class Survey(models.Model):
     )
     confirmed_accurate = models.BooleanField(null=True)
 
+    # Foreign key to farmer rather than user
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, null=True)
 
     # Location
     farm_location = geo_models.PointField(verbose_name="Farm location", null=True)
@@ -1051,7 +1083,7 @@ class FieldFarm(models.Model):
         Farmer,
         verbose_name="The farmer who farms this field.",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
     )
 
 
@@ -1441,4 +1473,70 @@ class AncillaryData(models.Model):
     spring_biomass_collection_date = models.DateField(null=True)
     spring_cc_biomass = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+
+
+class SurveyPhoto(models.Model):
+
+    survey_response = models.ForeignKey(Survey, on_delete=models.CASCADE, null=True)
+    uploaded_time = models.DateTimeField(auto_now_add=True)
+    image_1 = models.ImageField(storage=WiscCCPhotoStorage(), null=True)
+    caption_photo_1 = models.CharField(
+        max_length=50, verbose_name="Caption about photo 1", null=True
+    )
+    image_2 = models.ImageField(storage=WiscCCPhotoStorage(), null=True)
+    caption_photo_2 = models.CharField(
+        max_length=50, verbose_name="Caption about photo 2", null=True
+    )
+    notes = models.TextField(verbose_name="Notes about photo", null=True)
+
+
+class SurveyRegistration(models.Model):
+    """For folks registering to take survey"""
+
+    class BiomassOrJustSurveyChoices(models.TextChoices):
+        BIOMASS_AND_SURVEY = (
+            "BIOMASS_AND_SURVEY",
+            "I am willing to collect fall and spring cover crop samples from one of my fields, and complete a fall survey on cover crop practices ($100 honorarium plus biomass and nutrient quality analysis of samples).",
+        )
+        JUST_SURVEY = (
+            "JUST_SURVEY",
+            "I can share my cover cropping experiences in a survey ($25 honorarium) but prefer not to sample my fields.",
+        )
+
+    class HaveAKit(models.TextChoices):
+        HAVE_A_KIT = (
+            "HAVE_A_KIT",
+            "I have a biomass sampling kit from previous years’ participation. You will send me reminder instructions & prepaid addressed envelopes for my 2024-5 samples.",
+        )
+        NEED_A_KIT = (
+            "NEED_A_KIT",
+            "I need a biomass sampling kit sent to the address above along with instructions & prepaid addressed envelopes for my 2024-5 samples.",
+        )
+
+    survey_year = models.IntegerField(null=True)
+    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, null=True)
+    signup_timestamp = models.DateTimeField(auto_now_add=True)
+    belong_to_groups = models.TextField(
+        verbose_name="Do you belong to producer led watershed groups?", null=True
+    )
+    howd_you_hear = models.TextField(
+        verbose_name="How'd you hear about this project?", null=True
+    )
+    notes = models.TextField(null=True)
+    biomass_or_just_survey = models.CharField(
+        verbose_name="Biomass and survey or just survey",
+        null=True,
+        max_length=20,
+        choices=BiomassOrJustSurveyChoices.choices,
+    )
+    do_you_have_a_biomas_kit = models.CharField(
+        verbose_name="Do you have a biomass sampling kit from previous years?",
+        choices=HaveAKit.choices,
+        max_length=250,
+        null=True,
+    )
+    do_you_need_assistance = models.TextField(
+        verbose_name="I need some assistance",
+        null=True,
     )

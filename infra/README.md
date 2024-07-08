@@ -145,6 +145,11 @@ To install the necessary database software `./ansible/hosts` is not necessary, b
 - hosts: localhost
   connection: local
 ```
+along with `become: true` for all the tasks in which the user is postgres.
+```yaml
+  become: true
+  become_user: postgres
+```
 Otherwise it should look like
 ```yaml
 - hosts: all

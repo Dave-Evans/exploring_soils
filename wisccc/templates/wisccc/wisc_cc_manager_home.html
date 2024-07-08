@@ -1,0 +1,68 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+{% block title %}Wisconsin Cover Crop Citizen Science Network{% endblock %}
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Welcome Survey Managers</h3>
+
+                <div class="card">
+                    <div class="card-deck">
+                        <div class="card">
+                            <div class="card-header">
+                                Download Data
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Download full survey questions</h5>
+                                <p class="card-text">This dataset currently only contains 2023 survey data, but the full
+                                    set of questions.
+                                    Also contains lab data.</p>
+                                <a href="{% url 'wisccc_download_data' 1 %}" class="btn btn-primary">Download</a>
+                            </div>
+                            <hr>
+                            <div class="card-body">
+                                <h5 class="card-title">Download display data</h5>
+                                <p class="card-text">
+                                    This dataset is what is used in the graph and map display.
+                                    It will not contain much qualitative data.
+                                </p>
+                                <a href="{% url 'wisccc_download_data' 2 %}" class="btn btn-primary">Download</a>
+                            </div>
+
+
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">View registrants</h5>
+                                <p class="card-text"></p>
+                                <a href="{% url 'registration_table' %}" class="btn btn-primary">View registrants</a>
+
+                            </div>
+                            <hr>
+                            <div class="card-body">
+                                <h5 class="card-title">View survey responses</h5>
+                                <p class="card-text">View and edit survey responses.</p>
+                                <a href="{% url 'response_table' %}" class="btn btn-primary">View responses</a>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- <div class="card-footer text-muted text-center">
+        Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
+      </div> -->
+            </div>
+        </div>
+    </div>
+    {% endblock %}

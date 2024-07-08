@@ -173,7 +173,7 @@
 
 
 
-    <title>Wisconsin Growers Citizen Science Network</title>
+    <title>Wisconsin Cover Crop Citizen Science Network</title>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" />
 
@@ -278,13 +278,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Growers Citizen Science Network</a>
+            <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Citizen Science Network</a>
         </div>
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
                 <li><a href="{% url 'wisc_cc_home' %}">Home</a></li>
                 <li><a href="{% url 'wisc_cc_graph' %}">Graph</a></li>
                 <li><a href="{% url 'wisc_cc_survey' %}">Survey</a></li>
+                <li><a href="{% url 'wisc_cc_about' %}">About</a></li>
             </ul>
 
         </div>
@@ -312,7 +313,7 @@
 
 
                         <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
-                            <option value="cc_biomass">Cover crop biomass (tons/acre)</option>
+                            <option value="cc_biomass">Cover crop biomass (tons DM/ac)</option>
                             <option value="cc_species">Cover crop types</option>
                             <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_mo">Planting season</option>
@@ -390,6 +391,11 @@
 
                         <span>Manure applied post cover crop establishment
                             <input type="checkbox" id="PostManFilter" class="PreManSelector">
+                        </span>
+                        <br>
+
+                        <span>Filter for points with photos
+                            <input type="checkbox" id="HasPhotoFilter" class="HasPhotoFilter">
                         </span>
                         <br>
                         <a href="{% url 'wisc_cc_graph' %}" class="btn btn-primary">Go to graph</a>
@@ -525,6 +531,14 @@
             var biomass_val = feature.properties.cc_biomass;
 
             var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
+            var image_1 = ""
+            var image_2 = ""
+            if (feature.properties.image_1_url != null) {
+                image_1 = "<dt>" + feature.properties.caption_photo_1 + "</dt> <dd>" + '<img src="' + feature.properties.image_1_url + '" width="250" height="250">' + "</dd>"
+            }
+            if (feature.properties.image_2_url != null) {
+                image_2 = "<dt>" + feature.properties.caption_photo_2 + "</dt> <dd>" + '<img src="' + feature.properties.image_2_url + '" width="250" height="250">' + "</dd>"
+            }
             var popupContent = "<dl>" +
                 // "<dt>ID</dt> <dd>" + feature.id + "</dd>" +
                 "<dt>Cover crops</dt> <dd>" + feature.properties.cc_species_raw + "</dd>" +
@@ -535,14 +549,20 @@
                 "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
                 "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
                 "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
+                image_1 +
+                image_2 +
                 "</dl>"
 
 
             if (feature.properties && feature.properties.popupContent) {
                 popupContent += feature.properties.popupContent;
             }
+            var popup = L.popup({
 
-            layer.bindPopup(popupContent);
+                maxHeight: 400
+            })
+            popup.setContent(popupContent)
+            layer.bindPopup(popup);
             // Turning off the hover because it recenters the map automatically
             //  causing some jarring movement. Perhaps this can be salvaged?
             // layer.on('mouseover', function (e) {
@@ -747,7 +767,8 @@
                 year: false,
                 cc_species_raw: false,
                 manure_prior: false,
-                manure_post: false
+                manure_post: false,
+                has_photo: false
             }
 
 
@@ -761,6 +782,8 @@
             filter_values['residue_remaining'] = $("#TillageFilter").selectize()[0].selectize.getValue();
             filter_values['manure_prior'] = prior_manure;
             filter_values['manure_post'] = post_manure;
+
+            filter_values['has_photo'] = has_photo;
 
 
         }
@@ -826,7 +849,9 @@
                     const filt_priorman = (filter_values.manure_prior == false) ? true : (feature.properties.manure_prior == "Yes");
                     const filt_postman = (filter_values.manure_post == false) ? true : (feature.properties.manure_post == "Yes");
 
-                    return filt_year && filt_seeding && filt_soiltext && filt_species && filt_till && filt_priorman && filt_postman && filt_priorcrop//only true if both are true
+                    const filt_hasphoto = (filter_values.has_photo == false) ? true : (feature.properties.image_1_url != null);
+
+                    return filt_year && filt_seeding && filt_soiltext && filt_species && filt_till && filt_priorman && filt_postman && filt_priorcrop && filt_hasphoto//only true if both are true
                 },
 
                 pointToLayer: function (feature, latlng) {
@@ -894,15 +919,27 @@
             //add the layer to the map again, now that we have changed the filter value. 
             addLayerToMap();
         });
+        let has_photo = document.getElementById('HasPhotoFilter').checked;
+        $("#HasPhotoFilter").on("input", function () {
+
+            has_photo = document.getElementById('HasPhotoFilter').checked
+
+            filterer()
+            //add the layer to the map again, now that we have changed the filter value. 
+            addLayerToMap();
+        });
+
+
+
 
         function updateHelpTipText(property) {
             console.log("updateHelpTipText firing!. Property: " + property)
             var text = ""
             if (property == "acc_gdd") {
-                text = "Cumulative growing degree units are a measure of the growing conditions of a crop."
+                text = "Cumulative growing degree units measure the amount of growth-producing warmth a crop plant receives by a certain date."
             }
             if (property == "cc_biomass") {
-                text = "Cover crop biomass shows the amount of aboveground plant material that was produced from when the cover crop was planted to when it was collected."
+                text = "Biomass is the weight of aboveground plant material at time of collection, and ton DM/acre = tons of dry matter of biomass per acre (please note this is tons not pounds!)"
             }
             if (property == "fq_rfq") {
                 text = "Relative forage quality is a measure of how good the harvested cover crop was for use as forage for livestock."

@@ -9,7 +9,7 @@
 {% block body %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a style="font-family: Helvetica" class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Growers Citizen
+  <a style="font-family: Helvetica" class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Citizen
     Science Network</a>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
@@ -29,7 +29,11 @@
         <a class="nav-link" href="{% url 'wisc_cc_map' %}">Map</a>
       </li>
       <li class="nav-item" id="nav-survey">
-        <a class="nav-link" href="{% url 'wisc_cc_survey' %}">Survey</a>
+        <!-- <a class="nav-link" href="{% url 'wisc_cc_survey' %}">Survey</a> -->
+        <a class="nav-link" href="">Survey</a>
+      </li>
+      <li class="nav-item" id="nav-about">
+        <a class="nav-link" href="{% url 'wisc_cc_about' %}">About</a>
       </li>
 
     </ul>
@@ -41,7 +45,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true"
               aria-expanded="false">
-              {{ user.username }} <br> {{ user.email }}
+              {{ user.email }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
               <a class="dropdown-item" href="{% url 'my_account'  %}">My account</a>
@@ -54,32 +58,30 @@
         {% else %}
         <form class="form-inline ml-auto">
           <a href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
-          <a href="{% url 'signup' %}" class="btn btn-primary ml-2">Sign up</a>
+          <a href="{% url 'wisc_cc_signup' %}" class="btn btn-primary ml-2">Sign up</a>
         </form>
         {% endif %}
       </div>
     </span>
   </div>
 </nav>
+<br>
 <div class="container">
-  <h1 class="text-center logo my-4">
-    <img class="logoimg" src="{% static 'img/logo_wisc_cc_affiliations.png' %}" />
-    <!-- <img class="left logoimg" src="{% static 'img/mosh_logo.png' %}" />
-    <img class="right logoimg" src="{% static 'img/vertMrnM.gif' %}" /> -->
-  </h1>
   <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10 col-sm-12">
       <div class="card">
         <div class="card-body">
           <h1 class="card-title logo text-center">
-            <a href="{% url 'wisc_cc_home' %}">Wisconsin Growers<br>Citizen Science Network</a>
+            <a href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop<br>Citizen Science Network</a>
           </h1>
         </div>
       </div>
     </div>
   </div>
+
   {% block content %}
-  {% endblock %}
+  {% endblock content%}
+
 </div>
 <script>
   updateActive = function () {
@@ -97,10 +99,19 @@
     if (whichpage.includes("map")) {
       $("#nav-map").addClass("active");
     }
+    if (whichpage.includes("map")) {
+      $("#nav-about").addClass("active");
+    }
 
   }
   updateActive()
 
 </script>
 
+<h1 class="text-center logo my-4">
+  <img width="700" height="230" src="{% static 'img/logo_wisc_cc_affiliations_2.png' %}" />
+</h1>
 {% endblock %}
+{% block title %}
+Welcome to Wisconsin Growers Citizen Science Network
+{% endblock title %}

@@ -1,6 +1,14 @@
 from django import forms
 from django.contrib.gis import forms as geo_forms
-from wisccc.models import Survey, Farmer
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import (
+    UserCreationForm,
+    AuthenticationForm,
+    UsernameField,
+)
+from django import forms
+from wisccc.models import Survey, Farmer, SurveyPhoto, SurveyRegistration
 from wisccc.models import (
     CashCropChoices,
     CoverCropChoices,
@@ -17,25 +25,68 @@ from wisccc.models import (
     TerminationMethodTimingChoices,
     TillageSystemChoices,
     CoverCropRateUnitsChoices,
+    StateAbrevChoices,
 )
 
 TRUE_FALSE_CHOICES = (("", ""), (True, "Yes"), (False, "No"))
 
 
+class UserLoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(UserLoginForm, self).__init__(*args, **kwargs)
+
+    username = UsernameField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "", "id": "hello"}
+        )
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "",
+                "id": "hi",
+            }
+        )
+    )
+
+
 class FarmerForm(forms.ModelForm):
     first_name = forms.CharField(max_length=250, required=True)
     last_name = forms.CharField(max_length=250, required=True)
+    phone_number = forms.CharField(max_length=13, required=True)
+    address_street = forms.CharField(
+        label="Street Address", max_length=250, required=True
+    )
+    address_municipality = forms.CharField(
+        label="Municipality", max_length=250, required=True
+    )
+    address_state = forms.ChoiceField(
+        label="State",
+        choices=StateAbrevChoices.choices,
+        required=True,
+    )
+    address_zipcode = forms.IntegerField(label="Zip code", required=True)
     farm_name = forms.CharField(max_length=250, required=False)
     county = forms.CharField(
         max_length=500,
         label="In what county do you farm? (If you farm in more than one, list them in order of number of acres.) ",
         required=True,
-        widget=forms.Textarea,
+        widget=forms.Textarea(attrs={"rows": 5}),
     )
 
     class Meta:
         model = Farmer
-        fields = ("first_name", "last_name", "farm_name", "county")
+        fields = (
+            "first_name",
+            "last_name",
+            "phone_number",
+            "farm_name",
+            "county",
+            "address_street",
+            "address_municipality",
+            "address_zipcode",
+        )
 
 
 class SurveyForm1(forms.ModelForm):
@@ -1290,3 +1341,186 @@ class FullSurveyForm(forms.ModelForm):
             "confirmed_accurate",
             "notes_admin",
         )
+
+
+class SurveyPhotoForm(forms.ModelForm):
+
+    image_1 = forms.FileField(label="Photo 1", required=False)
+    caption_photo_1 = forms.CharField(
+        label="Add a caption to be displayed with photo 1.",
+        required=False,
+        max_length=50,
+        initial="",
+    )
+    image_2 = forms.FileField(label="Photo 2", required=False)
+    caption_photo_2 = forms.CharField(
+        label="Add a caption to be displayed with photo 2.",
+        required=False,
+        max_length=50,
+        initial="",
+    )
+
+    notes = forms.CharField(
+        label="Add any notes about these photos, notes will not be displayed.",
+        widget=forms.TextInput(
+            attrs={
+                "type": "text",
+                "class": "form-control form-control-lg",
+            },
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = SurveyPhoto
+        fields = ["image_1", "caption_photo_1", "image_2", "caption_photo_2", "notes"]
+
+
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.CharField(
+        label="Email (this will be your username as well)",
+        max_length=254,
+        required=True,
+        widget=forms.EmailInput(),
+    )
+
+    class Meta:
+        model = User
+        fields = ("email", "password1", "password2")
+
+    def clean_username(self):
+        username = self.cleaned_data["username"].lower()
+        r = User.objects.filter(username=username)
+        if r.count():
+            raise ValidationError("Username already exists")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].lower()
+        r = User.objects.filter(email=email)
+        if r.count():
+            raise ValidationError(
+                """Email already exists. Perhaps you have already created an account. Try using this email address to reset your password."""
+            )
+        return email
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+
+        if password1 and password2 and password1 != password2:
+            raise ValidationError("Password don't match")
+
+        return password2
+
+    def save(self, commit=True):
+        user = User.objects.create_user(
+            self.cleaned_data["email"],
+            self.cleaned_data["email"],
+            self.cleaned_data["password1"],
+        )
+        return user
+
+
+class SurveyRegistrationFullForm(forms.ModelForm):
+    """For updating or reviewing signing up for survey and biomass kit"""
+
+    belong_to_groups = forms.CharField(
+        label="If you belong to a producer-led watershed protection group or other agricultural conservation group what is the name of the group?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    howd_you_hear = forms.CharField(
+        label="How did you hear about the project?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    notes = forms.CharField(
+        label="Admin notes",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=1000,
+    )
+    biomass_or_just_survey = forms.ChoiceField(
+        label="Are you interested in sampling for biomass in addition to filling out a survey?",
+        required=True,
+        choices=SurveyRegistration.BiomassOrJustSurveyChoices.choices,
+        widget=forms.RadioSelect,
+    )
+    do_you_have_a_biomas_kit = forms.ChoiceField(
+        label="If you have agreed to sample, do you have a biomass sampling kit from previous years?",
+        choices=SurveyRegistration.HaveAKit.choices,
+        required=True,
+        widget=forms.RadioSelect,
+    )
+    do_you_need_assistance = forms.CharField(
+        label="If you prefer a paper copy of the survey mailed to you, or would like assistance with filling out the online survey, or with biomass collection, please let us know in the box below.?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    class Meta:
+        model = SurveyRegistration
+        fields = [
+            "belong_to_groups",
+            "howd_you_hear",
+            "notes",
+            "biomass_or_just_survey",
+            "do_you_have_a_biomas_kit",
+            "do_you_need_assistance",
+        ]
+
+
+class SurveyRegistrationPartialForm(forms.ModelForm):
+    """For updating or reviewing signing up for survey and biomass kit"""
+
+    belong_to_groups = forms.CharField(
+        label="If you belong to a producer-led watershed protection group or other agricultural conservation group what is the name of the group?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    howd_you_hear = forms.CharField(
+        label="How did you hear about the project?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    biomass_or_just_survey = forms.ChoiceField(
+        label="Are you interested in sampling for biomass in addition to filling out a survey?",
+        required=True,
+        choices=SurveyRegistration.BiomassOrJustSurveyChoices.choices,
+        widget=forms.RadioSelect,
+    )
+    do_you_have_a_biomas_kit = forms.ChoiceField(
+        label="If you have agreed to sample, do you have a biomass sampling kit from previous years?",
+        choices=SurveyRegistration.HaveAKit.choices,
+        required=True,
+        widget=forms.RadioSelect,
+    )
+    do_you_need_assistance = forms.CharField(
+        label="If you prefer a paper copy of the survey mailed to you, or would like assistance with filling out the online survey, or with biomass collection, please let us know in the box below.?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    class Meta:
+        model = SurveyRegistration
+        fields = [
+            "belong_to_groups",
+            "howd_you_hear",
+            "biomass_or_just_survey",
+            "do_you_have_a_biomas_kit",
+            "do_you_need_assistance",
+        ]
+
+
+class UserInfoForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ["username", "email"]
