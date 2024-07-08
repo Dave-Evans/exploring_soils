@@ -734,6 +734,8 @@ def get_registration_download():
             survey_registrants.values_list(
                 # From registration
                 "signup_timestamp",
+                # From Farmer
+                "farmer__id",
                 # From User
                 "farmer__user__email",
                 "farmer__user__username",
@@ -759,6 +761,8 @@ def get_registration_download():
         columns=[
             # From registration
             "signup_timestamp",
+            # From Farmer
+            "id",
             # From User
             "email",
             "username",
