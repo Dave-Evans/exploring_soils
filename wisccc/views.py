@@ -32,6 +32,8 @@ from wisccc.data_mgmt import pull_all_years_together, get_survey_data
 import pandas as pd
 
 
+# REVISE WITH NEW STRUCTURE
+#   This will be dependent on how the forms shake out.
 def check_section_completed(user_id, section):
     """Checks a particular section, farmer, 1, 2, 3
     to see if a particualr required field is a completed."""
@@ -114,6 +116,7 @@ def wisc_cc_survey(request):
     )
 
 
+# REVISE each survey page according to each form
 @login_required
 def wisc_cc_survey0(request):
     try:
@@ -389,6 +392,8 @@ def response_table(request):
         .count()
     )
 
+    # REVISE!
+    #   Revise according to new structure
     def get_table_data():
         """For getting survey data and returning an excel doc"""
         query = """
