@@ -4,6 +4,7 @@ from wisccc.models import (
     Survey,
     SurveyFarm,
     SurveyField,
+    SurveyPhoto,
     AncillaryData,
     FieldFarm,
     Farmer,
@@ -176,6 +177,14 @@ def migrate_to_new_structure():
                 survey_response=survey,
                 survey_field=survey_field,
             )
+        print("Updating survey field in survey photo...")
+        try:
+            print("Trying to grab a photo...")
+            survey_photo = SurveyPhoto.objects.get(survey_response_id=survey.id)
+            survey_photo.survey_field = survey_field
+            survey_photo.save()
+        except:
+            print("No photo.")
 
 
 def update_jerry_daniels():

@@ -314,15 +314,15 @@ def get_wisc_cc_data(request):
     # There is probably a better way to do this but while there aren't many
     #   submissions this is fine.
     for feat in data["features"]:
-        if feat["properties"]["response_id"]:
-            response_id = feat["properties"]["response_id"]
+        if feat["properties"]["survey_field_id"]:
+            survey_field_id = feat["properties"]["survey_field_id"]
         else:
             continue
 
         try:
-            survey_photo = SurveyPhoto.objects.get(survey_response_id=response_id)
+            survey_photo = SurveyPhoto.objects.get(survey_field_id=survey_field_id)
         except SurveyPhoto.DoesNotExist:
-            print(f"Survey photo does not exist for {response_id}")
+            # print(f"Survey photo does not exist for {survey_field_id}")
             continue
 
         if survey_photo.image_1:
