@@ -1,0 +1,33 @@
+{% load crispy_forms_tags %}
+
+
+<div>
+    <h5>In the following section we ask you about your specific cover cropping practices in one field or set of fields
+        (can be one acre or 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis.
+    </h5>
+    <h5>Provide answers *for that field.*</h5>
+</div>
+
+<div>
+
+
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0">
+            {{ field_farm_form.field_name|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0">
+            {{ field_farm_form.closest_zip_code|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-4 mb-0">
+            {{ field_farm_form.field_acreage|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-10 mb-0">
+            {{ field_farm_form.field_location|as_crispy_field }}
+        </div>
+    </div>
+
+</div>

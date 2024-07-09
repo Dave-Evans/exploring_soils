@@ -16,7 +16,9 @@
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
-  {% include 'wisccc/includes/form_2.html' %}
+  {% include 'wisccc/includes/form_survey_part_2_fieldfarm.html' %}
+  {% include 'wisccc/includes/form_survey_part_2_surveyfield.html' %}
+  {% include 'wisccc/includes/form_survey_part_2_surveyfarm.html' %}
 
   <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
   <a href="{% url 'wisc_cc_survey' %}"><button type="button" class="btn btn-secondary">Back to survey home

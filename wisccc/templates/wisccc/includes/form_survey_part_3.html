@@ -1,0 +1,22 @@
+{% load crispy_forms_tags %}
+
+
+<hr>
+<h4>IV. Final Thoughts</h4>
+<div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ form.interesting_tales|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ form.where_to_start|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ form.additional_thoughts|as_crispy_field }}
+        </div>
+    </div>
+</div>

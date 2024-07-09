@@ -24,6 +24,11 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django_tables2 import RequestConfig
 from wisccc.tables import ResponseTable, RegistrationTable
 from wisccc.forms import (
+    SurveyFieldFormFull,
+    SurveyFarmFormPart1,
+    SurveyFarmFormPart2,
+    SurveyFarmFormPart3,
+    FieldFarmFormFull,
     SurveyForm1,
     SurveyForm2,
     SurveyForm3,
@@ -36,7 +41,15 @@ from wisccc.forms import (
     UserInfoForm,
 )
 
-from wisccc.models import Survey, Farmer, SurveyPhoto, SurveyRegistration
+from wisccc.models import (
+    Survey,
+    Farmer,
+    SurveyPhoto,
+    SurveyRegistration,
+    SurveyField,
+    SurveyFarm,
+    FieldFarm,
+)
 from wisccc.data_mgmt import pull_all_years_together, get_survey_data
 import pandas as pd
 
@@ -168,6 +181,93 @@ def wisc_cc_survey0(request):
 
 @login_required
 def wisc_cc_survey1(request):
+    # field names as keys
+    context = {}
+
+    # Don't forget to grab based on survey_year!!!
+    farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    survey_farm = SurveyFarm.objects.filter(farmer_id=farmer.id).first()
+
+    # survey_field = get_object_or_404(SurveyField, survey_farm_id=survey_farm.id)
+    # field_farm = get_object_or_404(FieldFarm, id=survey_field.field_farm_id)
+
+    # pass the object as instance in form
+    survey_farm_form = SurveyFarmFormPart1(request.POST or None, instance=survey_farm)
+
+    # farmer_form = FarmerForm(request.POST or None, instance=farmer)
+
+    # user_info_form = UserInfoForm(request.POST or None, instance=user)
+
+    # form = SurveyForm1(request.POST or None, instance=instance)
+    if survey_farm_form.is_valid():
+        new_form = survey_farm_form.save(commit=False)
+        new_form.farmer = farmer
+        # Make sure to make a slot for this in the form.
+        # new_form.survey_year = 2024
+        new_form.save()
+
+        return redirect("wisc_cc_survey2")
+
+    # template = "wisccc/survey_upload_all.html"
+    template = "wisccc/survey_section_1.html"
+    return render(
+        request,
+        template,
+        {
+            "form": survey_farm_form,
+        },
+    )
+
+
+@login_required
+def wisc_cc_survey2(request):
+    # field names as keys
+    context = {}
+
+    # Don't forget to grab based on survey_year!!!
+    farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    survey_farm = SurveyFarm.objects.filter(farmer_id=farmer.id).first()
+    if survey_farm is None:
+        survey_field = None
+    else:
+        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+    
+    if survey_field is None:
+        field_farm = None
+    else:
+        field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
+
+    # pass the object as instance in form
+    survey_farm_form = SurveyFarmFormPart2(request.POST or None, instance=survey_farm)
+
+    survey_field_form = SurveyFieldFormFull(request.POST or None, instance=survey_field)
+
+    field_farm_form = FieldFarmFormFull(request.POST or None, instance=field_farm)
+
+    if (
+        survey_farm_form.is_valid()
+        and survey_field_form.is_valid()
+        and field_farm_form.is_valid()
+    ):
+
+        new_survey_farm_form = survey_farm_form.save()
+        new_field_farm_form = field_farm_form.save()
+        new_survey_field_form = survey_field_form.save()  # commit = FALSE
+
+        new_survey_field_form.survey_farm = new_survey_farm_form
+        new_survey_field_form.field_farm = new_field_farm_form
+
+        return redirect("wisc_cc_survey3")
+    # add form dictionary to context
+    context["survey_farm_form"] = survey_farm_form
+    context["survey_field_form"] = survey_field_form
+    context["field_farm_form"] = field_farm_form
+    template = "wisccc/survey_section_2.html"
+    return render(request, template, context)
+
+
+@login_required
+def deprecated_wisc_cc_survey1(request):
     try:
         # Survey.objects.get(farmer = Farmer.objects.get(user_id = 110))
         instance = Survey.objects.filter(user_id=request.user.id).earliest(
@@ -196,7 +296,7 @@ def wisc_cc_survey1(request):
 
 
 @login_required
-def wisc_cc_survey2(request):
+def deprecated_wisc_cc_survey2(request):
     try:
         instance = Survey.objects.filter(user_id=request.user.id).earliest(
             "last_updated"
