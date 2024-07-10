@@ -9,7 +9,7 @@
 {% block form %}
 
 <head>
-  {{ form.media }}
+  {{ field_farm_form.media }}
 </head>
 
 <h3 class="card-title">III. "Research Field" Cover Crop Information</h3>
@@ -19,6 +19,7 @@
   {% include 'wisccc/includes/form_survey_part_2_fieldfarm.html' %}
   {% include 'wisccc/includes/form_survey_part_2_surveyfield.html' %}
   {% include 'wisccc/includes/form_survey_part_2_surveyfarm.html' %}
+
 
   <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
   <a href="{% url 'wisc_cc_survey' %}"><button type="button" class="btn btn-secondary">Back to survey home

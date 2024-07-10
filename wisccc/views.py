@@ -231,7 +231,7 @@ def wisc_cc_survey2(request):
         survey_field = None
     else:
         survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-    
+
     if survey_field is None:
         field_farm = None
     else:
@@ -249,13 +249,18 @@ def wisc_cc_survey2(request):
         and survey_field_form.is_valid()
         and field_farm_form.is_valid()
     ):
-
+        # Just save survey_farm because no after the fact additions necessary
         new_survey_farm_form = survey_farm_form.save()
-        new_field_farm_form = field_farm_form.save()
-        new_survey_field_form = survey_field_form.save()  # commit = FALSE
 
+        new_field_farm_form = field_farm_form.save(commit=False)
+        new_field_farm_form.farmer = farmer
+
+        new_survey_field_form = survey_field_form.save(commit=False)
         new_survey_field_form.survey_farm = new_survey_farm_form
         new_survey_field_form.field_farm = new_field_farm_form
+        # Make sure to save field_farm first
+        new_field_farm_form.save()
+        new_survey_field_form.save()
 
         return redirect("wisc_cc_survey3")
     # add form dictionary to context
@@ -264,6 +269,31 @@ def wisc_cc_survey2(request):
     context["field_farm_form"] = field_farm_form
     template = "wisccc/survey_section_2.html"
     return render(request, template, context)
+
+
+@login_required
+def wisc_cc_survey3(request):
+    # Don't forget to grab based on survey_year!!!
+    farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    survey_farm = SurveyFarm.objects.filter(farmer_id=farmer.id).first()
+
+    form = SurveyFarmFormPart3(request.POST or None, instance=survey_farm)
+
+    if form.is_valid():
+        new_form = form.save(commit=False)
+        new_form.farmer = farmer
+        new_form.save()
+
+        return redirect("wisc_cc_survey")
+
+    template = "wisccc/survey_section_3.html"
+    return render(
+        request,
+        template,
+        {
+            "form": form,
+        },
+    )
 
 
 @login_required
@@ -327,7 +357,7 @@ def deprecated_wisc_cc_survey2(request):
 
 
 @login_required
-def wisc_cc_survey3(request):
+def deprecated_wisc_cc_survey3(request):
     try:
         instance = Survey.objects.filter(user_id=request.user.id).earliest(
             "last_updated"

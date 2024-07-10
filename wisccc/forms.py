@@ -2058,8 +2058,6 @@ class SurveyFarmFormPart3(forms.ModelForm):
             "interesting_tales",
             "where_to_start",
             "additional_thoughts",
-            "confirmed_accurate",
-            "notes_admin",
         )
 
 
