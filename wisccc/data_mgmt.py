@@ -435,7 +435,7 @@ SELECT
             nullif(concat(  ', ', cover_crop_planting_rate_5, ' ', mod_cover_crop_planting_rate_5_units, ' ', mod_cover_crop_species_5), ',   ')
         ) as cc_planting_rate,
         mod_cover_crop_estimated_termination as cc_termination,
-        null as days_between_crop_hvst_and_cc_estd,
+        days_between_crop_hvst_and_cc_estd as days_between_crop_hvst_and_cc_estd,
 	    ST_X(field_location) as site_lon,
 	    ST_Y(field_location) as site_lat,                
         cover_crop_planting_date::timestamp as cc_planting_date,
