@@ -750,6 +750,7 @@ def get_registration_download():
                 "farmer__address_zipcode",
                 "farmer__phone_number",
                 # From registration
+                "survey_year",
                 "biomass_or_just_survey",
                 "do_you_have_a_biomas_kit",
                 "do_you_need_assistance",
@@ -777,6 +778,7 @@ def get_registration_download():
             "zipcode",
             "phone_number",
             # From registrants
+            "survey_year",
             "biomass_or_just_survey",
             "do_you_have_a_biomas_kit",
             "do_you_need_assistance",
@@ -785,7 +787,12 @@ def get_registration_download():
             "notes",
         ],
     )
-
+    # convert farmer id to string, convert survey_year to string
+    #   grab just the year and create and id
+    df["id"] = (
+        df["id"].apply(str).str.zfill(5) + "-" + df["survey_year"].apply(str).str[-2:]
+    )
+    df = df.drop("survey_year", axis=1)
     return df
 
 
