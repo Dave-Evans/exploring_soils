@@ -57,7 +57,9 @@ urlpatterns = [
     re_path(
         r"login/",
         auth_views.LoginView.as_view(
-            template_name="wisccc/wisc_cc_login.html", authentication_form=UserLoginForm
+            template_name="wisccc/wisc_cc_login.html",
+            authentication_form=UserLoginForm,
+            next_page="wisc_cc_home",
         ),
         name="login",
     ),
