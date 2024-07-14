@@ -57,7 +57,9 @@ urlpatterns = [
     re_path(
         r"login/",
         auth_views.LoginView.as_view(
-            template_name="wisccc/wisc_cc_login.html", authentication_form=UserLoginForm
+            template_name="wisccc/wisc_cc_login.html",
+            authentication_form=UserLoginForm,
+            next_page="wisc_cc_home",
         ),
         name="login",
     ),
@@ -87,6 +89,11 @@ urlpatterns = [
         "delete_registration/<id>",
         wisccc_views.delete_registration,
         name="delete_registration",
+    ),
+    path(
+        "download_registrants",
+        wisccc_views.download_registrants,
+        name="download_registrants",
     ),
     # path("create_photo/<id>", wisccc_views.update_response, name="create_photo"),
     # path("update_photo/<id>", wisccc_views.update_response, name="update_photo"),

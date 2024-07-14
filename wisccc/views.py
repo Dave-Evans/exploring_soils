@@ -715,6 +715,91 @@ def delete_registration(request, id):
     return render(request, "wisccc/delete_registration.html", context)
 
 
+def get_registration_download():
+    survey_registrants = (
+        SurveyRegistration.objects.all()
+        .select_related("farmer")
+        .select_related("farmer__user")
+    )
+
+    df = pd.DataFrame(
+        list(
+            survey_registrants.values_list(
+                # From registration
+                "signup_timestamp",
+                # From Farmer
+                "farmer__id",
+                # From User
+                "farmer__user__email",
+                "farmer__user__username",
+                # From Farmer
+                "farmer__first_name",
+                "farmer__last_name",
+                "farmer__farm_name",
+                "farmer__county",
+                "farmer__address_street",
+                "farmer__address_municipality",
+                "farmer__address_state",
+                "farmer__address_zipcode",
+                "farmer__phone_number",
+                # From registration
+                "survey_year",
+                "biomass_or_just_survey",
+                "do_you_have_a_biomas_kit",
+                "do_you_need_assistance",
+                "howd_you_hear",
+                "belong_to_groups",
+                "notes",
+            )
+        ),
+        columns=[
+            # From registration
+            "signup_timestamp",
+            # From Farmer
+            "id",
+            # From User
+            "email",
+            "username",
+            # From Farmer
+            "first_name",
+            "last_name",
+            "farm_name",
+            "county",
+            "street",
+            "municipality",
+            "state",
+            "zipcode",
+            "phone_number",
+            # From registrants
+            "survey_year",
+            "biomass_or_just_survey",
+            "do_you_have_a_biomas_kit",
+            "do_you_need_assistance",
+            "howd_you_hear",
+            "belong_to_groups",
+            "notes",
+        ],
+    )
+    # convert farmer id to string, convert survey_year to string
+    #   grab just the year and create and id
+    df["id"] = (
+        df["id"].apply(str).str.zfill(5) + "-" + df["survey_year"].apply(str).str[-2:]
+    )
+    df = df.drop("survey_year", axis=1)
+    return df
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def download_registrants(request):
+    df = get_registration_download()
+    filename = "registrants.csv"
+    resp = HttpResponse(content_type="text/csv")
+    resp["Content-Disposition"] = f"attachment; filename={filename}"
+
+    df.to_csv(path_or_buf=resp, sep=",", index=False)
+    return resp
+
+
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def delete_response(request, id):
     # dictionary for initial data with
