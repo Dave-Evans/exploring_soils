@@ -34,6 +34,7 @@ from wisccc.forms import (
     SurveyForm3,
     FarmerForm,
     FullSurveyForm,
+    SurveyFarmFormFull,
     SurveyPhotoForm,
     CustomUserCreationForm,
     SurveyRegistrationFullForm,
@@ -183,10 +184,14 @@ def wisc_cc_survey0(request):
 def wisc_cc_survey1(request):
     # field names as keys
     context = {}
-
+    survey_year = 2024
     # Don't forget to grab based on survey_year!!!
     farmer = Farmer.objects.filter(user_id=request.user.id).first()
-    survey_farm = SurveyFarm.objects.filter(farmer_id=farmer.id).first()
+    survey_farm = (
+        SurveyFarm.objects.filter(farmer_id=farmer.id)
+        .filter(survey_year=survey_year)
+        .first()
+    )
 
     # survey_field = get_object_or_404(SurveyField, survey_farm_id=survey_farm.id)
     # field_farm = get_object_or_404(FieldFarm, id=survey_field.field_farm_id)
@@ -225,8 +230,13 @@ def wisc_cc_survey2(request):
     context = {}
 
     # Don't forget to grab based on survey_year!!!
+    survey_year = 2024
     farmer = Farmer.objects.filter(user_id=request.user.id).first()
-    survey_farm = SurveyFarm.objects.filter(farmer_id=farmer.id).first()
+    survey_farm = (
+        SurveyFarm.objects.filter(farmer_id=farmer.id)
+        .filter(survey_year=survey_year)
+        .first()
+    )
     if survey_farm is None:
         survey_field = None
     else:
@@ -274,8 +284,13 @@ def wisc_cc_survey2(request):
 @login_required
 def wisc_cc_survey3(request):
     # Don't forget to grab based on survey_year!!!
+    survey_year = 2024
     farmer = Farmer.objects.filter(user_id=request.user.id).first()
-    survey_farm = SurveyFarm.objects.filter(farmer_id=farmer.id).first()
+    survey_farm = (
+        SurveyFarm.objects.filter(farmer_id=farmer.id)
+        .filter(survey_year=survey_year)
+        .first()
+    )
 
     form = SurveyFarmFormPart3(request.POST or None, instance=survey_farm)
 
@@ -578,11 +593,11 @@ def response_table(request):
                 , f.last_name
                 , s.survey_created::Date
                 , s.confirmed_accurate
-            from wisccc_survey s 
+            from wisccc_surveyfarm s 
             left join wisccc_farmer f
-            on s.user_id = f.user_id 
+            on s.farmer_id = f.id 
             left join auth_user as u
-            on s.user_id = u.id"""
+            on f.user_id = u.id"""
         dat = pd.read_sql(query, connection)
         dat = dat.to_dict("records")
 
@@ -827,32 +842,49 @@ def update_response(request, id):
     context = {}
 
     # fetch the survey object related to passed id
-    obj = get_object_or_404(Survey, id=id)
+    survey_farm = get_object_or_404(SurveyFarm, id=id)
+
+    if survey_farm is None:
+        survey_field = None
+    else:
+        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+
+    if survey_field is None:
+        field_farm = None
+    else:
+        field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
 
     # Get farmer associated with user id of survey response
-    farmer = Farmer.objects.filter(user_id=obj.user_id).first()
-
-    # pass the object as instance in form
-    form = FullSurveyForm(request.POST or None, instance=obj)
-
+    farmer = Farmer.objects.filter(id=survey_farm.farmer_id).first()
     # Get any uploaded photos for this survey response
-    survey_photo = SurveyPhoto.objects.filter(survey_response=id).first()
+    survey_photo = SurveyPhoto.objects.filter(survey_field_id=survey_field.id).first()
+    # pass the object as instance in form
+    form_survey_farm = SurveyFarmFormFull(request.POST or None, instance=survey_farm)
+    form_field_farm = FieldFarmFormFull(request.POST or None, instance=field_farm)
+    form_survey_field = SurveyFieldFormFull(request.POST or None, instance=survey_field)
+    form_farmer = FarmerForm(request.POST or None, instance=farmer)
 
-    farmer_form = FarmerForm(request.POST or None, instance=farmer)
-
-    survey_photo_form = SurveyPhotoForm(request.POST or None, instance=survey_photo)
+    form_survey_photo = SurveyPhotoForm(request.POST or None, instance=survey_photo)
     # save the data from the form and
     # redirect to detail_view
 
-    if form.is_valid() and farmer_form.is_valid() and survey_photo_form.is_valid():
+    if (
+        form_survey_farm.is_valid()
+        and form_survey_field.is_valid()
+        and form_field_farm.is_valid()
+        and form_farmer.is_valid()
+        and form_survey_photo.is_valid()
+    ):
 
-        form.save()
+        form_survey_farm.save()
+        form_survey_field.save()
+        form_field_farm.save()
         # Here verify county
         # Here calc gdu?
-        farmer_form.save()
+        form_farmer.save()
 
-        new_survey_photo = survey_photo_form.save()
-        new_survey_photo.survey_response_id = id
+        new_survey_photo = form_survey_photo.save()
+        new_survey_photo.survey_field_id = survey_field.id
         if "image_1" in request.FILES.keys():
             new_survey_photo.image_1 = request.FILES["image_1"]
         if "image_2" in request.FILES.keys():
@@ -862,9 +894,12 @@ def update_response(request, id):
 
         return redirect("response_table")
     # add form dictionary to context
-    context["form"] = form
-    context["farmer_form"] = farmer_form
-    context["survey_photo_form"] = survey_photo_form
+    context["farmer_form"] = form_farmer
+    context["survey_farm_full_form"] = form_survey_farm
+    context["survey_field_full_form"] = form_survey_field
+    context["field_farm_full_form"] = form_field_farm
+
+    context["survey_photo_form"] = form_survey_photo
 
     return render(request, "wisccc/survey_review.html", context)
 

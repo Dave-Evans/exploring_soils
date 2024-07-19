@@ -486,7 +486,7 @@ SELECT
                 upper(substring(farmer.first_name, 1, 1)),
                 upper(substring(farmer.last_name,  1, 1)),
                 '-',
-                surveyfarm.survey_year
+                substring(survey_year::text, 3,4)
             ) as wisc_cc_id,
             surveyfarm.survey_year as year,
             case

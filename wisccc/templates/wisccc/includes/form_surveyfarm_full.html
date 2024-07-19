@@ -1,0 +1,156 @@
+{% load crispy_forms_tags %}
+
+
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_farm_full_form.years_experience|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.total_acres|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.percent_of_farm_cc|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.dominant_soil_series_1|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_farm_full_form.dominant_soil_series_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_farm_full_form.dominant_soil_series_3|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_farm_full_form.dominant_soil_series_4|as_crispy_field }}
+    </div>
+</div>
+<div>
+    <h5>Sources of support</h5>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.info_source_nutrient_mgmt_1|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.info_source_nutrient_mgmt_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.info_source_nutrient_mgmt_3|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.source_nutrient_mgmt_write_in|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.cov_crops_for_ntrnt_mgmt_comments_questions|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.info_source_cover_crops_1|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.info_source_cover_crops_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.info_source_cover_crops_3|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.info_source_cover_crops_write_in|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-8 mb-0">
+        {{ survey_farm_full_form.support_cover_crops_1|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.support_cover_crops_write_in|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.lacking_any_info_cover_crops|as_crispy_field }}
+    </div>
+</div>
+
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.barriers_to_expansion|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.quit_planting_cover_crops|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.if_use_crop_insurance|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.why_cover_crops_write_in|as_crispy_field }}
+    </div>
+</div>
+
+
+<div>
+    <div class="form-row">
+        <div class="form-group col-md-8 mb-0">
+            {{ survey_farm_full_form.cover_crops_delay_cash_crop|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0">
+            {{ survey_farm_full_form.save_cover_crop_seed|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-8 mb-0">
+            {{ survey_farm_full_form.source_cover_crop_seed|as_crispy_field }}
+        </div>
+    </div>
+</div>
+
+
+<hr>
+<h4>IV. Final Thoughts</h4>
+<div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ survey_farm_full_form.interesting_tales|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ survey_farm_full_form.where_to_start|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ survey_farm_full_form.additional_thoughts|as_crispy_field }}
+        </div>
+    </div>
+</div>
+
+{{ survey_farm_full_form.errors}}
