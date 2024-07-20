@@ -303,7 +303,7 @@ bkup() {
 
 dump_db() {
     # For dumping the database as backup
-    bkup_fl="./data/dump_$(printf '%(%Y%m%d)T\n' -1).json"
+    bkup_fl="$top_level/data/dump_$(printf '%(%Y%m%d)T\n' -1).json"
     source $myvenv_dir/bin/activate
     python $top_level/manage.py dumpdata --indent 4 --natural-primary --natural-foreign --traceback --exclude sessions --exclude admin.LogEntry > $bkup_fl
     deactivate
