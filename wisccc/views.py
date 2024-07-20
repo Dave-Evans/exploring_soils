@@ -72,6 +72,8 @@ def check_section_completed(user_id, section):
         return True
 
     if section == 1:
+        if farmer is None:
+            return False
         survey_farm = (
             SurveyFarm.objects.filter(farmer_id=farmer.id)
             .filter(survey_year=survey_year)
@@ -85,6 +87,8 @@ def check_section_completed(user_id, section):
         return True
 
     if section == 2:
+        if farmer is None:
+            return False
         survey_farm = (
             SurveyFarm.objects.filter(farmer_id=farmer.id)
             .filter(survey_year=survey_year)
@@ -98,6 +102,8 @@ def check_section_completed(user_id, section):
         return True
 
     if section == 3:
+        if farmer is None:
+            return False
         survey_farm = (
             SurveyFarm.objects.filter(farmer_id=farmer.id)
             .filter(survey_year=survey_year)
