@@ -60,9 +60,10 @@ import pandas as pd
 def check_section_completed(user_id, section):
     """Checks a particular section, farmer, 1, 2, 3
     to see if a particualr required field is a completed."""
-
+    survey_year = 2024
+    farmer = Farmer.objects.filter(user_id=user_id).first()
     if section == "farmer":
-        farmer = Farmer.objects.filter(user_id=user_id).first()
+
         if farmer is None:
             return False
         if farmer.last_name == "" or farmer.last_name is None:
@@ -71,28 +72,40 @@ def check_section_completed(user_id, section):
         return True
 
     if section == 1:
-        survey = Survey.objects.filter(user_id=user_id).first()
-        if survey is None:
+        survey_farm = (
+            SurveyFarm.objects.filter(farmer_id=farmer.id)
+            .filter(survey_year=survey_year)
+            .first()
+        )
+        if survey_farm is None:
             return False
-        if survey.percent_of_farm_cc is None:
+        if survey_farm.percent_of_farm_cc is None:
             return False
 
         return True
 
     if section == 2:
-        survey = Survey.objects.filter(user_id=user_id).first()
-        if survey is None:
+        survey_farm = (
+            SurveyFarm.objects.filter(farmer_id=farmer.id)
+            .filter(survey_year=survey_year)
+            .first()
+        )
+        if survey_farm is None:
             return False
-        if survey.closest_zip_code is None:
+        if survey_farm.save_cover_crop_seed is None:
             return False
 
         return True
 
     if section == 3:
-        survey = Survey.objects.filter(user_id=user_id).first()
-        if survey is None:
+        survey_farm = (
+            SurveyFarm.objects.filter(farmer_id=farmer.id)
+            .filter(survey_year=survey_year)
+            .first()
+        )
+        if survey_farm is None:
             return False
-        if survey.additional_thoughts is None:
+        if survey_farm.additional_thoughts is None:
             return False
 
         return True
@@ -208,7 +221,7 @@ def wisc_cc_survey1(request):
         new_form = survey_farm_form.save(commit=False)
         new_form.farmer = farmer
         # Make sure to make a slot for this in the form.
-        # new_form.survey_year = 2024
+        new_form.survey_year = survey_year
         new_form.save()
 
         return redirect("wisc_cc_survey2")
@@ -851,13 +864,17 @@ def update_response(request, id):
 
     if survey_field is None:
         field_farm = None
+        survey_photo = None
     else:
         field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
+        survey_photo = SurveyPhoto.objects.filter(
+            survey_field_id=survey_field.id
+        ).first()
 
     # Get farmer associated with user id of survey response
     farmer = Farmer.objects.filter(id=survey_farm.farmer_id).first()
     # Get any uploaded photos for this survey response
-    survey_photo = SurveyPhoto.objects.filter(survey_field_id=survey_field.id).first()
+
     # pass the object as instance in form
     form_survey_farm = SurveyFarmFormFull(request.POST or None, instance=survey_farm)
     form_field_farm = FieldFarmFormFull(request.POST or None, instance=field_farm)
