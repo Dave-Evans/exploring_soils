@@ -37,11 +37,11 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
-print(f"Allowed hosts: {ALLOWED_HOSTS}")
-print(f"Debug state: {DEBUG}")
-print(f"Deployed state: {DEPLOYED}")
-print(f"CSRF origins: {CSRF_TRUSTED_ORIGINS}")
-print(f"Base dir: {BASE_DIR}")
+# print(f"Allowed hosts: {ALLOWED_HOSTS}")
+# print(f"Debug state: {DEBUG}")
+# print(f"Deployed state: {DEPLOYED}")
+# print(f"CSRF origins: {CSRF_TRUSTED_ORIGINS}")
+# print(f"Base dir: {BASE_DIR}")
 
 # Application definition
 
