@@ -491,8 +491,10 @@ def get_wisc_cc_data(request):
 
         if survey_photo.image_1:
             feat["properties"]["image_1_url"] = survey_photo.image_1.url
+            feat["properties"]["caption_photo_1"] = survey_photo.caption_photo_1
         if survey_photo.image_2:
             feat["properties"]["image_2_url"] = survey_photo.image_2.url
+            feat["properties"]["caption_photo_2"] = survey_photo.caption_photo_2
 
     return JsonResponse(list(data["features"]), safe=False)
 
