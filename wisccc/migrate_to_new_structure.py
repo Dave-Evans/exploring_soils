@@ -51,6 +51,8 @@ def migrate_to_new_structure():
         except:
             continue
         print("Migrating to survey farm...")
+        if survey.survey_year is None:
+            survey.survey_year = 2023
         survey_farm = SurveyFarm.objects.create(
             survey_year=survey.survey_year,
             notes_admin=survey.notes_admin,
@@ -95,6 +97,7 @@ def migrate_to_new_structure():
             field_acreage=survey.field_acreage,
             field_location=survey.farm_location,
             farmer=farmer,
+            derived_county=survey.derived_county,
         )
         print("Migrating to survey field...")
         survey_field = SurveyField.objects.create(
@@ -145,7 +148,6 @@ def migrate_to_new_structure():
             cover_crop_estimated_termination=survey.cover_crop_estimated_termination,
             days_between_crop_hvst_and_cc_estd=survey.days_between_crop_hvst_and_cc_estd,
             derived_species_class=survey.derived_species_class,
-            derived_county=survey.derived_county,
             field_farm=field_farm,
             survey_farm=survey_farm,
         )
