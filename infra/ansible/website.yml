@@ -22,7 +22,6 @@
       force: yes
       dest: /home/ubuntu/exploring_soils
       version: "{{ branch }}"
-      depth: 2
 
   - name: Install Python modules
     pip:

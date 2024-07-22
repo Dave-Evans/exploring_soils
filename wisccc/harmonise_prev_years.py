@@ -57,9 +57,12 @@ def get_2020_2021_ancillary(mrill_id, property):
         # Fuck Excel, but yes, this is col name for the date
         val_col = "CC Biomass"
 
-    fl = "~/Documents/small_projects/wisc_cc/data_from_mrill/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
-    #
-    anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
+    try:
+        fl = "~/Documents/small_projects/wisc_cc/data_from_mrill/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
+        anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
+    except:
+        fl = "~/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
+        anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
     # id Column is always the first one in this spreadsheet
     id_col_name = anc.columns.tolist()[0]
 
@@ -105,9 +108,12 @@ def get_2022_ancillary(mrill_id, property):
         sheet_title = "Forage Quality"
         val_col = "RFQ"
 
-    fl = "~/Documents/small_projects/wisc_cc/data_from_mrill/Table 1. DS draft 2.13.22 CCROP Citizen Science Data 2022 with termination.xlsx"
-    #
-    anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
+    try:
+        fl = "~/Documents/small_projects/wisc_cc/data_from_mrill/Table 1. DS draft 2.13.22 CCROP Citizen Science Data 2022 with termination.xlsx"
+        anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
+    except:
+        fl = "~/Table 1. DS draft 2.13.22 CCROP Citizen Science Data 2022 with termination.xlsx"
+        anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
     # id Column is always the first one in this spreadsheet
     id_col_name = anc.columns.tolist()[0]
 
@@ -145,14 +151,15 @@ def ingest_2022_data():
             county="Unassigned county",
             user=unassigned_user,
         )
+    try:
+        fl_full_data = "~/Documents/small_projects/wisc_cc/data_from_mrill/2022 Responses - Building Knowledge about Wisconsin's Cover Crops.xlsx"
+        full_data = pd.read_excel(fl_full_data)
+    except:
+        fl_full_data = (
+            "~/2022 Responses - Building Knowledge about Wisconsin's Cover Crops.xlsx"
+        )
+        full_data = pd.read_excel(fl_full_data)
 
-    fl_full_data = "~/Documents/small_projects/wisc_cc/data_from_mrill/2022 Responses - Building Knowledge about Wisconsin's Cover Crops.xlsx"
-    fl_data = "~/Documents/small_projects/wisc_cc/data_from_mrill/CitSci CCROP 2022 responses agronomic.xlsx"
-
-    dat = pd.read_excel(fl_data, header=0)
-    cols = dat.columns
-
-    full_data = pd.read_excel(fl_full_data)
     for i, col in enumerate(full_data.columns):
         print(f"{i}: {col}")
 
@@ -505,9 +512,13 @@ def ingest_2020_1_data():
             user=unassigned_user,
         )
 
-    fl_full_data = "~/Documents/small_projects/wisc_cc/data_from_mrill/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
+    try:
+        fl_full_data = "~/Documents/small_projects/wisc_cc/data_from_mrill/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
+        full_data = pd.read_excel(fl_full_data)
+    except:
+        fl_full_data = "~/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
+        full_data = pd.read_excel(fl_full_data)
 
-    full_data = pd.read_excel(fl_full_data)
     for i, col in enumerate(full_data.columns):
         print(f"{i}: {col}")
 
@@ -690,7 +701,10 @@ def ingest_2020_1_data():
 
         ancillary_data = AncillaryData.objects.create(
             biomass_collection_date=(
-                full_data.iloc[i][26] if (not pd.isna(full_data.iloc[i][26])) and (not full_data.iloc[i][26] == '.') else None
+                full_data.iloc[i][26]
+                if (not pd.isna(full_data.iloc[i][26]))
+                and (not full_data.iloc[i][26] == ".")
+                else None
             ),
             cp=None,
             andf=None,
@@ -700,7 +714,10 @@ def ingest_2020_1_data():
             milk_ton_milk2013=None,
             rfq=None,
             cc_biomass=(
-                full_data.iloc[i][37] if (not pd.isna(full_data.iloc[i][37])) and (not full_data.iloc[i][37] == '.') else None
+                full_data.iloc[i][37]
+                if (not pd.isna(full_data.iloc[i][37]))
+                and (not full_data.iloc[i][37] == ".")
+                else None
             ),
             total_nitrogen=None,
             acc_gdd=None,
