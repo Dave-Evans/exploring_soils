@@ -592,11 +592,11 @@ def wisc_cc_static_data(request):
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def response_table(request):
     """List wisc response entries"""
-    all_surveys = Survey.objects.all()
+    all_surveys = SurveyFarm.objects.all()
     total_surveys = all_surveys.count()
     completed_surveys = (
         all_surveys.filter(percent_of_farm_cc__isnull=False)
-        .filter(closest_zip_code__isnull=False)
+        .filter(save_cover_crop_seed__isnull=False)
         .filter(additional_thoughts__isnull=False)
         .count()
     )
