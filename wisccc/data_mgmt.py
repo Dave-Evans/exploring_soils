@@ -183,12 +183,12 @@ def get_survey_data():
                 "survey_field__cover_crop_estimated_termination",
                 "survey_field__days_between_crop_hvst_and_cc_estd",
                 "survey_field__derived_species_class",
-                "survey_field__derived_county",
                 # From FieldFarm
                 "survey_field__field_farm__field_name",
                 "survey_field__field_farm__closest_zip_code",
                 "survey_field__field_farm__field_acreage",
                 "survey_field__field_farm__field_location",
+                "survey_field__field_farm__derived_county",
                 # From Ancillary Data
                 # "id",
                 "biomass_collection_date",
@@ -298,12 +298,12 @@ def get_survey_data():
             "cover_crop_estimated_termination",
             "days_between_crop_hvst_and_cc_estd",
             "derived_species_class",
-            "derived_county",
             # From FieldFarm
             "field_name",
             "closest_zip_code",
             "field_acreage",
             "field_location",
+            "derived_county",
             # From Ancillary Data
             # "id",
             "biomass_collection_date",
@@ -339,7 +339,7 @@ def pull_all_years_together(f_output):
     """
 
     query = """
-SELECT 
+    SELECT 
         stat.id
         , stat.year
         , stat.county
