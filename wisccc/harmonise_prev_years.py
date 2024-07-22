@@ -58,10 +58,10 @@ def get_2020_2021_ancillary(mrill_id, property):
         val_col = "CC Biomass"
 
     try:
-        fl = "~/Documents/small_projects/wisc_cc/data_from_mrill/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
+        fl = "~/uDocuments/small_projects/wisc_cc/data_from_mrill/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
         anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
     except:
-        fl = "~/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
+        fl = "/home/ubuntu/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
         anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
     # id Column is always the first one in this spreadsheet
     id_col_name = anc.columns.tolist()[0]
@@ -112,7 +112,7 @@ def get_2022_ancillary(mrill_id, property):
         fl = "~/Documents/small_projects/wisc_cc/data_from_mrill/Table 1. DS draft 2.13.22 CCROP Citizen Science Data 2022 with termination.xlsx"
         anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
     except:
-        fl = "~/Table 1. DS draft 2.13.22 CCROP Citizen Science Data 2022 with termination.xlsx"
+        fl = "/home/ubuntu/Table 1. DS draft 2.13.22 CCROP Citizen Science Data 2022 with termination.xlsx"
         anc = pd.read_excel(fl, sheet_name=sheet_title, skiprows=[1])
     # id Column is always the first one in this spreadsheet
     id_col_name = anc.columns.tolist()[0]
@@ -155,9 +155,7 @@ def ingest_2022_data():
         fl_full_data = "~/Documents/small_projects/wisc_cc/data_from_mrill/2022 Responses - Building Knowledge about Wisconsin's Cover Crops.xlsx"
         full_data = pd.read_excel(fl_full_data)
     except:
-        fl_full_data = (
-            "~/2022 Responses - Building Knowledge about Wisconsin's Cover Crops.xlsx"
-        )
+        fl_full_data = "/home/ubuntu/2022 Responses - Building Knowledge about Wisconsin's Cover Crops.xlsx"
         full_data = pd.read_excel(fl_full_data)
 
     for i, col in enumerate(full_data.columns):
@@ -516,7 +514,7 @@ def ingest_2020_1_data():
         fl_full_data = "~/Documents/small_projects/wisc_cc/data_from_mrill/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
         full_data = pd.read_excel(fl_full_data)
     except:
-        fl_full_data = "~/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
+        fl_full_data = "/home/ubuntu/MI Copy combined CC_citsci_2020-2021-grs.xlsx"
         full_data = pd.read_excel(fl_full_data)
 
     for i, col in enumerate(full_data.columns):
