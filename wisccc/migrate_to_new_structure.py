@@ -91,7 +91,7 @@ def migrate_to_new_structure():
             farmer=farmer,
         )
         survey_farm.survey_created = survey.survey_created
-
+        survey_farm.save()
         print("Migrating to field farm...")
         field_farm = FieldFarm.objects.create(
             field_name=None,
