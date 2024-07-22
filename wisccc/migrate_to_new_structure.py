@@ -90,6 +90,8 @@ def migrate_to_new_structure():
             additional_thoughts=survey.additional_thoughts,
             farmer=farmer,
         )
+        survey_farm.survey_created = survey.survey_created
+
         print("Migrating to field farm...")
         field_farm = FieldFarm.objects.create(
             field_name=None,
@@ -191,14 +193,17 @@ def migrate_to_new_structure():
 
 def update_jerry_daniels():
     """for updating jerry daniels three surveys
-    Arbitrarily assigning his surveys and fields to the first farmer
+    Arbitrarily assigning his surveys and fields to the id = 50 farmer
     entry for him.
-    Double check these ids in prod"""
-    jd_farm = Farmer.objects.get(id=47)
+    Double check these ids in prod.
+    This would be for user_id = 71 which needs to be updated with the proper email."""
+    jd_farm = Farmer.objects.get(id=50)
     jd_survey_farms = SurveyFarm.objects.filter(farmer__in=[47, 48, 49, 50])
     jd_field_farms = FieldFarm.objects.filter(farmer__in=[47, 48, 49, 50])
     for jd_survey_farm in jd_survey_farms:
         jd_survey_farm.farmer = jd_farm
+        jd_survey_farm.save()
 
     for jd_field_farm in jd_field_farms:
         jd_field_farm.farmer = jd_farm
+        jd_field_farm.save()

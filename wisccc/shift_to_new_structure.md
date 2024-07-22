@@ -3,7 +3,7 @@
 Because of unique email constraints
 Jerry daniels users have been changed.
 Search "jbh" to pull them up.
-
+"jbhcml@yahoo.com" is proper email.
 ### Can't load data into original structure
 
 An error about json serialization was thrown when trying to import data into the database.
@@ -33,6 +33,7 @@ Create new data structure
 source myvenv/bin/activate
 python manage.py makemigrations wisccc
 python manage.py migrate wisccc
+pip install openpyxl
 ```
 Make sure to update the file path of the data documents.
 These commands pull in the previous years data into the old `Survey` structure.
