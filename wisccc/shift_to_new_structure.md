@@ -21,6 +21,8 @@ I'm pretty sure the way to do this will be to create the instance from `master`.
 Then checkout `feat/harmonise_years`.
 `git checkout -b feat/harmonise_years`
 `git pull origin feat/harmonise_years`
+`git checkout master`
+`git merge feat/harmonise_years`
 Then make migrations: this will change `wisccc_survey` and create the new tables as
 shown below.
 
@@ -64,13 +66,6 @@ Then shift the data from `Survey` into the other tables.
 from wisccc.migrate_to_new_structure import *
 migrate_to_new_structure()
 update_jerry_daniels()
-```
-
-Forgot to add survey year for 2023.
-```sql
-update wisccc_surveyfarm
-set survey_year = 2023
-where survey_year is null;
 ```
 
 
