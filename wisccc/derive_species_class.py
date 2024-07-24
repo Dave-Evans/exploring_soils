@@ -833,7 +833,9 @@ def update_2020_2022():
 def update_2023_plus():
     from wisccc.models import SurveyField
 
-    survey_fields = SurveyField.objects.all()
+    survey_fields = SurveyField.objects.filter(
+        survey_farm__survey_year__gt=2022
+    ).filter(survey_farm__confirmed_accurate=True)
     for survey_field in survey_fields:
 
         cc_sp_1 = survey_field.cover_crop_species_1
