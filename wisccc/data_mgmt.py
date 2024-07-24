@@ -339,10 +339,8 @@ def pull_all_years_together(f_output):
     """
 
     query = """
-    SELECT 
-        ROW_NUMBER () OVER (
-		    ORDER BY id
-	    ) as id
+	SELECT 
+		prevsurv.survey_farm_id as id
         , stat.year
         , stat.county
         , stat.county_single
@@ -393,6 +391,13 @@ def pull_all_years_together(f_output):
         , null as survey_response_id
         , null as survey_field_id
     from wisc_cc as stat
+    inner join
+  	(select
+		id as survey_farm_id,
+		split_part(notes_admin, ';', 1) as mrill_id
+	from wisccc_surveyfarm  
+	where survey_year < 2023) as prevsurv
+	on stat.id = prevsurv.mrill_id
 
     union all
 
