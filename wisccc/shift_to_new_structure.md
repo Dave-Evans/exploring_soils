@@ -3,7 +3,7 @@
 Because of unique email constraints
 Jerry daniels users have been changed.
 Search "jbh" to pull them up.
-"jbhcml@yahoo.com" is proper email.
+"jbhcml@yahoo.com" is proper email.exit
 ### Can't load data into original structure
 
 An error about json serialization was thrown when trying to import data into the database.
@@ -73,14 +73,18 @@ Updates to species classification and precip and gdu
 
  - derive county
 ```python
-from wisccc.models import Survey
-surveys = Survey.objects.all()
-for survey in surveys:
-    survey.populate_county()
-    survey.save()
+from wisccc.models import FieldFarm
+fields = FieldFarm.objects.all()
+for field in fields:
+    field.populate_county()
+    field.save()
 ```
- - gdu and precip: running `gather_gdu_precip.py`
- `gather_gdu_precip_2023plus()`
+ gdu and precip: running the following:
+```python
+from wisccc.gather_gdu_precip.py import *
+gather_gdu_precip_2023plus()
+update_gdu_precip_2020_2022()
+ ```
  - derive species classes
 ```python
 from wisccc.derive_species_class import *

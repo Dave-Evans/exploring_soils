@@ -831,22 +831,22 @@ def update_2020_2022():
 
 
 def update_2023_plus():
-    from wisccc.models import Survey
+    from wisccc.models import SurveyField
 
-    surveys = Survey.objects.all()
-    for survey_response in surveys:
+    survey_fields = SurveyField.objects.all()
+    for survey_field in survey_fields:
 
-        cc_sp_1 = survey_response.cover_crop_species_1
-        cc_sp_2 = survey_response.cover_crop_species_2
-        cc_sp_3 = survey_response.cover_crop_species_3
-        cc_sp_4 = survey_response.cover_crop_species_4
-        cc_sp_5 = survey_response.cover_crop_species_5
+        cc_sp_1 = survey_field.cover_crop_species_1
+        cc_sp_2 = survey_field.cover_crop_species_2
+        cc_sp_3 = survey_field.cover_crop_species_3
+        cc_sp_4 = survey_field.cover_crop_species_4
+        cc_sp_5 = survey_field.cover_crop_species_5
         list_sp = [
-            survey_response.cover_crop_species_1,
-            survey_response.cover_crop_species_2,
-            survey_response.cover_crop_species_3,
-            survey_response.cover_crop_species_4,
-            survey_response.cover_crop_species_5,
+            survey_field.cover_crop_species_1,
+            survey_field.cover_crop_species_2,
+            survey_field.cover_crop_species_3,
+            survey_field.cover_crop_species_4,
+            survey_field.cover_crop_species_5,
         ]
 
         species_class = derive_species_class(list_sp)
@@ -860,8 +860,8 @@ def update_2023_plus():
         # else:
         #     print(species_class)
 
-        survey_response.derived_species_class = species_class
-        survey_response.save()
+        survey_field.derived_species_class = species_class
+        survey_field.save()
 
 
 def reclass_all_cc_species():
