@@ -1,24 +1,24 @@
 import requests
+import datetime
 from decouple import config, Csv
 
-from wisccc.models import Survey
+from wisccc.models import SurveyFarm, SurveyField, FieldFarm, AncillaryData
 
 lambda_url = config("GDU_LAMBDA_URL")
 
 
-def get_collection_date(id):
+def get_collection_date(survey_field_id):
+    """Get Biomass collection date from ancillary data.
+    Takes the survey_field id and looks up the collection date
+     from wisccc_ancillarydata"""
     from django.db import connection
 
     with connection.cursor() as cursor:
         cursor.execute(
             f"""
-            select 
-                COALESCE(
-                    TO_DATE(lab.date_reported_biomass,'YYYY-MM-DD'),
-                    TO_DATE(lab.date_processed,'YYYY-MM-DD')
-                ) as cc_biomass_collection_date
-            from all_lab_data_2023 lab 
-            where id = {id}"""
+            select biomass_collection_date
+            from wisccc_ancillarydata
+            where survey_field_id = {survey_field_id}"""
         )
         row = cursor.fetchone()
     if row == None:
@@ -80,74 +80,57 @@ def update_static_record(static_id, column_name, val):
 
 def gather_gdu_precip_2023plus():
 
-    check_if_col_exists("acc_gdd")
-    check_if_col_exists("total_precip")
+    # If survey year is before 2023 then we skip and handle elsewhere.
+    # These years had poorly formed dates.
+    survey_fields = SurveyField.objects.filter(survey_farm__survey_year__gt=2022)
 
-    surveys = Survey.objects.all()
+    for survey_field in survey_fields:
 
-    for srvy in surveys:
-        print(srvy.id)
+        print(survey_field.id)
 
-        cc_planting_date = srvy.cover_crop_planting_date
-        cc_collection = get_collection_date(srvy.id)
-        farm_location = srvy.farm_location
+        cc_planting_date = survey_field.cover_crop_planting_date
+        cc_collection = (
+            AncillaryData.objects.filter(survey_field_id=survey_field.id)
+            .first()
+            .biomass_collection_date
+        )
+        field_location = (
+            FieldFarm.objects.filter(id=survey_field.field_farm_id)
+            .first()
+            .field_location
+        )
 
-        if all([cc_planting_date, cc_collection, farm_location]):
+        if all([cc_planting_date, cc_collection, field_location]):
 
-            start_date = cc_planting_date.strftime("%Y-%m-%d")
+            # start_date = cc_planting_date.strftime("%Y-%m-%d")
+            start_date = cc_planting_date
             end_date = cc_collection.strftime("%Y-%m-%d")
-            lon = farm_location.coords[0]
-            lat = farm_location.coords[1]
+            lon = field_location.coords[0]
+            lat = field_location.coords[1]
         else:
             print("can't calc GDU")
             print(f"\tPlanting date {cc_planting_date}")
             print(f"\tcc_collection: {cc_collection}")
-            print(f"\tFarm location: {farm_location}")
+            print(f"\tFarm location: {field_location}")
             continue
 
-        headers = {"Accept": "application/json"}
-
         data = {
-            "target": "GDU",
             "lon": lon,
             "lat": lat,
             "start_date": start_date,
             "end_date": end_date,
         }
-        resp = requests.get(
-            lambda_url,
-            headers=headers,
-            data=data,
-        )
-        gdu = None
-        if resp.status_code == 200 or resp.text != "null":
-            gdu = resp.json()["body"]["cumulative_gdd"]
-        else:
-            print("Error: " + resp.text)
+        gdu = calc_gdu(data)
+        precip = calc_precip(data)
+        try:
+            ancillary_data = AncillaryData.objects.get(survey_field_id=survey_field.id)
+        except:
+            print("No Ancillary data record for survey_field:", survey_field.id)
+            continue
+        ancillary_data.acc_gdd = gdu
+        ancillary_data.total_precip = precip
 
-        if gdu is not None:
-            update_record(srvy.id, "acc_gdd", round(gdu, 1))
-
-        data = {
-            "target": "PRE",
-            "lon": lon,
-            "lat": lat,
-            "start_date": start_date,
-            "end_date": end_date,
-        }
-
-        resp = requests.get(
-            lambda_url,
-            headers=headers,
-            data=data,
-        )
-        if resp.status_code == 200:
-            precip = resp.json()["body"]["cumulative_precip"]
-        else:
-            print("Error: " + resp.text)
-
-        if precip is not None:
-            update_record(srvy.id, "total_precip", precip)
+        ancillary_data.save()
 
 
 def calc_gdu(data):
@@ -198,8 +181,8 @@ def update_gdu_precip_2020_2022():
         wisc_cc = cursor.fetchall()
 
     for i, cc in enumerate(wisc_cc):
-        if i < 10:
-            continue
+        # if i < 10:
+        #     continue
         lat = cc[21]
         lon = cc[22]
         cc_planting_date = cc[23]

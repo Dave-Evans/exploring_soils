@@ -68,6 +68,24 @@ migrate_to_new_structure()
 update_jerry_daniels()
 ```
 
+Updates to species classification and precip and gdu
+
+
+ - derive county
+```python
+from wisccc.models import Survey
+surveys = Survey.objects.all()
+for survey in surveys:
+    survey.populate_county()
+    survey.save()
+```
+ - gdu and precip: running `gather_gdu_precip.py`
+ `gather_gdu_precip_2023plus()`
+ - derive species classes
+```python
+from wisccc.derive_species_class import *
+reclass_all_cc_species()
+```
 
 For screwups and redos:
 ```sh
