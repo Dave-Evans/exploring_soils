@@ -340,7 +340,9 @@ def pull_all_years_together(f_output):
 
     query = """
     SELECT 
-        stat.id
+        ROW_NUMBER () OVER (
+		    ORDER BY id
+	    ) as id
         , stat.year
         , stat.county
         , stat.county_single
@@ -395,7 +397,7 @@ def pull_all_years_together(f_output):
     union all
 
     select
-        wisc_cc_id as id,
+        a.master_survey_farm_id as id,
         year,
         a.county,
         derived_county as county_single,
@@ -489,6 +491,7 @@ def pull_all_years_together(f_output):
                 substring(survey_year::text, 3,4)
             ) as wisc_cc_id,
             surveyfarm.survey_year as year,
+            surveyfarm.id as master_survey_farm_id,
             case
                 when surveyfield.cover_crop_species_1 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
                 when surveyfield.cover_crop_species_1 = 'BARLEY' then 'barley'
