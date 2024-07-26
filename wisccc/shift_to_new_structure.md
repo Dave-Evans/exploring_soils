@@ -79,17 +79,24 @@ for field in fields:
     field.populate_county()
     field.save()
 ```
- gdu and precip: running the following:
-```python
-from wisccc.gather_gdu_precip.py import *
-gather_gdu_precip_2023plus()
-update_gdu_precip_2020_2022()
- ```
  - derive species classes
 ```python
 from wisccc.derive_species_class import *
 reclass_all_cc_species()
 ```
+ gdu and precip: running the following:
+```python
+from wisccc.gather_gdu_precip import *
+gather_gdu_precip_2023plus()
+update_gdu_precip_2020_2022()
+ ```
+
+### Checks
+
+Data display download: 153 rows
+Full survey download:
+Registrants download: 
+
 
 For screwups and redos:
 ```sh
