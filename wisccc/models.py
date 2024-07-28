@@ -119,8 +119,9 @@ class CoverCropReasonsChoices(models.TextChoices):
     OTHER = "OTHER", "Other reasons"
 
 
-class CoverCropChoices(models.TextChoices):
-    """Cover crop options"""
+class CoverCropChoicesWMulti(models.TextChoices):
+    """Cover crop options for the crop rotation questions.
+    This contain multispecies mix."""
 
     BLANK = "", ""
     ANNUAL_RYEGRASS = "ANNUAL_RYEGRASS", "annual ryegrass"  # winter
@@ -157,6 +158,49 @@ class CoverCropChoices(models.TextChoices):
     WINTER_PEA = "WINTER_PEA", "winter pea"
     YELLOW_SWEET_CLOVER = "YELLOW_SWEET_CLOVER", "yellow sweet clover"
     MULTISPECIES = "MULITSPECIES", "multispecies mix of 2 or more"
+    NONE = "NONE", "none"
+    OTHER = "OTHER", "other"
+
+
+class CoverCropChoices(models.TextChoices):
+    """Cover crop options for the crop rotation questions.
+    This does not contain multispecies mix."""
+
+    BLANK = "", ""
+    ANNUAL_RYEGRASS = "ANNUAL_RYEGRASS", "annual ryegrass"  # winter
+    BALANSA_CLOVER = "BALANSA_CLOVER", "balansa clover"
+    BARLEY = "BARLEY", "barley"  # spring
+    BERSEEM_CLOVER = "BERSEEM_CLOVER", "berseem clover"  # legume
+    BUCKWHEAT = "BUCKWHEAT", "buckwheat"
+    CANOLA = "CANOLA", "canola/rapeseed"  # brassica
+    CEREAL_RYE = "CEREAL_RYE", "cereal (winter) rye"  # winter
+    CRIMSON_CLOVER = "CRIMSON_CLOVER", "crimson clover"  # legume
+    COWPEA = "COWPEA", "cowpea"  # legume
+    DUTCH_WHITE_CLOVER = "DUTCH_WHITE_CLOVER", "Dutch white clover"
+    FIELD_PEA = "FIELD_PEA", "field/forage pea"  # legume
+    FLAX = "FLAX", "flax"
+    HAIRY_VETCH = "HAIRY_VETCH", "hairy vetch"  # legume
+    KALE = "KALE", "kale"  # brassica
+    MILLET = "MILLET", "millet"
+    PLANTAIN = "PLANTAIN", "plantain"
+    OATS = "OATS", "oats"  # spring
+    OTHER_LEGUME = "OTHER_LEGUME", "other (legume)"  #
+    OTHER_GRASS = "OTHER_GRASS", "other (grass)"  #
+    OTHER_BROADLEAF = "OTHER_BROADLEAF", "other (broadleaf)"  #
+    RADISH = "RADISH", "radish"  # brassica
+    RED_CLOVER = "RED_CLOVER", "red clover"  # legume
+    SORGHUM = "SORGHUM", "sorghum"  # grass
+    SORGHUM_SUDAN = "SORGHUM_SUDAN", "sorghum-sudan"  # grass
+    SOYBEANS = "SOYBEANS", "soybeans"  # legume
+    SUNFLOWER = "SUNFLOWER", "sunflower"  #
+    SUN_HEMP = "SUN_HEMP", "sun hemp"
+    TRITICALE = "TRITICALE", "triticale"  # winter
+    TURNIP = "TURNIP", "turnip"  # brassica
+    WHEAT_SPRING = "WHEAT_SPRING", "wheat (spring)"  # spring
+    WHEAT_WINTER = "WHEAT_WINTER", "wheat (winter)"  # winter
+    WINTER_PEA = "WINTER_PEA", "winter pea"
+    YELLOW_SWEET_CLOVER = "YELLOW_SWEET_CLOVER", "yellow sweet clover"
+    NONE = "NONE", "none"
     OTHER = "OTHER", "other"
 
 
@@ -523,7 +567,7 @@ class Survey(models.Model):
     # 18a.
     crop_rotation_2021_cover_crop_species = models.CharField(
         verbose_name="Cover crop species in 2021",
-        choices=CoverCropChoices.choices,
+        choices=CoverCropChoicesWMulti.choices,
         max_length=30,
         null=True,
     )
@@ -537,7 +581,7 @@ class Survey(models.Model):
     # 18b.
     crop_rotation_2022_cover_crop_species = models.CharField(
         verbose_name="Cover crop species in 2022",
-        choices=CoverCropChoices.choices,
+        choices=CoverCropChoicesWMulti.choices,
         max_length=30,
         null=True,
     )
@@ -888,24 +932,37 @@ class SurveyFarm(models.Model):
         verbose_name="The percent of your farm, in acres, that is planted in cover crops",
         null=True,
     )
+
+    # New in 2024
+    main_cc_goal_this_year = models.TextField(
+        verbose_name="What is your main goal for cover cropping this year?",
+        null=True,
+    )
+
+    # New in 2024
+    satisfied_with_cc_results = models.TextField(
+        verbose_name="How satisfied are you with results you get from cover cropping? ",
+        null=True,
+    )
+
     # 4. Do you know the dominant soil series on your farm? If so, please list them below in order of how widely distributed (ex. Plano silt loam).
     dominant_soil_series_1 = models.CharField(
-        verbose_name="Soil series with the greatest distribution on your farm",
+        verbose_name="DEPRECATED Soil series with the greatest distribution on your farm",
         max_length=150,
         null=True,
     )
     dominant_soil_series_2 = models.CharField(
-        verbose_name="Soil series with the second greatest distribution on your farm",
+        verbose_name="DEPRECATED Soil series with the second greatest distribution on your farm",
         max_length=150,
         null=True,
     )
     dominant_soil_series_3 = models.CharField(
-        verbose_name="Soil series with the third greatest distribution on your farm",
+        verbose_name="DEPRECATED Soil series with the third greatest distribution on your farm",
         max_length=150,
         null=True,
     )
     dominant_soil_series_4 = models.CharField(
-        verbose_name="Soil series with the fourth greatest distribution on your farm",
+        verbose_name="DEPRECATED Soil series with the fourth greatest distribution on your farm",
         max_length=150,
         null=True,
     )
@@ -913,59 +970,74 @@ class SurveyFarm(models.Model):
     # 5. From the following list, select and rank your top 1 - 3 sources of information for nutrient management:
 
     info_source_nutrient_mgmt_1 = models.CharField(
-        verbose_name="Top information source for nutrient management",
+        verbose_name="DEPRECATED Top information source for nutrient management",
         choices=NutrientMgmtSourcesChoices.choices,
         max_length=120,
         null=True,
     )
     info_source_nutrient_mgmt_2 = models.CharField(
-        verbose_name="Top information source for nutrient management",
+        verbose_name="DEPRECATED Top information source for nutrient management",
         choices=NutrientMgmtSourcesChoices.choices,
         max_length=120,
         null=True,
     )
     info_source_nutrient_mgmt_3 = models.CharField(
-        verbose_name="Top information source for nutrient management",
+        verbose_name="DEPRECATED Top information source for nutrient management",
         choices=NutrientMgmtSourcesChoices.choices,
         max_length=120,
         null=True,
     )
 
     source_nutrient_mgmt_write_in = models.TextField(
-        verbose_name="Other information source for nutrient management",
+        verbose_name="DEPRECATED Other information source for nutrient management",
         null=True,
     )
     #
     # . For using cover crops for nutrient management, do you have any experiences to share or questions you'd like more information on?
     cov_crops_for_ntrnt_mgmt_comments_questions = models.TextField(
-        verbose_name="Questions or comments about nutrient management and cover crops",
+        verbose_name="DEPRECATED Questions or comments about nutrient management and cover crops",
         null=True,
     )
 
     # 6. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
     info_source_cover_crops_1 = models.CharField(
         verbose_name="Top information source for cover crops",
-        choices=CoverCropInfoSourcesChoices.choices,
-        max_length=120,
+        # choices=CoverCropInfoSourcesChoices.choices,
+        max_length=1000,
         null=True,
     )
 
     info_source_cover_crops_2 = models.CharField(
-        verbose_name="Top information source for cover crops",
+        verbose_name="DEPRECATED Top information source for cover crops",
         choices=CoverCropInfoSourcesChoices.choices,
         max_length=120,
         null=True,
     )
 
     info_source_cover_crops_3 = models.CharField(
-        verbose_name="Top information source for cover crops",
+        verbose_name="DEPRECATED Top information source for cover crops",
         choices=CoverCropInfoSourcesChoices.choices,
         max_length=120,
         null=True,
     )
 
     info_source_cover_crops_write_in = models.TextField(
-        verbose_name="Other information and social media source for cover crops",
+        verbose_name="DEPRECATED Other information and social media source for cover crops",
+        null=True,
+    )
+
+    biggest_challenge_cc = models.TextField(
+        verbose_name="What is your biggest challenge or unanswered question when it comes to cover cropping?",
+        null=True,
+    )
+
+    learning_history_cc = models.TextField(
+        verbose_name="How would you describe your learning history for cover cropping (including personal experience)?",
+        null=True,
+    )
+
+    conservation_programs = models.TextField(
+        verbose_name="Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices?",
         null=True,
     )
 
@@ -979,40 +1051,48 @@ class SurveyFarm(models.Model):
     )
 
     support_cover_crops_2 = models.CharField(
-        verbose_name="Support for cover cropping",
+        verbose_name="DEPRECATED Support for cover cropping",
         choices=CoverCropSupportChoices.choices,
         max_length=150,
         null=True,
     )
 
     support_cover_crops_3 = models.CharField(
-        verbose_name="Support for cover cropping",
+        verbose_name="DEPRECATED Support for cover cropping",
         choices=CoverCropSupportChoices.choices,
         max_length=150,
         null=True,
     )
 
     support_cover_crops_write_in = models.TextField(
-        verbose_name="Other support for cover crops you would like to see",
+        verbose_name="DEPRECATED Other support for cover crops you would like to see",
         null=True,
     )
 
     # 8. Are you lacking in any information regarding your selecting, planting, and managing cover crops?
     lacking_any_info_cover_crops = models.TextField(
-        verbose_name="Lacking in any information regarding cover crops?",
+        verbose_name="DEPRECATED Lacking in any information regarding cover crops?",
         null=True,
     )
 
-    # 9. If yes, what are the main barries to expansion?
-    # Please share any details that will help us understand the challenges.
-    barriers_to_expansion = models.TextField(
-        verbose_name="What are your barriers to expansion? Please share any details to help us understand.",
+    # Would you like to expand the number of acres you cover crop?
+    # If yes, what are the main barriers? Please share any details that will help us understand the challenges.
+    # NEW:  Would you like to expand the number of acres you cover crop?
+    # Add options: 	Yes/No/Already all cover cropped /Other
+    barriers_to_expansion = models.CharField(
+        verbose_name="Would you like to expand the number of acres you cover crop?",
         null=True,
+        max_length=550,
+    )
+
+    barriers_to_expansion_write_in = models.TextField(
+        verbose_name="If you chose “other” please provide details.", null=True
     )
 
     # 10. What would it take for you to quit planting covers?
     quit_planting_cover_crops = models.TextField(
-        verbose_name="What would it take for you to quit planting covers?", null=True
+        verbose_name="DEPRECATED What would it take for you to quit planting covers?",
+        null=True,
     )
 
     # 11. If so, does it influence your cover cropping decisions, and how?
@@ -1044,17 +1124,18 @@ class SurveyFarm(models.Model):
 
     # 37	Please share any interesting experiments, failures, equipment challenges with cover crops.
     interesting_tales = models.TextField(
-        verbose_name="What has been your cover crop “learning curve”? Please share any interesting experiments including failures that have helped you adapt cover cropping to your farm.",
+        verbose_name="DEPRECATED What has been your cover crop “learning curve”? Please share any interesting experiments including failures that have helped you adapt cover cropping to your farm.",
         null=True,
     )
     # 38	If another grower asked you where to start with cover cropping what would you recommend and why?
     where_to_start = models.TextField(
-        verbose_name="Where would you tell another grower to start with cover crops? Why?",
+        verbose_name="DEPRECATED Where would you tell another grower to start with cover crops? Why?",
         null=True,
     )
     # 39	Do you have any additional thoughts or questions about this data gathering process? Any important survey questions we should ask next time?
+    # 2023 Any additional thoughts or questions? Any important survey questions we should ask next time?Any additional thoughts or questions? Any important survey questions we should ask next time?
     additional_thoughts = models.TextField(
-        verbose_name="Any additional thoughts or questions? Any important survey questions we should ask next time?",
+        verbose_name="Please share anything else we should know, including any feedback on the survey.",
         null=True,
     )
 
@@ -1138,7 +1219,7 @@ class SurveyField(models.Model):
     # 18a.
     crop_rotation_2021_cover_crop_species = models.CharField(
         verbose_name="Cover crop species in 2021",
-        choices=CoverCropChoices.choices,
+        choices=CoverCropChoicesWMulti.choices,
         max_length=30,
         null=True,
     )
@@ -1152,7 +1233,7 @@ class SurveyField(models.Model):
     # 18b.
     crop_rotation_2022_cover_crop_species = models.CharField(
         verbose_name="Cover crop species in 2022",
-        choices=CoverCropChoices.choices,
+        choices=CoverCropChoicesWMulti.choices,
         max_length=30,
         null=True,
     )
@@ -1166,7 +1247,7 @@ class SurveyField(models.Model):
     # 18c.
     crop_rotation_2023_cover_crop_species = models.CharField(
         verbose_name="Cover crop species in 2023",
-        choices=CoverCropChoices.choices,
+        choices=CoverCropChoicesWMulti.choices,
         max_length=30,
         null=True,
     )
@@ -1275,7 +1356,7 @@ class SurveyField(models.Model):
 
     # 21	What date this year did you plant your cash crop in this field?
     cash_crop_planting_date = models.CharField(
-        verbose_name="What date this year did you plant your cash crop in this field?",
+        verbose_name="What date did you plant your cash crop in this field?",
         null=True,
         max_length=50,
     )
@@ -1391,7 +1472,7 @@ class SurveyField(models.Model):
     )
     # 35	"Estimated termination timing/method for this field.
     cover_crop_estimated_termination = models.CharField(
-        verbose_name="Estimated termination timing/method for this field.",
+        verbose_name="Estimated termination timing and method for this field.",
         choices=TerminationMethodTimingChoices.choices,
         max_length=250,
         null=True,

@@ -188,7 +188,6 @@ def wisc_cc_survey0(request):
 
         return redirect("wisc_cc_survey")
 
-    # template = "wisccc/survey_upload_all.html"
     template = "wisccc/survey_section_0.html"
     return render(
         request,
@@ -232,7 +231,6 @@ def wisc_cc_survey1(request):
 
         return redirect("wisc_cc_survey2")
 
-    # template = "wisccc/survey_upload_all.html"
     template = "wisccc/survey_section_1.html"
     return render(
         request,
@@ -348,7 +346,6 @@ def deprecated_wisc_cc_survey1(request):
 
         return redirect("wisc_cc_survey2")
 
-    # template = "wisccc/survey_upload_all.html"
     template = "wisccc/survey_section_1.html"
     return render(
         request,
@@ -968,11 +965,7 @@ def wisc_cc_register_1(request):
 
 @login_required
 def wisc_cc_register_2(request):
-
-    # TODO:
-    #   Grab user info if they are logged in
-    #   Grab farmer info if they are logged in and have a farmer attached to userid
-    #   Grab registration info if they have already registered
+    """For when a user already exists."""
     user = User.objects.get(id=request.user.id)
     try:
         farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
@@ -1019,6 +1012,7 @@ def wisc_cc_register_2(request):
 
 @login_required
 def wisc_cc_register_3(request):
+    """Thank you for registering page"""
 
     return render(request, "wisccc/wisc_cc_register_3.html")
 
