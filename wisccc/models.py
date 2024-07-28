@@ -41,6 +41,16 @@ class Farmer(models.Model):
     phone_number = models.CharField(max_length=13, blank=True)
 
 
+class ExpandAcresChoices(models.TextChoices):
+    """Different Nutrient management information sources"""
+
+    BLANK = "", ""
+    YES = "YES", "Yes"
+    NO = "NO", "No"
+    ALREADY_MAX = "ALREADY_MAX", "Already all cover cropped"
+    OTHER = "OTHER", "Other"
+
+
 class NutrientMgmtSourcesChoices(models.TextChoices):
     """Different Nutrient management information sources"""
 
@@ -898,6 +908,7 @@ class Survey(models.Model):
 
 
 class SurveyFarm(models.Model):
+
     # Timestamp
     survey_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -1000,7 +1011,7 @@ class SurveyFarm(models.Model):
     )
 
     # 6. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
-    info_source_cover_crops_1 = models.CharField(
+    info_source_cover_crops_1 = models.TextField(
         verbose_name="Top information source for cover crops",
         # choices=CoverCropInfoSourcesChoices.choices,
         max_length=1000,
@@ -1081,6 +1092,7 @@ class SurveyFarm(models.Model):
     # Add options: 	Yes/No/Already all cover cropped /Other
     barriers_to_expansion = models.CharField(
         verbose_name="Would you like to expand the number of acres you cover crop?",
+        choices=ExpandAcresChoices.choices,
         null=True,
         max_length=550,
     )
@@ -1136,6 +1148,18 @@ class SurveyFarm(models.Model):
     # 2023 Any additional thoughts or questions? Any important survey questions we should ask next time?Any additional thoughts or questions? Any important survey questions we should ask next time?
     additional_thoughts = models.TextField(
         verbose_name="Please share anything else we should know, including any feedback on the survey.",
+        null=True,
+    )
+
+    encourage_cc = models.CharField(
+        verbose_name="Which of the following would do the most to encourage more farmers to cover crop?",
+        choices=CoverCropSupportChoices.choices,
+        null=True,
+        max_length=100,
+    )
+
+    encourage_cc_write_in = models.TextField(
+        verbose_name="Please share any details",
         null=True,
     )
 
