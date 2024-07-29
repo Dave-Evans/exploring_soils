@@ -44,27 +44,29 @@
         {% endif %}
 
 
-        <p>There are four sections to the survey.</p>
+        <p>There are seven sections to the survey.</p>
         <div class="col-md-10">
           <div class="list-group">
             {% if completed_0 %}
             <a href="{% url 'wisc_cc_survey1' %}"
-              class="list-group-item list-group-item-action list-group-item-success">I. About You - Completed! Click to
+              class="list-group-item list-group-item-action list-group-item-success">I. General Info - Completed! Click
+              to
               edit your response.</a>
             {% else %}
             <a href="{% url 'wisc_cc_survey1' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">I. About You</a>
+              class="list-group-item list-group-item-action list-group-item-warning">I. General Info</a>
             {% endif %}
 
             {% if completed_1 %}
             <a href="{% url 'wisc_cc_survey2' %}"
-              class="list-group-item list-group-item-action list-group-item-success">II. General Farm Characteristics -
+              class="list-group-item list-group-item-action list-group-item-success">II. Cover cropping goals & support
+              -
               Completed! Click to
               edit your response.</a>
             {% else %}
             <a href="{% url 'wisc_cc_survey2' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">II. General Farm
-              Characteristics</a>
+              class="list-group-item list-group-item-action list-group-item-warning">II. Cover cropping goals & support
+            </a>
             {% endif %}
 
             {% if completed_2 %}
@@ -81,17 +83,28 @@
 
             {% if completed_3 %}
             <a href="{% url 'wisc_cc_survey4' %}"
-              class="list-group-item list-group-item-action list-group-item-success">IV. Thoughts on outreach about
-              cover cropping - Completed!
+              class="list-group-item list-group-item-action list-group-item-success">IV. Research Field: Planting dates
+              & timing
+              - Completed!
               Click
               to
               edit your response.</a>
             {% else %}
             <a href="{% url 'wisc_cc_survey4' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">IV. Thoughts on outreach about
-              cover cropping</a>
+              class="list-group-item list-group-item-action list-group-item-warning">IV. Research Field: Planting dates
+              & timing</a>
             {% endif %}
 
+            <a href="{% url 'wisc_cc_survey5' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">V. Research Field: Manure, tillage,
+              soil conditions</a>
+
+            <a href="{% url 'wisc_cc_survey6' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">VI. Research Field: Cover crop
+              seeding & cost</a>
+
+            <a href="{% url 'wisc_cc_survey7' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">VII. Final thoughts</a>
           </div>
         </div>
         <br>
