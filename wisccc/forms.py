@@ -2528,3 +2528,259 @@ class SurveyFieldFormSection3(forms.ModelForm):
             "cover_crop_species_and_rate_write_in",
             "cover_crop_multispecies_mix_write_in",
         )
+
+
+class SurveyFieldFormSection4_part1(forms.ModelForm):
+
+    # 31	What date this year did you plant your cash crop in this field?
+    cash_crop_planting_date = forms.DateField(
+        label="31. What date this year did you plant your cash crop in this field? (Estimate is OK if not known)",
+        required=True,
+    )
+
+    class Meta:
+        model = SurveyField
+        fields = ("cash_crop_planting_date",)
+
+
+class SurveyFarmFormSection4(forms.ModelForm):
+
+    # 34. Does planting a cover crop delay when you would otherwise plant your cash crop?
+    cover_crops_delay_cash_crop = forms.ChoiceField(
+        label="34. Does planting a cover crop delay when you would otherwise plant your cash crop?",
+        choices=TRUE_FALSE_CHOICES,
+        required=True,
+    )
+
+    class Meta:
+        model = SurveyFarm
+        fields = ("cover_crops_delay_cash_crop",)
+
+
+class SurveyFieldFormSection4_part2(forms.ModelForm):
+
+    # 46	Cover crop planting date for this field (estimate is OK if not known).
+    cover_crop_planting_date = forms.DateField(
+        label="46. Cover crop planting date for this field (estimate is OK if not known).",
+        required=True,
+    )
+    # 47	"Estimated termination timing/method for this field.
+    cover_crop_estimated_termination = forms.ChoiceField(
+        label="47. Estimated termination timing/method for this field.",
+        choices=TerminationMethodTimingChoices.choices,
+        required=True,
+    )
+
+    # 48	Number of days estimated between crop harvest and cover crop establishment in this field.
+    days_between_crop_hvst_and_cc_estd = forms.IntegerField(
+        label="48. Number of days estimated between crop harvest and cover crop establishment in this field.",
+        min_value=0,
+        max_value=365,
+        required=True,
+    )
+
+    class Meta:
+        model = SurveyField
+        fields = (
+            "cover_crop_planting_date",
+            "cover_crop_estimated_termination",
+            "days_between_crop_hvst_and_cc_estd",
+        )
+
+
+class SurveyFieldFormSection5(forms.ModelForm):
+
+    # 37a	Will you apply manure prior to seeding cover crops on this field, and at what rate?
+    manure_prior = forms.ChoiceField(
+        label="37. Will you apply manure prior to seeding cover crops on this field?",
+        required=True,
+        choices=TRUE_FALSE_CHOICES,
+    )
+    # 37b
+    manure_prior_rate = forms.IntegerField(
+        label="At what rate will the manure be applied?",
+        required=False,
+        min_value=0,
+    )
+    # 37c
+    manure_prior_rate_units = forms.ChoiceField(
+        label="Please select the units for the manure application rate.",
+        choices=ManureApplicateUnitsChoices.choices,
+        required=False,
+    )
+
+    # 38a Will manure be applied to the field after the cover crop is established?
+    manure_post = forms.ChoiceField(
+        label="38. Will manure be applied to the field after the cover crop is established?",
+        required=True,
+        choices=TRUE_FALSE_CHOICES,
+    )
+    # 38b
+    manure_post_rate = forms.IntegerField(
+        label="At what rate will the manure be applied?",
+        required=False,
+        min_value=0,
+    )
+    # 38c
+    manure_post_rate_units = forms.ChoiceField(
+        label="The units for the manure application rate",
+        choices=ManureApplicateUnitsChoices.choices,
+        required=False,
+    )
+    # 39	"What is your tillage system for the cash crop preceding the cover crop?
+    tillage_system_cash_crop = forms.ChoiceField(
+        label="39. What is your tillage system for the cash crop preceding the cover crop?",
+        choices=TillageSystemChoices.choices,
+        required=True,
+    )
+    # 40a	"Primary tillage equipment (select all that apply) for a cash crop preceding a cover crop?
+    primary_tillage_equipment = forms.ChoiceField(
+        label="40. Primary tillage equipment (select all that apply) for a cash crop preceding a cover crop?",
+        choices=PrimaryTillageEquipmentChoices.choices,
+        required=True,
+    )
+    # 40b
+    primary_tillage_equipment_write_in = forms.CharField(
+        label="If you selected other, please explain.",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+        required=False,
+    )
+    # 41	"Secondary tillage equipment (select all that apply) for cash crop preceding the cover crop?
+    secondary_tillage_equipment = forms.ChoiceField(
+        label="41. Secondary tillage equipment (select all that apply) for cash crop preceding the cover crop?",
+        choices=SecondaryTillageEquipmentChoices.choices,
+        required=False,
+    )
+    secondary_tillage_equipment_write_in = forms.CharField(
+        label="If you selected other, please explain.",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+        required=False,
+    )
+
+    # 42	"Soil conditions in this field at cover crop seeding
+    soil_conditions_at_cover_crop_seeding = forms.ChoiceField(
+        label="42. Soil conditions in this field at cover crop seeding.",
+        choices=SoilConditionsSeedingChoices.choices,
+        required=True,
+    )
+
+    # 33	"Please choose the dominant soil texture of the field.
+    dominant_soil_texture = forms.ChoiceField(
+        label="33. Please select the dominant soil texture of this field.",
+        choices=SoilTextureClassChoices.choices,
+        required=True,
+    )
+
+    class Meta:
+        model = SurveyField
+        fields = (
+            "manure_prior",
+            "manure_prior_rate",
+            "manure_prior_rate_units",
+            "manure_post",
+            "manure_post_rate",
+            "manure_post_rate_units",
+            "tillage_system_cash_crop",
+            "primary_tillage_equipment",
+            "primary_tillage_equipment_write_in",
+            "secondary_tillage_equipment",
+            "secondary_tillage_equipment_write_in",
+            "soil_conditions_at_cover_crop_seeding",
+            "dominant_soil_texture",
+        )
+
+
+class SurveyFieldFormSection6(forms.ModelForm):
+
+    # 43	"Cover Crop Seeding Method.
+    cover_crop_seeding_method = forms.ChoiceField(
+        label="43. Please select your the seeding method for your cover crop.",
+        choices=SeedingMethodChoices.choices,
+        required=True,
+    )
+
+    # 43 b
+    cover_crop_seeding_method_write_in = forms.CharField(
+        label="If you selected other, please explain.",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+        required=False,
+    )
+
+    # 44
+    cover_crop_seed_cost = forms.IntegerField(
+        label="44. Estimated cover crop seed cost for this field ($/acre)",
+        min_value=0,
+        required=True,
+    )
+    # 45	Estimated cover crop planting cost per acre in this field. Please use UW Extension Custom Rate Guide.(https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf)
+    cover_crop_planting_cost = forms.IntegerField(
+        label='45. Estimated cover crop planting cost per acre in this field. Please use <a href="https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf" target="_blank" rel="noopener noreferrer">UW Extension Custom Rate Guide.</a>',
+        min_value=0,
+        required=True,
+    )
+
+    class Meta:
+        model = SurveyField
+        fields = (
+            "cover_crop_seeding_method",
+            "cover_crop_seeding_method_write_in",
+            "cover_crop_seed_cost",
+            "cover_crop_planting_cost",
+        )
+
+
+class SurveyFarmFormSection6(forms.ModelForm):
+    # 35. Do you save cover crop seed?
+    save_cover_crop_seed = forms.ChoiceField(
+        label="35. Do you save cover crop seed?",
+        required=True,
+        choices=TRUE_FALSE_CHOICES,
+    )
+    # 36. What is your source for cover crop seed?
+    source_cover_crop_seed = forms.CharField(
+        label="36. What is your cover crop seed source?",
+        required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    class Meta:
+        model = SurveyFarm
+        fields = (
+            "save_cover_crop_seed",
+            "source_cover_crop_seed",
+        )
+
+
+class SurveyFarmFormSection7(forms.ModelForm):
+
+    # 51	Do you have any additional thoughts or questions about this data gathering process? Any important survey questions we should ask next time?
+    additional_thoughts = forms.CharField(
+        label="51. Any additional thoughts or questions? Any important survey questions we should ask next time?",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=1000,
+        required=False,
+    )
+
+    encourage_cc = forms.ChoiceField(
+        label="Which of the following would do the most to encourage more farmers to cover crop?",
+        choices=CoverCropSupportChoices.choices,
+        required=False,
+    )
+
+    encourage_cc_write_in = forms.CharField(
+        label="Please share any details",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        required=False,
+    )
+
+    class Meta:
+        model = SurveyFarm
+        fields = (
+            "additional_thoughts",
+            "encourage_cc",
+            "encourage_cc_write_in",
+        )
