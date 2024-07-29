@@ -1,0 +1,120 @@
+{% load crispy_forms_tags %}
+
+
+
+
+
+<div class="form-row">
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2021_cash_crop_species|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2021_cover_crop_species|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2022_cash_crop_species|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2022_cover_crop_species|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2023_cash_crop_species|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2023_cover_crop_species|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-10 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation|as_crispy_field }}
+    </div>
+</div>
+
+<p>Please select any of the following that were planted as a cover crop in this field *this year*.</p>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_1|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_1|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_1_units|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_2_units|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_3|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_3|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_3_units|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_4|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_4|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_4_units|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_5|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_5|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_5_units|as_crispy_field }}
+    </div>
+</div>
+<hr>
+<p><b>Mrill, do we keep these?*</b></p>
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_and_rate_write_in|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_multispecies_mix_write_in|as_crispy_field }}
+    </div>
+</div>
+<hr>
+
+<script>
+    $(function () {
+        $("#id_cover_crop_planting_date").datepicker({
+            format: 'yyyy-mm-dd',
+        });
+    });
+
+
+    $(function () {
+        $("#id_cash_crop_planting_date").datepicker({
+            format: 'yyyy-mm-dd',
+        });
+    });
+</script>

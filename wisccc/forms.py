@@ -2347,3 +2347,184 @@ class SurveyFieldFormFull(forms.ModelForm):
             "cover_crop_estimated_termination",
             "days_between_crop_hvst_and_cc_estd",
         )
+
+
+class SurveyFieldFormSection3(forms.ModelForm):
+
+    # In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
+    # ??	Question about multiple year rotation?
+    # 18	"Please describe your crop rotation for this field including cover crops.
+    # 2021. Cash crop drop down        cover crop drop down
+    # 2022 Cash crop drop down        cover crop drop down
+    # 2023 Cash crop drop down        cover crop drop down
+    # 20 a
+    crop_rotation_2021_cash_crop_species = forms.ChoiceField(
+        label="20a. Cash crop planted 2022",
+        choices=CashCropChoices.choices,
+        required=True,
+        initial=CashCropChoices.BLANK,
+    )
+    # 20 b
+    crop_rotation_2021_cover_crop_species = forms.ChoiceField(
+        label="20b. Cover crop planted in 2022",
+        choices=CoverCropChoicesWMulti.choices,
+        required=True,
+        initial=CoverCropChoices.BLANK,
+    )
+
+    # 21 a.
+    crop_rotation_2022_cash_crop_species = forms.ChoiceField(
+        label="21a. Cash crop planted 2023",
+        choices=CashCropChoices.choices,
+        required=True,
+    )
+    # 21 b
+    crop_rotation_2022_cover_crop_species = forms.ChoiceField(
+        label="21b. Cover crop planted in 2023",
+        choices=CoverCropChoicesWMulti.choices,
+        required=True,
+        initial=CoverCropChoices.BLANK,
+    )
+    # 22 a.
+    crop_rotation_2023_cash_crop_species = forms.ChoiceField(
+        label="22a. Cash crop planted 2024",
+        choices=CashCropChoices.choices,
+        required=True,
+    )
+    # 22 b.
+    crop_rotation_2023_cover_crop_species = forms.ChoiceField(
+        label="22b. Cover crop in planted 2024",
+        choices=CoverCropChoicesWMulti.choices,
+        required=True,
+    )
+    # 23	"Please describe your crop rotation for this field including cover crops.
+    crop_rotation = forms.CharField(
+        label="23. Are there any other details you would like to share about your crop rotation?",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+        required=False,
+    )
+
+    # 24 a
+    # Species 1
+    cover_crop_species_1 = forms.ChoiceField(
+        label="24. Cover crop 1",
+        choices=CoverCropChoices.choices,
+        required=True,
+    )
+    # 24b
+    cover_crop_planting_rate_1 = forms.IntegerField(
+        label="Planting rate, for cover crop 1", required=True
+    )
+    # 24c
+    cover_crop_planting_rate_1_units = forms.ChoiceField(
+        label="Units for cover crop 1",
+        choices=CoverCropRateUnitsChoices.choices,
+        required=True,
+    )
+    # Species 2
+    # 25a
+    cover_crop_species_2 = forms.ChoiceField(
+        label="25. Cover crop 2",
+        choices=CoverCropChoices.choices,
+        required=False,
+    )
+    # 25b
+    cover_crop_planting_rate_2 = forms.IntegerField(
+        label="Planting rate, for cover crop 2", required=False
+    )
+    # 25c
+    cover_crop_planting_rate_2_units = forms.ChoiceField(
+        label="Units for cover crop 2",
+        choices=CoverCropRateUnitsChoices.choices,
+        required=False,
+    )
+    # Species 3
+    # 26
+    cover_crop_species_3 = forms.ChoiceField(
+        label="26. Cover crop 3",
+        choices=CoverCropChoices.choices,
+        required=False,
+    )
+    cover_crop_planting_rate_3 = forms.IntegerField(
+        label="Planting rate, for cover crop 3", required=False
+    )
+    cover_crop_planting_rate_3_units = forms.ChoiceField(
+        label="Units for cover crop 3",
+        choices=CoverCropRateUnitsChoices.choices,
+        required=False,
+    )
+    # Species 4
+    # 27
+    cover_crop_species_4 = forms.ChoiceField(
+        label="27. Cover crop 4",
+        choices=CoverCropChoices.choices,
+        required=False,
+    )
+    cover_crop_planting_rate_4 = forms.IntegerField(
+        label="Planting rate, for cover crop 4", required=False
+    )
+    cover_crop_planting_rate_4_units = forms.ChoiceField(
+        label="Units for cover crop 4",
+        choices=CoverCropRateUnitsChoices.choices,
+        required=False,
+    )
+    # Species 5
+    # 28
+    cover_crop_species_5 = forms.ChoiceField(
+        label="28. Cover crop 5",
+        choices=CoverCropChoices.choices,
+        required=False,
+    )
+    cover_crop_planting_rate_5 = forms.IntegerField(
+        label="Planting rate, for cover crop 5", required=False
+    )
+    cover_crop_planting_rate_5_units = forms.ChoiceField(
+        label="Units for cover crop 5",
+        choices=CoverCropRateUnitsChoices.choices,
+        required=False,
+    )
+
+    # 29
+    cover_crop_species_and_rate_write_in = forms.CharField(
+        label="29. Other cover crops planted and their rates, please specify in pounds per acre.",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+        required=False,
+    )
+    # 30
+    cover_crop_multispecies_mix_write_in = forms.CharField(
+        label="30. If you planted a multispecies mix in 2023 please provide details.",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+        required=False,
+    )
+
+    class Meta:
+        model = SurveyField
+        fields = (
+            "crop_rotation_2021_cover_crop_species",
+            "crop_rotation_2021_cash_crop_species",
+            "crop_rotation_2022_cover_crop_species",
+            "crop_rotation_2022_cash_crop_species",
+            "crop_rotation_2023_cover_crop_species",
+            "crop_rotation_2023_cash_crop_species",
+            "crop_rotation",
+            "cover_crop_species_1",
+            "cover_crop_planting_rate_1",
+            "cover_crop_planting_rate_1_units",
+            "cover_crop_species_2",
+            "cover_crop_planting_rate_2",
+            "cover_crop_planting_rate_2_units",
+            "cover_crop_species_3",
+            "cover_crop_planting_rate_3",
+            "cover_crop_planting_rate_3_units",
+            "cover_crop_species_4",
+            "cover_crop_planting_rate_4",
+            "cover_crop_planting_rate_4_units",
+            "cover_crop_species_5",
+            "cover_crop_planting_rate_5",
+            "cover_crop_planting_rate_5_units",
+            "cover_crop_species_and_rate_write_in",
+            "cover_crop_multispecies_mix_write_in",
+        )

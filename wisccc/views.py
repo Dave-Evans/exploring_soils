@@ -25,6 +25,7 @@ from django_tables2 import RequestConfig
 from wisccc.tables import ResponseTable, RegistrationTable
 from wisccc.forms import (
     SurveyFieldFormFull,
+    SurveyFieldFormSection3,
     FieldFarmFormFull,
     SurveyForm1,
     SurveyForm2,
@@ -233,6 +234,7 @@ def wisc_cc_survey2(request):
 
 @login_required
 def wisc_cc_survey3(request):
+    """Uses SurveyField and FieldFarm"""
     # field names as keys
     context = {}
 
@@ -248,6 +250,7 @@ def wisc_cc_survey3(request):
         .first()
     )
     if survey_farm is None:
+        survey_farm = SurveyFarm.objects.create(farmer=farmer, survey_year=survey_year)
         survey_field = None
     else:
         survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
@@ -258,25 +261,16 @@ def wisc_cc_survey3(request):
         field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
 
     # pass the object as instance in form
-    survey_farm_form = SurveyFarmFormPart2(request.POST or None, instance=survey_farm)
-
-    survey_field_form = SurveyFieldFormFull(request.POST or None, instance=survey_field)
-
+    survey_field_form = SurveyFieldFormSection3(request.POST or None, instance=survey_field)
     field_farm_form = FieldFarmFormFull(request.POST or None, instance=field_farm)
 
-    if (
-        survey_farm_form.is_valid()
-        and survey_field_form.is_valid()
-        and field_farm_form.is_valid()
-    ):
-        # Just save survey_farm because no after the fact additions necessary
-        new_survey_farm_form = survey_farm_form.save()
+    if survey_field_form.is_valid() and field_farm_form.is_valid():
 
         new_field_farm_form = field_farm_form.save(commit=False)
         new_field_farm_form.farmer = farmer
 
         new_survey_field_form = survey_field_form.save(commit=False)
-        new_survey_field_form.survey_farm = new_survey_farm_form
+        new_survey_field_form.survey_farm = survey_farm
         new_survey_field_form.field_farm = new_field_farm_form
         # Make sure to save field_farm first
         new_field_farm_form.save()
@@ -284,10 +278,10 @@ def wisc_cc_survey3(request):
 
         return redirect("wisc_cc_survey3")
     # add form dictionary to context
-    context["survey_farm_form"] = survey_farm_form
-    context["survey_field_form"] = survey_field_form
-    context["field_farm_form"] = field_farm_form
-    template = "wisccc/survey_section_2_field_rotation_rates.html"
+
+    context["form_surveyfield_section_3"] = survey_field_form
+    context["field_farm_full_form"] = field_farm_form
+    template = "wisccc/survey_section_3_field_rotation_rates.html"
     return render(request, template, context)
 
 
