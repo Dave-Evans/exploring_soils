@@ -1673,6 +1673,24 @@ class SurveyFarmFormFull(forms.ModelForm):
         max_length=500,
     )
 
+    biggest_challenge_cc = forms.CharField(
+        label="What is your biggest challenge or unanswered question when it comes to cover cropping?",
+        required=True,
+        max_length=500,
+    )
+
+    learning_history_cc = forms.CharField(
+        label="How would you describe your learning history for cover cropping (including personal experience)?",
+        required=True,
+        max_length=500,
+    )
+
+    conservation_programs = forms.CharField(
+        label="Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices?",
+        required=False,
+        max_length=500,
+    )
+
     # 10. In terms of support for cover cropping, select and rank the top 1 to 3 factors you’d like to see more of:
     support_cover_crops_1 = forms.ChoiceField(
         label="10. Which of the following would make the biggest difference to you in terms of support for using cover crops?",
@@ -1698,8 +1716,7 @@ class SurveyFarmFormFull(forms.ModelForm):
     barriers_to_expansion = forms.ChoiceField(
         label="13. Would you like to expand the number of acres you cover crop?",
         required=True,
-        choices=ExpandAcresChoices,
-        max_length=500,
+        choices=ExpandAcresChoices.choices,
     )
 
     barriers_to_expansion_write_in = forms.CharField(
@@ -1772,14 +1789,13 @@ class SurveyFarmFormFull(forms.ModelForm):
     )
 
     encourage_cc = forms.ChoiceField(
-        verbose_name="Which of the following would do the most to encourage more farmers to cover crop?",
+        label="Which of the following would do the most to encourage more farmers to cover crop?",
         choices=CoverCropSupportChoices.choices,
         required=False,
-        max_length=100,
     )
 
     encourage_cc_write_in = forms.CharField(
-        verbose_name="Please share any details",
+        label="Please share any details",
         widget=forms.Textarea(attrs={"rows": 5}),
         required=False,
     )
@@ -1818,6 +1834,9 @@ class SurveyFarmFormFull(forms.ModelForm):
             "info_source_cover_crops_2",
             "info_source_cover_crops_3",
             "info_source_cover_crops_write_in",
+            "biggest_challenge_cc",
+            "learning_history_cc",
+            "conservation_programs",
             "support_cover_crops_1",
             "support_cover_crops_write_in",
             "lacking_any_info_cover_crops",
@@ -1836,6 +1855,111 @@ class SurveyFarmFormFull(forms.ModelForm):
             "encourage_cc_write_in",
             "confirmed_accurate",
             "notes_admin",
+        )
+
+
+class SurveyFarmFormSection2(forms.ModelForm):
+
+    # 1. Years Experience
+    # Changing this to char field to accomodate previous years data which contained ranges
+    # 1. Years Experience
+    years_experience = forms.IntegerField(
+        label="1. How many total years experience do you have planting cover crops?",
+        required=True,
+        min_value=0,
+        max_value=100,
+    )
+
+    # 2. Total acres of cover crops
+    total_acres = forms.IntegerField(
+        label="2. Total acres you planted to cover crops this year.",
+        required=True,
+        min_value=0,
+        max_value=100000,
+    )
+
+    # 3. Percent acres of your farm in cc?
+    percent_of_farm_cc = forms.IntegerField(
+        label="3. What percent of all your farm acres did you plant to covers this year?",
+        required=True,
+        min_value=0,
+        max_value=100,
+    )
+
+    main_cc_goal_this_year = forms.CharField(
+        label="What is your main goal for cover cropping this year?",
+        required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    satisfied_with_cc_results = forms.CharField(
+        label="How satisfied are you with results you get from cover cropping? ",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    barriers_to_expansion = forms.ChoiceField(
+        label="13. Would you like to expand the number of acres you cover crop?",
+        required=True,
+        choices=ExpandAcresChoices.choices,
+    )
+
+    barriers_to_expansion_write_in = forms.CharField(
+        label="If you chose “other” please provide details.",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=1000,
+    )
+
+    # 8. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
+    info_source_cover_crops_1 = forms.CharField(
+        label="8. What are your top sources of information on cover cropping?",
+        help_text="Answers might include Agronomist, CCA, or other private consultant, friends and neighbor farmers, local cooperative, land conservation office, producer-led Watershed Group, UW Extension",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    biggest_challenge_cc = forms.CharField(
+        label="What is your biggest challenge or unanswered question when it comes to cover cropping?",
+        required=True,
+        max_length=500,
+    )
+
+    learning_history_cc = forms.CharField(
+        label="How would you describe your learning history for cover cropping (including personal experience)?",
+        required=True,
+        max_length=500,
+    )
+    if_use_crop_insurance = forms.CharField(
+        label="15. Do you use crop insurance? If so, does it influence your cover cropping decisions, and how?",
+        required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    conservation_programs = forms.CharField(
+        label="Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices?",
+        required=False,
+        max_length=500,
+    )
+
+    class Meta:
+        model = SurveyFarm
+        fields = (
+            "total_acres",
+            "percent_of_farm_cc",
+            "years_experience",
+            "main_cc_goal_this_year",
+            "satisfied_with_cc_results",
+            "barriers_to_expansion",
+            "barriers_to_expansion_write_in",
+            "info_source_cover_crops_1",
+            "biggest_challenge_cc",
+            "learning_history_cc",
+            "if_use_crop_insurance",
+            "conservation_programs",
         )
 
 

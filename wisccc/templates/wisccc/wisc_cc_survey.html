@@ -48,46 +48,46 @@
         <div class="col-md-10">
           <div class="list-group">
             {% if completed_0 %}
-            <a href="{% url 'wisc_cc_survey0' %}"
+            <a href="{% url 'wisc_cc_survey1' %}"
               class="list-group-item list-group-item-action list-group-item-success">I. About You - Completed! Click to
               edit your response.</a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey0' %}"
+            <a href="{% url 'wisc_cc_survey1' %}"
               class="list-group-item list-group-item-action list-group-item-warning">I. About You</a>
             {% endif %}
 
             {% if completed_1 %}
-            <a href="{% url 'wisc_cc_survey1' %}"
+            <a href="{% url 'wisc_cc_survey2' %}"
               class="list-group-item list-group-item-action list-group-item-success">II. General Farm Characteristics -
               Completed! Click to
               edit your response.</a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey1' %}"
+            <a href="{% url 'wisc_cc_survey2' %}"
               class="list-group-item list-group-item-action list-group-item-warning">II. General Farm
               Characteristics</a>
             {% endif %}
 
             {% if completed_2 %}
-            <a href="{% url 'wisc_cc_survey2' %}"
+            <a href="{% url 'wisc_cc_survey3' %}"
               class="list-group-item list-group-item-action list-group-item-success">III. "Research Field" Cover Crop
               Information - Completed! Click to
               edit your response.</a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey2' %}"
+            <a href="{% url 'wisc_cc_survey3' %}"
               class="list-group-item list-group-item-action list-group-item-warning">III. "Research Field" Cover Crop
               Information</a>
             {% endif %}
 
 
             {% if completed_3 %}
-            <a href="{% url 'wisc_cc_survey3' %}"
+            <a href="{% url 'wisc_cc_survey4' %}"
               class="list-group-item list-group-item-action list-group-item-success">IV. Thoughts on outreach about
               cover cropping - Completed!
               Click
               to
               edit your response.</a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey3' %}"
+            <a href="{% url 'wisc_cc_survey4' %}"
               class="list-group-item list-group-item-action list-group-item-warning">IV. Thoughts on outreach about
               cover cropping</a>
             {% endif %}
