@@ -95,9 +95,15 @@
               & timing</a>
             {% endif %}
 
+            {% if completed_5 %}
             <a href="{% url 'wisc_cc_survey5' %}"
               class="list-group-item list-group-item-action list-group-item-warning">V. Research Field: Manure, tillage,
               soil conditions</a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey5' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">V. Research Field: Manure, tillage,
+              soil conditions</a>
+            {% endif %}
 
             <a href="{% url 'wisc_cc_survey6' %}"
               class="list-group-item list-group-item-action list-group-item-warning">VI. Research Field: Cover crop

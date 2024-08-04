@@ -117,6 +117,9 @@ urlpatterns = [
         r"^wisc-cc-survey/2$", wisccc_views.wisc_cc_survey2, name="wisc_cc_survey2"
     ),
     re_path(
+        r"^wisc-cc-survey/3a$", wisccc_views.wisc_cc_survey3a, name="wisc_cc_survey3a"
+    ),
+    re_path(
         r"^wisc-cc-survey/3$", wisccc_views.wisc_cc_survey3, name="wisc_cc_survey3"
     ),
     re_path(
@@ -130,6 +133,21 @@ urlpatterns = [
     ),
     re_path(
         r"^wisc-cc-survey/7$", wisccc_views.wisc_cc_survey7, name="wisc_cc_survey7"
+    ),
+    path(
+        "update_fieldfarm/<id>",
+        wisccc_views.update_fieldfarm,
+        name="update_fieldfarm",
+    ),
+    path(
+        "create_fieldfarm",
+        wisccc_views.create_fieldfarm,
+        name="create_fieldfarm",
+    ),
+    path(
+        "wisc_cc_survey_populate_fieldfarm/<id>",
+        wisccc_views.wisc_cc_survey_populate_fieldfarm,
+        name="wisc_cc_survey_populate_fieldfarm",
     ),
     re_path(r"^wisc-cc-graph$", wisccc_views.wisc_cc_graph, name="wisc_cc_graph"),
     re_path(r"^wisc_cc_graph$", wisccc_views.wisc_cc_graph, name="wisc_cc_graph"),

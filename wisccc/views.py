@@ -178,10 +178,9 @@ def wisc_cc_survey(request):
     )
 
 
-# REVISE each survey page according to each form
 @login_required
 def wisc_cc_survey1(request):
-    """Farmer information"""
+    """I. General info: Farmer information"""
     try:
         instance = Farmer.objects.filter(user_id=request.user.id).first()
     except:
@@ -207,7 +206,8 @@ def wisc_cc_survey1(request):
 
 @login_required
 def wisc_cc_survey2(request):
-    """only Survey Farm data"""
+    """II. Cover cropping goals and support
+    only Survey Farm data"""
     # field names as keys
     context = {}
     survey_year = 2024
@@ -241,7 +241,15 @@ def wisc_cc_survey2(request):
 
 @login_required
 def wisc_cc_survey3(request):
-    """Uses SurveyField and FieldFarm"""
+    """Research Field: Crop rotation and planting rates
+    Uses SurveyField and FieldFarm
+    We will redirect a user to separate page, where they will select
+    either an existing field or opt to create a new one.
+    They will be redirected this page if:
+        survey_field (current survey year) does not have field_farm_id populated
+        AND
+        there is at least one field_farm object for that farmer
+    """
     # field names as keys
     context = {}
 
@@ -251,21 +259,41 @@ def wisc_cc_survey3(request):
     if farmer is None:
         # This is in case someone clicks to fill out the survey before filling in farmer info
         farmer = Farmer.objects.create(user_id=request.user.id)
+
+    # Grab survey farm objects
     survey_farm = (
         SurveyFarm.objects.filter(farmer_id=farmer.id)
         .filter(survey_year=survey_year)
         .first()
     )
+
+    # These if/else statements are here in case a record of the SurveyFarm is not yet created for 18.216.216.77
+    # the farmer and needs to be created for this year. Without these if/else then errors occur because
+    # of the need for the id field later on.
     if survey_farm is None:
         survey_farm = SurveyFarm.objects.create(farmer=farmer, survey_year=survey_year)
         survey_field = None
     else:
         survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
 
+    # If the survey field has not been created then no field populated for this year
     if survey_field is None:
         field_farm = None
-    else:
+    # If the field farm id is not null, then it has been populated already
+    elif survey_field.field_farm_id is not None:
         field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
+    else:
+        field_farm = None
+    print("field_farm is None", field_farm is None)
+    # Is there a field_farm associated with this survey_field?
+    if field_farm is None:
+        # Check for fields associated with this farmer, if one or more, then send to selection page
+        field_farms = FieldFarm.objects.filter(farmer_id=farmer.id)
+        print("field_farms is None", field_farms is None)
+        print("len(field_farms)", len(field_farms))
+        if len(field_farms) >= 1:
+            return redirect("wisc_cc_survey3a")
+        # Else, then we will just be creating it here.
 
     # pass the object as instance in form
     survey_field_form = SurveyFieldFormSection3(
@@ -294,8 +322,25 @@ def wisc_cc_survey3(request):
 
 
 @login_required
+def wisc_cc_survey3a(request):
+    """For selecting which field the survey is for.
+    We can assume that someone coming here has more than one.
+    If no farmer associated, then send back to farmer part."""
+    context = {}
+    farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if farmer is None:
+        return redirect("wisc_cc_survey1")
+
+    field_farms = FieldFarm.objects.filter(farmer_id=farmer.id)
+    context["field_farm_list"] = field_farms
+    template = "wisccc/survey_section_3a_select_field.html"
+    return render(request, template, context)
+
+
+@login_required
 def wisc_cc_survey4(request):
-    """Uses survey_field and one question, cash crop planting date, from surveyfarm"""
+    """IV. Research Field: Planting dates & timing
+    Uses survey_field and one question, cash crop planting date, from surveyfarm"""
     # Don't forget to grab based on survey_year!!!
     survey_year = 2024
     farmer = Farmer.objects.filter(user_id=request.user.id).first()
@@ -356,7 +401,8 @@ def wisc_cc_survey4(request):
 
 @login_required
 def wisc_cc_survey5(request):
-    """Uses SurveyField"""
+    """V. Research Field: Manure, tillage, soil conditions
+    Uses SurveyField"""
     # field names as keys
     context = {}
 
@@ -398,7 +444,8 @@ def wisc_cc_survey5(request):
 
 @login_required
 def wisc_cc_survey6(request):
-    """Uses survey_field and surveyfarm"""
+    """VI. Research Field: Cover crop seeding & cost
+    Uses survey_field and surveyfarm"""
     # Don't forget to grab based on survey_year!!!
     survey_year = 2024
     farmer = Farmer.objects.filter(user_id=request.user.id).first()
@@ -446,7 +493,10 @@ def wisc_cc_survey6(request):
     )
 
 
+@login_required
 def wisc_cc_survey7(request):
+    """VII. Final thoughts
+    Uses SurveyFarm"""
     context = {}
     survey_year = 2024
 
@@ -476,6 +526,102 @@ def wisc_cc_survey7(request):
 
     template = "wisccc/survey_section_7_final_thoughts.html"
     return render(request, template, {"survey_farm_form": survey_farm_form})
+
+
+@login_required
+def update_fieldfarm(request, id):
+    """Takes field_farm id"""
+    context = {}
+    farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if farmer is None:
+        redirect("wisc_cc_survey1")
+
+    # Verify they can do this, better with perms.
+    field_farms = FieldFarm.objects.filter(farmer_id=farmer.id)
+    if id not in field_farms:
+        print("You don't have access to this field!")
+
+    field_farm = get_object_or_404(FieldFarm, id=id)
+    form_field_farm = FieldFarmFormFull(request.POST or None, instance=field_farm)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if form_field_farm.is_valid():
+
+        new_field_farm_form = form_field_farm.save(commit=False)
+        new_field_farm_form.farmer = farmer
+        new_field_farm_form.save()
+
+        return redirect("wisc_cc_survey3")
+    # add form dictionary to context
+    context["field_farm_full_form"] = form_field_farm
+    context["field_farm"] = field_farm
+
+    return render(request, "wisccc/fieldfarm_update.html", context)
+
+
+@login_required
+def create_fieldfarm(request):
+    """Takes field_farm id"""
+    survey_year = 2024
+    context = {}
+    farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if farmer is None:
+        redirect("wisc_cc_survey1")
+
+    form_field_farm = FieldFarmFormFull(request.POST or None)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if form_field_farm.is_valid():
+
+        new_field_farm_form = form_field_farm.save(commit=False)
+        new_field_farm_form.farmer = farmer
+        new_field_farm_form.save()
+
+        # If creating a field, we are assuming that this is the field the farmer
+        # wants to fill out the survey for
+
+        return redirect(f"wisc_cc_survey_populate_fieldfarm/{new_field_farm_form.id}")
+    # add form dictionary to context
+    context["field_farm_full_form"] = form_field_farm
+
+    return render(request, "wisccc/fieldfarm_create.html", context)
+
+
+@login_required
+def wisc_cc_survey_populate_fieldfarm(request, id):
+    """Update the current years survey (field)
+    with this fieldfarm id"""
+    print("We are in populate!")
+    survey_year = 2024
+    farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    # Grab survey farm objects
+    survey_farm = (
+        SurveyFarm.objects.filter(farmer_id=farmer.id)
+        .filter(survey_year=survey_year)
+        .first()
+    )
+
+    # These if/else statements are here in case a record of the SurveyFarm is not yet created for 18.216.216.77
+    # the farmer and needs to be created for this year. Without these if/else then errors occur because
+    # of the need for the id field later on.
+    print("Survey farm is None?", survey_farm is None)
+    if survey_farm is None:
+        survey_farm = SurveyFarm.objects.create(farmer=farmer, survey_year=survey_year)
+        survey_field = SurveyField.objects.create(survey_farm_id=survey_farm.id)
+    else:
+        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+
+    print("Survey field is None?", survey_field is None)
+    if survey_field is None:
+        survey_field = SurveyField.objects.create(survey_farm_id=survey_farm.id)
+
+    print("Farmfield id:", id)
+    survey_field.field_farm_id = id
+    survey_field.save()
+
+    return redirect("wisc_cc_survey3")
 
 
 @login_required
