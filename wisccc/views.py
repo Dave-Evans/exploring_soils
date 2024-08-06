@@ -68,26 +68,11 @@ def check_section_completed(user_id, section):
     to see if a particualr required field is a completed."""
     survey_year = 2024
     farmer = Farmer.objects.filter(user_id=user_id).first()
-    if section == "farmer":
+    if section == 1:
 
         if farmer is None:
             return False
         if farmer.last_name == "" or farmer.last_name is None:
-            return False
-
-        return True
-
-    if section == 1:
-        if farmer is None:
-            return False
-        survey_farm = (
-            SurveyFarm.objects.filter(farmer_id=farmer.id)
-            .filter(survey_year=survey_year)
-            .first()
-        )
-        if survey_farm is None:
-            return False
-        if survey_farm.percent_of_farm_cc is None:
             return False
 
         return True
@@ -102,7 +87,7 @@ def check_section_completed(user_id, section):
         )
         if survey_farm is None:
             return False
-        if survey_farm.save_cover_crop_seed is None:
+        if survey_farm.percent_of_farm_cc is None:
             return False
 
         return True
@@ -117,7 +102,91 @@ def check_section_completed(user_id, section):
         )
         if survey_farm is None:
             return False
-        if survey_farm.additional_thoughts is None:
+
+        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+        if survey_field is None:
+            return False
+
+        if survey_field.crop_rotation_2023_cash_crop_species is None:
+            return False
+
+        return True
+
+    if section == 4:
+        if farmer is None:
+            return False
+        survey_farm = (
+            SurveyFarm.objects.filter(farmer_id=farmer.id)
+            .filter(survey_year=survey_year)
+            .first()
+        )
+        if survey_farm is None:
+            return False
+
+        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+        if survey_field is None:
+            return False
+
+        if survey_field.cash_crop_planting_date is None:
+            return False
+
+        return True
+
+    if section == 5:
+        if farmer is None:
+            return False
+        survey_farm = (
+            SurveyFarm.objects.filter(farmer_id=farmer.id)
+            .filter(survey_year=survey_year)
+            .first()
+        )
+        if survey_farm is None:
+            return False
+
+        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+        if survey_field is None:
+            return False
+
+        if survey_field.manure_post is None:
+            return False
+
+        return True
+
+    if section == 6:
+        if farmer is None:
+            return False
+        survey_farm = (
+            SurveyFarm.objects.filter(farmer_id=farmer.id)
+            .filter(survey_year=survey_year)
+            .first()
+        )
+        if survey_farm is None:
+            return False
+
+        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+        if survey_field is None:
+            return False
+
+        if survey_field.cover_crop_seeding_method is None:
+            return False
+
+        return True
+
+    if section == 7:
+        if farmer is None:
+            return False
+        survey_farm = (
+            SurveyFarm.objects.filter(farmer_id=farmer.id)
+            .filter(survey_year=survey_year)
+            .first()
+        )
+        if survey_farm is None:
+            return False
+        if (
+            survey_farm.additional_thoughts is None
+            and survey_farm.encourage_cc is None
+            and survey_farm.encourage_cc_write_in is None
+        ):
             return False
 
         return True
@@ -159,10 +228,13 @@ def wisc_cc_survey(request):
     by querying one required question from each section (0 (the farmer section),1,2,3).
     If this is completed then we assume it is all completed."""
 
-    completed_0 = check_section_completed(request.user.id, "farmer")
     completed_1 = check_section_completed(request.user.id, 1)
     completed_2 = check_section_completed(request.user.id, 2)
     completed_3 = check_section_completed(request.user.id, 3)
+    completed_4 = check_section_completed(request.user.id, 4)
+    completed_5 = check_section_completed(request.user.id, 5)
+    completed_6 = check_section_completed(request.user.id, 6)
+    completed_7 = check_section_completed(request.user.id, 7)
 
     template = "wisccc/wisc_cc_survey.html"
 
@@ -170,10 +242,14 @@ def wisc_cc_survey(request):
         request,
         template,
         {
-            "completed_0": completed_0,
+            
             "completed_1": completed_1,
             "completed_2": completed_2,
             "completed_3": completed_3,
+            "completed_4": completed_4,
+            "completed_5": completed_5,
+            "completed_6": completed_6,
+            "completed_7": completed_7,
         },
     )
 

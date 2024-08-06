@@ -47,70 +47,90 @@
         <p>There are seven sections to the survey.</p>
         <div class="col-md-10">
           <div class="list-group">
-            {% if completed_0 %}
-            <a href="{% url 'wisc_cc_survey1' %}"
-              class="list-group-item list-group-item-action list-group-item-success">I. General Info - Completed! Click
-              to
-              edit your response.</a>
-            {% else %}
-            <a href="{% url 'wisc_cc_survey1' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">I. General Info</a>
-            {% endif %}
-
             {% if completed_1 %}
-            <a href="{% url 'wisc_cc_survey2' %}"
-              class="list-group-item list-group-item-action list-group-item-success">II. Cover cropping goals & support
-              -
-              Completed! Click to
-              edit your response.</a>
+            <a href="{% url 'wisc_cc_survey1' %}"
+              class="list-group-item list-group-item-action list-group-item-success">
+              I. General Info - Completed! Click to edit your response.
+            </a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey2' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">II. Cover cropping goals & support
+            <a href="{% url 'wisc_cc_survey1' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">
+              I. General Info
             </a>
             {% endif %}
 
             {% if completed_2 %}
+            <a href="{% url 'wisc_cc_survey2' %}"
+              class="list-group-item list-group-item-action list-group-item-success">
+              II. Cover cropping goals & support - Completed! Click to edit your response.
+            </a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey2' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">
+              II. Cover cropping goals & support
+            </a>
+            {% endif %}
+
+            {% if completed_3 %}
             <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-success">III. "Research Field" Cover Crop
-              Information - Completed! Click to
-              edit your response.</a>
+              class="list-group-item list-group-item-action list-group-item-success">
+              III. "Research Field" Cover Crop Information - Completed! Click to edit your response.
+            </a>
             {% else %}
             <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">III. "Research Field" Cover Crop
-              Information</a>
+              class="list-group-item list-group-item-action list-group-item-warning">
+              III. "Research Field" Cover Crop Information
+            </a>
             {% endif %}
 
 
-            {% if completed_3 %}
+            {% if completed_4 %}
             <a href="{% url 'wisc_cc_survey4' %}"
-              class="list-group-item list-group-item-action list-group-item-success">IV. Research Field: Planting dates
-              & timing
-              - Completed!
-              Click
-              to
-              edit your response.</a>
+              class="list-group-item list-group-item-action list-group-item-success">
+              IV. Research Field: Planting dates & timing - Completed! Click to edit your response.
+            </a>
             {% else %}
             <a href="{% url 'wisc_cc_survey4' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">IV. Research Field: Planting dates
-              & timing</a>
+              class="list-group-item list-group-item-action list-group-item-warning">
+              IV. Research Field: Planting dates & timing
+            </a>
             {% endif %}
 
             {% if completed_5 %}
             <a href="{% url 'wisc_cc_survey5' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">V. Research Field: Manure, tillage,
-              soil conditions</a>
+              class="list-group-item list-group-item-action list-group-item-success">
+              V. Research Field: Manure, tillage, soil conditions - Completed! Click to edit your response.
+            </a>
             {% else %}
             <a href="{% url 'wisc_cc_survey5' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">V. Research Field: Manure, tillage,
-              soil conditions</a>
+              class="list-group-item list-group-item-action list-group-item-warning">
+              V. Research Field: Manure, tillage, soil conditions
+            </a>
             {% endif %}
 
+            {% if completed_6 %}
             <a href="{% url 'wisc_cc_survey6' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">VI. Research Field: Cover crop
-              seeding & cost</a>
-
+              class="list-group-item list-group-item-action list-group-item-success">
+              VI. Research Field: Cover crop seeding & cost - Completed! Click to edit your response.
+            </a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey6' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">
+              VI. Research Field: Cover crop seeding & cost
+            </a>
+            {% endif %}
+            {% if completed_7 %}
             <a href="{% url 'wisc_cc_survey7' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">VII. Final thoughts</a>
+              class="list-group-item list-group-item-action list-group-item-success">
+              VII. Final thoughts - Completed! Click to edit your response.
+            </a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey7' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">
+              VII. Final thoughts
+            </a>
+            {% endif %}
+
           </div>
         </div>
         <br>
