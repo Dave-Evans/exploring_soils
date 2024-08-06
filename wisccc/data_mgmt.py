@@ -384,7 +384,8 @@ def pull_all_years_together(f_output):
         , stat.fq_tdn_adf
         , stat.fq_milkton
         , stat.fq_rfq
-        
+        , null as total_nitrogen
+
         , stat.cc_rate_and_species
         , stat.cc_species
         , stat.cc_species_raw
@@ -461,7 +462,7 @@ def pull_all_years_together(f_output):
         tdn_adf as fq_tdn_adf,
         milk_ton_milk2013 as fq_milkton,
         rfq as fq_rfq,
-
+        total_nitrogen,
         
         concat(		
             concat(  cover_crop_planting_rate_1, ' ', mod_cover_crop_planting_rate_1_units, ' ', mod_cover_crop_species_1),
@@ -794,6 +795,74 @@ def pull_all_years_together(f_output):
         data = pd.read_sql(query, connection)
         # df.value_counts(['cc_species', 'cc_species_raw'])
         return data
+
+
+def data_export():
+    """For exporting an Excel doc for collaborating researchers"""
+    df = pull_all_years_together("df")
+    df = df.drop(
+        columns=[
+            "survey_response_id",
+            "survey_field_id",
+            "years_experience",
+            "anpp",
+            "days_from_plant_to_bio_hrvst",
+            "cc_rate_and_species",
+            "cc_species",
+            "fq_undfom30",
+            "tillage_system",
+        ]
+    )
+    df = df.rename(
+        columns={
+            "year": "survey_year",
+            "county": "county_farm",
+            "county_single": "county_field",
+            "cc_termination": "cc_termination_timing_method",
+        }
+    )
+    # Excel doesn't want datetimes with timezones, so converting
+    # to dates
+    cols_wtzs = [
+        "cash_crop_planting_date",
+        "cc_planting_date",
+        "cc_biomass_collection_date",
+    ]
+    for col_wtz in cols_wtzs:
+        df[col_wtz] = df[col_wtz].apply(lambda a: pd.to_datetime(a).date())
+
+    # Surveys before 2023 have periods (".") for nulls,
+    #   this will clean them up.
+    # Currently replacing with blank
+    cols_wperiods = [
+        "tillage_equip_primary",
+        "tillage_equip_secondary",
+        "cc_planting_rate",
+        "cc_termination_timing_method",
+    ]
+    for col_wperiod in cols_wperiods:
+        df[col_wperiod] = df[col_wperiod].replace(".", "")
+
+    import openpyxl
+
+    file_dat = "./data/cover_crop_data_export_wmetadata.xlsx"
+    # file_dat = "data/cover_crop_data_export_wmetadata.xlsx"
+    book = openpyxl.load_workbook(file_dat)
+
+    writer = pd.ExcelWriter(file_dat, engine="openpyxl")
+    writer.book = book
+
+    ## ExcelWriter for some reason uses writer.sheets to access the sheet.
+    ## If you leave it empty it will not know that sheet Main is already there
+    ## and will create a new sheet.
+
+    writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+
+    df.to_excel(writer, "Wisconsin Cover Crop Data", index=False)
+
+    writer.save()
+
+    return file_dat
 
 
 # From Ancillary Data

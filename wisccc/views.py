@@ -1,6 +1,7 @@
 import json
 import djqscsv
 import pandas as pd
+import datetime
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.db import connection
@@ -51,7 +52,7 @@ from wisccc.models import (
     SurveyFarm,
     FieldFarm,
 )
-from wisccc.data_mgmt import pull_all_years_together, get_survey_data
+from wisccc.data_mgmt import pull_all_years_together, get_survey_data, data_export
 import pandas as pd
 
 
@@ -135,16 +136,23 @@ def wisccc_download_data(request, opt):
     # opt == 1 then full survey with qualitative
     # opt == 2 then display data
     if opt == 1:
+        resp = HttpResponse(content_type="text/csv")
+        resp["Content-Disposition"] = f"attachment; filename={filename}"
         df = get_survey_data()
         filename = "full_survey_questions.csv"
-    elif opt == 2:
-        df = pull_all_years_together("df")
-        filename = "cleaned_data_from_display.csv"
-    resp = HttpResponse(content_type="text/csv")
-    resp["Content-Disposition"] = f"attachment; filename={filename}"
+        df.to_csv(path_or_buf=resp, sep=",", index=False)
+        return resp
 
-    df.to_csv(path_or_buf=resp, sep=",", index=False)
-    return resp
+    elif opt == 2:
+        filename = data_export()
+        export_name = "wisc_cc_data_export_{}.xlsx".format(datetime.datetime.now().strftime("%Y_%m_%d"))
+        # filename = "cleaned_data_from_display.csv"
+        # df.to_csv(path_or_buf=resp, sep=",", index=False)
+        with open(filename, "rb") as f:
+            resp = HttpResponse(f.read(), content_type="application/ms-excel")
+            resp["Content-Disposition"] = f"attachment; filename={export_name}"
+
+        return resp
 
 
 @login_required
