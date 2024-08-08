@@ -862,7 +862,7 @@ def data_export():
     # writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
     metadata.to_excel(writer, sheet_name="Metadata", index=False)
     df.to_excel(writer, sheet_name="Wisconsin Cover Crop Data", index=False)
-    writer.save()
+    writer.close()
 
     return output.getvalue()
 

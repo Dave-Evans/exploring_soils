@@ -1,0 +1,40 @@
+Data category	Explanation
+id	random identifer for survey record
+survey_year	Participants fill out a survey of cover crop agronomic practices each fall.
+county_farm	County as identified by participant as where they farm; may be more than one
+zipcode	Closest zip code for sampled field as identified by participant
+county_field	County based on zipcode centroid for research field for years 2020 through 2022. For 2023 and later the county is determined based on participants's selected location on a map.
+previous_crop	The previously planted cash crop
+cash_crop_planting_date	When the previous cash crop was planted
+dominant_soil_texture	Selected from a list: clay; clay loam; loam; loamy sand; sand; sandy clay; sandy clay loam; sandy loam; silt; silt loam; silty clay; silty clay loam; muck; not sure
+manure_prior	Will you apply manure prior to seeding cover crops on this field? Yes/No
+manure_prior_rate	At what rate will the manure be applied? (numerical)
+manure_prior_rate_units	tons/acre; gallons/acre
+manure_post	Will you apply manure post to seeding cover crops on this field? Yes/No
+manure_post_rate	At what rate will the manure be applied?
+manure_post_rate_units	tons/acre; gallons/acre
+manure_rate	Units for manure application; When manure was applied prior to and post cover cropping, then surveys prior to Fall 2023 did not distinguish whether manure applications rates were for before or after.
+manure_value	Amount of manure (numerical); When manure was applied prior to and post cover cropping, then surveys prior to Fall 2023 did not distinguish whether manure applications rates were for before or after.
+residue_remaining	Describe the degree of tillage. Selected from a list:  Conservation, >30% residue remaining; Reduced, 15-30% residue remaining; Conventional, <15% residue remaining
+tillage_equip_primary	Selected from a list: moldboard plow; disk-harrow; chisel plow; disk-chisel; high-speed disk; none; other
+tillage_equip_secondary	Selected from a list: field cultivator/field finisher; disk-harrow; high-speed disk; disk-chisel; vertical tillage; none; other
+soil_conditions	Selected from a list: dry; adequate moisture, excessively wet
+cc_seeding_method	Selected from a list: frost seeded; drilled; broadcast, no incorporation; early interseeded -- broadcast; late interseeded -- broadcast; late interseeded -- aerial; broadcast + incorporation; cover crop seed mixed with fertilizer + broadcast + incorporation; other
+cc_planting_rate	ln lbs/acre unless specified otherwise.
+cc_termination_timing_method	Selected from a list: graze fall; little to no cover crop growth in spring; killing frost (fall); graze spring; early spring, herbicide application (14 plus days prior to crop establishment); harvest for forage; plant green, herbicide termination; early spring, roller-crimper termination; plant green, roller-crimper termination; other
+days_between_crop_hvst_and_cc_estd	(numerical) Days between when cash crop was harvested and cover crop was established.
+site_lon	Longitude of field. To maintain privacy, this value has been randomly shifted up to a mile away from the selected longitude.
+site_lat	Latitude of field. To maintain privacy, this value has been randomly shifted up to a mile away from the selected latitude.
+cc_planting_date	Planting date of cover crop (approximate)
+cc_biomass_collection_date	The date of fall biomass collection.
+total_precip	Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
+acc_gdd	growing degree days/units that have accumulated from when the cover crop was planted to when it was harvested derived from https://mrcc.purdue.edu/data_serv/cli-dap
+cc_biomass	Samples from 2020, 2021, 2022, 2023 were collected by UW Extension personnel. Most samples beginning in 2024 were collected by participants and mailed to AgSource and Dairyland labs for analysis.
+fq_cp	measured: crude protein (%)
+fq_andf	estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om)
+fq_ndfd30	Neutral detergent fiber digestibility after 30 hours
+fq_tdn_adf	total digestible nutrients - acid detergent fiber
+fq_milkton	"a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters."
+fq_rfq	measured: relative forage quality
+total_nitrogen	Total nitrogen in a the plant tissue, mg/L
+cc_species_raw	As entered by participant from a list: annual ryegrass; barley; berseem clover; canola/rapeseed; cereal (winter) rye; crimson clover; cowpea; field/forage pea; hairy vetch; kale; oats; other (legume); other (grass); other (broadleaf); radish; red clover; sorghum; sorghum-sudan; soybeans; sunflower; Tritcale; turnip; wheat (spring); wheat (winter); multispecies mix of 2 or more; other. 
