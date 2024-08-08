@@ -144,8 +144,18 @@ def wisccc_download_data(request, opt):
         return resp
 
     elif opt == 2:
-        filename = data_export()
-        export_name = "wisc_cc_data_export_{}.xlsx".format(datetime.datetime.now().strftime("%Y_%m_%d"))
+        export_name = "wisc_cc_data_export_{}.xlsx".format(
+            datetime.datetime.now().strftime("%Y_%m_%d")
+        )
+        excel_bytes = data_export()
+        print(type(excel_bytes))
+        response = HttpResponse(excel_bytes, content_type="application/ms-excel")
+        response["Content-Disposition"] = f"attachment; filename={export_name}"
+        return response
+
+        export_name = "wisc_cc_data_export_{}.xlsx".format(
+            datetime.datetime.now().strftime("%Y_%m_%d")
+        )
         # filename = "cleaned_data_from_display.csv"
         # df.to_csv(path_or_buf=resp, sep=",", index=False)
         with open(filename, "rb") as f:

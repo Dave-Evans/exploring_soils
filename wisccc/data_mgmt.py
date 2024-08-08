@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-
+from django.http import HttpResponse
 from django.db import connection
 from wisccc.models import SurveyFarm, SurveyField, FieldFarm, AncillaryData, Farmer
 from wisccc.models import (
@@ -22,6 +22,8 @@ from wisccc.models import (
 )
 
 from django.contrib.auth.models import User
+from django.conf import settings
+import os
 
 
 def convert_to_human_readable(column, choices_object):
@@ -799,6 +801,7 @@ def pull_all_years_together(f_output):
 
 def data_export():
     """For exporting an Excel doc for collaborating researchers"""
+
     df = pull_all_years_together("df")
     df = df.drop(
         columns=[
@@ -843,26 +846,25 @@ def data_export():
     for col_wperiod in cols_wperiods:
         df[col_wperiod] = df[col_wperiod].replace(".", "")
 
-    import openpyxl
+    file_dat = "data/cover_crop_data_export_wmetadata.csv"
+    file_dat = os.path.join(settings.BASE_DIR, file_dat)
 
-    file_dat = "./data/cover_crop_data_export_wmetadata.xlsx"
-    # file_dat = "data/cover_crop_data_export_wmetadata.xlsx"
-    book = openpyxl.load_workbook(file_dat)
+    metadata = pd.read_csv(file_dat, sep="\t")
+    from io import BytesIO, StringIO
 
-    writer = pd.ExcelWriter(file_dat, engine="openpyxl")
-    writer.book = book
+    output = BytesIO()
+    # response = HttpResponse(content_type="application/ms-excel")
+    writer = pd.ExcelWriter(output, engine="xlsxwriter")
+    # writer = pd.ExcelWriter(
+    #     excelfile, engine="openpyxl", mode="a", if_sheet_exists="replace"
+    # )
 
-    ## ExcelWriter for some reason uses writer.sheets to access the sheet.
-    ## If you leave it empty it will not know that sheet Main is already there
-    ## and will create a new sheet.
-
-    writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-
-    df.to_excel(writer, "Wisconsin Cover Crop Data", index=False)
-
+    # writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+    metadata.to_excel(writer, sheet_name="Metadata", index=False)
+    df.to_excel(writer, sheet_name="Wisconsin Cover Crop Data", index=False)
     writer.save()
 
-    return file_dat
+    return output.getvalue()
 
 
 # From Ancillary Data
