@@ -109,7 +109,6 @@ urlpatterns = [
     ),
     # Temporarily directing people to the home page rather than the survey page.
     re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),
-    # re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),
     re_path(
         r"^wisc-cc-survey/1$", wisccc_views.wisc_cc_survey1, name="wisc_cc_survey1"
     ),

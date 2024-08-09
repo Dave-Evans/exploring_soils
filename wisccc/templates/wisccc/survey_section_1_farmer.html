@@ -1,6 +1,6 @@
 {% extends 'wisccc/base_survey.html' %}
 
-{% block title %}Farmer Information{% endblock %}
+{% block title %}General information{% endblock %}
 {% load static %}
 {% load crispy_forms_tags %}
 
@@ -15,7 +15,7 @@
   //https://stackoverflow.com/questions/140460/client-js-framework-for-unsaved-data-protection
 </script>
 
-<h3 class="card-title">I. General Info</h3>
+<h3 class="card-title">I. General info</h3>
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
