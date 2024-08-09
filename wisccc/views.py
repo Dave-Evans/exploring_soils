@@ -35,11 +35,7 @@ from wisccc.forms import (
     SurveyFarmFormSection6,
     SurveyFarmFormSection7,
     FieldFarmFormFull,
-    SurveyForm1,
-    SurveyForm2,
-    SurveyForm3,
     FarmerForm,
-    FullSurveyForm,
     SurveyFarmFormFull,
     SurveyPhotoForm,
     CustomUserCreationForm,
@@ -242,7 +238,6 @@ def wisc_cc_survey(request):
         request,
         template,
         {
-            
             "completed_1": completed_1,
             "completed_2": completed_2,
             "completed_3": completed_3,
@@ -699,92 +694,6 @@ def wisc_cc_survey_populate_fieldfarm(request, id):
 
     return redirect("wisc_cc_survey3")
 
-
-@login_required
-def deprecated_wisc_cc_survey1(request):
-    try:
-        # Survey.objects.get(farmer = Farmer.objects.get(user_id = 110))
-        instance = Survey.objects.filter(user_id=request.user.id).earliest(
-            "last_updated"
-        )
-    except:
-        instance = Survey.objects.create(user_id=request.user.id)
-
-    form = SurveyForm1(request.POST or None, instance=instance)
-    if form.is_valid():
-        new_form = form.save(commit=False)
-        new_form.user = request.user
-        new_form.save()
-
-        return redirect("wisc_cc_survey2")
-
-    template = "wisccc/survey_section_1.html"
-    return render(
-        request,
-        template,
-        {
-            "form": form,
-        },
-    )
-
-
-@login_required
-def deprecated_wisc_cc_survey2(request):
-    try:
-        instance = Survey.objects.filter(user_id=request.user.id).earliest(
-            "last_updated"
-        )
-    except:
-        instance = Survey.objects.create(user_id=request.user.id)
-
-    form = SurveyForm2(request.POST or None, instance=instance)
-
-    if form.is_valid():
-        new_form = form.save(commit=False)
-        # Here classify species
-        new_form.derive_species_class()
-        new_form.populate_county()
-        new_form.user = request.user
-        new_form.save()
-
-        return redirect("wisc_cc_survey3")
-
-    template = "wisccc/survey_section_2.html"
-    return render(
-        request,
-        template,
-        {
-            "form": form,
-        },
-    )
-
-
-@login_required
-def deprecated_wisc_cc_survey3(request):
-    try:
-        instance = Survey.objects.filter(user_id=request.user.id).earliest(
-            "last_updated"
-        )
-    except:
-        instance = Survey.objects.create(user_id=request.user.id)
-
-    form = SurveyForm3(request.POST or None, instance=instance)
-
-    if form.is_valid():
-        new_form = form.save(commit=False)
-        new_form.user = request.user
-        new_form.save()
-
-        return redirect("wisc_cc_survey")
-
-    template = "wisccc/survey_section_3.html"
-    return render(
-        request,
-        template,
-        {
-            "form": form,
-        },
-    )
 
 
 def wisc_cc_graph(request):
