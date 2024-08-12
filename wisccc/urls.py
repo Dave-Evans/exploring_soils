@@ -107,6 +107,12 @@ urlpatterns = [
         wisccc_views.wisccc_download_data,
         name="wisccc_download_data",
     ),
+    re_path(
+        r"^wisccc-create-researcher$",
+        wisccc_views.wisccc_create_researcher,
+        name="wisccc_create_researcher",
+    ),
+    re_path(r"^researcher_page$", wisccc_views.researcher_page, name="researcher_page"),
     # Temporarily directing people to the home page rather than the survey page.
     re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),
     # re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),

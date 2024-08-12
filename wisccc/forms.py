@@ -16,6 +16,7 @@ from wisccc.models import (
     Farmer,
     SurveyPhoto,
     SurveyRegistration,
+    Researcher,
 )
 from wisccc.models import (
     CashCropChoices,
@@ -2445,3 +2446,34 @@ class SurveyFieldFormFull(forms.ModelForm):
             "cover_crop_estimated_termination",
             "days_between_crop_hvst_and_cc_estd",
         )
+
+
+class ResearcherSignupForm(forms.ModelForm):
+    """For creating collaborating researchers"""
+
+    institution = forms.CharField(
+        label="What institution is this researcher affiliated with?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    notes = forms.CharField(
+        label="Notes about researcher",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=500,
+    )
+    agreement_doc = forms.FileField(label="Upload agreement docs", required=False)
+    approved = forms.ChoiceField(
+        label="Approve this researcher for a year download permissions?",
+        required=True,
+        choices=TRUE_FALSE_CHOICES,
+    )
+    approved_date = forms.DateField(
+        label="Date approved. Permissions expire one year after this date.",
+        required=False
+    )
+
+    class Meta:
+        model = Researcher
+        fields = ["institution", "notes", "agreement_doc", "approved", "approved_date"]

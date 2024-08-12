@@ -1,0 +1,36 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h5>Create new researcher collaborator</h5>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <hr>
+                    {% include 'wisccc/includes/form_wisc_signup.html' %}
+                    <hr>
+                    {% include 'wisccc/includes/form_create_researcher.html' %}
+
+                    <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
+
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}

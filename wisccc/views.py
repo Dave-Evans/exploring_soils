@@ -9,7 +9,8 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.forms import UserCreationForm
 from wisccc.forms import UserLoginForm
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -41,6 +42,7 @@ from wisccc.forms import (
     SurveyRegistrationFullForm,
     SurveyRegistrationPartialForm,
     UserInfoForm,
+    ResearcherSignupForm,
 )
 
 from wisccc.models import (
@@ -51,9 +53,9 @@ from wisccc.models import (
     SurveyField,
     SurveyFarm,
     FieldFarm,
+    Researcher,
 )
 from wisccc.data_mgmt import pull_all_years_together, get_survey_data, data_export
-import pandas as pd
 
 
 # REVISE WITH NEW STRUCTURE
@@ -591,6 +593,51 @@ def wisc_cc_static_data(request):
     data = get_json()
 
     return JsonResponse(list(data["features"]), safe=False)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisccc_create_researcher(request):
+    """For creating a new researcher
+    Currently this assumes we are creating a *new user*
+    This may not always be the case. How to allow manager to
+    populate user info by looking up existing email addresses?
+    """
+
+    researcher_form = ResearcherSignupForm(request.POST)
+    signup_form = CustomUserCreationForm(request.POST)
+
+    if researcher_form.is_valid() and signup_form.is_valid():
+
+        new_researcher = researcher_form.save(commit=False)
+        new_user = signup_form.save(commit=False)
+
+        new_researcher.user = new_user
+        if new_researcher.approved:
+            content_type = ContentType.objects.get_for_model(Researcher)
+            perm_approved_researcher = Permission.objects.get(
+                codename="approved_researcher"
+            )
+            new_researcher.approved_date = datetime.date.today()
+            new_user.user_permissions.add(perm_approved_researcher)
+        new_researcher.save()
+        new_user.save()
+        # Eventually redirect to table of researchers
+        return redirect("wisc_cc_manager_home")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_create_researcher.html",
+        {
+            "researcher_form": researcher_form,
+            # Uses a generic form
+            "form": signup_form,
+        },
+    )
+
+
+@permission_required("wisccc.approved_researcher", raise_exception=True)
+def researcher_page(request):
+    return render("researcher!")
 
 
 # class SurveyResponseDeleteView(PermissionRequiredMixin, DeleteView):

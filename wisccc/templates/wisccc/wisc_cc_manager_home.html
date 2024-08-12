@@ -20,18 +20,32 @@
                     <div class="card-deck">
                         <div class="card">
                             <div class="card-header">
+                                Create researcher
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Give a researcher the ability to download the Wisconsin Cover Crop Dataset,
+                                    agronomic subset.
+                                </p>
+                                <a href="{% url 'wisccc_create_researcher' %}" class="btn btn-primary">
+                                    Add researcher
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
                                 Download Data
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title">Download full survey questions</h5>
-                                <p class="card-text">This dataset currently only contains 2023 survey data, but the full
+                                <h5 class="card-title">Full survey questions and answers</h5>
+                                <p class="card-text">This dataset survey data for 2020 through 2023, but the full
                                     set of questions.
                                     Also contains lab data.</p>
                                 <a href="{% url 'wisccc_download_data' 1 %}" class="btn btn-primary">Download</a>
                             </div>
                             <hr>
                             <div class="card-body">
-                                <h5 class="card-title">Download display data</h5>
+                                <h5 class="card-title">Display data</h5>
                                 <p class="card-text">
                                     This dataset is what is used in the graph and map display.
                                     It will not contain much qualitative data.

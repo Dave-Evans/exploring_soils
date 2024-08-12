@@ -1,0 +1,27 @@
+{% load crispy_forms_tags %}
+
+
+<div class="form-row">
+    <div class="form-group col-md-10 mb-0">
+        {{ researcher_form.institution|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ researcher_form.agreement_doc|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-10 mb-0">
+        {{ researcher_form.approved|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-10 mb-0">
+        {{ researcher_form.notes|as_crispy_field }}
+    </div>
+</div>
+
+
+{{ researcher_form.errors}}
