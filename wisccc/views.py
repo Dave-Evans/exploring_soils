@@ -26,6 +26,7 @@ from wisccc.tables import ResponseTable, RegistrationTable
 from wisccc.forms import (
     SurveyFieldFormFull,
     SurveyFarmFormSection2,
+    FieldFarmFormSection3,
     SurveyFieldFormSection3,
     SurveyFarmFormSection4,
     SurveyFieldFormSection4_part1,
@@ -370,7 +371,7 @@ def wisc_cc_survey3(request):
     survey_field_form = SurveyFieldFormSection3(
         request.POST or None, instance=survey_field
     )
-    field_farm_form = FieldFarmFormFull(request.POST or None, instance=field_farm)
+    field_farm_form = FieldFarmFormSection3(request.POST or None, instance=field_farm)
 
     if survey_field_form.is_valid() and field_farm_form.is_valid():
 
@@ -693,7 +694,6 @@ def wisc_cc_survey_populate_fieldfarm(request, id):
     survey_field.save()
 
     return redirect("wisc_cc_survey3")
-
 
 
 def wisc_cc_graph(request):

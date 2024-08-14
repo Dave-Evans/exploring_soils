@@ -25,7 +25,7 @@
     <a href="{% url 'update_fieldfarm' field_farm.id %}"
       class="list-group-item list-group-item-action list-group-item-success">
       {% if not field_farm.field_name %}
-      Unnamed field: {{field_farm.field_acreage}} acres
+      Unnamed field from 2023: {{field_farm.field_acreage}} acres
       {% else %}
       {{ field_farm.field_name }}: {{field_farm.field_acreage}} acres
       {% endif %}

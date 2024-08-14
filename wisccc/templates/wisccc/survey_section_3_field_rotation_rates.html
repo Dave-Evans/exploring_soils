@@ -16,9 +16,6 @@
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
-  <a class="btn btn-info btn-sm" href="{% url 'wisc_cc_survey3a' %}">
-    Select different field
-  </a>
   {% include 'wisccc/includes/survey_2024/form_section_3_rotation_rates_fieldfarm.html' %}
   <hr>
   {% include 'wisccc/includes/survey_2024/form_section_3_rotation_rates_surveyfield.html' %}
