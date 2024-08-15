@@ -94,6 +94,7 @@ def get_survey_data():
         list(
             ancillary_data.values_list(
                 # From User
+                "survey_field__survey_farm__farmer__user__username",
                 "survey_field__survey_farm__farmer__user__email",
                 # From Farmer
                 "survey_field__survey_farm__farmer__first_name",
