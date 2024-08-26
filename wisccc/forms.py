@@ -1444,6 +1444,32 @@ class SurveyFieldFormSection5(forms.ModelForm):
         required=True,
     )
 
+    def clean(self):
+        super().clean()
+        manure_prior = self.cleaned_data.get("manure_prior")
+        manure_prior_rate = self.cleaned_data.get("manure_prior_rate")
+        manure_prior_rate_units = self.cleaned_data.get("manure_prior_rate_units")
+
+        manure_post = self.cleaned_data.get("manure_post")
+        manure_post_rate = self.cleaned_data.get("manure_post_rate")
+        manure_post_rate_units = self.cleaned_data.get("manure_post_rate_units")
+
+        if (manure_prior == "True") and (manure_prior_rate is None):
+            msg = "Please enter a manure rate"
+            self.add_error("manure_prior_rate", msg)
+
+        if (manure_prior == "True") and (manure_prior_rate_units == ""):
+            msg = "Please enter the units for this manure rate"
+            self.add_error("manure_prior_rate_units", msg)
+
+        if (manure_post == "True") and (manure_post_rate is None):
+            msg = "Please enter a manure rate"
+            self.add_error("manure_post_rate", msg)
+
+        if (manure_post == "True") and (manure_post_rate_units == ""):
+            msg = "Please enter the units for this manure rate"
+            self.add_error("manure_post_rate_units", msg)
+
     class Meta:
         model = SurveyField
         fields = (
