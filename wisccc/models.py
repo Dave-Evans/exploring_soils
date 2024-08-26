@@ -141,19 +141,20 @@ class CoverCropChoicesWMulti(models.TextChoices):
     BUCKWHEAT = "BUCKWHEAT", "buckwheat"
     CANOLA = "CANOLA", "canola/rapeseed"  # brassica
     CEREAL_RYE = "CEREAL_RYE", "cereal (winter) rye"  # winter
-    CRIMSON_CLOVER = "CRIMSON_CLOVER", "crimson clover"  # legume
     COWPEA = "COWPEA", "cowpea"  # legume
+    CRIMSON_CLOVER = "CRIMSON_CLOVER", "crimson clover"  # legume
     DUTCH_WHITE_CLOVER = "DUTCH_WHITE_CLOVER", "Dutch white clover"
     FIELD_PEA = "FIELD_PEA", "field/forage pea"  # legume
     FLAX = "FLAX", "flax"
     HAIRY_VETCH = "HAIRY_VETCH", "hairy vetch"  # legume
     KALE = "KALE", "kale"  # brassica
     MILLET = "MILLET", "millet"
-    PLANTAIN = "PLANTAIN", "plantain"
+    MULTISPECIES = "MULITSPECIES", "multispecies mix of 2 or more"
     OATS = "OATS", "oats"  # spring
     OTHER_LEGUME = "OTHER_LEGUME", "other (legume)"  #
     OTHER_GRASS = "OTHER_GRASS", "other (grass)"  #
     OTHER_BROADLEAF = "OTHER_BROADLEAF", "other (broadleaf)"  #
+    PLANTAIN = "PLANTAIN", "plantain"
     RADISH = "RADISH", "radish"  # brassica
     RED_CLOVER = "RED_CLOVER", "red clover"  # legume
     SORGHUM = "SORGHUM", "sorghum"  # grass
@@ -167,7 +168,6 @@ class CoverCropChoicesWMulti(models.TextChoices):
     WHEAT_WINTER = "WHEAT_WINTER", "wheat (winter)"  # winter
     WINTER_PEA = "WINTER_PEA", "winter pea"
     YELLOW_SWEET_CLOVER = "YELLOW_SWEET_CLOVER", "yellow sweet clover"
-    MULTISPECIES = "MULITSPECIES", "multispecies mix of 2 or more"
     NONE = "NONE", "none"
     OTHER = "OTHER", "other"
 

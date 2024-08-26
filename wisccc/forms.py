@@ -711,7 +711,7 @@ class SurveyFarmFormSection2(forms.ModelForm):
     )
 
     learning_history_cc = forms.CharField(
-        label="9. How would you describe your learning history for cover cropping (including personal experience)?",
+        label="9. How would you describe your personal learning process with cover cropping? We'd like to understand how you make cover crop decisions from year to year and what might help you in the future.",
         required=True,
         max_length=500,
     )
@@ -1183,79 +1183,79 @@ class SurveyFieldFormSection3(forms.ModelForm):
     # Question 18, labeled as such in the form_ html
     # Species 1
     cover_crop_species_1 = forms.ChoiceField(
-        label="Cover crop 1",
+        label="18a. Cover crop 1",
         choices=CoverCropChoices.choices,
         required=True,
     )
     # 24b
     cover_crop_planting_rate_1 = forms.IntegerField(
-        label="Planting rate, for cover crop 1", required=True
+        label="18b. Planting rate, for cover crop 1", required=True
     )
     # 24c
     cover_crop_planting_rate_1_units = forms.ChoiceField(
-        label="Units for cover crop 1",
+        label="18c. Units for cover crop 1",
         choices=CoverCropRateUnitsChoices.choices,
         required=True,
     )
     # Species 2
     # 25a
     cover_crop_species_2 = forms.ChoiceField(
-        label="Cover crop 2",
+        label="18d. Cover crop 2",
         choices=CoverCropChoices.choices,
         required=False,
     )
     # 25b
     cover_crop_planting_rate_2 = forms.IntegerField(
-        label="Planting rate, for cover crop 2", required=False
+        label="18e. Planting rate, for cover crop 2", required=False
     )
     # 25c
     cover_crop_planting_rate_2_units = forms.ChoiceField(
-        label="Units for cover crop 2",
+        label="18f. Units for cover crop 2",
         choices=CoverCropRateUnitsChoices.choices,
         required=False,
     )
     # Species 3
     # 26
     cover_crop_species_3 = forms.ChoiceField(
-        label="Cover crop 3",
+        label="18g. Cover crop 3",
         choices=CoverCropChoices.choices,
         required=False,
     )
     cover_crop_planting_rate_3 = forms.IntegerField(
-        label="Planting rate, for cover crop 3", required=False
+        label="18h. Planting rate, for cover crop 3", required=False
     )
     cover_crop_planting_rate_3_units = forms.ChoiceField(
-        label="Units for cover crop 3",
+        label="18i. Units for cover crop 3",
         choices=CoverCropRateUnitsChoices.choices,
         required=False,
     )
     # Species 4
     # 27
     cover_crop_species_4 = forms.ChoiceField(
-        label="Cover crop 4",
+        label="18j. Cover crop 4",
         choices=CoverCropChoices.choices,
         required=False,
     )
     cover_crop_planting_rate_4 = forms.IntegerField(
-        label="Planting rate, for cover crop 4", required=False
+        label="18k. Planting rate, for cover crop 4", required=False
     )
     cover_crop_planting_rate_4_units = forms.ChoiceField(
-        label="Units for cover crop 4",
+        label="18l. Units for cover crop 4",
         choices=CoverCropRateUnitsChoices.choices,
         required=False,
     )
     # Species 5
     # 28
     cover_crop_species_5 = forms.ChoiceField(
-        label="Cover crop 5",
+        label="18m. Cover crop 5",
         choices=CoverCropChoices.choices,
         required=False,
     )
     cover_crop_planting_rate_5 = forms.IntegerField(
-        label="Planting rate, for cover crop 5", required=False
+        label="18n. Planting rate, for cover crop 5", required=False
     )
     cover_crop_planting_rate_5_units = forms.ChoiceField(
-        label="Units for cover crop 5",
+        label="18o. Units for cover crop 5",
         choices=CoverCropRateUnitsChoices.choices,
         required=False,
     )
@@ -1359,38 +1359,38 @@ class SurveyFieldFormSection5(forms.ModelForm):
 
     # 37a	Will you apply manure prior to seeding cover crops on this field, and at what rate?
     manure_prior = forms.ChoiceField(
-        label="25. Will you apply manure prior to seeding cover crops on this field?",
+        label="25a. Will you apply manure prior to seeding cover crops on this field?",
         required=True,
         choices=TRUE_FALSE_CHOICES,
     )
     # 37b
     manure_prior_rate = forms.IntegerField(
-        label="At what rate will the manure be applied?",
+        label="25b. At what rate will the manure be applied?",
         required=False,
         min_value=0,
     )
     # 37c
     manure_prior_rate_units = forms.ChoiceField(
-        label="Please select the units for the manure application rate.",
+        label="25c. Please select the units for the manure application rate.",
         choices=ManureApplicateUnitsChoices.choices,
         required=False,
     )
 
     # 38a Will manure be applied to the field after the cover crop is established?
     manure_post = forms.ChoiceField(
-        label="26. Will manure be applied to the field after the cover crop is established?",
+        label="26a. Will manure be applied to the field after the cover crop is established?",
         required=True,
         choices=TRUE_FALSE_CHOICES,
     )
     # 38b
     manure_post_rate = forms.IntegerField(
-        label="At what rate will the manure be applied?",
+        label="26b. At what rate will the manure be applied?",
         required=False,
         min_value=0,
     )
     # 38c
     manure_post_rate_units = forms.ChoiceField(
-        label="The units for the manure application rate",
+        label="26c. The units for the manure application rate",
         choices=ManureApplicateUnitsChoices.choices,
         required=False,
     )
@@ -1429,7 +1429,7 @@ class SurveyFieldFormSection5(forms.ModelForm):
     dominant_soil_texture = forms.ChoiceField(
         label="30. Please select the dominant soil texture of this field.",
         choices=SoilTextureClassChoices.choices,
-        required=False,
+        required=True,
     )
     # 42	"Soil conditions in this field at cover crop seeding
     soil_conditions_at_cover_crop_seeding = forms.ChoiceField(
@@ -1461,7 +1461,7 @@ class SurveyFieldFormSection6(forms.ModelForm):
 
     # 43	"Cover Crop Seeding Method.
     cover_crop_seeding_method = forms.ChoiceField(
-        label="32. Please select your the seeding method for your cover crop.",
+        label="32. Please select the seeding method for the cover crop in this field.",
         choices=SeedingMethodChoices.choices,
         required=True,
     )
@@ -1507,7 +1507,7 @@ class SurveyFarmFormSection6(forms.ModelForm):
     # 36. What is your source for cover crop seed?
     source_cover_crop_seed = forms.CharField(
         label="36. What is your cover crop seed source?",
-        required=False,
+        required=True,
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
@@ -1522,30 +1522,30 @@ class SurveyFarmFormSection6(forms.ModelForm):
 
 class SurveyFarmFormSection7(forms.ModelForm):
 
-    # 51	Do you have any additional thoughts or questions about this data gathering process? Any important survey questions we should ask next time?
-    additional_thoughts = forms.CharField(
-        label="37. Any additional thoughts or questions? Any important survey questions we should ask next time?",
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=1000,
-        required=False,
-    )
-
     encourage_cc = forms.ChoiceField(
-        label="38. Which of the following would do the most to encourage more farmers to cover crop?",
+        label="37. Which of the following would do the most to encourage more farmers to cover crop?",
         choices=CoverCropSupportChoices.choices,
         required=False,
     )
 
     encourage_cc_write_in = forms.CharField(
-        label="38a. Please explain.",
+        label="37a. Please explain.",
         widget=forms.Textarea(attrs={"rows": 5}),
+        required=False,
+    )
+
+    # 51	Do you have any additional thoughts or questions about this data gathering process? Any important survey questions we should ask next time?
+    additional_thoughts = forms.CharField(
+        label="38. Any additional thoughts or questions? Any important survey questions we should ask next time?",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=1000,
         required=False,
     )
 
     class Meta:
         model = SurveyFarm
         fields = (
-            "additional_thoughts",
             "encourage_cc",
             "encourage_cc_write_in",
+            "additional_thoughts",
         )
