@@ -32,6 +32,7 @@ class ResponseTable(tables.Table):
 
 
 class RegistrationTable(tables.Table):
+    signup_timestamp = tables.Column()
     first_name = tables.Column()
     last_name = tables.Column()
     email = tables.Column()
