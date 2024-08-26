@@ -293,7 +293,7 @@ class SurveyFarmFormFull(forms.ModelForm):
 
     # 2. Years Experience
     years_experience = forms.IntegerField(
-        label="2. How many total years experience do you have planting cover crops?",
+        label="2. How many years' of experience do you have planting cover crops?",
         required=True,
         min_value=0,
         max_value=100,
@@ -315,7 +315,7 @@ class SurveyFarmFormFull(forms.ModelForm):
     )
 
     satisfied_with_cc_results = forms.CharField(
-        label="How satisfied are you with results you get from cover cropping? ",
+        label="How satisfied are you with the results you get from cover cropping? ",
         required=False,
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
@@ -419,18 +419,21 @@ class SurveyFarmFormFull(forms.ModelForm):
     biggest_challenge_cc = forms.CharField(
         label="What is your biggest challenge or unanswered question when it comes to cover cropping?",
         required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
 
     learning_history_cc = forms.CharField(
         label="How would you describe your learning history for cover cropping (including personal experience)?",
         required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
 
     conservation_programs = forms.CharField(
         label="Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices? Which ones?",
         required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
 
@@ -662,7 +665,7 @@ class SurveyFarmFormSection2(forms.ModelForm):
 
     # 3. Years Experience
     years_experience = forms.IntegerField(
-        label="2. How many total years experience do you have planting cover crops?",
+        label="3. How many years' of experience do you have planting cover crops?",
         required=True,
         min_value=0,
         max_value=100,
@@ -676,7 +679,7 @@ class SurveyFarmFormSection2(forms.ModelForm):
     )
 
     satisfied_with_cc_results = forms.CharField(
-        label="5. How satisfied are you with results you get from cover cropping? ",
+        label="5. How satisfied are you with the results you get from cover cropping? ",
         required=False,
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
@@ -708,12 +711,14 @@ class SurveyFarmFormSection2(forms.ModelForm):
         label="8. What is your biggest challenge or unanswered question when it comes to cover cropping?",
         required=True,
         max_length=500,
+        widget=forms.Textarea(attrs={"rows": 5}),
     )
 
     learning_history_cc = forms.CharField(
         label="9. How would you describe your personal learning process with cover cropping? We'd like to understand how you make cover crop decisions from year to year and what might help you in the future.",
         required=True,
         max_length=500,
+        widget=forms.Textarea(attrs={"rows": 5}),
     )
     if_use_crop_insurance = forms.CharField(
         label="10. Do you use crop insurance? If so, does it influence your cover cropping decisions, and how?",
@@ -725,6 +730,7 @@ class SurveyFarmFormSection2(forms.ModelForm):
         label="11. Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices? Which ones?",
         required=False,
         max_length=500,
+        widget=forms.Textarea(attrs={"rows": 5}),
     )
 
     class Meta:
@@ -1034,7 +1040,7 @@ class SurveyFieldFormFull(forms.ModelForm):
 
     # 43	"Cover Crop Seeding Method.
     cover_crop_seeding_method = forms.ChoiceField(
-        label="43. Please select your the seeding method for your cover crop.",
+        label="43. Please select the seeding method for the cover crop in this field.",
         choices=SeedingMethodChoices.choices,
         required=True,
     )

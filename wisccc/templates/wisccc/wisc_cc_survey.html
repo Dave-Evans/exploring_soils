@@ -12,20 +12,18 @@
       <div class="card-body">
         <h3 class="card-title">Welcome {{ user.username }}</h3>
 
-        {% if completed_0 and completed_1 and completed_2 and completed_3 %}
+        {% if completed_1 and completed_2 and completed_3 and completed_4 and completed_5 and completed_6 and
+        completed_7%}
 
         <h4>Thank you!</h4>
 
-        <p>Thank you for completing our survey. If you would like to edit your answers, just click on one of the four
+        <p>Thank you for completing our survey. If you would like to edit your answers, just click on one of the
           survey sections below. We will be in touch to be sure the biomass sampling is going ok, and to share other
           project info. Also, check out the map and graph of the data we've collected so far! Project information
           available on the Michael Fields website.</p>
 
         <p>Please contact
           Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a> with any questions</p>
-
-        <p>Dan Smith, Mrill Ingram, Ricardo Costa Silva, Gregg Sanford.</p>
-
 
         {% else %}
 
@@ -53,7 +51,6 @@
         {% endif %}
 
 
-        <p>There are seven sections to the survey.</p>
         <div class="col-md-10">
           <div class="list-group">
             {% if completed_1 %}
