@@ -1550,6 +1550,8 @@ class Researcher(models.Model):
     """For researchers looking to use the data"""
 
     signup_timestamp = models.DateTimeField(auto_now_add=True)
+    first_name = models.CharField(max_length=250, blank=True)
+    last_name = models.CharField(max_length=250, blank=True)
     institution = models.TextField(
         verbose_name="What institution does the researcher belong to?", null=True
     )

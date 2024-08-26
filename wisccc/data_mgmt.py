@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 from django.http import HttpResponse
+import datetime
 from django.db import connection
 from wisccc.models import SurveyFarm, SurveyField, FieldFarm, AncillaryData, Farmer
 from wisccc.models import (
@@ -865,6 +866,18 @@ def data_export():
     writer.close()
 
     return output.getvalue()
+
+
+def export_agronomic_data():
+    export_name = "wisc_cc_data_export_{}.xlsx".format(
+        datetime.datetime.now().strftime("%Y_%m_%d")
+    )
+    excel_bytes = data_export()
+    print(type(excel_bytes))
+    response = HttpResponse(excel_bytes, content_type="application/ms-excel")
+    response["Content-Disposition"] = f"attachment; filename={export_name}"
+
+    return response
 
 
 # From Ancillary Data

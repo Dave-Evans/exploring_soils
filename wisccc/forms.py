@@ -2451,6 +2451,8 @@ class SurveyFieldFormFull(forms.ModelForm):
 class ResearcherSignupForm(forms.ModelForm):
     """For creating collaborating researchers"""
 
+    first_name = forms.CharField(max_length=250, required=True)
+    last_name = forms.CharField(max_length=250, required=True)
     institution = forms.CharField(
         label="What institution is this researcher affiliated with?",
         required=False,
@@ -2471,9 +2473,62 @@ class ResearcherSignupForm(forms.ModelForm):
     )
     approved_date = forms.DateField(
         label="Date approved. Permissions expire one year after this date.",
-        required=False
+        required=False,
     )
 
     class Meta:
         model = Researcher
-        fields = ["institution", "notes", "agreement_doc", "approved", "approved_date"]
+        fields = [
+            "first_name",
+            "last_name",
+            "institution",
+            "notes",
+            "agreement_doc",
+            "approved",
+            "approved_date",
+        ]
+
+
+class ResearcherFullForm(forms.ModelForm):
+    """For creating collaborating researchers"""
+
+    first_name = forms.CharField(max_length=250, required=True)
+    last_name = forms.CharField(max_length=250, required=True)
+    institution = forms.CharField(
+        label="What institution is this researcher affiliated with?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    notes = forms.CharField(
+        label="Notes about researcher",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=500,
+    )
+    agreement_doc = forms.FileField(label="Upload agreement docs", required=False)
+    approved = forms.ChoiceField(
+        label="Approve this researcher for a year download permissions?",
+        required=True,
+        choices=TRUE_FALSE_CHOICES,
+    )
+    approved_date = forms.DateField(
+        label="Date approved. Permissions expire one year after this date.",
+        required=False,
+    )
+    download_count = forms.IntegerField()
+    last_download_timestamp = forms.DateTimeField()
+
+    class Meta:
+        model = Researcher
+        fields = [
+            "first_name",
+            "last_name",
+            "institution",
+            "notes",
+            "agreement_doc",
+            "approved",
+            "approved_date",
+            "download_count",
+            "last_download_timestamp",
+        ]

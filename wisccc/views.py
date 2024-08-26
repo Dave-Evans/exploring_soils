@@ -24,7 +24,7 @@ from django.views.generic import (
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django_tables2 import RequestConfig
-from wisccc.tables import ResponseTable, RegistrationTable
+from wisccc.tables import ResponseTable, RegistrationTable, ResearcherTable
 from wisccc.forms import (
     SurveyFieldFormFull,
     SurveyFarmFormPart1,
@@ -43,6 +43,7 @@ from wisccc.forms import (
     SurveyRegistrationPartialForm,
     UserInfoForm,
     ResearcherSignupForm,
+    ResearcherFullForm,
 )
 
 from wisccc.models import (
@@ -55,7 +56,12 @@ from wisccc.models import (
     FieldFarm,
     Researcher,
 )
-from wisccc.data_mgmt import pull_all_years_together, get_survey_data, data_export
+from wisccc.data_mgmt import (
+    pull_all_years_together,
+    get_survey_data,
+    data_export,
+    export_agronomic_data,
+)
 
 
 # REVISE WITH NEW STRUCTURE
@@ -133,6 +139,15 @@ def wisc_cc_about(request):
     return render(request, "wisccc/wisc_cc_about.html")
 
 
+@permission_required("wisccc.approved_researcher", raise_exception=True)
+def wisccc_researcher_download_data(request):
+    # run test for if expired
+    # log downloads?
+
+    response = export_agronomic_data()
+    return response
+
+
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def wisccc_download_data(request, opt):
     # opt == 1 then full survey with qualitative
@@ -146,13 +161,7 @@ def wisccc_download_data(request, opt):
         return resp
 
     elif opt == 2:
-        export_name = "wisc_cc_data_export_{}.xlsx".format(
-            datetime.datetime.now().strftime("%Y_%m_%d")
-        )
-        excel_bytes = data_export()
-        print(type(excel_bytes))
-        response = HttpResponse(excel_bytes, content_type="application/ms-excel")
-        response["Content-Disposition"] = f"attachment; filename={export_name}"
+        response = export_agronomic_data()
         return response
 
         export_name = "wisc_cc_data_export_{}.xlsx".format(
@@ -637,7 +646,108 @@ def wisccc_create_researcher(request):
 
 @permission_required("wisccc.approved_researcher", raise_exception=True)
 def researcher_page(request):
-    return render("researcher!")
+
+    return render(request, "wisccc/wisc_cc_researcher.html")
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def researcher_table(request):
+    """List researchers who have or have had access to download data"""
+
+    # all_regs = SurveyRegistration.objects.prefetch_related("farmer__user")
+    def get_table_data():
+        """For getting researcher data"""
+        query = """
+            select
+                wr.id
+                , wr.first_name
+                , wr.last_name
+                , au.email
+                , au.username
+                , wr.signup_timestamp
+                , wr.institution
+                , wr.agreement_doc
+                , wr.notes
+                , wr.approved
+                , wr.approved_date
+                , wr.download_count
+                , wr.last_download_timestamp
+            from wisccc_researcher wr 
+            inner join auth_user au 
+            on wr.user_id = au.id"""
+        dat = pd.read_sql(query, connection)
+        dat = dat.to_dict("records")
+
+        return dat
+
+    data = get_table_data()
+
+    table = ResearcherTable(data)
+    RequestConfig(request, paginate={"per_page": 15}).configure(table)
+
+    return render(
+        request,
+        "wisccc/researcher_table.html",
+        {"table": table, "total_regs": 3},
+    )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def delete_researcher(request, id):
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(Researcher, id=id)
+
+    if request.method == "POST":
+        # delete object
+        obj.delete()
+        # after deleting redirect to
+        # home page
+        return redirect("researcher_table")
+
+    return render(request, "wisccc/delete_researcher.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def update_researcher(request, id):
+    """For updating researcher"""
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the survey object related to passed id
+    researcher = get_object_or_404(Researcher, id=id)
+
+    # Get user associated with registrant
+    user = researcher.user
+
+    # pass the object as instance in form
+    researcher_form = ResearcherFullForm(request.POST or None, instance=researcher)
+
+    user_info_form = UserInfoForm(request.POST or None, instance=user)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if researcher_form.is_valid() and user_info_form.is_valid():
+
+        user_info_form.save()
+        new_researcher_form = researcher_form.save(commit=False)
+        if new_researcher_form.approved:
+            # Verify permissions are set
+            pass
+        else:
+            # Verify permissions are removed
+            pass
+
+        return redirect("researcher_table")
+    # add form dictionary to context
+    context["researcher_form"] = researcher_form
+    context["user_info_form"] = user_info_form
+
+    return render(request, "wisccc/wisc_cc_researcher_review.html", context)
 
 
 # class SurveyResponseDeleteView(PermissionRequiredMixin, DeleteView):
