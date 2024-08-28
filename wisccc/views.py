@@ -154,9 +154,9 @@ def wisccc_download_data(request, opt):
     # opt == 2 then display data
     if opt == 1:
         resp = HttpResponse(content_type="text/csv")
+        filename = "full_survey_questions.csv"
         resp["Content-Disposition"] = f"attachment; filename={filename}"
         df = get_survey_data()
-        filename = "full_survey_questions.csv"
         df.to_csv(path_or_buf=resp, sep=",", index=False)
         return resp
 
