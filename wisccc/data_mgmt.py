@@ -89,11 +89,12 @@ def get_survey_data():
         "cover_crop_seeding_method": SeedingMethodChoices,
         "cover_crop_estimated_termination": TerminationMethodTimingChoices,
     }
-
+    # Any column added here will need to have its name added in the below list!
     df = pd.DataFrame(
         list(
             ancillary_data.values_list(
                 # From User
+                "survey_field__survey_farm__farmer__user__username",
                 "survey_field__survey_farm__farmer__user__email",
                 # From Farmer
                 "survey_field__survey_farm__farmer__first_name",
@@ -209,6 +210,7 @@ def get_survey_data():
         ),
         columns=[
             # From User
+            "username",
             "email",
             # From Farmer
             "first_name",

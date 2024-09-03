@@ -1302,10 +1302,11 @@ def wisc_cc_register_3(request):
 def upload_photo(request, id):
     """For uploading photos for survey response"""
     context = {}
-
+    # fetch the survey object related to passed id
+    survey_farm = get_object_or_404(SurveyFarm, id=id)
+    survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
     # Get any uploaded photos for this survey response
-
-    survey_photo = SurveyPhoto.objects.filter(survey_response=id).first()
+    survey_photo = SurveyPhoto.objects.filter(survey_field_id=survey_field.id).first()
 
     survey_photo_form = SurveyPhotoForm(request.POST or None, instance=survey_photo)
     # save the data from the form and
@@ -1314,7 +1315,7 @@ def upload_photo(request, id):
     if survey_photo_form.is_valid():
 
         new_survey_photo = survey_photo_form.save()
-        new_survey_photo.survey_response_id = id
+        new_survey_photo.survey_field_id = survey_field.id
         if "image_1" in request.FILES.keys():
             new_survey_photo.image_1 = request.FILES["image_1"]
         if "image_2" in request.FILES.keys():

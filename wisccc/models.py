@@ -1586,13 +1586,13 @@ class SurveyPhoto(models.Model):
     survey_response = models.ForeignKey(Survey, on_delete=models.CASCADE, null=True)
     survey_field = models.ForeignKey(SurveyField, on_delete=models.CASCADE, null=True)
     uploaded_time = models.DateTimeField(auto_now_add=True)
-    image_1 = models.ImageField(storage=WiscCCPhotoStorage(), null=True)
+    image_1 = models.ImageField(storage=WiscCCPhotoStorage(), blank=True)
     caption_photo_1 = models.CharField(
-        max_length=50, verbose_name="Caption about photo 1", null=True
+        max_length=50, verbose_name="Caption about photo 1", blank=True
     )
-    image_2 = models.ImageField(storage=WiscCCPhotoStorage(), null=True)
+    image_2 = models.ImageField(storage=WiscCCPhotoStorage(), blank=True)
     caption_photo_2 = models.CharField(
-        max_length=50, verbose_name="Caption about photo 2", null=True
+        max_length=50, verbose_name="Caption about photo 2", blank=True
     )
     notes = models.TextField(verbose_name="Notes about photo", null=True)
 
