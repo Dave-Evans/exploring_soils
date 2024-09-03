@@ -1189,79 +1189,79 @@ class SurveyFieldFormSection3(forms.ModelForm):
     # Question 18, labeled as such in the form_ html
     # Species 1
     cover_crop_species_1 = forms.ChoiceField(
-        label="a. Cover crop 1",
+        label="a. Species",
         choices=CoverCropChoices.choices,
         required=True,
     )
     # 24b
     cover_crop_planting_rate_1 = forms.IntegerField(
-        label="b. Planting rate, for cover crop 1", required=True
+        label="b. Planting rate", required=True
     )
     # 24c
     cover_crop_planting_rate_1_units = forms.ChoiceField(
-        label="c. Units for cover crop 1",
+        label="c. Planting rate units",
         choices=CoverCropRateUnitsChoices.choices,
         required=True,
     )
     # Species 2
     # 25a
     cover_crop_species_2 = forms.ChoiceField(
-        label="d. Cover crop 2",
+        label="d. Species",
         choices=CoverCropChoices.choices,
         required=False,
     )
     # 25b
     cover_crop_planting_rate_2 = forms.IntegerField(
-        label="e. Planting rate, for cover crop 2", required=False
+        label="e. Planting rate", required=False
     )
     # 25c
     cover_crop_planting_rate_2_units = forms.ChoiceField(
-        label="f. Units for cover crop 2",
+        label="f. Planting rate units",
         choices=CoverCropRateUnitsChoices.choices,
         required=False,
     )
     # Species 3
     # 26
     cover_crop_species_3 = forms.ChoiceField(
-        label="g. Cover crop 3",
+        label="g. Species",
         choices=CoverCropChoices.choices,
         required=False,
     )
     cover_crop_planting_rate_3 = forms.IntegerField(
-        label="h. Planting rate, for cover crop 3", required=False
+        label="h. Planting rate", required=False
     )
     cover_crop_planting_rate_3_units = forms.ChoiceField(
-        label="i. Units for cover crop 3",
+        label="i. Planting rate units",
         choices=CoverCropRateUnitsChoices.choices,
         required=False,
     )
     # Species 4
     # 27
     cover_crop_species_4 = forms.ChoiceField(
-        label="j. Cover crop 4",
+        label="j. Species",
         choices=CoverCropChoices.choices,
         required=False,
     )
     cover_crop_planting_rate_4 = forms.IntegerField(
-        label="k. Planting rate, for cover crop 4", required=False
+        label="k. Planting rate", required=False
     )
     cover_crop_planting_rate_4_units = forms.ChoiceField(
-        label="l. Units for cover crop 4",
+        label="l. Planting rate units",
         choices=CoverCropRateUnitsChoices.choices,
         required=False,
     )
     # Species 5
     # 28
     cover_crop_species_5 = forms.ChoiceField(
-        label="m. Cover crop 5",
+        label="m. Species",
         choices=CoverCropChoices.choices,
         required=False,
     )
     cover_crop_planting_rate_5 = forms.IntegerField(
-        label="n. Planting rate, for cover crop 5", required=False
+        label="n. Planting rate", required=False
     )
     cover_crop_planting_rate_5_units = forms.ChoiceField(
-        label="o. Units for cover crop 5",
+        label="o. Planting rate units",
         choices=CoverCropRateUnitsChoices.choices,
         required=False,
     )
