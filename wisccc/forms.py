@@ -1298,8 +1298,6 @@ class SurveyFieldFormSection3(forms.ModelForm):
             "cover_crop_species_5",
             "cover_crop_planting_rate_5",
             "cover_crop_planting_rate_5_units",
-            "cover_crop_species_and_rate_write_in",
-            "cover_crop_multispecies_mix_write_in",
         )
 
 
