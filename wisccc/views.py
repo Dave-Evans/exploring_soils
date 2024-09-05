@@ -897,7 +897,8 @@ def response_table(request):
             on s.farmer_id = f.id 
             left join auth_user as u
             on f.user_id = u.id
-            where s.survey_year >= 2023"""
+            where s.survey_year >= 2023
+            order by s.survey_created desc"""
         dat = pd.read_sql(query, connection)
         dat = dat.to_dict("records")
 
