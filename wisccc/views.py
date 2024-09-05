@@ -1122,13 +1122,13 @@ def delete_response(request, id):
     context = {}
 
     # fetch the object related to passed id
-    obj = get_object_or_404(Survey, id=id)
+    obj = get_object_or_404(SurveyFarm, id=id)
 
     if request.method == "POST":
         # delete object
         obj.delete()
-        # after deleting redirect to
-        # home page
+        # after deleting redirect back to
+        # reponse table
         return redirect("response_table")
 
     return render(request, "wisccc/delete_response.html", context)
