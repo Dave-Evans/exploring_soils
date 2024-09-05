@@ -1,0 +1,66 @@
+{% load crispy_forms_tags %}
+
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ form_surveyfarm_section_2.total_acres|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ form_surveyfarm_section_2.percent_of_farm_cc|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ form_surveyfarm_section_2.years_experience|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ form_surveyfarm_section_2.main_cc_goal_this_year|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ form_surveyfarm_section_2.satisfied_with_cc_results|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ form_surveyfarm_section_2.barriers_to_expansion|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfarm_section_2.barriers_to_expansion_write_in|as_crispy_field }}
+    </div>
+</div>
+
+
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfarm_section_2.info_source_cover_crops_1|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfarm_section_2.biggest_challenge_cc|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfarm_section_2.learning_history_cc|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfarm_section_2.if_use_crop_insurance|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfarm_section_2.conservation_programs|as_crispy_field }}
+    </div>
+</div>
+
+{{ form_surveyfarm_section_2.errors }}

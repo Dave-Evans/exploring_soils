@@ -133,10 +133,6 @@ urlpatterns = [
     ),
     # Temporarily directing people to the home page rather than the survey page.
     re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),
-    # re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),
-    re_path(
-        r"^wisc-cc-survey/0$", wisccc_views.wisc_cc_survey0, name="wisc_cc_survey0"
-    ),
     re_path(
         r"^wisc-cc-survey/1$", wisccc_views.wisc_cc_survey1, name="wisc_cc_survey1"
     ),
@@ -144,7 +140,37 @@ urlpatterns = [
         r"^wisc-cc-survey/2$", wisccc_views.wisc_cc_survey2, name="wisc_cc_survey2"
     ),
     re_path(
+        r"^wisc-cc-survey/3a$", wisccc_views.wisc_cc_survey3a, name="wisc_cc_survey3a"
+    ),
+    re_path(
         r"^wisc-cc-survey/3$", wisccc_views.wisc_cc_survey3, name="wisc_cc_survey3"
+    ),
+    re_path(
+        r"^wisc-cc-survey/4$", wisccc_views.wisc_cc_survey4, name="wisc_cc_survey4"
+    ),
+    re_path(
+        r"^wisc-cc-survey/5$", wisccc_views.wisc_cc_survey5, name="wisc_cc_survey5"
+    ),
+    re_path(
+        r"^wisc-cc-survey/6$", wisccc_views.wisc_cc_survey6, name="wisc_cc_survey6"
+    ),
+    re_path(
+        r"^wisc-cc-survey/7$", wisccc_views.wisc_cc_survey7, name="wisc_cc_survey7"
+    ),
+    path(
+        "update_fieldfarm/<id>",
+        wisccc_views.update_fieldfarm,
+        name="update_fieldfarm",
+    ),
+    path(
+        "create_fieldfarm",
+        wisccc_views.create_fieldfarm,
+        name="create_fieldfarm",
+    ),
+    path(
+        "wisc_cc_survey_populate_fieldfarm/<id>",
+        wisccc_views.wisc_cc_survey_populate_fieldfarm,
+        name="wisc_cc_survey_populate_fieldfarm",
     ),
     re_path(r"^wisc-cc-graph$", wisccc_views.wisc_cc_graph, name="wisc_cc_graph"),
     re_path(r"^wisc_cc_graph$", wisccc_views.wisc_cc_graph, name="wisc_cc_graph"),

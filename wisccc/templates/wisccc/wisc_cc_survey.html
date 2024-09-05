@@ -1,6 +1,5 @@
 {% extends 'wisccc/base_wisccc.html' %}
 {% load static %}
-{% block title %}Wisconsin Cover Crop Citizen Science Network {% endblock %}
 
 {% block content %}
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> -->
@@ -12,11 +11,11 @@
       <div class="card-body">
         <h3 class="card-title">Welcome {{ user.username }}</h3>
 
-        {% if completed_0 and completed_1 and completed_2 and completed_3 %}
+        {% if completed_1 and completed_2 and completed_3 and completed_4 and completed_5 and completed_6 %}
 
         <h4>Thank you!</h4>
 
-        <p>Thank you for completing our survey. If you would like to edit your answers, just click on one of the four
+        <p>Thank you for completing our survey. If you would like to edit your answers, just click on one of the
           survey sections below. We will be in touch to be sure the biomass sampling is going ok, and to share other
           project info. Also, check out the map and graph of the data we've collected so far! Project information
           available on the Michael Fields website.</p>
@@ -24,72 +23,116 @@
         <p>Please contact
           Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a> with any questions</p>
 
-        <p>Dan Smith, Mrill Ingram, Ricardo Costa Silva, Gregg Sanford.</p>
-
-
         {% else %}
 
-        <p>Thank you for doing this survey. We're excited for this fourth season of our cover crop citizen science
-          project, and to be able to add a spring biomass element. You are part of a state-wide collaborative effort to
-          develop sound cover crop strategies for Wisconsin. You're also helping improve tools like SnapPlus and
-          developing better cost-effective strategies for reducing erosion and conserving nutrients.</p>
+        <p>
+          Welcome to the fifth season of our cover crop citizen science project.
+          You are part of a state-wide collaborative effort to build practical knowledge about cover cropping in
+          Wisconsin.
+          You're also helping improve tools like SnapPlus and developing better
+          cost-effective strategies for reducing erosion and conserving nutrients.
+        </p>
 
-        <p>We will be in touch to be sure the biomass sampling is going ok, and to share other project info. Also, check
-          out the map and graph of the data we've collected so far! Please contact
-          Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a> with any questions</p>
+        <p>
+          We will be in touch to be sure the biomass sampling is going ok, and to share other project info. Also, check
+          out the <a href="{% url 'wisc_cc_graph' %}">map and graph</a> of the data we've collected so far!
+        </p>
+        <p>Please contact Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a>
+          or Dan Marzu <a href="mailto:dan.marzu@wisc.edu">(dan.marzu@wisc.edu)</a> with any questions</p>
 
-        <p>Dan Smith, Mrill Ingram, Ricardo Costa Silva, Gregg Sanford.</p>
+        <p>
+          The survey has seven sections, some of them very short.
+          Please submit each section before leaving so you don’t lose the information you’ve put in.
+        </p>
 
 
         {% endif %}
 
 
-        <p>There are four sections to the survey.</p>
         <div class="col-md-10">
           <div class="list-group">
-            {% if completed_0 %}
-            <a href="{% url 'wisc_cc_survey0' %}"
-              class="list-group-item list-group-item-action list-group-item-success">I. About You - Completed! Click to
-              edit your response.</a>
-            {% else %}
-            <a href="{% url 'wisc_cc_survey0' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">I. About You</a>
-            {% endif %}
-
             {% if completed_1 %}
             <a href="{% url 'wisc_cc_survey1' %}"
-              class="list-group-item list-group-item-action list-group-item-success">II. General Farm Characteristics -
-              Completed! Click to
-              edit your response.</a>
+              class="list-group-item list-group-item-action list-group-item-success">
+              I. General info - completed! Click to edit your response.
+            </a>
             {% else %}
             <a href="{% url 'wisc_cc_survey1' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">II. General Farm
-              Characteristics</a>
+              class="list-group-item list-group-item-action list-group-item-warning">
+              I. General info
+            </a>
             {% endif %}
 
             {% if completed_2 %}
             <a href="{% url 'wisc_cc_survey2' %}"
-              class="list-group-item list-group-item-action list-group-item-success">III. "Research Field" Cover Crop
-              Information - Completed! Click to
-              edit your response.</a>
+              class="list-group-item list-group-item-action list-group-item-success">
+              II. Cover cropping goals & support - completed! Click to edit your response.
+            </a>
             {% else %}
             <a href="{% url 'wisc_cc_survey2' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">III. "Research Field" Cover Crop
-              Information</a>
+              class="list-group-item list-group-item-action list-group-item-warning">
+              II. Cover cropping goals & support
+            </a>
             {% endif %}
-
 
             {% if completed_3 %}
             <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-success">IV. Thoughts on outreach about
-              cover cropping - Completed!
-              Click
-              to
-              edit your response.</a>
+              class="list-group-item list-group-item-action list-group-item-success">
+              III. Research Field: Crop rotation and planting rates - completed! Click to edit your response.
+            </a>
             {% else %}
             <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">IV. Thoughts on outreach about
-              cover cropping</a>
+              class="list-group-item list-group-item-action list-group-item-warning">
+              III. Research Field: Crop rotation and planting rates
+            </a>
+            {% endif %}
+
+
+            {% if completed_4 %}
+            <a href="{% url 'wisc_cc_survey4' %}"
+              class="list-group-item list-group-item-action list-group-item-success">
+              IV. Research Field: Planting dates & timing - completed! Click to edit your response.
+            </a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey4' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">
+              IV. Research Field: Planting dates & timing
+            </a>
+            {% endif %}
+
+            {% if completed_5 %}
+            <a href="{% url 'wisc_cc_survey5' %}"
+              class="list-group-item list-group-item-action list-group-item-success">
+              V. Research Field: Manure, tillage, soil conditions - completed! Click to edit your response.
+            </a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey5' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">
+              V. Research Field: Manure, tillage, soil conditions
+            </a>
+            {% endif %}
+
+            {% if completed_6 %}
+            <a href="{% url 'wisc_cc_survey6' %}"
+              class="list-group-item list-group-item-action list-group-item-success">
+              VI. Research Field: Cover crop seeding & cost - completed! Click to edit your response.
+            </a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey6' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">
+              VI. Research Field: Cover crop seeding & cost
+            </a>
+            {% endif %}
+            {% if completed_7 %}
+            <a href="{% url 'wisc_cc_survey7' %}"
+              class="list-group-item list-group-item-action list-group-item-success">
+              VII. Final thoughts - completed! Click to edit your response.
+            </a>
+            {% else %}
+            <a href="{% url 'wisc_cc_survey7' %}"
+              class="list-group-item list-group-item-action list-group-item-warning">
+              VII. Final thoughts
+            </a>
             {% endif %}
 
           </div>

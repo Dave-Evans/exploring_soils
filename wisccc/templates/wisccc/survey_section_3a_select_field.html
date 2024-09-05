@@ -1,0 +1,42 @@
+{% extends 'wisccc/base_survey.html' %}
+
+{% block title %}Field information{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+<!-- Not a true form but should still work... -->
+{% block form %}
+
+<h3 class="card-title">III. Research Field: Select a field</h3>
+<p>Are you filling out this survey for the same field as last year?</p>
+<p>If you are going to use the same field, select it, and verify the information is correct.
+  Then click "Select as this year's field"
+</p>
+<p>If you are going to enter information for a different field, then please select "Create New",
+  enter the necessary information.
+</p>
+
+{% if field_farm_list %}
+<div class="col-md-10">
+  <div class="list-group">
+
+    {% for field_farm in field_farm_list %}
+    <a href="{% url 'update_fieldfarm' field_farm.id %}"
+      class="list-group-item list-group-item-action list-group-item-success">
+
+      Field from 2023: {{field_farm.field_acreage}} acres
+
+    </a>
+    {% endfor %}
+    <a href="{% url 'create_fieldfarm' %}" class="list-group-item list-group-item-action list-group-item-success">
+      Create new!
+    </a>
+  </div>
+</div>
+
+{% else %}
+<p>There are no fields yet created for this farmer.</p>
+{% endif %}
+
+{% endblock %}

@@ -13,24 +13,14 @@
 </head>
 
 
-<h3 class="card-title">Review Response</h3>
-
-
+<h3 class="card-title">Enter data for new field</h3>
 
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
-  {% include 'wisccc/includes/form_photo.html' %}
-
-  {% include 'wisccc/includes/form_farmer.html' %}
-
-  {% include 'wisccc/includes/form_surveyfarm_full.html' %}
-
-  {% include 'wisccc/includes/form_surveyfield_full.html' %}
-
   {% include 'wisccc/includes/form_fieldfarm_full.html' %}
 
-  <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
+  <button type="submit" class="noprompt-required btn btn-primary">Submit new field</button>
   <a href="{% url 'wisc_cc_survey' %}"><button type="button" class="warn btn btn-secondary">Back to survey home
       page</button></a>
 

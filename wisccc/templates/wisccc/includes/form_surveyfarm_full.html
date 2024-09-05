@@ -16,6 +16,14 @@
 </div>
 <div class="form-row">
     <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.main_cc_goal_this_year|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ survey_farm_full_form.satisfied_with_cc_results|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
         {{ survey_farm_full_form.dominant_soil_series_1|as_crispy_field }}
     </div>
 </div>
@@ -75,6 +83,20 @@
         {{ survey_farm_full_form.info_source_cover_crops_write_in|as_crispy_field }}
     </div>
 </div>
+
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.biggest_challenge_cc|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.learning_history_cc|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.conservation_programs|as_crispy_field }}
+    </div>
+</div>
+
 <div class="form-row">
     <div class="form-group col-md-8 mb-0">
         {{ survey_farm_full_form.support_cover_crops_1|as_crispy_field }}
@@ -95,6 +117,9 @@
 <div class="form-row">
     <div class="form-group col-md-12 mb-0">
         {{ survey_farm_full_form.barriers_to_expansion|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-12 mb-0">
+        {{ survey_farm_full_form.barriers_to_expansion_write_in|as_crispy_field }}
     </div>
 </div>
 
@@ -149,6 +174,17 @@
     <div class="form-row">
         <div class="form-group col-md-12 mb-0">
             {{ survey_farm_full_form.additional_thoughts|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ survey_farm_full_form.encourage_cc|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ survey_farm_full_form.encourage_cc_write_in|as_crispy_field }}
         </div>
     </div>
 </div>

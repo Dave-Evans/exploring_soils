@@ -1,0 +1,125 @@
+{% load crispy_forms_tags %}
+
+
+
+<h4>Crop rotation in this field 2022-2024</h4>
+<p>
+    If you planted more than one species as a cover crop select “multispecies mix of 2 or more”
+    from the drop down.
+</p>
+
+
+<div class="form-row">
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2021_cash_crop_species|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2021_cover_crop_species|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2022_cash_crop_species|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2022_cover_crop_species|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2023_cash_crop_species|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-5 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation_2023_cover_crop_species|as_crispy_field }}
+    </div>
+</div>
+<h4>Planting Rate 2024</h4>
+<p>
+    18. What was your cover crop planting rate for this field?
+    If you planted a multispecies mix of two or more types please tell us the rate for each type of cover crop in the
+    mix (up to 5 species) to the best of your ability.
+    You can add more details in the text box below.
+</p>
+<h5>Cover crop 1</h5>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_1|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_1|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_1_units|as_crispy_field }}
+    </div>
+</div>
+<h5>Cover crop 2</h5>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_2_units|as_crispy_field }}
+    </div>
+</div>
+<h5>Cover crop 3</h5>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_3|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_3|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_3_units|as_crispy_field }}
+    </div>
+</div>
+<h5>Cover crop 4</h5>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_4|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_4|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_4_units|as_crispy_field }}
+    </div>
+</div>
+<h5>Cover crop 5</h5>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_species_5|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_5|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_surveyfield_section_3.cover_crop_planting_rate_5_units|as_crispy_field }}
+    </div>
+</div>
+<hr>
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfield_section_3.crop_rotation|as_crispy_field }}
+    </div>
+</div>
+
+<hr>
+{{ form_surveyfield_section_3.errors }}
+<script>
+    $(function () {
+        $("#id_cover_crop_planting_date").datepicker({
+            format: 'yyyy-mm-dd',
+        });
+    });
+
+
+    $(function () {
+        $("#id_cash_crop_planting_date").datepicker({
+            format: 'yyyy-mm-dd',
+        });
+    });
+</script>

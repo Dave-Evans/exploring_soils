@@ -1,8 +1,6 @@
 {% extends 'wisccc/base_wisccc.html' %}
 {% load static %}
 
-{% block title %}Wisconsin Cover Crop Citizen Science Network {% endblock %}
-
 {% block content %}
 <style>
   a p,
@@ -55,19 +53,6 @@
 
         </div>
         <div class="card-group">
-
-          <!-- <a href="{% url 'wisc_cc_survey' %}"> -->
-          <div class="card">
-            <img class="card-img-top" height="228" src="{% static 'img/oats_berseem_481x425.jpg' %}" alt="Oats photo">
-            <div class="card-body">
-              <h5 class="card-title">Cover crop survey </h5>
-              <p class="card-text">Survey for the 2024 season will open this fall.</p>
-              <!-- <p class="card-text">Click here if you've registered to participate in this year's survey.</p> -->
-              <!-- <a href="{% url 'wisc_cc_survey' %}" class="btn btn-primary">Go to survey</a> -->
-              <a class="btn btn-primary">Go to survey</a>
-            </div>
-          </div>
-          <!-- </a> -->
           <a href="{% url 'wisc_cc_register_1' %}">
             <div class="card">
               <img class="card-img-top" src="{% static 'img/checking_corn.jpg' %}"
@@ -76,6 +61,17 @@
                 <h5 class="card-title">Interested in participating?</h5>
 
                 <a href="{% url 'wisc_cc_register_1' %}" class="btn btn-primary">Register here!</a>
+              </div>
+            </div>
+          </a>
+          <a href="{% url 'wisc_cc_survey' %}">
+            <div class="card">
+              <img class="card-img-top" height="228" src="{% static 'img/oats_berseem_481x425.jpg' %}" alt="Oats photo">
+              <div class="card-body">
+                <h5 class="card-title">Cover crop survey </h5>
+                <p class="card-text">Survey for the 2024 season is open!</p>
+                <!-- <p class="card-text">Click here if you've registered to participate in this year's survey.</p> -->
+                <a href="{% url 'wisc_cc_survey' %}" class="btn btn-primary">Go to survey</a>
               </div>
             </div>
           </a>
@@ -103,7 +99,9 @@
             rel="noopener noreferrer">the USDA Dairy Forage Research Center</a>, and
           UW-Madison's <a href="https://wicst.wisc.edu/" target="_blank" rel="noopener noreferrer">WICST project</a>.
           We are grateful to our collaborating Wisconsin farmers and to our
-          Soil Health Alliance for Research and Engagement (SHARE) project partners.
+          <a href="https://www.soilhealthalliance.net/" target="_blank" rel="noopener noreferrer">
+            Soil Health Alliance for Research and Engagement (SHARE)
+          </a> project partners.
         </p>
 
 
