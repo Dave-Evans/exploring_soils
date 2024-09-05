@@ -4,7 +4,9 @@ Because of unique email constraints
 Jerry daniels users have been changed.
 Search "jbh" to pull them up.
 "jbhcml@yahoo.com" is proper email.
-Hym]%dr89"?=+mE
+jbhcml@yahoo.com
+
+
 ### Can't load data into original structure
 
 An error about json serialization was thrown when trying to import data into the database.
