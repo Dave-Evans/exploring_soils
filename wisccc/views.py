@@ -647,6 +647,9 @@ def update_response(request, id):
     form_surveyfarm_section_2 = SurveyFarmFormSection2(
         request.POST or None, instance=survey_farm
     )
+    # For making all review questions NOT required
+    # for f in form_surveyfarm_section_2.fields:
+    #     form_surveyfarm_section_2.fields[f].required = False
     # Section 3 - SurveyField and FarmField
     form_surveyfield_section_3 = SurveyFieldFormSection3(
         request.POST or None, instance=survey_field
