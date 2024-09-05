@@ -35,9 +35,9 @@ from wisccc.forms import (
     SurveyFieldFormSection6,
     SurveyFarmFormSection6,
     SurveyFarmFormSection7,
+    SurveyFarmFormReview,
     FieldFarmFormFull,
     FarmerForm,
-    FarmerFormReview,
     SurveyFarmFormFull,
     SurveyPhotoForm,
     CustomUserCreationForm,
@@ -642,14 +642,12 @@ def update_response(request, id):
 
     # pass the object as instance in form
     # Section 1 - Farmer
-    form_farmer_section_1 = FarmerFormReview(request.POST or None, instance=farmer)
+    form_farmer_section_1 = FarmerForm(request.POST or None, instance=farmer)
     # Section 2 - SurveyFarm
     form_surveyfarm_section_2 = SurveyFarmFormSection2(
         request.POST or None, instance=survey_farm
     )
-    # For making all review questions NOT required
-    # for f in form_surveyfarm_section_2.fields:
-    #     form_surveyfarm_section_2.fields[f].required = False
+
     # Section 3 - SurveyField and FarmField
     form_surveyfield_section_3 = SurveyFieldFormSection3(
         request.POST or None, instance=survey_field
@@ -682,8 +680,30 @@ def update_response(request, id):
     form_surveyfarm_section_7 = SurveyFarmFormSection7(
         request.POST or None, instance=survey_farm
     )
+    # For making all review questions NOT required
+    forms = [
+        form_farmer_section_1,
+        form_surveyfarm_section_2,
+        form_fieldfarm_section_3,
+        form_surveyfield_section_3,
+        form_surveyfield_section_4_part_1,
+        form_surveyfarm_section_4,
+        form_surveyfield_section_4_part_2,
+        form_surveyfield_section_5,
+        form_surveyfarm_section_6,
+        form_surveyfield_section_6,
+        form_surveyfarm_section_7,
+    ]
+
+    for frm in forms:
+        for fld in frm.fields:
+            frm.fields[fld].required = False
 
     form_survey_photo = SurveyPhotoForm(request.POST or None, instance=survey_photo)
+
+    form_surveyfarm_review = SurveyFarmFormReview(
+        request.POST or None, instance=survey_farm
+    )
     # save the data from the form and
     # redirect to detail_view
 
@@ -700,6 +720,7 @@ def update_response(request, id):
         and form_surveyfield_section_6.is_valid()
         and form_surveyfarm_section_7.is_valid()
         and form_survey_photo.is_valid()
+        and form_surveyfarm_review.is_valid()
     ):
 
         form_farmer_section_1.save()
@@ -713,6 +734,7 @@ def update_response(request, id):
         form_surveyfarm_section_6.save()
         form_surveyfield_section_6.save()
         form_surveyfarm_section_7.save()
+        form_surveyfarm_review.save()
 
         new_survey_photo = form_survey_photo.save()
         new_survey_photo.survey_field_id = survey_field.id
@@ -738,6 +760,7 @@ def update_response(request, id):
     context["form_surveyfarm_section_6"] = form_surveyfarm_section_6
     context["form_surveyfield_section_6"] = form_surveyfield_section_6
     context["form_surveyfarm_section_7"] = form_surveyfarm_section_7
+    context["form_surveyfarm_review"] = form_surveyfarm_review
 
     context["survey_photo_form"] = form_survey_photo
 

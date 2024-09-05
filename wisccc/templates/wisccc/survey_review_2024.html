@@ -58,6 +58,18 @@
   <h3 class="card-title">VII. Final thoughts</h3>
   {% include 'wisccc/includes/survey_2024/form_section_7_final_thoughts_surveyfarm.html' %}
 
+  <h3 class="card-title">Reviewer notes and accuracy confirmation</h3>
+  <div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+      {{ form_surveyfarm_review.notes_admin|as_crispy_field }}
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+      {{ form_surveyfarm_review.confirmed_accurate|as_crispy_field }}
+    </div>
+  </div>
+
   <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
   <a href="{% url 'response_table' %}">
     <button type="button" class="warn btn btn-secondary">

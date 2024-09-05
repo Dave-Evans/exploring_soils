@@ -37,7 +37,6 @@ from wisccc.models import (
     StateAbrevChoices,
 )
 
-from wisccc.forms_review import *
 TRUE_FALSE_CHOICES = (("", ""), (True, "Yes"), (False, "No"))
 
 
@@ -1579,4 +1578,27 @@ class SurveyFarmFormSection7(forms.ModelForm):
             "encourage_cc",
             "encourage_cc_write_in",
             "additional_thoughts",
+        )
+
+
+class SurveyFarmFormReview(forms.ModelForm):
+
+    notes_admin = forms.CharField(
+        label="Notes about survey response (for admin purposes)",
+        widget=forms.Textarea,
+        max_length=5000,
+        required=False,
+    )
+
+    confirmed_accurate = forms.ChoiceField(
+        label="Is all the information in this entry accurate?",
+        required=False,
+        choices=TRUE_FALSE_CHOICES,
+    )
+
+    class Meta:
+        model = SurveyFarm
+        fields = (
+            "confirmed_accurate",
+            "notes_admin",
         )
