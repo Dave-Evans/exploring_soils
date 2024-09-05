@@ -37,6 +37,7 @@ from wisccc.models import (
     StateAbrevChoices,
 )
 
+from wisccc.forms_review import *
 TRUE_FALSE_CHOICES = (("", ""), (True, "Yes"), (False, "No"))
 
 
@@ -645,153 +646,6 @@ class FieldFarmFormFull(forms.ModelForm):
         )
 
 
-class SurveyFarmFormSection2(forms.ModelForm):
-
-    # 1. Total acres of cover crops
-    total_acres = forms.IntegerField(
-        label="1. Total acres you planted to cover crops this year.",
-        required=True,
-        min_value=0,
-        max_value=100000,
-    )
-
-    # 2. Percent acres of your farm in cc?
-    percent_of_farm_cc = forms.IntegerField(
-        label="2. What percent of all your farm acres did you plant to covers this year?",
-        required=True,
-        min_value=0,
-        max_value=100,
-    )
-
-    # 3. Years Experience
-    years_experience = forms.IntegerField(
-        label="3. How many years' of experience do you have planting cover crops?",
-        required=True,
-        min_value=0,
-        max_value=100,
-    )
-
-    main_cc_goal_this_year = forms.CharField(
-        label="4. What is your main goal for cover cropping this year?",
-        required=True,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=500,
-    )
-
-    satisfied_with_cc_results = forms.CharField(
-        label="5. How satisfied are you with the results you get from cover cropping? ",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=500,
-    )
-
-    barriers_to_expansion = forms.ChoiceField(
-        label="6. Would you like to expand the number of acres you cover crop?",
-        required=False,
-        choices=ExpandAcresChoices.choices,
-    )
-
-    barriers_to_expansion_write_in = forms.CharField(
-        label="6a. If you chose “other” please provide details.",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=1000,
-    )
-
-    # 8. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
-    info_source_cover_crops_1 = forms.CharField(
-        label="7. What are your top sources of outside information on cover cropping in order of importance?",
-        help_text="Answers might include Agronomist, CCA, or other private consultant, friends and neighbor farmers, local cooperative, land conservation office, producer-led Watershed Group, UW Extension",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=500,
-    )
-
-    biggest_challenge_cc = forms.CharField(
-        label="8. What is your biggest challenge or unanswered question when it comes to cover cropping?",
-        required=True,
-        max_length=500,
-        widget=forms.Textarea(attrs={"rows": 5}),
-    )
-
-    learning_history_cc = forms.CharField(
-        label="9. How would you describe your personal learning process with cover cropping? We'd like to understand how you make cover crop decisions from year to year and what might help you in the future.",
-        required=True,
-        max_length=500,
-        widget=forms.Textarea(attrs={"rows": 5}),
-    )
-    if_use_crop_insurance = forms.CharField(
-        label="10. Do you use crop insurance? If so, does it influence your cover cropping decisions, and how?",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=500,
-    )
-    conservation_programs = forms.CharField(
-        label="11. Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices? Which ones?",
-        required=False,
-        max_length=500,
-        widget=forms.Textarea(attrs={"rows": 5}),
-    )
-
-    class Meta:
-        model = SurveyFarm
-        fields = (
-            "total_acres",
-            "percent_of_farm_cc",
-            "years_experience",
-            "main_cc_goal_this_year",
-            "satisfied_with_cc_results",
-            "barriers_to_expansion",
-            "barriers_to_expansion_write_in",
-            "info_source_cover_crops_1",
-            "biggest_challenge_cc",
-            "learning_history_cc",
-            "if_use_crop_insurance",
-            "conservation_programs",
-        )
-
-
-class FieldFarmFormSection3(forms.ModelForm):
-    """For static data about a farmer's field"""
-
-    field_name = forms.CharField(
-        label="Please enter a name for this field", required=False, max_length=250
-    )
-    # 16 Closest zip code for this field (so we can determine appropriate climate data and generate a location map of participating fields). Field must be located in Wisconsin.
-    closest_zip_code = forms.IntegerField(
-        label="12. Enter the closest zip code for this field.",
-        required=True,
-        min_value=0,
-        max_value=99999,
-    )
-    # 18 What is this field(s) acreage?
-    field_acreage = forms.IntegerField(
-        label="13. What is this field's acreage?", required=True, min_value=0
-    )
-    # 19 In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
-    field_location = geo_forms.PointField(
-        label="14. Zoom in to the map and click the general location for this field.",
-        help_text="To reset the location, click 'Delete all features' and click a different location",
-        widget=geo_forms.OSMWidget(
-            attrs={
-                "default_lat": 44.636774,
-                "default_lon": -90.012530,
-                "default_zoom": 6,
-            }
-        ),
-        required=False,
-    )
-
-    class Meta:
-        model = FieldFarm
-        fields = (
-            "field_name",
-            "closest_zip_code",
-            "field_acreage",
-            "field_location",
-        )
-
-
 class SurveyFieldFormFull(forms.ModelForm):
 
     # In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
@@ -1134,6 +988,153 @@ class SurveyFieldFormFull(forms.ModelForm):
             "cover_crop_planting_date",
             "cover_crop_estimated_termination",
             "days_between_crop_hvst_and_cc_estd",
+        )
+
+
+class SurveyFarmFormSection2(forms.ModelForm):
+
+    # 1. Total acres of cover crops
+    total_acres = forms.IntegerField(
+        label="1. Total acres you planted to cover crops this year.",
+        required=True,
+        min_value=0,
+        max_value=100000,
+    )
+
+    # 2. Percent acres of your farm in cc?
+    percent_of_farm_cc = forms.IntegerField(
+        label="2. What percent of all your farm acres did you plant to covers this year?",
+        required=True,
+        min_value=0,
+        max_value=100,
+    )
+
+    # 3. Years Experience
+    years_experience = forms.IntegerField(
+        label="3. How many years' of experience do you have planting cover crops?",
+        required=True,
+        min_value=0,
+        max_value=100,
+    )
+
+    main_cc_goal_this_year = forms.CharField(
+        label="4. What is your main goal for cover cropping this year?",
+        required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    satisfied_with_cc_results = forms.CharField(
+        label="5. How satisfied are you with the results you get from cover cropping? ",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    barriers_to_expansion = forms.ChoiceField(
+        label="6. Would you like to expand the number of acres you cover crop?",
+        required=False,
+        choices=ExpandAcresChoices.choices,
+    )
+
+    barriers_to_expansion_write_in = forms.CharField(
+        label="6a. If you chose “other” please provide details.",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=1000,
+    )
+
+    # 8. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
+    info_source_cover_crops_1 = forms.CharField(
+        label="7. What are your top sources of outside information on cover cropping in order of importance?",
+        help_text="Answers might include Agronomist, CCA, or other private consultant, friends and neighbor farmers, local cooperative, land conservation office, producer-led Watershed Group, UW Extension",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+
+    biggest_challenge_cc = forms.CharField(
+        label="8. What is your biggest challenge or unanswered question when it comes to cover cropping?",
+        required=True,
+        max_length=500,
+        widget=forms.Textarea(attrs={"rows": 5}),
+    )
+
+    learning_history_cc = forms.CharField(
+        label="9. How would you describe your personal learning process with cover cropping? We'd like to understand how you make cover crop decisions from year to year and what might help you in the future.",
+        required=True,
+        max_length=500,
+        widget=forms.Textarea(attrs={"rows": 5}),
+    )
+    if_use_crop_insurance = forms.CharField(
+        label="10. Do you use crop insurance? If so, does it influence your cover cropping decisions, and how?",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    conservation_programs = forms.CharField(
+        label="11. Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices? Which ones?",
+        required=False,
+        max_length=500,
+        widget=forms.Textarea(attrs={"rows": 5}),
+    )
+
+    class Meta:
+        model = SurveyFarm
+        fields = (
+            "total_acres",
+            "percent_of_farm_cc",
+            "years_experience",
+            "main_cc_goal_this_year",
+            "satisfied_with_cc_results",
+            "barriers_to_expansion",
+            "barriers_to_expansion_write_in",
+            "info_source_cover_crops_1",
+            "biggest_challenge_cc",
+            "learning_history_cc",
+            "if_use_crop_insurance",
+            "conservation_programs",
+        )
+
+
+class FieldFarmFormSection3(forms.ModelForm):
+    """For static data about a farmer's field"""
+
+    field_name = forms.CharField(
+        label="Please enter a name for this field", required=False, max_length=250
+    )
+    # 16 Closest zip code for this field (so we can determine appropriate climate data and generate a location map of participating fields). Field must be located in Wisconsin.
+    closest_zip_code = forms.IntegerField(
+        label="12. Enter the closest zip code for this field.",
+        required=True,
+        min_value=0,
+        max_value=99999,
+    )
+    # 18 What is this field(s) acreage?
+    field_acreage = forms.IntegerField(
+        label="13. What is this field's acreage?", required=True, min_value=0
+    )
+    # 19 In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
+    field_location = geo_forms.PointField(
+        label="14. Zoom in to the map and click the general location for this field.",
+        help_text="To reset the location, click 'Delete all features' and click a different location",
+        widget=geo_forms.OSMWidget(
+            attrs={
+                "default_lat": 44.636774,
+                "default_lon": -90.012530,
+                "default_zoom": 6,
+            }
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = FieldFarm
+        fields = (
+            "field_name",
+            "closest_zip_code",
+            "field_acreage",
+            "field_location",
         )
 
 

@@ -37,6 +37,7 @@ from wisccc.forms import (
     SurveyFarmFormSection7,
     FieldFarmFormFull,
     FarmerForm,
+    FarmerFormReview,
     SurveyFarmFormFull,
     SurveyPhotoForm,
     CustomUserCreationForm,
@@ -258,9 +259,9 @@ def wisc_cc_survey1(request):
     except:
         instance = Farmer.objects.create(user_id=request.user.id)
 
-    form = FarmerForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        new_form = form.save(commit=False)
+    form_farmer = FarmerForm(request.POST or None, instance=instance)
+    if form_farmer.is_valid():
+        new_form = form_farmer.save(commit=False)
         new_form.user = request.user
         new_form.save()
 
@@ -271,7 +272,7 @@ def wisc_cc_survey1(request):
         request,
         template,
         {
-            "farmer_form": form,
+            "form_farmer": form_farmer,
         },
     )
 
@@ -294,12 +295,13 @@ def wisc_cc_survey2(request):
         .filter(survey_year=survey_year)
         .first()
     )
-    print("SurveyFarm object:", survey_farm)
     # pass the object as instance in form
-    form = SurveyFarmFormSection2(request.POST or None, instance=survey_farm)
+    form_surveyfarm_section_2 = SurveyFarmFormSection2(
+        request.POST or None, instance=survey_farm
+    )
 
-    if form.is_valid():
-        new_form = form.save(commit=False)
+    if form_surveyfarm_section_2.is_valid():
+        new_form = form_surveyfarm_section_2.save(commit=False)
         new_form.farmer = farmer
         # Make sure to make a slot for this in the form.
         new_form.survey_year = survey_year
@@ -308,7 +310,9 @@ def wisc_cc_survey2(request):
         return redirect("wisc_cc_survey3")
 
     template = "wisccc/survey_section_2_goals_support.html"
-    return render(request, template, {"form": form})
+    return render(
+        request, template, {"form_surveyfarm_section_2": form_surveyfarm_section_2}
+    )
 
 
 @login_required
@@ -368,16 +372,18 @@ def wisc_cc_survey3(request):
         # Else, then we will just be creating it here.
 
     # pass the object as instance in form
-    survey_field_form = SurveyFieldFormSection3(
+    form_surveyfield_section_3 = SurveyFieldFormSection3(
         request.POST or None, instance=survey_field
     )
-    field_farm_form = FieldFarmFormSection3(request.POST or None, instance=field_farm)
+    form_fieldfarm_section_3 = FieldFarmFormSection3(
+        request.POST or None, instance=field_farm
+    )
 
-    if survey_field_form.is_valid() and field_farm_form.is_valid():
+    if form_surveyfield_section_3.is_valid() and form_fieldfarm_section_3.is_valid():
 
-        new_field_farm_form = field_farm_form.save(commit=False)
+        new_field_farm_form = form_fieldfarm_section_3.save(commit=False)
         new_field_farm_form.farmer = farmer
-        new_survey_field_form = survey_field_form.save(commit=False)
+        new_survey_field_form = form_surveyfield_section_3.save(commit=False)
         new_survey_field_form.survey_farm = survey_farm
         new_survey_field_form.field_farm = new_field_farm_form
         # Make sure to save field_farm first
@@ -387,8 +393,8 @@ def wisc_cc_survey3(request):
         return redirect("wisc_cc_survey4")
     # add form dictionary to context
 
-    context["form_surveyfield_section_3"] = survey_field_form
-    context["field_farm_full_form"] = field_farm_form
+    context["form_surveyfield_section_3"] = form_surveyfield_section_3
+    context["form_fieldfarm_section_3"] = form_fieldfarm_section_3
     template = "wisccc/survey_section_3_field_rotation_rates.html"
     return render(request, template, context)
 
@@ -430,30 +436,34 @@ def wisc_cc_survey4(request):
     else:
         survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
 
-    form_survey_farm = SurveyFarmFormSection4(
+    form_surveyfarm_section_4 = SurveyFarmFormSection4(
         request.POST or None, instance=survey_farm
     )
-    form_survey_field_part_1 = SurveyFieldFormSection4_part1(
+    form_surveyfield_section_4_part_1 = SurveyFieldFormSection4_part1(
         request.POST or None, instance=survey_field
     )
-    form_survey_field_part_2 = SurveyFieldFormSection4_part2(
+    form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2(
         request.POST or None, instance=survey_field
     )
 
     if (
-        form_survey_farm.is_valid()
-        and form_survey_field_part_1.is_valid()
-        and form_survey_field_part_2.is_valid()
+        form_surveyfarm_section_4.is_valid()
+        and form_surveyfield_section_4_part_1.is_valid()
+        and form_surveyfield_section_4_part_2.is_valid()
     ):
 
-        new_survey_farm_form = form_survey_farm.save(commit=False)
+        new_survey_farm_form = form_surveyfarm_section_4.save(commit=False)
         new_survey_farm_form.farmer = farmer
         new_survey_farm_form.survey_year = survey_year
         new_survey_farm_form.save()
-        new_form_survey_field_part_1 = form_survey_field_part_1.save(commit=False)
+        new_form_survey_field_part_1 = form_surveyfield_section_4_part_1.save(
+            commit=False
+        )
         new_form_survey_field_part_1.survey_farm = survey_farm
         new_form_survey_field_part_1.save()
-        new_form_survey_field_part_2 = form_survey_field_part_2.save(commit=False)
+        new_form_survey_field_part_2 = form_surveyfield_section_4_part_2.save(
+            commit=False
+        )
         new_form_survey_field_part_2.survey_farm = survey_farm
         new_form_survey_field_part_2.save()
 
@@ -464,9 +474,9 @@ def wisc_cc_survey4(request):
         request,
         template,
         {
-            "form_survey_farm": form_survey_farm,
-            "form_survey_field_part_1": form_survey_field_part_1,
-            "form_survey_field_part_2": form_survey_field_part_2,
+            "form_surveyfarm_section_4": form_surveyfarm_section_4,
+            "form_surveyfield_section_4_part_1": form_surveyfield_section_4_part_1,
+            "form_surveyfield_section_4_part_2": form_surveyfield_section_4_part_2,
         },
     )
 
@@ -496,20 +506,20 @@ def wisc_cc_survey5(request):
         survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
 
     # pass the object as instance in form
-    survey_field_form = SurveyFieldFormSection5(
+    form_surveyfield_section_5 = SurveyFieldFormSection5(
         request.POST or None, instance=survey_field
     )
 
-    if survey_field_form.is_valid():
+    if form_surveyfield_section_5.is_valid():
 
-        new_survey_field_form = survey_field_form.save(commit=False)
+        new_survey_field_form = form_surveyfield_section_5.save(commit=False)
         new_survey_field_form.survey_farm = survey_farm
         new_survey_field_form.save()
 
         return redirect("wisc_cc_survey6")
     # add form dictionary to context
 
-    context["form_surveyfield"] = survey_field_form
+    context["form_surveyfield_section_5"] = form_surveyfield_section_5
     template = "wisccc/survey_section_5_field_tillage_manure_soil.html"
     return render(request, template, context)
 
@@ -535,20 +545,20 @@ def wisc_cc_survey6(request):
     else:
         survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
 
-    form_survey_farm = SurveyFarmFormSection6(
+    form_surveyfarm_section_6 = SurveyFarmFormSection6(
         request.POST or None, instance=survey_farm
     )
-    form_survey_field = SurveyFieldFormSection6(
+    form_surveyfield_section_6 = SurveyFieldFormSection6(
         request.POST or None, instance=survey_field
     )
 
-    if form_survey_farm.is_valid() and form_survey_field.is_valid():
+    if form_surveyfarm_section_6.is_valid() and form_surveyfield_section_6.is_valid():
 
-        new_form_survey_farm = form_survey_farm.save(commit=False)
+        new_form_survey_farm = form_surveyfarm_section_6.save(commit=False)
         new_form_survey_farm.farmer = farmer
         new_form_survey_farm.survey_year = survey_year
         new_form_survey_farm.save()
-        new_form_survey_field = form_survey_field.save(commit=False)
+        new_form_survey_field = form_surveyfield_section_6.save(commit=False)
         new_form_survey_field.survey_farm = survey_farm
         new_form_survey_field.save()
 
@@ -559,8 +569,8 @@ def wisc_cc_survey6(request):
         request,
         template,
         {
-            "form_survey_farm": form_survey_farm,
-            "form_survey_field": form_survey_field,
+            "form_surveyfarm_section_6": form_surveyfarm_section_6,
+            "form_surveyfield_section_6": form_surveyfield_section_6,
         },
     )
 
@@ -584,20 +594,152 @@ def wisc_cc_survey7(request):
     )
 
     # pass the object as instance in form
-    survey_farm_form = SurveyFarmFormSection7(
+    form_surveyfarm_section_7 = SurveyFarmFormSection7(
         request.POST or None, instance=survey_farm
     )
 
-    if survey_farm_form.is_valid():
-        survey_farm_form = survey_farm_form.save(commit=False)
-        survey_farm_form.farmer = farmer
-        survey_farm_form.survey_year = survey_year
-        survey_farm_form.save()
+    if form_surveyfarm_section_7.is_valid():
+        new_form_surveyfarm_section_7 = form_surveyfarm_section_7.save(commit=False)
+        new_form_surveyfarm_section_7.farmer = farmer
+        new_form_surveyfarm_section_7.survey_year = survey_year
+        new_form_surveyfarm_section_7.save()
 
         return redirect("wisc_cc_survey")
 
     template = "wisccc/survey_section_7_final_thoughts.html"
-    return render(request, template, {"survey_farm_form": survey_farm_form})
+    return render(
+        request, template, {"form_surveyfarm_section_7": form_surveyfarm_section_7}
+    )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def update_response(request, id):
+    """For updating survey"""
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the survey object related to passed id
+    survey_farm = get_object_or_404(SurveyFarm, id=id)
+
+    if survey_farm is None:
+        survey_field = None
+    else:
+        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+
+    if survey_field is None:
+        field_farm = None
+        survey_photo = None
+    else:
+        field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
+        survey_photo = SurveyPhoto.objects.filter(
+            survey_field_id=survey_field.id
+        ).first()
+
+    # Get farmer associated with user id of survey response
+    farmer = Farmer.objects.filter(id=survey_farm.farmer_id).first()
+    # Get any uploaded photos for this survey response
+
+    # pass the object as instance in form
+    # Section 1 - Farmer
+    form_farmer_section_1 = FarmerFormReview(request.POST or None, instance=farmer)
+    # Section 2 - SurveyFarm
+    form_surveyfarm_section_2 = SurveyFarmFormSection2(
+        request.POST or None, instance=survey_farm
+    )
+    # Section 3 - SurveyField and FarmField
+    form_surveyfield_section_3 = SurveyFieldFormSection3(
+        request.POST or None, instance=survey_field
+    )
+    form_fieldfarm_section_3 = FieldFarmFormSection3(
+        request.POST or None, instance=field_farm
+    )
+    # Section 4 - SurveyFarm and SurveyField
+    form_surveyfield_section_4_part_1 = SurveyFieldFormSection4_part1(
+        request.POST or None, instance=survey_field
+    )
+    form_surveyfarm_section_4 = SurveyFarmFormSection4(
+        request.POST or None, instance=survey_farm
+    )
+    form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2(
+        request.POST or None, instance=survey_field
+    )
+    # Section 5 - SurveyField
+    form_surveyfield_section_5 = SurveyFieldFormSection5(
+        request.POST or None, instance=survey_field
+    )
+    # Section 6 - SurveyFarm and SurveyField
+    form_surveyfarm_section_6 = SurveyFarmFormSection6(
+        request.POST or None, instance=survey_farm
+    )
+    form_surveyfield_section_6 = SurveyFieldFormSection6(
+        request.POST or None, instance=survey_field
+    )
+    # Section 7 - SurveyFarm
+    form_surveyfarm_section_7 = SurveyFarmFormSection7(
+        request.POST or None, instance=survey_farm
+    )
+
+    form_survey_photo = SurveyPhotoForm(request.POST or None, instance=survey_photo)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if (
+        form_farmer_section_1.is_valid()
+        and form_surveyfarm_section_2.is_valid()
+        and form_surveyfield_section_3.is_valid()
+        and form_fieldfarm_section_3.is_valid()
+        and form_surveyfield_section_4_part_1.is_valid()
+        and form_surveyfarm_section_4.is_valid()
+        and form_surveyfield_section_4_part_2.is_valid()
+        and form_surveyfield_section_5.is_valid()
+        and form_surveyfarm_section_6.is_valid()
+        and form_surveyfield_section_6.is_valid()
+        and form_surveyfarm_section_7.is_valid()
+        and form_survey_photo.is_valid()
+    ):
+
+        form_farmer_section_1.save()
+        form_surveyfarm_section_2.save()
+        form_surveyfield_section_3.save()
+        form_fieldfarm_section_3.save()
+        form_surveyfield_section_4_part_1.save()
+        form_surveyfarm_section_4.save()
+        form_surveyfield_section_4_part_2.save()
+        form_surveyfield_section_5.save()
+        form_surveyfarm_section_6.save()
+        form_surveyfield_section_6.save()
+        form_surveyfarm_section_7.save()
+
+        new_survey_photo = form_survey_photo.save()
+        new_survey_photo.survey_field_id = survey_field.id
+        if "image_1" in request.FILES.keys():
+            new_survey_photo.image_1 = request.FILES["image_1"]
+        if "image_2" in request.FILES.keys():
+            new_survey_photo.image_2 = request.FILES["image_2"]
+
+        new_survey_photo.save()
+
+        return redirect("response_table")
+    # add form dictionary to context
+    # Section 1 - Farmer
+    context["farmer_form"] = form_farmer_section_1
+    # Section 2 - Survey Farm
+    context["form_surveyfarm_section_2"] = form_surveyfarm_section_2
+    context["form_surveyfield_section_3"] = form_surveyfield_section_3
+    context["form_fieldfarm_section_3"] = form_fieldfarm_section_3
+    context["form_surveyfield_section_4_part_1"] = form_surveyfield_section_4_part_1
+    context["form_surveyfarm_section_4"] = form_surveyfarm_section_4
+    context["form_surveyfield_section_4_part_2"] = form_surveyfield_section_4_part_2
+    context["form_surveyfield_section_5"] = form_surveyfield_section_5
+    context["form_surveyfarm_section_6"] = form_surveyfarm_section_6
+    context["form_surveyfield_section_6"] = form_surveyfield_section_6
+    context["form_surveyfarm_section_7"] = form_surveyfarm_section_7
+
+    context["survey_photo_form"] = form_survey_photo
+
+    template = "wisccc/survey_review_2024.html"
+    return render(request, template, context)
 
 
 @login_required
@@ -1133,80 +1275,6 @@ def delete_response(request, id):
         return redirect("response_table")
 
     return render(request, "wisccc/delete_response.html", context)
-
-
-@permission_required("wisccc.survery_manager", raise_exception=True)
-def update_response(request, id):
-    """For updating survey"""
-    # dictionary for initial data with
-    # field names as keys
-    context = {}
-
-    # fetch the survey object related to passed id
-    survey_farm = get_object_or_404(SurveyFarm, id=id)
-
-    if survey_farm is None:
-        survey_field = None
-    else:
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-
-    if survey_field is None:
-        field_farm = None
-        survey_photo = None
-    else:
-        field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
-        survey_photo = SurveyPhoto.objects.filter(
-            survey_field_id=survey_field.id
-        ).first()
-
-    # Get farmer associated with user id of survey response
-    farmer = Farmer.objects.filter(id=survey_farm.farmer_id).first()
-    # Get any uploaded photos for this survey response
-
-    # pass the object as instance in form
-    form_survey_farm = SurveyFarmFormFull(request.POST or None, instance=survey_farm)
-    form_field_farm = FieldFarmFormFull(request.POST or None, instance=field_farm)
-    form_survey_field = SurveyFieldFormFull(request.POST or None, instance=survey_field)
-    form_farmer = FarmerForm(request.POST or None, instance=farmer)
-
-    form_survey_photo = SurveyPhotoForm(request.POST or None, instance=survey_photo)
-    # save the data from the form and
-    # redirect to detail_view
-
-    if (
-        form_survey_farm.is_valid()
-        and form_survey_field.is_valid()
-        and form_field_farm.is_valid()
-        and form_farmer.is_valid()
-        and form_survey_photo.is_valid()
-    ):
-
-        form_survey_farm.save()
-        form_survey_field.save()
-        form_field_farm.save()
-        # Here verify county
-        # Here calc gdu?
-        form_farmer.save()
-
-        new_survey_photo = form_survey_photo.save()
-        new_survey_photo.survey_field_id = survey_field.id
-        if "image_1" in request.FILES.keys():
-            new_survey_photo.image_1 = request.FILES["image_1"]
-        if "image_2" in request.FILES.keys():
-            new_survey_photo.image_2 = request.FILES["image_2"]
-
-        new_survey_photo.save()
-
-        return redirect("response_table")
-    # add form dictionary to context
-    context["farmer_form"] = form_farmer
-    context["survey_farm_full_form"] = form_survey_farm
-    context["survey_field_full_form"] = form_survey_field
-    context["field_farm_full_form"] = form_field_farm
-
-    context["survey_photo_form"] = form_survey_photo
-
-    return render(request, "wisccc/survey_review.html", context)
 
 
 def wisc_cc_signup(request):
