@@ -723,7 +723,7 @@ def update_response(request, id):
         return redirect("response_table")
     # add form dictionary to context
     # Section 1 - Farmer
-    context["farmer_form"] = form_farmer_section_1
+    context["form_farmer"] = form_farmer_section_1
     # Section 2 - Survey Farm
     context["form_surveyfarm_section_2"] = form_surveyfarm_section_2
     context["form_surveyfield_section_3"] = form_surveyfield_section_3
