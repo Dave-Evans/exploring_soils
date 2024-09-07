@@ -127,6 +127,16 @@ urlpatterns = [
     ),
     re_path(r"^researcher_page$", wisccc_views.researcher_page, name="researcher_page"),
     re_path(
+        r"^researcher_page_unapproved$",
+        wisccc_views.researcher_page_unapproved,
+        name="researcher_page_unapproved",
+    ),
+    re_path(
+        r"^researcher_page_expired$",
+        wisccc_views.researcher_page_expired,
+        name="researcher_page_expired",
+    ),
+    re_path(
         r"^wisccc_researcher_download_data$",
         wisccc_views.wisccc_researcher_download_data,
         name="wisccc_researcher_download_data",

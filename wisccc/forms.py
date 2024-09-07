@@ -2745,8 +2745,8 @@ class ResearcherSignupForm(forms.ModelForm):
 class ResearcherFullForm(forms.ModelForm):
     """For creating collaborating researchers"""
 
-    first_name = forms.CharField(max_length=250, required=True)
-    last_name = forms.CharField(max_length=250, required=True)
+    first_name = forms.CharField(max_length=250, required=False)
+    last_name = forms.CharField(max_length=250, required=False)
     institution = forms.CharField(
         label="What institution is this researcher affiliated with?",
         required=False,
@@ -2762,15 +2762,15 @@ class ResearcherFullForm(forms.ModelForm):
     agreement_doc = forms.FileField(label="Upload agreement docs", required=False)
     approved = forms.ChoiceField(
         label="Approve this researcher for a year download permissions?",
-        required=True,
+        required=False,
         choices=TRUE_FALSE_CHOICES,
     )
     approved_date = forms.DateField(
         label="Date approved. Permissions expire one year after this date.",
         required=False,
     )
-    download_count = forms.IntegerField()
-    last_download_timestamp = forms.DateTimeField()
+    download_count = forms.IntegerField(required=False)
+    last_download_timestamp = forms.DateTimeField(required=False)
 
     class Meta:
         model = Researcher

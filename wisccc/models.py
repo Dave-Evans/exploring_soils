@@ -1660,10 +1660,10 @@ class Researcher(models.Model):
     institution = models.TextField(
         verbose_name="What institution does the researcher belong to?", null=True
     )
-    agreement_doc = models.FileField(storage=WiscCCResearcherDocStorage(), null=True)
+    agreement_doc = models.FileField(storage=WiscCCResearcherDocStorage(), blank=True)
     notes = models.TextField(null=True)
     download_count = models.IntegerField(
-        verbose_name="Count of times the researcher has downloaded data.", null=True
+        verbose_name="Count of times the researcher has downloaded data.", default=0
     )
     last_download_timestamp = models.DateTimeField(
         verbose_name="Timestamp of when the researcher last download the data.",

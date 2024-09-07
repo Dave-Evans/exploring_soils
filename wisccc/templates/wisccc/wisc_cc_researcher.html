@@ -1,8 +1,6 @@
 {% extends 'wisccc/base_wisccc.html' %}
 {% load static %}
 
-{% block title %}Wisconsin Cover Crop Citizen Science Network{% endblock %}
-
 {% block content %}
 <style>
     a p,
@@ -24,13 +22,16 @@
                                 Download Data
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title">Display data</h5>
+                                <h5 class="card-title">Data download</h5>
                                 <p class="card-text">
                                     This dataset is what is used in the graph and map display.
-                                    It will not contain much qualitative data.
+                                    The data are in MS-Excel format.
+                                    The first sheet contains metadata describing each column of data.
+                                    The second sheet contains the collected survey data.
                                 </p>
-                                <a href="{% url 'wisccc_researcher_download_data' %}"
-                                    class="btn btn-primary">Download</a>
+                                <a href="{% url 'wisccc_researcher_download_data' %}" class="btn btn-primary">
+                                    Download
+                                </a>
                             </div>
 
                         </div>
@@ -41,4 +42,5 @@
             </div>
         </div>
     </div>
-    {% endblock %}
+</div>
+{% endblock %}
