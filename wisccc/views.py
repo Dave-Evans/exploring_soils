@@ -1206,7 +1206,7 @@ def update_researcher(request, id):
                 # Refetch to update the perms
                 user = User.objects.get(id=researcher.id)
         if "agreement_doc" in request.FILES.keys():
-            new_researcher_form.agreement_doc = request.FILES["agreement_doc"]  
+            new_researcher_form.agreement_doc = request.FILES["agreement_doc"]
         new_researcher_form.save()
         return redirect("researcher_table")
     # add form dictionary to context
