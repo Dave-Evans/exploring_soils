@@ -45,7 +45,14 @@ from wisccc.forms import (
     SurveyRegistrationPartialForm,
     UserInfoForm,
 )
-
+from wisccc.forms_2023 import (
+    SurveyFarmFormPart1_2023,
+    SurveyFarmFormPart2_2023,
+    SurveyFieldFormFull_2023_parta,
+    SurveyFieldFormFull_2023_partb,
+    FieldFarmFormFull_2023,
+    SurveyFarmFormPart3_2023,
+)
 from wisccc.models import (
     Survey,
     Farmer,
@@ -638,134 +645,141 @@ def update_response(request, id):
 
     # Get farmer associated with user id of survey response
     farmer = Farmer.objects.filter(id=survey_farm.farmer_id).first()
-    # Get any uploaded photos for this survey response
 
     # pass the object as instance in form
     # Section 1 - Farmer
     form_farmer_section_1 = FarmerForm(request.POST or None, instance=farmer)
-    # Section 2 - SurveyFarm
-    form_surveyfarm_section_2 = SurveyFarmFormSection2(
-        request.POST or None, instance=survey_farm
-    )
-
-    # Section 3 - SurveyField and FarmField
-    form_surveyfield_section_3 = SurveyFieldFormSection3(
-        request.POST or None, instance=survey_field
-    )
-    form_fieldfarm_section_3 = FieldFarmFormSection3(
-        request.POST or None, instance=field_farm
-    )
-    # Section 4 - SurveyFarm and SurveyField
-    form_surveyfield_section_4_part_1 = SurveyFieldFormSection4_part1(
-        request.POST or None, instance=survey_field
-    )
-    form_surveyfarm_section_4 = SurveyFarmFormSection4(
-        request.POST or None, instance=survey_farm
-    )
-    form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2(
-        request.POST or None, instance=survey_field
-    )
-    # Section 5 - SurveyField
-    form_surveyfield_section_5 = SurveyFieldFormSection5(
-        request.POST or None, instance=survey_field
-    )
-    # Section 6 - SurveyFarm and SurveyField
-    form_surveyfarm_section_6 = SurveyFarmFormSection6(
-        request.POST or None, instance=survey_farm
-    )
-    form_surveyfield_section_6 = SurveyFieldFormSection6(
-        request.POST or None, instance=survey_field
-    )
-    # Section 7 - SurveyFarm
-    form_surveyfarm_section_7 = SurveyFarmFormSection7(
-        request.POST or None, instance=survey_farm
-    )
-    # For making all review questions NOT required
-    forms = [
-        form_farmer_section_1,
-        form_surveyfarm_section_2,
-        form_fieldfarm_section_3,
-        form_surveyfield_section_3,
-        form_surveyfield_section_4_part_1,
-        form_surveyfarm_section_4,
-        form_surveyfield_section_4_part_2,
-        form_surveyfield_section_5,
-        form_surveyfarm_section_6,
-        form_surveyfield_section_6,
-        form_surveyfarm_section_7,
-    ]
-
-    for frm in forms:
-        for fld in frm.fields:
-            frm.fields[fld].required = False
-
+    # Get any uploaded photos for this survey response
     form_survey_photo = SurveyPhotoForm(request.POST or None, instance=survey_photo)
-
+    # Review questions: Confirm accurate and Notes
     form_surveyfarm_review = SurveyFarmFormReview(
         request.POST or None, instance=survey_farm
     )
+
+    form_context = {
+        "form_farmer": form_farmer_section_1,
+        "form_surveyfarm_review": form_surveyfarm_review,
+        "survey_photo_form": form_survey_photo,
+    }
+    if survey_farm.survey_year == 2023:
+
+        # Section 1
+        #   wisccc/includes/form_survey_part_1.html
+        form_surveyfarm_section_1 = SurveyFarmFormPart1_2023(
+            request.POST or None, instance=survey_farm
+        )
+        # Section 2
+        #   wisccc/includes/form_survey_part_2_fieldfarm.html
+        #   wisccc/includes/form_survey_part_2_surveyfield.html
+        #   wisccc/includes/form_survey_part_2_surveyfarm.html
+        form_surveyfarm_section_2 = SurveyFarmFormPart2_2023(
+            request.POST or None, instance=survey_farm
+        )
+        form_surveyfield_section_2_part_a = SurveyFieldFormFull_2023_parta(
+            request.POST or None, instance=survey_field
+        )
+        form_surveyfield_section_2_part_b = SurveyFieldFormFull_2023_partb(
+            request.POST or None, instance=survey_field
+        )        
+        form_fieldfarm_section_2 = FieldFarmFormFull_2023(
+            request.POST or None, instance=field_farm
+        )
+        # Section 3
+        #   wisccc/includes/form_survey_part_3.html
+        form_surveyfarm_section_3 = SurveyFarmFormPart3_2023(
+            request.POST or None, instance=survey_farm
+        )
+        form_context["form_surveyfarm_section_1"] = form_surveyfarm_section_1
+        form_context["form_surveyfarm_section_2"] = form_surveyfarm_section_2
+        form_context["form_surveyfield_section_2_part_a"] = form_surveyfield_section_2_part_a
+        form_context["form_surveyfield_section_2_part_b"] = form_surveyfield_section_2_part_b
+        form_context["form_fieldfarm_section_2"] = form_fieldfarm_section_2
+        form_context["form_surveyfarm_section_3"] = form_surveyfarm_section_3
+        # 2023 template
+        template = "wisccc/survey_review_2023.html"
+    elif survey_farm.survey_year == 2024:
+        # Section 2 - SurveyFarm
+        form_surveyfarm_section_2 = SurveyFarmFormSection2(
+            request.POST or None, instance=survey_farm
+        )
+
+        # Section 3 - SurveyField and FarmField
+        form_surveyfield_section_3 = SurveyFieldFormSection3(
+            request.POST or None, instance=survey_field
+        )
+        form_fieldfarm_section_3 = FieldFarmFormSection3(
+            request.POST or None, instance=field_farm
+        )
+        # Section 4 - SurveyFarm and SurveyField
+        form_surveyfield_section_4_part_1 = SurveyFieldFormSection4_part1(
+            request.POST or None, instance=survey_field
+        )
+        form_surveyfarm_section_4 = SurveyFarmFormSection4(
+            request.POST or None, instance=survey_farm
+        )
+        form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2(
+            request.POST or None, instance=survey_field
+        )
+        # Section 5 - SurveyField
+        form_surveyfield_section_5 = SurveyFieldFormSection5(
+            request.POST or None, instance=survey_field
+        )
+        # Section 6 - SurveyFarm and SurveyField
+        form_surveyfarm_section_6 = SurveyFarmFormSection6(
+            request.POST or None, instance=survey_farm
+        )
+        form_surveyfield_section_6 = SurveyFieldFormSection6(
+            request.POST or None, instance=survey_field
+        )
+        # Section 7 - SurveyFarm
+        form_surveyfarm_section_7 = SurveyFarmFormSection7(
+            request.POST or None, instance=survey_farm
+        )
+        # For making all review questions NOT required
+        form_context["form_surveyfarm_section_2"] = form_surveyfarm_section_2
+        form_context["form_surveyfield_section_3"] = form_surveyfield_section_3
+        form_context["form_fieldfarm_section_3"] = form_fieldfarm_section_3
+        form_context["form_surveyfield_section_4_part_1"] = (
+            form_surveyfield_section_4_part_1
+        )
+        form_context["form_surveyfarm_section_4"] = form_surveyfarm_section_4
+        form_context["form_surveyfield_section_4_part_2"] = (
+            form_surveyfield_section_4_part_2
+        )
+        form_context["form_surveyfield_section_5"] = form_surveyfield_section_5
+        form_context["form_surveyfarm_section_6"] = form_surveyfarm_section_6
+        form_context["form_surveyfield_section_6"] = form_surveyfield_section_6
+        form_context["form_surveyfarm_section_7"] = form_surveyfarm_section_7
+        # 2024 template
+        template = "wisccc/survey_review_2024.html"
+
+    # Make everything not required for the review
+    for frm in form_context:
+        for fld in form_context[frm].fields:
+            form_context[frm].fields[fld].required = False
+
     # save the data from the form and
     # redirect to detail_view
 
-    if (
-        form_farmer_section_1.is_valid()
-        and form_surveyfarm_section_2.is_valid()
-        and form_surveyfield_section_3.is_valid()
-        and form_fieldfarm_section_3.is_valid()
-        and form_surveyfield_section_4_part_1.is_valid()
-        and form_surveyfarm_section_4.is_valid()
-        and form_surveyfield_section_4_part_2.is_valid()
-        and form_surveyfield_section_5.is_valid()
-        and form_surveyfarm_section_6.is_valid()
-        and form_surveyfield_section_6.is_valid()
-        and form_surveyfarm_section_7.is_valid()
-        and form_survey_photo.is_valid()
-        and form_surveyfarm_review.is_valid()
-    ):
+    if all([form_context[frm].is_valid() for frm in form_context]):
 
-        form_farmer_section_1.save()
-        form_surveyfarm_section_2.save()
-        form_surveyfield_section_3.save()
-        form_fieldfarm_section_3.save()
-        form_surveyfield_section_4_part_1.save()
-        form_surveyfarm_section_4.save()
-        form_surveyfield_section_4_part_2.save()
-        form_surveyfield_section_5.save()
-        form_surveyfarm_section_6.save()
-        form_surveyfield_section_6.save()
-        form_surveyfarm_section_7.save()
-        form_surveyfarm_review.save()
+        for frm in form_context:
+            if frm == "survey_photo_form":
 
-        new_survey_photo = form_survey_photo.save()
-        new_survey_photo.survey_field_id = survey_field.id
-        if "image_1" in request.FILES.keys():
-            new_survey_photo.image_1 = request.FILES["image_1"]
-        if "image_2" in request.FILES.keys():
-            new_survey_photo.image_2 = request.FILES["image_2"]
+                new_survey_photo = form_context["survey_photo_form"].save()
+                new_survey_photo.survey_field_id = survey_field.id
+                if "image_1" in request.FILES.keys():
+                    new_survey_photo.image_1 = request.FILES["image_1"]
+                if "image_2" in request.FILES.keys():
+                    new_survey_photo.image_2 = request.FILES["image_2"]
 
-        new_survey_photo.save()
+                new_survey_photo.save()
+            else:
+                form_context[frm].save()
 
         return redirect("response_table")
-    # add form dictionary to context
-    # Section 1 - Farmer
-    context["form_farmer"] = form_farmer_section_1
-    # Section 2 - Survey Farm
-    context["form_surveyfarm_section_2"] = form_surveyfarm_section_2
-    context["form_surveyfield_section_3"] = form_surveyfield_section_3
-    context["form_fieldfarm_section_3"] = form_fieldfarm_section_3
-    context["form_surveyfield_section_4_part_1"] = form_surveyfield_section_4_part_1
-    context["form_surveyfarm_section_4"] = form_surveyfarm_section_4
-    context["form_surveyfield_section_4_part_2"] = form_surveyfield_section_4_part_2
-    context["form_surveyfield_section_5"] = form_surveyfield_section_5
-    context["form_surveyfarm_section_6"] = form_surveyfarm_section_6
-    context["form_surveyfield_section_6"] = form_surveyfield_section_6
-    context["form_surveyfarm_section_7"] = form_surveyfarm_section_7
-    context["form_surveyfarm_review"] = form_surveyfarm_review
 
-    context["survey_photo_form"] = form_survey_photo
-
-    template = "wisccc/survey_review_2024.html"
-    return render(request, template, context)
+    return render(request, template, form_context)
 
 
 @login_required

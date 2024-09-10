@@ -1013,7 +1013,7 @@ class SurveyFarm(models.Model):
     # 6. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
     info_source_cover_crops_1 = models.TextField(
         verbose_name="Top information source for cover crops",
-        # choices=CoverCropInfoSourcesChoices.choices,
+        choices=CoverCropInfoSourcesChoices.choices,
         max_length=1000,
         null=True,
     )
