@@ -7,7 +7,8 @@ from django.contrib.auth.forms import (
     AuthenticationForm,
     UsernameField,
 )
-from django import forms
+
+from accounts.forms import TurnstileField
 from wisccc.models import (
     SurveyFarm,
     SurveyField,
@@ -142,6 +143,12 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("email", "password1", "password2")
+
+    def __init__(self, *args, **kwargs):
+        client_ip = kwargs["initial"]["client_ip"]
+        super().__init__(*args, **kwargs)
+        self.fields["turnstile"] = TurnstileField(client_ip=client_ip)
+        self.fields["turnstile"].widget = forms.HiddenInput()
 
     def clean_username(self):
         username = self.cleaned_data["username"].lower()

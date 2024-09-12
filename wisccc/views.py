@@ -680,7 +680,7 @@ def update_response(request, id):
         )
         form_surveyfield_section_2_part_b = SurveyFieldFormFull_2023_partb(
             request.POST or None, instance=survey_field
-        )        
+        )
         form_fieldfarm_section_2 = FieldFarmFormFull_2023(
             request.POST or None, instance=field_farm
         )
@@ -691,8 +691,12 @@ def update_response(request, id):
         )
         form_context["form_surveyfarm_section_1"] = form_surveyfarm_section_1
         form_context["form_surveyfarm_section_2"] = form_surveyfarm_section_2
-        form_context["form_surveyfield_section_2_part_a"] = form_surveyfield_section_2_part_a
-        form_context["form_surveyfield_section_2_part_b"] = form_surveyfield_section_2_part_b
+        form_context["form_surveyfield_section_2_part_a"] = (
+            form_surveyfield_section_2_part_a
+        )
+        form_context["form_surveyfield_section_2_part_b"] = (
+            form_surveyfield_section_2_part_b
+        )
         form_context["form_fieldfarm_section_2"] = form_fieldfarm_section_2
         form_context["form_surveyfarm_section_3"] = form_surveyfarm_section_3
         # 2023 template
@@ -1319,13 +1323,30 @@ def delete_response(request, id):
 
 def wisc_cc_signup(request):
     """For creating an account with wisc cc"""
-    signup_form = CustomUserCreationForm(request.POST)
-    if signup_form.is_valid():
+    client_ip = request.META.get("REMOTE_ADDR")
+    signup_form = CustomUserCreationForm(
+        request.POST or None, initial={"client_ip": client_ip}
+    )
+    signup_form.fields["turnstile"].required = False
+    if request.method == "POST":
+        if signup_form.is_valid():
 
-        new_user = signup_form.save()
-        auth_login(request, new_user)
-        messages.success(request, "Account created successfully")
-        return redirect("wisc_cc_home")
+            new_user = signup_form.save()
+            auth_login(request, new_user)
+            messages.success(request, "Account created successfully")
+            return redirect("wisc_cc_home")
+
+        else:
+            # print("here's the errors:")
+            # for err in signup_form.errors:
+            #     print(err)
+            #     print(type(err))
+
+            return render(
+                request,
+                "wisccc/wisc_cc_signup.html",
+                {"form": signup_form},
+            )
 
     return render(
         request,
