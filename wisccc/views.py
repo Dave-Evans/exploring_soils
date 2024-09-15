@@ -1360,7 +1360,11 @@ def wisc_cc_register_1(request):
     if request.user.id is not None:
         return redirect("wisc_cc_register_2")
 
-    signup_form = CustomUserCreationForm(request.POST)
+    client_ip = request.META.get("REMOTE_ADDR")
+    signup_form = CustomUserCreationForm(
+        request.POST or None, initial={"client_ip": client_ip}
+    )
+    signup_form.fields["turnstile"].required = True
     if signup_form.is_valid():
 
         new_user = signup_form.save()
