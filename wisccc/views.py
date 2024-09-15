@@ -1192,7 +1192,7 @@ def update_registration(request, id):
         return redirect("registration_table")
     # add form dictionary to context
     context["registration_form"] = registration_form
-    context["farmer_form"] = farmer_form
+    context["form_farmer"] = farmer_form
     context["user_info_form"] = user_info_form
 
     return render(request, "wisccc/wisc_cc_registration_review.html", context)
