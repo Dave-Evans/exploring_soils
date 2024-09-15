@@ -680,7 +680,7 @@ def update_response(request, id):
         )
         form_surveyfield_section_2_part_b = SurveyFieldFormFull_2023_partb(
             request.POST or None, instance=survey_field
-        )        
+        )
         form_fieldfarm_section_2 = FieldFarmFormFull_2023(
             request.POST or None, instance=field_farm
         )
@@ -691,8 +691,12 @@ def update_response(request, id):
         )
         form_context["form_surveyfarm_section_1"] = form_surveyfarm_section_1
         form_context["form_surveyfarm_section_2"] = form_surveyfarm_section_2
-        form_context["form_surveyfield_section_2_part_a"] = form_surveyfield_section_2_part_a
-        form_context["form_surveyfield_section_2_part_b"] = form_surveyfield_section_2_part_b
+        form_context["form_surveyfield_section_2_part_a"] = (
+            form_surveyfield_section_2_part_a
+        )
+        form_context["form_surveyfield_section_2_part_b"] = (
+            form_surveyfield_section_2_part_b
+        )
         form_context["form_fieldfarm_section_2"] = form_fieldfarm_section_2
         form_context["form_surveyfarm_section_3"] = form_surveyfarm_section_3
         # 2023 template
@@ -1395,7 +1399,7 @@ def wisc_cc_register_2(request):
         request,
         "wisccc/wisc_cc_register_2.html",
         {
-            "farmer_form": farmer_form,
+            "form_farmer": farmer_form,
             "registration_form": registration_form,
         },
     )
