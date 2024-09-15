@@ -29,6 +29,11 @@ class TurnstileField(forms.CharField):
                 "CLOUDFLARE_TURNSTILE_SECRET_KEY environment variable not set"
             )
 
+        if value is None or value == "":
+
+            msg = "Please check the box to complete your signup."
+            raise ValidationError((msg), code="check_box")
+
         # send the widget response token value, secret key, and request IP to the Turnstile API
         response = requests.post(
             "https://challenges.cloudflare.com/turnstile/v0/siteverify",
@@ -42,7 +47,7 @@ class TurnstileField(forms.CharField):
         print(response)
         if not response["success"]:
             raise ValidationError(
-                ("Please try again. If the problem persists, please contact us."),
+                ("Please check the box to complete the signup."),
                 code=",".join(response["error-codes"]),
             )
         return value

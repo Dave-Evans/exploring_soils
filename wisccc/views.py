@@ -1327,7 +1327,7 @@ def wisc_cc_signup(request):
     signup_form = CustomUserCreationForm(
         request.POST or None, initial={"client_ip": client_ip}
     )
-    signup_form.fields["turnstile"].required = False
+    signup_form.fields["turnstile"].required = True
     if request.method == "POST":
         if signup_form.is_valid():
 

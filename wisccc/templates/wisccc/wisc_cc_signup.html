@@ -35,6 +35,7 @@
                     {% csrf_token %}
 
                     {% include 'wisccc/includes/form_wisc_signup.html' %}
+                    <p>Please check the box to complete your signup.</p>
                     <div class="cf-turnstile" data-sitekey="0x4AAAAAAAju8QRpruOM5bky"></div>
                     <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
                     <a href="{% url 'wisc_cc_survey' %}">
