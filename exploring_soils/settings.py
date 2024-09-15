@@ -227,3 +227,5 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 
 DEFAULT_FROM_EMAIL = "Evans Geospatial <noreply@evansgeospatial.com>"
 EMAIL_SUBJECT_PREFIX = "[Evans Geospatial] "
+
+CLOUDFLARE_TURNSTILE_SECRET_KEY = config("CLOUDFLARE_TURNSTILE_SECRET_KEY", default="")
