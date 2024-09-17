@@ -10,6 +10,9 @@ class ResponseTable(tables.Table):
     survey_created = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column_response.html")
     upload_photo = TemplateColumn(template_name="wisccc/upload_photo_column.html")
+    update_labdata = TemplateColumn(
+        template_name="wisccc/update_column_ancillarydata.html"
+    )
     # delete = TemplateColumn(template_name="wisccc/delete_column.html")
 
     class Meta:

@@ -44,6 +44,7 @@ from wisccc.forms import (
     SurveyRegistrationFullForm,
     SurveyRegistrationPartialForm,
     UserInfoForm,
+    AncillaryDataForm,
 )
 from wisccc.forms_2023 import (
     SurveyFarmFormPart1_2023,
@@ -61,6 +62,7 @@ from wisccc.models import (
     SurveyField,
     SurveyFarm,
     FieldFarm,
+    AncillaryData,
 )
 from wisccc.data_mgmt import pull_all_years_together, get_survey_data
 import pandas as pd
@@ -616,6 +618,42 @@ def wisc_cc_survey7(request):
     template = "wisccc/survey_section_7_final_thoughts.html"
     return render(
         request, template, {"form_surveyfarm_section_7": form_surveyfarm_section_7}
+    )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def update_labdata(request, id):
+    """For updating labdata
+    Will navigate to this page via the survey table
+    page so will use SurveyFarm id to grab ancillary data
+    """
+    context = {}
+    survey_farm = get_object_or_404(SurveyFarm, id=id)
+    survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+    # Get any uploaded photos for this survey response
+    ancillary_data = AncillaryData.objects.filter(
+        survey_field_id=survey_field.id
+    ).first()
+
+    form_ancillary_data = AncillaryDataForm(
+        request.POST or None, instance=ancillary_data
+    )
+    if form_ancillary_data.is_valid():
+
+        new_ancillary_data = form_ancillary_data.save()
+        new_ancillary_data.survey_field_id = survey_field.id
+
+        new_ancillary_data.save()
+
+        return redirect("response_table")
+
+    template = "wisccc/wisc_cc_ancillarydata_review.html"
+    return render(
+        request,
+        template,
+        {
+            "form": form_ancillary_data,
+        },
     )
 
 

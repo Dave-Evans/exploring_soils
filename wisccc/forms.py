@@ -16,6 +16,7 @@ from wisccc.models import (
     Farmer,
     SurveyPhoto,
     SurveyRegistration,
+    AncillaryData
 )
 from wisccc.models import (
     CashCropChoices,
@@ -1608,4 +1609,99 @@ class SurveyFarmFormReview(forms.ModelForm):
         fields = (
             "confirmed_accurate",
             "notes_admin",
+        )
+
+
+class AncillaryDataForm(forms.ModelForm):
+
+    biomass_collection_date = forms.DateField(required=False, label="Fall biomass collection date")
+    cp = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Fall Crude protein", required=False
+    )
+    andf = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Fall ANDF", required=False
+    )
+    undfom30 = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Fall undfom30", required=False
+    )
+    ndfd30 = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Fall ndfd30", required=False
+    )
+    tdn_adf = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Fall tdn_adf", required=False
+    )
+    milk_ton_milk2013 = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Fall Milk_ton_milk2013", required=False
+    )
+    rfq = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall Relative forage quality (RFQ)",
+        required=False,
+    )
+    cc_biomass = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall Cover crop biomass, english tons dry matter per acre",
+        required=False,
+    )
+    total_nitrogen = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Fall Total nitrogen", required=False
+    )
+    acc_gdd = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall Accumulated growing degree units",
+        required=False,
+    )
+    total_precip = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall Total precipitation, in inches",
+        required=False,
+    )
+    spring_biomass_collection_date = forms.DateField(required=False, label="Spring biomass collection date")
+    spring_cc_biomass = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Spring cover crop biomass, english tons per acre", required=False
+    )
+
+    spring_acc_gdd = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring Accumulated growing degree units",
+        required=False,
+    )
+    spring_total_precip = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring Total precipitation, in inches",
+        required=False,
+    )
+    spring_rfq = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring Relative forage quality (RFQ)",
+        required=False,
+    )
+
+    class Meta:
+        model = AncillaryData
+        fields = (
+            "biomass_collection_date",
+            "cp",
+            "andf",
+            "undfom30",
+            "ndfd30",
+            "tdn_adf",
+            "milk_ton_milk2013",
+            "rfq",
+            "cc_biomass",
+            "total_nitrogen",
+            "acc_gdd",
+            "total_precip",
+            "spring_biomass_collection_date",
+            "spring_cc_biomass",
+            "spring_rfq",            
+            "spring_acc_gdd",
+            "spring_total_precip",
         )

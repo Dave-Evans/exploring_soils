@@ -1580,6 +1580,25 @@ class AncillaryData(models.Model):
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
 
+    spring_acc_gdd = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Accumulated growing degree units",
+        null=True,
+    )
+    spring_total_precip = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Total precipitation, in inches",
+        null=True,
+    )
+    spring_rfq = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Relative forage quality",
+        null=True,
+    )
+
 
 class SurveyPhoto(models.Model):
 
