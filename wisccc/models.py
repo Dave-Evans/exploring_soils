@@ -1598,6 +1598,27 @@ class AncillaryData(models.Model):
         verbose_name="Relative forage quality",
         null=True,
     )
+    spring_cp = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="Crude protein", null=True
+    )
+    spring_andf = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_undfom30 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_ndfd30 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_tdn_adf = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_milk_ton_milk2013 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_total_nitrogen = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="Total nitrogen", null=True
+    )
 
 
 class SurveyPhoto(models.Model):

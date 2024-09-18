@@ -16,7 +16,7 @@ from wisccc.models import (
     Farmer,
     SurveyPhoto,
     SurveyRegistration,
-    AncillaryData
+    AncillaryData,
 )
 from wisccc.models import (
     CashCropChoices,
@@ -1614,7 +1614,9 @@ class SurveyFarmFormReview(forms.ModelForm):
 
 class AncillaryDataForm(forms.ModelForm):
 
-    biomass_collection_date = forms.DateField(required=False, label="Fall biomass collection date")
+    biomass_collection_date = forms.DateField(
+        required=False, label="Fall biomass collection date"
+    )
     cp = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Fall Crude protein", required=False
     )
@@ -1660,9 +1662,14 @@ class AncillaryDataForm(forms.ModelForm):
         label="Fall Total precipitation, in inches",
         required=False,
     )
-    spring_biomass_collection_date = forms.DateField(required=False, label="Spring biomass collection date")
+    spring_biomass_collection_date = forms.DateField(
+        required=False, label="Spring biomass collection date"
+    )
     spring_cc_biomass = forms.DecimalField(
-        decimal_places=2, max_digits=15, label="Spring cover crop biomass, english tons per acre", required=False
+        decimal_places=2,
+        max_digits=15,
+        label="Spring cover crop biomass, english tons per acre",
+        required=False,
     )
 
     spring_acc_gdd = forms.DecimalField(
@@ -1683,6 +1690,30 @@ class AncillaryDataForm(forms.ModelForm):
         label="Spring Relative forage quality (RFQ)",
         required=False,
     )
+    spring_cp = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Spring Crude protein", required=False
+    )
+    spring_andf = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Spring ANDF", required=False
+    )
+    spring_undfom30 = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Spring undfom30", required=False
+    )
+    spring_ndfd30 = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Spring ndfd30", required=False
+    )
+    spring_tdn_adf = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Spring tdn_adf", required=False
+    )
+    spring_milk_ton_milk2013 = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring Milk_ton_milk2013",
+        required=False,
+    )
+    spring_total_nitrogen = forms.DecimalField(
+        decimal_places=2, max_digits=15, label="Spring Total nitrogen", required=False
+    )
 
     class Meta:
         model = AncillaryData
@@ -1701,7 +1732,14 @@ class AncillaryDataForm(forms.ModelForm):
             "total_precip",
             "spring_biomass_collection_date",
             "spring_cc_biomass",
-            "spring_rfq",            
+            "spring_rfq",
             "spring_acc_gdd",
             "spring_total_precip",
+            "spring_cp",
+            "spring_andf",
+            "spring_undfom30",
+            "spring_ndfd30",
+            "spring_tdn_adf",
+            "spring_milk_ton_milk2013",
+            "spring_total_nitrogen",
         )
