@@ -1322,8 +1322,9 @@ def get_registration_download():
     )
     # convert farmer id to string, convert survey_year to string
     #   grab just the year and create and id
+    # Add -F for fall sampling
     df["id"] = (
-        df["id"].apply(str).str.zfill(5) + "-" + df["survey_year"].apply(str).str[-2:]
+        df["id"].apply(str).str.zfill(5) + "-" + df["survey_year"].apply(str).str[-2:] + "-F"
     )
     df = df.drop("survey_year", axis=1)
     return df
