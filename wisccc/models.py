@@ -1092,7 +1092,7 @@ class SurveyFarm(models.Model):
     # Add options: 	Yes/No/Already all cover cropped /Other
     barriers_to_expansion = models.CharField(
         verbose_name="Would you like to expand the number of acres you cover crop?",
-        choices=ExpandAcresChoices.choices,
+        # choices=ExpandAcresChoices.choices,
         null=True,
         max_length=550,
     )
