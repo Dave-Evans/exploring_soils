@@ -1095,7 +1095,7 @@ class SurveyFarm(models.Model):
     # Add options: 	Yes/No/Already all cover cropped /Other
     barriers_to_expansion = models.CharField(
         verbose_name="Would you like to expand the number of acres you cover crop?",
-        choices=ExpandAcresChoices.choices,
+        # choices=ExpandAcresChoices.choices,
         null=True,
         max_length=550,
     )
@@ -1581,6 +1581,46 @@ class AncillaryData(models.Model):
     spring_biomass_collection_date = models.DateField(null=True)
     spring_cc_biomass = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+
+    spring_acc_gdd = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Accumulated growing degree units",
+        null=True,
+    )
+    spring_total_precip = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Total precipitation, in inches",
+        null=True,
+    )
+    spring_rfq = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Relative forage quality",
+        null=True,
+    )
+    spring_cp = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="Crude protein", null=True
+    )
+    spring_andf = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_undfom30 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_ndfd30 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_tdn_adf = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_milk_ton_milk2013 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_total_nitrogen = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="Total nitrogen", null=True
     )
 
 

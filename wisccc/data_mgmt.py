@@ -344,6 +344,7 @@ def pull_all_years_together(f_output):
     """
 
     query = """
+ 
 	SELECT 
 		prevsurv.survey_farm_id as id
         , stat.year
@@ -390,7 +391,20 @@ def pull_all_years_together(f_output):
         , stat.fq_milkton
         , stat.fq_rfq
         , null as total_nitrogen
-
+        
+        , null as spring_cc_biomass_collection_date
+        , null as spring_total_precip
+        , null as spring_acc_gdd        
+        , null as spring_cc_biomass
+        , null as spring_fq_cp
+        , null as spring_fq_andf
+        , null as spring_fq_undfom30
+        , null as spring_fq_ndfd30
+        , null as spring_fq_tdn_adf
+        , null as spring_fq_milkton
+        , null as spring_fq_rfq
+        , null as spring_total_nitrogen        
+        
         , stat.cc_rate_and_species
         , stat.cc_species
         , stat.cc_species_raw
@@ -467,7 +481,21 @@ def pull_all_years_together(f_output):
         tdn_adf as fq_tdn_adf,
         milk_ton_milk2013 as fq_milkton,
         rfq as fq_rfq,
-        total_nitrogen,
+        
+        total_nitrogen as total_nitrogen,
+        
+        spring_biomass_collection_date as spring_cc_biomass_collection_date,
+        spring_total_precip as spring_total_precip,
+        spring_acc_gdd as spring_acc_gdd,    
+        spring_cc_biomass as spring_cc_biomass,
+        spring_cp as spring_fq_cp,
+        spring_andf as spring_fq_andf,
+        spring_undfom30 as spring_fq_undfom30,
+        spring_ndfd30 as spring_fq_ndfd30,
+        spring_tdn_adf as spring_fq_tdn_adf,
+        spring_milk_ton_milk2013 as spring_fq_milkton,
+        spring_rfq as spring_fq_rfq,
+        spring_total_nitrogen as spring_total_nitrogen,
         
         concat(		
             concat(  cover_crop_planting_rate_1, ' ', mod_cover_crop_planting_rate_1_units, ' ', mod_cover_crop_species_1),
@@ -735,8 +763,6 @@ def pull_all_years_together(f_output):
 			where surveyfarm.survey_year >= 2023
                 and surveyfarm.confirmed_accurate = TRUE
 	) as a
- 
- 
  
     """
 

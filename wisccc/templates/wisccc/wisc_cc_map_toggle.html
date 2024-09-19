@@ -315,7 +315,7 @@
 
 
                         <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
-                            <option value="cc_biomass">Cover crop biomass (tons DM/ac)</option>
+                            <option value="cc_biomass">Fall Cover crop biomass (tons DM/ac)</option>
                             <option value="cc_species">Cover crop types</option>
                             <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_mo">Planting season</option>
@@ -531,8 +531,9 @@
 
 
             var biomass_val = feature.properties.cc_biomass;
-
             var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
+            var spring_biomass_val = feature.properties.spring_cc_biomass;
+            var spring_biomass_val = (spring_biomass_val === null) ? null : roundUp(feature.properties.spring_cc_biomass, 2);
             var image_1 = ""
             var image_2 = ""
             if (feature.properties.image_1_url != null) {
@@ -549,8 +550,13 @@
                 "<dt>Previous crop</dt> <dd>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</dd>" +
                 "<dt>Planting date</dt> <dd>" + planting_date + "</dd>" +
                 "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
-                "<dt>Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
-                "<dt>Cumulative growing degree units</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
+
+                "<dt>Fall Cumulative GDU </dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
+                "<dt>Fall Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
+
+                "<dt>Spring Cumulative GDU </dt> <dd>" + feature.properties.spring_acc_gdd + "</dd>" +
+                "<dt>Spring Biomass (ton DM/acre)</dt> <dd>" + spring_biomass_val + "</dd>" +
+
                 image_1 +
                 image_2 +
                 "</dl>"

@@ -8,19 +8,51 @@
 </div>
 {% endif %}
 
-{% for field in form %}
+
 <div class="form-group">
-    {{ field.label_tag }}
-    {% render_field field class=field|input_class %}
-    {% for error in field.errors %}
+    {{ form.email.label_tag }}
+    {% render_field form.email class=form.email|input_class %}
+    {% for error in form.email.errors %}
     <div class="invalid-feedback">
         {{ error }}
     </div>
     {% endfor %}
-    {% if field.help_text %}
+    {% if form.email.help_text %}
     <small class="form-text text-muted">
-        {{ field.help_text|safe }}
+        {{ form.email.help_text|safe }}
     </small>
     {% endif %}
 </div>
-{% endfor %}
+<div class="form-group">
+    {{ form.password1.label_tag }}
+    {% render_field form.password1 class=form.password1|input_class %}
+    {% for error in form.password1.errors %}
+    <div class="invalid-feedback">
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% if form.password1.help_text %}
+    <small class="form-text text-muted">
+        {{ form.password1.help_text|safe }}
+    </small>
+    {% endif %}
+</div>
+<div class="form-group">
+    {{ form.password2.label_tag }}
+    {% render_field form.password2 class=form.password2|input_class %}
+    {% for error in form.password2.errors %}
+    <div class="invalid-feedback">
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% if form.password2.help_text %}
+    <small class="form-text text-muted">
+        {{ form.password2.help_text|safe }}
+    </small>
+    {% endif %}
+</div>
+<div class="form-group">
+
+    {% render_field form.turnstile class=form.turnstile|input_class %}
+
+</div>

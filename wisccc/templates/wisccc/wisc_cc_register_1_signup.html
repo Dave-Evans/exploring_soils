@@ -8,12 +8,26 @@
         color: #212529;
     }
 </style>
+<script type="text/javascript">
+    $(function () {
+        // Grab turnstile value
+        $('.noprompt-required').click(
+            function () { populateTurnstileField(); });
 
+        function populateTurnstileField() {
+            var response_val = $("input[name=cf-turnstile-response]").val();
+            $('#id_turnstile').val(response_val);
+        }
+
+    });
+
+</script>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     {% include 'wisccc/includes/form_wisc_signup.html' %}
-
+    <p>Please check the box to complete your signup.</p>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAAju8QRpruOM5bky"></div>
     <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
     <a href="{% url 'register_1a' %}">
         <button type="button" class="noprompt-required btn btn-primary">
