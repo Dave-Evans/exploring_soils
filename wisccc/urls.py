@@ -48,6 +48,7 @@ urlpatterns = [
         name="wisc_cc_register_3",
     ),
     # For creating an account
+    re_path(r"^signup/$", wisccc_views.wisc_cc_signup, name="signup"),
     re_path(
         r"^wisc_cc_signup$",
         wisccc_views.wisc_cc_signup,
