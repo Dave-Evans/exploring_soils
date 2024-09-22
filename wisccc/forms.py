@@ -134,58 +134,6 @@ class SurveyPhotoForm(forms.ModelForm):
         fields = ["image_1", "caption_photo_1", "image_2", "caption_photo_2", "notes"]
 
 
-class CustomUserCreationForm(UserCreationForm):
-    email = forms.CharField(
-        label="Email (this will be your username as well)",
-        max_length=254,
-        required=True,
-        widget=forms.EmailInput(),
-    )
-
-    class Meta:
-        model = User
-        fields = ("email", "password1", "password2")
-
-    def __init__(self, *args, **kwargs):
-        client_ip = kwargs["initial"]["client_ip"]
-        super().__init__(*args, **kwargs)
-        self.fields["turnstile"] = TurnstileField(client_ip=client_ip)
-        self.fields["turnstile"].widget = forms.HiddenInput()
-
-    def clean_username(self):
-        username = self.cleaned_data["username"].lower()
-        r = User.objects.filter(username=username)
-        if r.count():
-            raise ValidationError("Username already exists")
-        return username
-
-    def clean_email(self):
-        email = self.cleaned_data["email"].lower()
-        r = User.objects.filter(email=email)
-        if r.count():
-            raise ValidationError(
-                """Email already exists. Perhaps you have already created an account. Try using this email address to reset your password."""
-            )
-        return email
-
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-
-        if password1 and password2 and password1 != password2:
-            raise ValidationError("Password don't match")
-
-        return password2
-
-    def save(self, commit=True):
-        user = User.objects.create_user(
-            self.cleaned_data["email"],
-            self.cleaned_data["email"],
-            self.cleaned_data["password1"],
-        )
-        return user
-
-
 class SurveyRegistrationFullForm(forms.ModelForm):
     """For updating or reviewing signing up for survey and biomass kit"""
 
@@ -1657,6 +1605,12 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("email", "password1", "password2")
+
+    def __init__(self, *args, **kwargs):
+        client_ip = kwargs["initial"]["client_ip"]
+        super().__init__(*args, **kwargs)
+        self.fields["turnstile"] = TurnstileField(client_ip=client_ip)
+        self.fields["turnstile"].widget = forms.HiddenInput()
 
     def clean_username(self):
         username = self.cleaned_data["username"].lower()

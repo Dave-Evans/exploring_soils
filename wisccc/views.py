@@ -67,13 +67,13 @@ from wisccc.models import (
     SurveyFarm,
     FieldFarm,
     Researcher,
+    AncillaryData,
 )
 from wisccc.data_mgmt import (
     pull_all_years_together,
     get_survey_data,
     data_export,
     export_agronomic_data,
-    AncillaryData,
 )
 
 
@@ -1580,7 +1580,11 @@ def wisc_cc_signup(request):
     signup_form = CustomUserCreationForm(
         request.POST or None, initial={"client_ip": client_ip}
     )
+    for f in signup_form.fields:
+        print(f)
     signup_form.fields["turnstile"].required = True
+    signup_form.fields["turnstile"].client_ip = client_ip
+
     if request.method == "POST":
         if signup_form.is_valid():
 
