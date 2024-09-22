@@ -1110,35 +1110,53 @@ def wisccc_create_researcher(request):
     """
 
     researcher_form = ResearcherSignupForm(request.POST)
-    signup_form = CustomUserCreationForm(request.POST)
 
-    if researcher_form.is_valid() and signup_form.is_valid():
-
-        new_researcher = researcher_form.save(commit=False)
-        new_user = signup_form.save(commit=False)
-
-        new_researcher.user = new_user
-        if new_researcher.approved:
-            content_type = ContentType.objects.get_for_model(Researcher)
-            perm_approved_researcher = Permission.objects.get(
-                codename="approved_researcher"
-            )
-            new_researcher.approved_date = datetime.date.today()
-            new_user.user_permissions.add(perm_approved_researcher)
-        new_researcher.save()
-        new_user.save()
-        # Eventually redirect to table of researchers
-        return redirect("wisc_cc_manager_home")
-
-    return render(
-        request,
-        "wisccc/wisc_cc_create_researcher.html",
-        {
-            "researcher_form": researcher_form,
-            # Uses a generic form
-            "form": signup_form,
-        },
+    client_ip = request.META.get("REMOTE_ADDR")
+    signup_form = CustomUserCreationForm(
+        request.POST or None, initial={"client_ip": client_ip}
     )
+
+    signup_form.fields["turnstile"].required = True
+    signup_form.fields["turnstile"].client_ip = client_ip
+    if request.method == "POST":
+        if researcher_form.is_valid() and signup_form.is_valid():
+
+            new_researcher = researcher_form.save(commit=False)
+            new_user = signup_form.save(commit=False)
+
+            new_researcher.user = new_user
+            if new_researcher.approved:
+                content_type = ContentType.objects.get_for_model(Researcher)
+                perm_approved_researcher = Permission.objects.get(
+                    codename="approved_researcher"
+                )
+                new_researcher.approved_date = datetime.date.today()
+                new_user.user_permissions.add(perm_approved_researcher)
+            new_researcher.save()
+            new_user.save()
+            # Eventually redirect to table of researchers
+            return redirect("wisc_cc_manager_home")
+        else:
+            return render(
+                request,
+                "wisccc/wisc_cc_create_researcher.html",
+                {
+                    "researcher_form": researcher_form,
+                    # Uses a generic form
+                    "form": signup_form,
+                },
+            )
+    else:
+
+        return render(
+            request,
+            "wisccc/wisc_cc_create_researcher.html",
+            {
+                "researcher_form": researcher_form,
+                # Uses a generic form
+                "form": signup_form,
+            },
+        )
 
 
 def researcher_page(request):
@@ -1580,8 +1598,6 @@ def wisc_cc_signup(request):
     signup_form = CustomUserCreationForm(
         request.POST or None, initial={"client_ip": client_ip}
     )
-    for f in signup_form.fields:
-        print(f)
     signup_form.fields["turnstile"].required = True
     signup_form.fields["turnstile"].client_ip = client_ip
 

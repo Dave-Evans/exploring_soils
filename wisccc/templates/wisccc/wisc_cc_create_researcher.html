@@ -15,7 +15,20 @@
     <div class="col-lg-8 col-md-10 col-sm-12">
         <div class="card">
             <div class="card-body">
+                <script type="text/javascript">
+                    $(function () {
+                        // Grab turnstile value
+                        $('.noprompt-required').click(
+                            function () { populateTurnstileField(); });
 
+                        function populateTurnstileField() {
+                            var response_val = $("input[name=cf-turnstile-response]").val();
+                            $('#id_turnstile').val(response_val);
+                        }
+
+                    });
+
+                </script>
                 <h5>Create new researcher collaborator</h5>
                 <a class="btn btn-info btn-sm" href="#">
                     Create new collaborator from existing user
@@ -24,6 +37,8 @@
                     {% csrf_token %}
                     <hr>
                     {% include 'wisccc/includes/form_wisc_signup.html' %}
+                    <p>Please check the box to complete your signup.</p>
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAAAju8QRpruOM5bky"></div>
                     <hr>
                     {% include 'wisccc/includes/form_create_researcher.html' %}
 
