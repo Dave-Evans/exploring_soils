@@ -50,7 +50,7 @@ urlpatterns = [
     # bikemileage App
     # re_path(r'^mileage/$',mileage_views.mileage_list, name='mileage_list' ),
     path("custom_mileage", CustomMileageListView.as_view(), name="custom_mileage"),
-    re_path(r"^mileage/create/$", MileageCreateView.as_view(), name="mileage_create"),
+    path("mileage/create/", MileageCreateView.as_view(), name="mileage_create"),
     re_path(
         r"^mileage/delete/(?P<pk>\d+)/",
         MileageDeleteView.as_view(),
@@ -64,37 +64,37 @@ urlpatterns = [
         "bicycles/<int:pk>/delete", BicycleDeleteView.as_view(), name="bicycle_delete"
     ),
     # re_path(r"^signup/$", accounts_views.signup, name="signup"),
-    re_path(
-        r"^login/$",
+    path(
+        "login/",
         auth_views.LoginView.as_view(template_name="login.html"),
         name="login",
     ),
-    re_path(r"^logout/$", auth_views.LogoutView.as_view(), name="logout"),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     # Books app
-    re_path(r"^$", books_views.home, name="home"),
-    re_path(r"^books/$", books_views.book_list, name="book_list"),
-    re_path(r"^books/create/$", books_views.book_create, name="book_create"),
-    re_path(
-        r"^books/(?P<pk>\d+)/update/$", books_views.book_update, name="book_update"
+    path("", books_views.home, name="home"),
+    path("books/", books_views.book_list, name="book_list"),
+    path("books/create/", books_views.book_create, name="book_create"),
+    path(
+        "books/<int:pk>/update/", books_views.book_update, name="book_update"
     ),
-    re_path(
-        r"^books/(?P<pk>\d+)/delete/$", books_views.book_delete, name="book_delete"
+    path(
+        "books/<int:pk>/delete/", books_views.book_delete, name="book_delete"
     ),
     # Accounts
-    re_path(
-        r"^settings/password/$",
+    path(
+        "settings/password/",
         auth_views.PasswordChangeView.as_view(template_name="password_change.html"),
         name="password_change",
     ),
-    re_path(
-        r"^settings/password/done/$",
+    path(
+        "settings/password/done/",
         auth_views.PasswordChangeDoneView.as_view(
             template_name="password_change_done.html"
         ),
         name="password_change_done",
     ),
-    re_path(
-        r"^reset/$",
+    path(
+        "reset/",
         auth_views.PasswordResetView.as_view(
             template_name="password_reset.html",
             email_template_name="password_reset_email.html",
@@ -102,8 +102,8 @@ urlpatterns = [
         ),
         name="password_reset",
     ),
-    re_path(
-        r"^reset/done/$",
+    path(
+        "reset/done/",
         auth_views.PasswordResetDoneView.as_view(
             template_name="password_reset_done.html"
         ),
@@ -116,40 +116,40 @@ urlpatterns = [
         ),
         name="password_reset_confirm",
     ),
-    re_path(
-        r"^reset/complete/$",
+    path(
+        "reset/complete/",
         auth_views.PasswordResetCompleteView.as_view(
             template_name="password_reset_complete.html"
         ),
         name="password_reset_complete",
     ),
-    re_path(
-        r"^settings/account/$",
+    path(
+        "settings/account/",
         accounts_views.UserUpdateView.as_view(),
         name="my_account",
     ),
     # Boards
-    re_path(r"^boards$", views.BoardListView.as_view(), name="home_boards"),
-    re_path(
-        r"^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/posts/(?P<post_pk>\d+)/edit/$",
+    path("boards", views.BoardListView.as_view(), name="home_boards"),
+    path(
+        "boards/<int:pk>/topics/<int:topic_pk>/posts/<int:post_pk>/edit/",
         views.PostUpdateView.as_view(),
         name="edit_post",
     ),
-    re_path(r"^new_post/$", views.NewPostView.as_view(), name="new_post"),
-    re_path(
-        r"^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/reply/$",
+    path("new_post/", views.NewPostView.as_view(), name="new_post"),
+    path(
+        "boards/<int:pk>/topics/<int:topic_pk>/reply/",
         views.reply_topic,
         name="reply_topic",
     ),
-    re_path(
-        r"^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/$",
+    path(
+        "boards/<int:pk>/topics/<int:topic_pk>/",
         views.PostListView.as_view(),
         name="topic_posts",
     ),
     # re_path(r'^boards/(?P<pk>\d+)/$', views.board_topics, name='board_topics'),
-    re_path(
-        r"^boards/(?P<pk>\d+)/$", views.TopicListView.as_view(), name="board_topics"
+    path(
+        "boards/<int:pk>/", views.TopicListView.as_view(), name="board_topics"
     ),
-    re_path(r"^boards/(?P<pk>\d+)/new/$", views.new_topic, name="new_topic"),
+    path("boards/<int:pk>/new/", views.new_topic, name="new_topic"),
     path("admin/", admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
