@@ -1163,7 +1163,9 @@ def wisccc_create_researcher_existing_user(request):
 
         new_researcher = researcher_form.save(commit=False)
         # Form returns a queryset, so we select the first object, there is only one
-        new_user = select_form.cleaned_data["user_select"][0]
+        print(select_form.cleaned_data)
+
+        new_user = User.objects.get(id=select_form.cleaned_data["user_select"])
 
         new_researcher.user = new_user
         if new_researcher.approved:

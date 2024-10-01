@@ -2881,9 +2881,11 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_total_nitrogen",
         )
 
+
 class SelectUserForm(forms.Form):
-    users = User.objects.all()
-    user_select = forms.ModelMultipleChoiceField(queryset=users, to_field_name="email")
+    users = User.objects.filter(is_active=True)
+    # user_select = forms.ModelMultipleChoiceField(queryset=users, to_field_name="email")
+    user_select = forms.ChoiceField(choices=users.values_list("id", "email"))
 
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
