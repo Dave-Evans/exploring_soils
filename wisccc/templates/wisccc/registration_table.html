@@ -23,6 +23,10 @@
         <h3 class="card-title">Registered for Survey</h3>
         <h7 class="card-title">
           <span><a href="{% url 'download_registrants' %}">Download registrants</a></span>
+          <a class="btn btn-info btn-sm" href="{% url 'wisc_cc_register_by_mgmt' %}">
+            click here to create a new registrant
+          </a>
+
         </h7>
         <div class="col-md-12">
           {% render_table table %}

@@ -47,6 +47,22 @@ urlpatterns = [
         wisccc_views.wisc_cc_register_3,
         name="wisc_cc_register_3",
     ),
+    re_path(
+        r"^wisc_cc_register_by_mgmt$",
+        wisccc_views.wisc_cc_register_by_mgmt,
+        name="wisc_cc_register_by_mgmt",
+    ),
+    re_path(
+        r"^wisc_cc_register_by_mgmt_exist_user_select$",
+        wisccc_views.wisc_cc_register_by_mgmt_exist_user_select,
+        name="wisc_cc_register_by_mgmt_exist_user_select",
+    ),
+    # Takes the user's pk
+    path(
+        "wisc_cc_register_by_mgmt_exist_user/<pk>",
+        wisccc_views.wisc_cc_register_by_mgmt_exist_user,
+        name="wisc_cc_register_by_mgmt_exist_user",
+    ),
     # For creating an account
     re_path(r"^signup/$", wisccc_views.wisc_cc_signup, name="signup"),
     re_path(
