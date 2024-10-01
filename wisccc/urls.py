@@ -127,6 +127,11 @@ urlpatterns = [
         wisccc_views.wisccc_create_researcher,
         name="wisccc_create_researcher",
     ),
+    re_path(
+        r"^wisccc-create-researcher-existing-user$",
+        wisccc_views.wisccc_create_researcher_existing_user,
+        name="wisccc_create_researcher_existing_user",
+    ),
     re_path(r"^researcher_page$", wisccc_views.researcher_page, name="researcher_page"),
     re_path(
         r"^researcher_page_unapproved$",

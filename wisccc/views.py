@@ -49,6 +49,7 @@ from wisccc.forms import (
     ResearcherSignupForm,
     ResearcherFullForm,
     AncillaryDataForm,
+    SelectUserForm,
 )
 from wisccc.forms_2023 import (
     SurveyFarmFormPart1_2023,
@@ -1109,7 +1110,7 @@ def wisccc_create_researcher(request):
     populate user info by looking up existing email addresses?
     """
 
-    researcher_form = ResearcherSignupForm(request.POST)
+    researcher_form = ResearcherSignupForm(request.POST or None)
 
     client_ip = request.META.get("REMOTE_ADDR")
     signup_form = CustomUserCreationForm(
@@ -1118,36 +1119,25 @@ def wisccc_create_researcher(request):
 
     signup_form.fields["turnstile"].required = True
     signup_form.fields["turnstile"].client_ip = client_ip
-    if request.method == "POST":
-        if researcher_form.is_valid() and signup_form.is_valid():
 
-            new_researcher = researcher_form.save(commit=False)
-            new_user = signup_form.save(commit=False)
+    if researcher_form.is_valid() and signup_form.is_valid():
 
-            new_researcher.user = new_user
-            if new_researcher.approved:
-                content_type = ContentType.objects.get_for_model(Researcher)
-                perm_approved_researcher = Permission.objects.get(
-                    codename="approved_researcher"
-                )
-                new_researcher.approved_date = datetime.date.today()
-                new_user.user_permissions.add(perm_approved_researcher)
-            new_researcher.save()
-            new_user.save()
-            # Eventually redirect to table of researchers
-            return redirect("wisc_cc_manager_home")
-        else:
-            return render(
-                request,
-                "wisccc/wisc_cc_create_researcher.html",
-                {
-                    "researcher_form": researcher_form,
-                    # Uses a generic form
-                    "form": signup_form,
-                },
+        new_researcher = researcher_form.save(commit=False)
+        new_user = signup_form.save(commit=False)
+
+        new_researcher.user = new_user
+        if new_researcher.approved:
+            content_type = ContentType.objects.get_for_model(Researcher)
+            perm_approved_researcher = Permission.objects.get(
+                codename="approved_researcher"
             )
-    else:
+            new_researcher.approved_date = datetime.date.today()
+            new_user.user_permissions.add(perm_approved_researcher)
+        new_researcher.save()
+        new_user.save()
 
+        return redirect("researcher_table")
+    else:
         return render(
             request,
             "wisccc/wisc_cc_create_researcher.html",
@@ -1155,6 +1145,46 @@ def wisccc_create_researcher(request):
                 "researcher_form": researcher_form,
                 # Uses a generic form
                 "form": signup_form,
+            },
+        )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisccc_create_researcher_existing_user(request):
+    """For creating a new researcher
+    This assumes we are creating a researcher for an existing user.
+    """
+
+    researcher_form = ResearcherSignupForm(request.POST or None)
+
+    select_form = SelectUserForm(request.POST or None)
+
+    if researcher_form.is_valid() and select_form.is_valid():
+
+        new_researcher = researcher_form.save(commit=False)
+        # Form returns a queryset, so we select the first object, there is only one
+        new_user = select_form.cleaned_data["user_select"][0]
+
+        new_researcher.user = new_user
+        if new_researcher.approved:
+            content_type = ContentType.objects.get_for_model(Researcher)
+            perm_approved_researcher = Permission.objects.get(
+                codename="approved_researcher"
+            )
+            new_researcher.approved_date = datetime.date.today()
+            new_user.user_permissions.add(perm_approved_researcher)
+        new_researcher.save()
+        new_user.save()
+
+        return redirect("researcher_table")
+    else:
+        return render(
+            request,
+            "wisccc/wisc_cc_create_researcher_existing_user.html",
+            {
+                "researcher_form": researcher_form,
+                # Uses a generic form
+                "form": select_form,
             },
         )
 
@@ -1310,6 +1340,8 @@ def check_researcher_approvals():
     for researcher in researchers:
         # If the approval was given more than 366 days ago, set
         #   approved to False
+        if researcher.approved_date is None:
+            continue
         if abs(researcher.approved_date - datetime.date.today()).days > 366:
             researcher.approved = False
             researcher.save()

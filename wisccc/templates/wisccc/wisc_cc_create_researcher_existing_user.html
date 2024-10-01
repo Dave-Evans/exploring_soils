@@ -1,5 +1,6 @@
 {% extends 'wisccc/base_wisccc.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 
 
@@ -30,15 +31,20 @@
 
                 </script>
                 <h5>Create new researcher collaborator</h5>
-                <a class="btn btn-info btn-sm" href="{% url 'wisccc_create_researcher_existing_user' %}">
-                    Create new collaborator from existing user
+                <a class="btn btn-info btn-sm" href="{% url 'wisccc_create_researcher' %}">
+                    Create new collaborator for new user
                 </a>
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <hr>
-                    {% include 'wisccc/includes/form_wisc_signup.html' %}
-                    <p>Please check the box to complete your signup.</p>
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAAAju8QRpruOM5bky"></div>
+
+                    <div class="form-group">
+
+                        {{ form.user_select|as_crispy_field }}
+
+                    </div>
+
+
                     <hr>
                     {% include 'wisccc/includes/form_create_researcher.html' %}
 

@@ -2880,3 +2880,11 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_milk_ton_milk2013",
             "spring_total_nitrogen",
         )
+
+class SelectUserForm(forms.Form):
+    users = User.objects.all()
+    user_select = forms.ModelMultipleChoiceField(queryset=users, to_field_name="email")
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields["user_select"].queryset = User.objects.all()
