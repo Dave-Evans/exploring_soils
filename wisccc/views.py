@@ -1733,6 +1733,133 @@ def wisc_cc_register_2(request):
     )
 
 
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisc_cc_register_by_mgmt_exist_user_select(request):
+    """For when a registrant is signed up by survey manager
+    This is for when the user already exists in our system.
+    This first page is for just selecting the user.
+    """
+    survey_year = 2024
+
+    select_user_form = SelectUserForm(request.POST or None)
+
+    if select_user_form.is_valid():
+
+        # selected_user = User.objects.get(id=select_user_form.cleaned_data["user_select"])
+
+        return redirect(
+            "wisc_cc_register_by_mgmt_exist_user",
+            pk=select_user_form.cleaned_data["user_select"],
+        )
+    else:
+        return render(
+            request,
+            "wisccc/wisc_cc_register_by_mgmt_exist_user_select.html",
+            {
+                "form": select_user_form,
+            },
+        )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisc_cc_register_by_mgmt_exist_user(request, pk):
+    """For when a registrant is signed up by survey manager
+    This is for when the user already exists in our system.
+    This page is for when the user has been selected. The id here is the user id.
+    """
+    survey_year = 2024
+
+    selected_user = get_object_or_404(User, id=pk)
+    try:
+        farmer_instance = Farmer.objects.filter(user_id=selected_user.id).first()
+    except:
+        farmer_instance = Farmer.objects.create(user_id=selected_user.id)
+
+    form_farmer = FarmerForm(request.POST or None, instance=farmer_instance)
+
+    registration_instance = SurveyRegistration.objects.filter(
+        farmer=farmer_instance
+    ).first()
+    registration_form = SurveyRegistrationFullForm(
+        request.POST or None, instance=registration_instance
+    )
+
+    if registration_form.is_valid() and form_farmer.is_valid():
+
+        new_farmer = form_farmer.save(commit=False)
+        new_registrant = registration_form.save(commit=False)
+
+        new_farmer.user = selected_user
+        new_farmer.save()
+
+        new_registrant.farmer = new_farmer
+        new_registrant.survey_year = survey_year
+
+        new_registrant.save()
+
+        return redirect("registration_table")
+    else:
+        return render(
+            request,
+            "wisccc/wisc_cc_register_by_mgmt_exist_user.html",
+            {
+                "registration_form": registration_form,
+                "form_farmer": form_farmer,
+                "selected_user": selected_user,
+            },
+        )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisc_cc_register_by_mgmt(request):
+    """For when a registrant is signed up by survey manager
+    This is for when the user is new.
+    """
+    survey_year = 2024
+    client_ip = request.META.get("REMOTE_ADDR")
+
+    registration_form = SurveyRegistrationFullForm(request.POST or None)
+    farmer_form = FarmerForm(request.POST or None)
+
+    signup_form = CustomUserCreationForm(
+        request.POST or None, initial={"client_ip": client_ip}
+    )
+
+    signup_form.fields["turnstile"].required = True
+    signup_form.fields["turnstile"].client_ip = client_ip
+
+    if (
+        registration_form.is_valid()
+        and signup_form.is_valid()
+        and farmer_form.is_valid()
+    ):
+
+        new_farmer = farmer_form.save(commit=False)
+        new_registrant = registration_form.save(commit=False)
+        new_user = signup_form.save(commit=False)
+
+        new_farmer.user = new_user
+        new_farmer.save()
+
+        new_registrant.farmer = new_farmer
+        new_registrant.survey_year = survey_year
+
+        new_registrant.save()
+        new_user.save()
+
+        return redirect("registration_table")
+    else:
+        return render(
+            request,
+            "wisccc/wisc_cc_register_by_mgmt.html",
+            {
+                "registration_form": registration_form,
+                "form_farmer": farmer_form,
+                "form": signup_form,
+            },
+        )
+
+
 @login_required
 def wisc_cc_register_3(request):
     """Thank you for registering page"""
