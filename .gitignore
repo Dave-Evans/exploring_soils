@@ -6,4 +6,4 @@ myvenv/
 *.json
 *.env
 *.pem
-/*/migrations/
+
