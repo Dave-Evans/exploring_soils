@@ -87,50 +87,71 @@ def gather_gdu_precip_2023plus():
     for survey_field in survey_fields:
 
         print(survey_field.id)
+        print("\tFall...")
+        grab_and_update_weather_dat(survey_field, "fall")
+        print("\tSpring...")
+        grab_and_update_weather_dat(survey_field, "spring")
 
-        cc_planting_date = survey_field.cover_crop_planting_date
+
+def grab_and_update_weather_dat(survey_field_instance, season="fall"):
+
+    cc_planting_date = survey_field_instance.cover_crop_planting_date
+    if season == "fall":
         cc_collection = (
-            AncillaryData.objects.filter(survey_field_id=survey_field.id)
+            AncillaryData.objects.filter(survey_field_id=survey_field_instance.id)
             .first()
             .biomass_collection_date
         )
-        field_location = (
-            FieldFarm.objects.filter(id=survey_field.field_farm_id)
+    else:
+        cc_collection = (
+            AncillaryData.objects.filter(survey_field_id=survey_field_instance.id)
             .first()
-            .field_location
+            .spring_biomass_collection_date
         )
+    field_location = (
+        FieldFarm.objects.filter(id=survey_field_instance.field_farm_id)
+        .first()
+        .field_location
+    )
 
-        if all([cc_planting_date, cc_collection, field_location]):
+    if all([cc_planting_date, cc_collection, field_location]):
 
-            # start_date = cc_planting_date.strftime("%Y-%m-%d")
-            start_date = cc_planting_date
-            end_date = cc_collection.strftime("%Y-%m-%d")
-            lon = field_location.coords[0]
-            lat = field_location.coords[1]
-        else:
-            print("can't calc GDU")
-            print(f"\tPlanting date {cc_planting_date}")
-            print(f"\tcc_collection: {cc_collection}")
-            print(f"\tFarm location: {field_location}")
-            continue
+        # start_date = cc_planting_date.strftime("%Y-%m-%d")
+        start_date = cc_planting_date
+        end_date = cc_collection.strftime("%Y-%m-%d")
+        lon = field_location.coords[0]
+        lat = field_location.coords[1]
+    else:
+        print("can't calc GDU")
+        print(f"\tPlanting date {cc_planting_date}")
+        print(f"\tcc_collection: {cc_collection}")
+        print(f"\tFarm location: {field_location}")
+        return None
 
-        data = {
-            "lon": lon,
-            "lat": lat,
-            "start_date": start_date,
-            "end_date": end_date,
-        }
-        gdu = calc_gdu(data)
-        precip = calc_precip(data)
-        try:
-            ancillary_data = AncillaryData.objects.get(survey_field_id=survey_field.id)
-        except:
-            print("No Ancillary data record for survey_field:", survey_field.id)
-            continue
+    data = {
+        "lon": lon,
+        "lat": lat,
+        "start_date": start_date,
+        "end_date": end_date,
+    }
+    gdu = calc_gdu(data)
+    precip = calc_precip(data)
+    try:
+        ancillary_data = AncillaryData.objects.get(
+            survey_field_id=survey_field_instance.id
+        )
+    except:
+        print("No Ancillary data record for survey_field:", survey_field_instance.id)
+        return None
+
+    if season == "fall":
         ancillary_data.acc_gdd = gdu
         ancillary_data.total_precip = precip
+    else:
+        ancillary_data.spring_acc_gdd = gdu
+        ancillary_data.spring_total_precip = precip
 
-        ancillary_data.save()
+    ancillary_data.save()
 
 
 def calc_gdu(data):

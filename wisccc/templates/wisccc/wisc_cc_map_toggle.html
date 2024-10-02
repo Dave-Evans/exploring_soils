@@ -531,9 +531,9 @@
 
 
             var biomass_val = feature.properties.cc_biomass;
-            var biomass_val = (biomass_val === null) ? null : roundUp(feature.properties.cc_biomass, 2);
+            var biomass_val = (biomass_val === null) ? 'Not sampled.' : roundUp(feature.properties.cc_biomass, 2);
             var spring_biomass_val = feature.properties.spring_cc_biomass;
-            var spring_biomass_val = (spring_biomass_val === null) ? null : roundUp(feature.properties.spring_cc_biomass, 2);
+            var spring_biomass_val = (spring_biomass_val === null) ? 'Not sampled.' : roundUp(feature.properties.spring_cc_biomass, 2);
             var image_1 = ""
             var image_2 = ""
             if (feature.properties.image_1_url != null) {
