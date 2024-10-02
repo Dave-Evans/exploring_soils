@@ -368,6 +368,17 @@ while [ -n "$1" ]; do
             provision_deploy
             ;;
         teardown)
+            tier=$(extract_envvar ENV)
+            if [ "$tier" == "prod" ]; then
+                echo "  -------------  "
+                echo "   Are you certain you want to destroy the production instance?"
+                echo "  -------------  "
+                read resp
+                if [ "$resp" != 'yes' ]; then
+                    echo $resp
+                    exit 1
+                fi
+            fi
             terraform destroy
             ;;            
         opensite)
