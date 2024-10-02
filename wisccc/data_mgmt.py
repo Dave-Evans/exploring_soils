@@ -533,138 +533,224 @@ def pull_all_years_together(f_output):
             surveyfarm.id as master_survey_farm_id,
             case
                 when surveyfield.cover_crop_species_1 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_1 = 'BALANSA_CLOVER' then 'balansa clover'
                 when surveyfield.cover_crop_species_1 = 'BARLEY' then 'barley'
                 when surveyfield.cover_crop_species_1 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_1 = 'BUCKWHEAT' then 'buckwheat'
+
                 when surveyfield.cover_crop_species_1 = 'CANOLA' then 'canola/rapeseed'
                 when surveyfield.cover_crop_species_1 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when surveyfield.cover_crop_species_1 = 'CRIMSON_CLOVER' then 'crimson clover'
                 when surveyfield.cover_crop_species_1 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_1 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_1 = 'DUTCH_WHITE_CLOVER' then 'Dutch white clover'
+
                 when surveyfield.cover_crop_species_1 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_1 = 'FLAX' then 'flax'
                 when surveyfield.cover_crop_species_1 = 'HAIRY_VETCH' then 'hairy vetch'
                 when surveyfield.cover_crop_species_1 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_1 = 'MILLET' then 'millet'
+
                 when surveyfield.cover_crop_species_1 = 'OATS' then 'oats'
                 when surveyfield.cover_crop_species_1 = 'OTHER_LEGUME' then 'other (legume)'
                 when surveyfield.cover_crop_species_1 = 'OTHER_GRASS' then 'other (grass)'
                 when surveyfield.cover_crop_species_1 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when surveyfield.cover_crop_species_1 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_1 = 'PLANTAIN' then 'plantain'
+
+
+                when surveyfield.cover_crop_species_1 = 'RADISH' then 'radish'  
                 when surveyfield.cover_crop_species_1 = 'RED_CLOVER' then 'red clover'
                 when surveyfield.cover_crop_species_1 = 'SORGHUM' then 'sorghum'
                 when surveyfield.cover_crop_species_1 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_1 = 'SOYBEANS' then 'soybeans'
+
                 when surveyfield.cover_crop_species_1 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_1 = 'SUN_HEMP' then 'sun hemp'
                 when surveyfield.cover_crop_species_1 = 'TRITICALE' then 'triticale'
                 when surveyfield.cover_crop_species_1 = 'TURNIP' then 'turnip'
                 when surveyfield.cover_crop_species_1 = 'WHEAT_SPRING' then 'wheat (spring)'
+
                 when surveyfield.cover_crop_species_1 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_1 = 'WINTER_PEA' then 'winter pea'
+                when surveyfield.cover_crop_species_1 = 'YELLOW_SWEET_CLOVER' then 'yellow sweet clover'
                 when surveyfield.cover_crop_species_1 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
                 when surveyfield.cover_crop_species_1 = 'OTHER' then 'other'		
+
             end as mod_cover_crop_species_1,
             case
                 when surveyfield.cover_crop_species_2 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_2 = 'BALANSA_CLOVER' then 'balansa clover'
                 when surveyfield.cover_crop_species_2 = 'BARLEY' then 'barley'
                 when surveyfield.cover_crop_species_2 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_2 = 'BUCKWHEAT' then 'buckwheat'
+
                 when surveyfield.cover_crop_species_2 = 'CANOLA' then 'canola/rapeseed'
                 when surveyfield.cover_crop_species_2 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when surveyfield.cover_crop_species_2 = 'CRIMSON_CLOVER' then 'crimson clover'
                 when surveyfield.cover_crop_species_2 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_2 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_2 = 'DUTCH_WHITE_CLOVER' then 'Dutch white clover'
+
                 when surveyfield.cover_crop_species_2 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_2 = 'FLAX' then 'flax'
                 when surveyfield.cover_crop_species_2 = 'HAIRY_VETCH' then 'hairy vetch'
                 when surveyfield.cover_crop_species_2 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_2 = 'MILLET' then 'millet'
+
                 when surveyfield.cover_crop_species_2 = 'OATS' then 'oats'
                 when surveyfield.cover_crop_species_2 = 'OTHER_LEGUME' then 'other (legume)'
                 when surveyfield.cover_crop_species_2 = 'OTHER_GRASS' then 'other (grass)'
                 when surveyfield.cover_crop_species_2 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when surveyfield.cover_crop_species_2 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_2 = 'PLANTAIN' then 'plantain'
+
+
+                when surveyfield.cover_crop_species_2 = 'RADISH' then 'radish'  
                 when surveyfield.cover_crop_species_2 = 'RED_CLOVER' then 'red clover'
                 when surveyfield.cover_crop_species_2 = 'SORGHUM' then 'sorghum'
                 when surveyfield.cover_crop_species_2 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_2 = 'SOYBEANS' then 'soybeans'
+
                 when surveyfield.cover_crop_species_2 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_2 = 'SUN_HEMP' then 'sun hemp'
                 when surveyfield.cover_crop_species_2 = 'TRITICALE' then 'triticale'
                 when surveyfield.cover_crop_species_2 = 'TURNIP' then 'turnip'
                 when surveyfield.cover_crop_species_2 = 'WHEAT_SPRING' then 'wheat (spring)'
+
                 when surveyfield.cover_crop_species_2 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_2 = 'WINTER_PEA' then 'winter pea'
+                when surveyfield.cover_crop_species_2 = 'YELLOW_SWEET_CLOVER' then 'yellow sweet clover'
                 when surveyfield.cover_crop_species_2 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
-                when surveyfield.cover_crop_species_2 = 'OTHER' then 'other'		
+                when surveyfield.cover_crop_species_2 = 'OTHER' then 'other'	
             end as mod_cover_crop_species_2,
             case
                 when surveyfield.cover_crop_species_3 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
-                when surveyfield.cover_crop_species_3 =  'BARLEY' then 'barley'
+                when surveyfield.cover_crop_species_3 = 'BALANSA_CLOVER' then 'balansa clover'
+                when surveyfield.cover_crop_species_3 = 'BARLEY' then 'barley'
                 when surveyfield.cover_crop_species_3 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_3 = 'BUCKWHEAT' then 'buckwheat'
+
                 when surveyfield.cover_crop_species_3 = 'CANOLA' then 'canola/rapeseed'
                 when surveyfield.cover_crop_species_3 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when surveyfield.cover_crop_species_3 = 'CRIMSON_CLOVER' then 'crimson clover'
                 when surveyfield.cover_crop_species_3 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_3 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_3 = 'DUTCH_WHITE_CLOVER' then 'Dutch white clover'
+
                 when surveyfield.cover_crop_species_3 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_3 = 'FLAX' then 'flax'
                 when surveyfield.cover_crop_species_3 = 'HAIRY_VETCH' then 'hairy vetch'
                 when surveyfield.cover_crop_species_3 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_3 = 'MILLET' then 'millet'
+
                 when surveyfield.cover_crop_species_3 = 'OATS' then 'oats'
                 when surveyfield.cover_crop_species_3 = 'OTHER_LEGUME' then 'other (legume)'
                 when surveyfield.cover_crop_species_3 = 'OTHER_GRASS' then 'other (grass)'
                 when surveyfield.cover_crop_species_3 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when surveyfield.cover_crop_species_3 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_3 = 'PLANTAIN' then 'plantain'
+
+
+                when surveyfield.cover_crop_species_3 = 'RADISH' then 'radish'  
                 when surveyfield.cover_crop_species_3 = 'RED_CLOVER' then 'red clover'
                 when surveyfield.cover_crop_species_3 = 'SORGHUM' then 'sorghum'
                 when surveyfield.cover_crop_species_3 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_3 = 'SOYBEANS' then 'soybeans'
+
                 when surveyfield.cover_crop_species_3 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_3 = 'SUN_HEMP' then 'sun hemp'
                 when surveyfield.cover_crop_species_3 = 'TRITICALE' then 'triticale'
                 when surveyfield.cover_crop_species_3 = 'TURNIP' then 'turnip'
                 when surveyfield.cover_crop_species_3 = 'WHEAT_SPRING' then 'wheat (spring)'
+
                 when surveyfield.cover_crop_species_3 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_3 = 'WINTER_PEA' then 'winter pea'
+                when surveyfield.cover_crop_species_3 = 'YELLOW_SWEET_CLOVER' then 'yellow sweet clover'
                 when surveyfield.cover_crop_species_3 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
-                when surveyfield.cover_crop_species_3 = 'OTHER' then 'other'		
+                when surveyfield.cover_crop_species_3 = 'OTHER' then 'other'	
             end as mod_cover_crop_species_3,
             case
                 when surveyfield.cover_crop_species_4 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_4 = 'BALANSA_CLOVER' then 'balansa clover'
                 when surveyfield.cover_crop_species_4 = 'BARLEY' then 'barley'
                 when surveyfield.cover_crop_species_4 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_4 = 'BUCKWHEAT' then 'buckwheat'
+
                 when surveyfield.cover_crop_species_4 = 'CANOLA' then 'canola/rapeseed'
                 when surveyfield.cover_crop_species_4 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when surveyfield.cover_crop_species_4 = 'CRIMSON_CLOVER' then 'crimson clover'
                 when surveyfield.cover_crop_species_4 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_4 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_4 = 'DUTCH_WHITE_CLOVER' then 'Dutch white clover'
+
                 when surveyfield.cover_crop_species_4 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_4 = 'FLAX' then 'flax'
                 when surveyfield.cover_crop_species_4 = 'HAIRY_VETCH' then 'hairy vetch'
                 when surveyfield.cover_crop_species_4 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_4 = 'MILLET' then 'millet'
+
                 when surveyfield.cover_crop_species_4 = 'OATS' then 'oats'
                 when surveyfield.cover_crop_species_4 = 'OTHER_LEGUME' then 'other (legume)'
                 when surveyfield.cover_crop_species_4 = 'OTHER_GRASS' then 'other (grass)'
                 when surveyfield.cover_crop_species_4 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when surveyfield.cover_crop_species_4 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_4 = 'PLANTAIN' then 'plantain'
+
+
+                when surveyfield.cover_crop_species_4 = 'RADISH' then 'radish'  
                 when surveyfield.cover_crop_species_4 = 'RED_CLOVER' then 'red clover'
                 when surveyfield.cover_crop_species_4 = 'SORGHUM' then 'sorghum'
                 when surveyfield.cover_crop_species_4 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_4 = 'SOYBEANS' then 'soybeans'
+
                 when surveyfield.cover_crop_species_4 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_4 = 'SUN_HEMP' then 'sun hemp'
                 when surveyfield.cover_crop_species_4 = 'TRITICALE' then 'triticale'
                 when surveyfield.cover_crop_species_4 = 'TURNIP' then 'turnip'
                 when surveyfield.cover_crop_species_4 = 'WHEAT_SPRING' then 'wheat (spring)'
+
                 when surveyfield.cover_crop_species_4 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_4 = 'WINTER_PEA' then 'winter pea'
+                when surveyfield.cover_crop_species_4 = 'YELLOW_SWEET_CLOVER' then 'yellow sweet clover'
                 when surveyfield.cover_crop_species_4 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
-                when surveyfield.cover_crop_species_4 = 'OTHER' then 'other'		
+                when surveyfield.cover_crop_species_4 = 'OTHER' then 'other'	
             end as mod_cover_crop_species_4,
             case
                 when surveyfield.cover_crop_species_5 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
+                when surveyfield.cover_crop_species_5 = 'BALANSA_CLOVER' then 'balansa clover'
                 when surveyfield.cover_crop_species_5 = 'BARLEY' then 'barley'
                 when surveyfield.cover_crop_species_5 = 'BERSEEM_CLOVER' then 'berseem clover'
+                when surveyfield.cover_crop_species_5 = 'BUCKWHEAT' then 'buckwheat'
+
                 when surveyfield.cover_crop_species_5 = 'CANOLA' then 'canola/rapeseed'
                 when surveyfield.cover_crop_species_5 = 'CEREAL_RYE' then 'cereal (winter) rye'
-                when surveyfield.cover_crop_species_5 = 'CRIMSON_CLOVER' then 'crimson clover'
                 when surveyfield.cover_crop_species_5 = 'COWPEA' then 'cowpea'
+                when surveyfield.cover_crop_species_5 = 'CRIMSON_CLOVER' then 'crimson clover'
+                when surveyfield.cover_crop_species_5 = 'DUTCH_WHITE_CLOVER' then 'Dutch white clover'
+
                 when surveyfield.cover_crop_species_5 = 'FIELD_PEA' then 'field/forage pea'
+                when surveyfield.cover_crop_species_5 = 'FLAX' then 'flax'
                 when surveyfield.cover_crop_species_5 = 'HAIRY_VETCH' then 'hairy vetch'
                 when surveyfield.cover_crop_species_5 = 'KALE' then 'kale'
+                when surveyfield.cover_crop_species_5 = 'MILLET' then 'millet'
+
                 when surveyfield.cover_crop_species_5 = 'OATS' then 'oats'
                 when surveyfield.cover_crop_species_5 = 'OTHER_LEGUME' then 'other (legume)'
                 when surveyfield.cover_crop_species_5 = 'OTHER_GRASS' then 'other (grass)'
                 when surveyfield.cover_crop_species_5 = 'OTHER_BROADLEAF' then 'other (broadleaf)'
-                when surveyfield.cover_crop_species_5 = 'RADISH' then 'radish'
+                when surveyfield.cover_crop_species_5 = 'PLANTAIN' then 'plantain'
+
+
+                when surveyfield.cover_crop_species_5 = 'RADISH' then 'radish'  
                 when surveyfield.cover_crop_species_5 = 'RED_CLOVER' then 'red clover'
                 when surveyfield.cover_crop_species_5 = 'SORGHUM' then 'sorghum'
                 when surveyfield.cover_crop_species_5 = 'SORGHUM_SUDAN' then 'sorghum-sudan'
+                when surveyfield.cover_crop_species_5 = 'SOYBEANS' then 'soybeans'
+
                 when surveyfield.cover_crop_species_5 = 'SUNFLOWER' then 'sunflower'
+                when surveyfield.cover_crop_species_5 = 'SUN_HEMP' then 'sun hemp'
                 when surveyfield.cover_crop_species_5 = 'TRITICALE' then 'triticale'
                 when surveyfield.cover_crop_species_5 = 'TURNIP' then 'turnip'
                 when surveyfield.cover_crop_species_5 = 'WHEAT_SPRING' then 'wheat (spring)'
+
                 when surveyfield.cover_crop_species_5 = 'WHEAT_WINTER' then 'wheat (winter)'
+                when surveyfield.cover_crop_species_5 = 'WINTER_PEA' then 'winter pea'
+                when surveyfield.cover_crop_species_5 = 'YELLOW_SWEET_CLOVER' then 'yellow sweet clover'
                 when surveyfield.cover_crop_species_5 = 'MULITSPECIES' then 'multispecies mix of 2 or more'
-                when surveyfield.cover_crop_species_5 = 'OTHER' then 'other'		
+                when surveyfield.cover_crop_species_5 = 'OTHER' then 'other'	
             end as mod_cover_crop_species_5,
             case
                 when surveyfield.cover_crop_planting_rate_1_units = 'POUNDS_ACRE' then 'lbs/acre' 

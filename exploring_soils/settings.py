@@ -151,7 +151,6 @@ TIME_ZONE = "America/Chicago"
 
 USE_I18N = True
 
-USE_L10N = True
 
 USE_TZ = True
 
@@ -207,7 +206,14 @@ AWS_S3_OBJECT_PARAMETERS = {
 # STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
 
 AWS_PUBLIC_MEDIA_LOCATION = "media/public"
-DEFAULT_FILE_STORAGE = "exploring_soils.storage_backends.PublicMediaStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "exploring_soils.storage_backends.PublicMediaStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 AWS_PRIVATE_MEDIA_LOCATION = "media/private"
 PRIVATE_FILE_STORAGE = "exploring_soils.storage_backends.PrivateMediaStorage"
