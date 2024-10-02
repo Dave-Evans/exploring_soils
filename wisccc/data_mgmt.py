@@ -1,6 +1,7 @@
 import json
 import pandas as pd
-
+from django.http import HttpResponse
+import datetime
 from django.db import connection
 from wisccc.models import SurveyFarm, SurveyField, FieldFarm, AncillaryData, Farmer
 from wisccc.models import (
@@ -22,6 +23,8 @@ from wisccc.models import (
 )
 
 from django.contrib.auth.models import User
+from django.conf import settings
+import os
 
 
 def convert_to_human_readable(column, choices_object):
@@ -909,6 +912,86 @@ def pull_all_years_together(f_output):
         data = pd.read_sql(query, connection)
         # df.value_counts(['cc_species', 'cc_species_raw'])
         return data
+
+
+def data_export():
+    """For exporting an Excel doc for collaborating researchers"""
+
+    df = pull_all_years_together("df")
+    df = df.drop(
+        columns=[
+            "survey_response_id",
+            "survey_field_id",
+            "years_experience",
+            "anpp",
+            "days_from_plant_to_bio_hrvst",
+            "cc_rate_and_species",
+            "cc_species",
+            "fq_undfom30",
+            "tillage_system",
+        ]
+    )
+    df = df.rename(
+        columns={
+            "year": "survey_year",
+            "county": "county_farm",
+            "county_single": "county_field",
+            "cc_termination": "cc_termination_timing_method",
+        }
+    )
+    # Excel doesn't want datetimes with timezones, so converting
+    # to dates
+    cols_wtzs = [
+        "cash_crop_planting_date",
+        "cc_planting_date",
+        "cc_biomass_collection_date",
+    ]
+    for col_wtz in cols_wtzs:
+        df[col_wtz] = df[col_wtz].apply(lambda a: pd.to_datetime(a).date())
+
+    # Surveys before 2023 have periods (".") for nulls,
+    #   this will clean them up.
+    # Currently replacing with blank
+    cols_wperiods = [
+        "tillage_equip_primary",
+        "tillage_equip_secondary",
+        "cc_planting_rate",
+        "cc_termination_timing_method",
+    ]
+    for col_wperiod in cols_wperiods:
+        df[col_wperiod] = df[col_wperiod].replace(".", "")
+
+    file_dat = "data/cover_crop_data_export_wmetadata.csv"
+    file_dat = os.path.join(settings.BASE_DIR, file_dat)
+
+    metadata = pd.read_csv(file_dat, sep="\t")
+    from io import BytesIO, StringIO
+
+    output = BytesIO()
+    # response = HttpResponse(content_type="application/ms-excel")
+    writer = pd.ExcelWriter(output, engine="xlsxwriter")
+    # writer = pd.ExcelWriter(
+    #     excelfile, engine="openpyxl", mode="a", if_sheet_exists="replace"
+    # )
+
+    # writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+    metadata.to_excel(writer, sheet_name="Metadata", index=False)
+    df.to_excel(writer, sheet_name="Wisconsin Cover Crop Data", index=False)
+    writer.close()
+
+    return output.getvalue()
+
+
+def export_agronomic_data():
+    export_name = "wisc_cc_data_export_{}.xlsx".format(
+        datetime.datetime.now().strftime("%Y_%m_%d")
+    )
+    excel_bytes = data_export()
+    print(type(excel_bytes))
+    response = HttpResponse(excel_bytes, content_type="application/ms-excel")
+    response["Content-Disposition"] = f"attachment; filename={export_name}"
+
+    return response
 
 
 # From Ancillary Data

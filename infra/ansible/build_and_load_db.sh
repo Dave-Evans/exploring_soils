@@ -18,7 +18,7 @@ aws s3 cp s3://$1/db/$fl_bkup ./data/.
 
 bkup_fl="dump_$(printf '%(%Y%m%d)T\n' -1).json"
 
-find . -maxdepth 3 -path "*/migrations/*.py" -not -name "__init__.py" -delete
+# find . -maxdepth 3 -path "*/migrations/*.py" -not -name "__init__.py" -delete
 # enter virtual env and create fresh migration files,
 #   use them to build the database
 #   and load data

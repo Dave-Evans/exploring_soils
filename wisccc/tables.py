@@ -1,5 +1,8 @@
 import django_tables2 as tables
 from django_tables2 import TemplateColumn
+from django.db import connection
+import pandas as pd
+from wisccc.models import Survey, Farmer, SurveyRegistration
 
 
 class ResponseTable(tables.Table):
@@ -50,15 +53,26 @@ class RegistrationTable(tables.Table):
 
         attrs = {"class": "table table-hover"}
 
-        # row_attrs = {
-        #     # For highlighting rows according to if confirmed good
-        #     "class": lambda record: (
-        #         "table-success"
-        #         if record["confirmed_accurate"] == True
-        #         else (
-        #             "table-danger"
-        #             if record["confirmed_accurate"] == False
-        #             else "table-warning"
-        #         )
-        #     )
-        # }
+
+class ResearcherTable(tables.Table):
+
+    first_name = tables.Column()
+    last_name = tables.Column()
+    email = tables.Column()
+    # username = tables.Column()
+    signup_timestamp = tables.Column()
+    # institution = tables.Column()
+    # agreement_doc = tables.Column()
+    # notes = tables.Column()
+    # approved = tables.Column()
+    # approved_date = tables.Column()
+    # number_of_downloads = tables.Column()
+    # last_downloaded = tables.Column()
+    edit = TemplateColumn(template_name="wisccc/update_column_researcher.html")
+    delete = TemplateColumn(template_name="wisccc/delete_researcher_column.html")
+
+    class Meta:
+
+        template_name = "django_tables2/bootstrap4.html"
+
+        attrs = {"class": "table table-hover"}

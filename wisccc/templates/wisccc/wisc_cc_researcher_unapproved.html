@@ -1,0 +1,42 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Collaborating researchers</h5>
+                <p class="card-text">
+                    Hello, if you are interested in using our data, we welcome your collaboration.
+                    To get started, email Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a>.
+                    She will begin the conversation about our data and how you might use it.
+                    You will need to fill out a data use agreement form and sign it.
+                    After this is done, you will be given an account to this website and given
+                    permissions to download the data.
+                    These permissions will expire after a year.
+                </p>
+                <p>
+                    If you have already been given an account, and have signed in, and you are still
+                    seeing this page,
+                    please email Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a> to verify that
+                    permissions have been assigned appropriately.
+                    If permissions have, perhaps, been assigned recently, then try logging out and
+                    back in again.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

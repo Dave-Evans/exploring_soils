@@ -47,6 +47,22 @@ urlpatterns = [
         wisccc_views.wisc_cc_register_3,
         name="wisc_cc_register_3",
     ),
+    re_path(
+        r"^wisc_cc_register_by_mgmt$",
+        wisccc_views.wisc_cc_register_by_mgmt,
+        name="wisc_cc_register_by_mgmt",
+    ),
+    re_path(
+        r"^wisc_cc_register_by_mgmt_exist_user_select$",
+        wisccc_views.wisc_cc_register_by_mgmt_exist_user_select,
+        name="wisc_cc_register_by_mgmt_exist_user_select",
+    ),
+    # Takes the user's pk
+    path(
+        "wisc_cc_register_by_mgmt_exist_user/<pk>",
+        wisccc_views.wisc_cc_register_by_mgmt_exist_user,
+        name="wisc_cc_register_by_mgmt_exist_user",
+    ),
     # For creating an account
     re_path(r"^signup/$", wisccc_views.wisc_cc_signup, name="signup"),
     re_path(
@@ -104,10 +120,49 @@ urlpatterns = [
     #     wisccc_views.wisccc_download_data,
     #     name="wisccc_download_data",
     # ),
+    re_path(
+        r"^researcher_table$", wisccc_views.researcher_table, name="researcher_table"
+    ),
+    path(
+        "update_researcher/<id>",
+        wisccc_views.update_researcher,
+        name="update_researcher",
+    ),
+    path(
+        "delete_researcher/<id>",
+        wisccc_views.delete_researcher,
+        name="delete_researcher",
+    ),
     path(
         "wisccc_download_data/<int:opt>",
         wisccc_views.wisccc_download_data,
         name="wisccc_download_data",
+    ),
+    re_path(
+        r"^wisccc-create-researcher$",
+        wisccc_views.wisccc_create_researcher,
+        name="wisccc_create_researcher",
+    ),
+    re_path(
+        r"^wisccc-create-researcher-existing-user$",
+        wisccc_views.wisccc_create_researcher_existing_user,
+        name="wisccc_create_researcher_existing_user",
+    ),
+    re_path(r"^researcher_page$", wisccc_views.researcher_page, name="researcher_page"),
+    re_path(
+        r"^researcher_page_unapproved$",
+        wisccc_views.researcher_page_unapproved,
+        name="researcher_page_unapproved",
+    ),
+    re_path(
+        r"^researcher_page_expired$",
+        wisccc_views.researcher_page_expired,
+        name="researcher_page_expired",
+    ),
+    re_path(
+        r"^wisccc_researcher_download_data$",
+        wisccc_views.wisccc_researcher_download_data,
+        name="wisccc_researcher_download_data",
     ),
     # Temporarily directing people to the home page rather than the survey page.
     re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),

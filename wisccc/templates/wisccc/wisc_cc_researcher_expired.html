@@ -1,0 +1,30 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Expired permissions</h5>
+                <p class="card-text">
+                    Hello, it seems like your permissions to download our data have expired.
+                    Please email Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a> to see if your
+                    permissions can be reset.
+                    Your permissions expire after a year.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
