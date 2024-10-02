@@ -3,7 +3,10 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.gis.db import models as geo_models
 from .derive_species_class import derive_species_class
-from exploring_soils.storage_backends import WiscCCPhotoStorage
+from exploring_soils.storage_backends import (
+    WiscCCPhotoStorage,
+    WiscCCResearcherDocStorage,
+)
 
 
 # For making User's email non-unique
@@ -1686,3 +1689,36 @@ class SurveyRegistration(models.Model):
         verbose_name="I need some assistance",
         null=True,
     )
+
+
+class Researcher(models.Model):
+    """For researchers looking to use the data"""
+
+    signup_timestamp = models.DateTimeField(auto_now_add=True)
+    first_name = models.CharField(max_length=250, blank=True)
+    last_name = models.CharField(max_length=250, blank=True)
+    institution = models.TextField(
+        verbose_name="What institution does the researcher belong to?", null=True
+    )
+    agreement_doc = models.FileField(storage=WiscCCResearcherDocStorage(), blank=True)
+    notes = models.TextField(null=True)
+    download_count = models.IntegerField(
+        verbose_name="Count of times the researcher has downloaded data.", default=0
+    )
+    last_download_timestamp = models.DateTimeField(
+        verbose_name="Timestamp of when the researcher last download the data.",
+        null=True,
+    )
+    approved = models.BooleanField(
+        verbose_name="Is the user approved for downloading data?",
+        default=False,
+        null=True,
+    )
+    approved_date = models.DateField(
+        verbose_name="When the user was approved. Download permission expires after one year.",
+        null=True,
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        permissions = (("approved_researcher", "Approved researcher"),)

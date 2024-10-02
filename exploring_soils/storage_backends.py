@@ -20,3 +20,11 @@ class WiscCCPhotoStorage(S3Boto3Storage):
     default_acl = "private"
     file_overwrite = False
     custom_domain = False
+
+
+class WiscCCResearcherDocStorage(S3Boto3Storage):
+    bucket_name = settings.AWS_WISC_CC_RESEARCHER_DOC_LOCATION
+    location = "media/private"
+    default_acl = "private"
+    file_overwrite = False
+    custom_domain = False

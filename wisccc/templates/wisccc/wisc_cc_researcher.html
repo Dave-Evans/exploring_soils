@@ -1,0 +1,46 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Welcome {{ user.username }}</h3>
+
+                <div class="card">
+                    <div class="card-deck">
+
+                        <div class="card">
+                            <div class="card-header">
+                                Download Data
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Data download</h5>
+                                <p class="card-text">
+                                    This dataset is what is used in the graph and map display.
+                                    The data are in MS-Excel format.
+                                    The first sheet contains metadata describing each column of data.
+                                    The second sheet contains the collected survey data.
+                                </p>
+                                <a href="{% url 'wisccc_researcher_download_data' %}" class="btn btn-primary">
+                                    Download
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

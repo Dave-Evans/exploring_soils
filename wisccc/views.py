@@ -1,6 +1,7 @@
 import json
 import djqscsv
 import pandas as pd
+import datetime
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.db import connection
@@ -8,7 +9,8 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.forms import UserCreationForm
 from wisccc.forms import UserLoginForm
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -22,7 +24,7 @@ from django.views.generic import (
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django_tables2 import RequestConfig
-from wisccc.tables import ResponseTable, RegistrationTable
+from wisccc.tables import ResponseTable, RegistrationTable, ResearcherTable
 from wisccc.forms import (
     SurveyFieldFormFull,
     SurveyFarmFormSection2,
@@ -44,7 +46,10 @@ from wisccc.forms import (
     SurveyRegistrationFullForm,
     SurveyRegistrationPartialForm,
     UserInfoForm,
+    ResearcherSignupForm,
+    ResearcherFullForm,
     AncillaryDataForm,
+    SelectUserForm,
 )
 from wisccc.forms_2023 import (
     SurveyFarmFormPart1_2023,
@@ -62,10 +67,15 @@ from wisccc.models import (
     SurveyField,
     SurveyFarm,
     FieldFarm,
+    Researcher,
     AncillaryData,
 )
-from wisccc.data_mgmt import pull_all_years_together, get_survey_data
-import pandas as pd
+from wisccc.data_mgmt import (
+    pull_all_years_together,
+    get_survey_data,
+    data_export,
+    export_agronomic_data,
+)
 
 
 # REVISE WITH NEW STRUCTURE
@@ -205,6 +215,10 @@ def wisc_cc_home(request):
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def wisc_cc_manager_home(request):
+    # Not ideal, but whenever a manager navigates to the admin home page
+    #   approvals are checked
+    check_researcher_approvals()
+
     return render(request, "wisccc/wisc_cc_manager_home.html")
 
 
@@ -217,16 +231,27 @@ def wisccc_download_data(request, opt):
     # opt == 1 then full survey with qualitative
     # opt == 2 then display data
     if opt == 1:
-        df = get_survey_data()
+        resp = HttpResponse(content_type="text/csv")
         filename = "full_survey_questions.csv"
-    elif opt == 2:
-        df = pull_all_years_together("df")
-        filename = "cleaned_data_from_display.csv"
-    resp = HttpResponse(content_type="text/csv")
-    resp["Content-Disposition"] = f"attachment; filename={filename}"
+        resp["Content-Disposition"] = f"attachment; filename={filename}"
+        df = get_survey_data()
+        df.to_csv(path_or_buf=resp, sep=",", index=False)
+        return resp
 
-    df.to_csv(path_or_buf=resp, sep=",", index=False)
-    return resp
+    elif opt == 2:
+        response = export_agronomic_data()
+        return response
+
+        export_name = "wisc_cc_data_export_{}.xlsx".format(
+            datetime.datetime.now().strftime("%Y_%m_%d")
+        )
+        # filename = "cleaned_data_from_display.csv"
+        # df.to_csv(path_or_buf=resp, sep=",", index=False)
+        with open(filename, "rb") as f:
+            resp = HttpResponse(f.read(), content_type="application/ms-excel")
+            resp["Content-Disposition"] = f"attachment; filename={export_name}"
+
+        return resp
 
 
 @login_required
@@ -1077,18 +1102,256 @@ def wisc_cc_static_data(request):
     return JsonResponse(list(data["features"]), safe=False)
 
 
-# class SurveyResponseDeleteView(PermissionRequiredMixin, DeleteView):
-#     permission_required = "wisccc.survery_manager"
-#     model = Survey
-#     success_url = reverse_lazy("kanopy_table")
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisccc_create_researcher(request):
+    """For creating a new researcher
+    Currently this assumes we are creating a *new user*
+    This may not always be the case. How to allow manager to
+    populate user info by looking up existing email addresses?
+    """
+
+    researcher_form = ResearcherSignupForm(request.POST or None)
+
+    client_ip = request.META.get("REMOTE_ADDR")
+    signup_form = CustomUserCreationForm(
+        request.POST or None, initial={"client_ip": client_ip}
+    )
+
+    signup_form.fields["turnstile"].required = True
+    signup_form.fields["turnstile"].client_ip = client_ip
+
+    if researcher_form.is_valid() and signup_form.is_valid():
+
+        new_researcher = researcher_form.save(commit=False)
+        new_user = signup_form.save(commit=False)
+
+        new_researcher.user = new_user
+        if new_researcher.approved:
+            content_type = ContentType.objects.get_for_model(Researcher)
+            perm_approved_researcher = Permission.objects.get(
+                codename="approved_researcher"
+            )
+            new_researcher.approved_date = datetime.date.today()
+            new_user.user_permissions.add(perm_approved_researcher)
+        new_researcher.save()
+        new_user.save()
+
+        return redirect("researcher_table")
+    else:
+        return render(
+            request,
+            "wisccc/wisc_cc_create_researcher.html",
+            {
+                "researcher_form": researcher_form,
+                # Uses a generic form
+                "form": signup_form,
+            },
+        )
 
 
-# class SurveyResponseUpdateView(PermissionRequiredMixin, UpdateView):
-#     permission_required = "wisccc.survery_manager"
-#     model = Survey
-#     form_class = FullSurveyForm
-#     template_name = "wisccc/update_form.html"
-#     success_url = reverse_lazy("kanopy_table")
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def wisccc_create_researcher_existing_user(request):
+    """For creating a new researcher
+    This assumes we are creating a researcher for an existing user.
+    """
+
+    researcher_form = ResearcherSignupForm(request.POST or None)
+
+    select_form = SelectUserForm(request.POST or None)
+
+    if researcher_form.is_valid() and select_form.is_valid():
+
+        new_researcher = researcher_form.save(commit=False)
+        # Form returns a queryset, so we select the first object, there is only one
+        print(select_form.cleaned_data)
+
+        new_user = User.objects.get(id=select_form.cleaned_data["user_select"])
+
+        new_researcher.user = new_user
+        if new_researcher.approved:
+            content_type = ContentType.objects.get_for_model(Researcher)
+            perm_approved_researcher = Permission.objects.get(
+                codename="approved_researcher"
+            )
+            new_researcher.approved_date = datetime.date.today()
+            new_user.user_permissions.add(perm_approved_researcher)
+        new_researcher.save()
+        new_user.save()
+
+        return redirect("researcher_table")
+    else:
+        return render(
+            request,
+            "wisccc/wisc_cc_create_researcher_existing_user.html",
+            {
+                "researcher_form": researcher_form,
+                # Uses a generic form
+                "form": select_form,
+            },
+        )
+
+
+def researcher_page(request):
+
+    # if user has the permission then allow them to see the download page,
+    #   otherwise redirect to a page explaining the process to get approved
+    if not request.user.has_perm(
+        "wisccc.approved_researcher"
+    ) and not request.user.has_perm("wisccc.survery_manager"):
+
+        return redirect("researcher_page_unapproved")
+
+    return render(request, "wisccc/wisc_cc_researcher.html")
+
+
+def researcher_page_unapproved(request):
+
+    return render(request, "wisccc/wisc_cc_researcher_unapproved.html")
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def researcher_table(request):
+    """List researchers who have or have had access to download data"""
+
+    def get_table_data():
+        """For getting researcher data"""
+        query = """
+            select
+                wr.id
+                , wr.first_name
+                , wr.last_name
+                , au.email
+                , au.username
+                , wr.signup_timestamp
+                , wr.institution
+                , wr.agreement_doc
+                , wr.notes
+                , wr.approved
+                , wr.approved_date
+                , wr.download_count
+                , wr.last_download_timestamp
+            from wisccc_researcher wr 
+            inner join auth_user au 
+            on wr.user_id = au.id"""
+        dat = pd.read_sql(query, connection)
+        dat = dat.to_dict("records")
+
+        return dat
+
+    data = get_table_data()
+
+    table = ResearcherTable(data)
+    RequestConfig(request, paginate={"per_page": 15}).configure(table)
+
+    return render(
+        request,
+        "wisccc/researcher_table.html",
+        {"table": table},
+    )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def delete_researcher(request, id):
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(Researcher, id=id)
+
+    if request.method == "POST":
+        # delete object
+        obj.delete()
+        # after deleting redirect to
+        # home page
+        return redirect("researcher_table")
+
+    return render(request, "wisccc/delete_researcher.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def update_researcher(request, id):
+    """For updating researcher"""
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+    content_type = ContentType.objects.get_for_model(Researcher)
+    perm_approved_researcher = Permission.objects.get(codename="approved_researcher")
+    # fetch the survey object related to passed id
+    researcher = get_object_or_404(Researcher, id=id)
+    initial_approved_status = researcher.approved
+    # Get user associated with registrant
+    user = researcher.user
+
+    # pass the object as instance in form
+    researcher_form = ResearcherFullForm(request.POST or None, instance=researcher)
+
+    user_info_form = UserInfoForm(request.POST or None, instance=user)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if researcher_form.is_valid() and user_info_form.is_valid():
+
+        new_user_info_form = user_info_form.save(commit=False)
+        new_researcher_form = researcher_form.save(commit=False)
+        if new_researcher_form.approved:
+            # For the case when going from not approved to approved,
+            # we reset the date
+            if initial_approved_status == False:
+                new_researcher_form.approved_date = datetime.date.today()
+                new_user_info_form.user_permissions.add(perm_approved_researcher)
+                new_user_info_form.save()
+                # Refetch to update the perms
+                user = User.objects.get(id=researcher.id)
+        else:
+            # When intially approved then approval revoked, nullify date
+            if initial_approved_status == True:
+                new_researcher_form.approved_date = None
+                new_user_info_form.user_permissions.remove(perm_approved_researcher)
+                new_user_info_form.save()
+                # Refetch to update the perms
+                user = User.objects.get(id=researcher.id)
+        if "agreement_doc" in request.FILES.keys():
+            new_researcher_form.agreement_doc = request.FILES["agreement_doc"]
+        new_researcher_form.save()
+        return redirect("researcher_table")
+    # add form dictionary to context
+    context["researcher_form"] = researcher_form
+    context["user_info_form"] = user_info_form
+
+    return render(request, "wisccc/wisc_cc_researcher_review.html", context)
+
+
+@permission_required("wisccc.approved_researcher", raise_exception=True)
+def wisccc_researcher_download_data(request):
+    researcher_instance = Researcher.objects.get(user_id=request.user.id)
+    # run test for if expired
+    if abs(researcher_instance.approved_date - datetime.date.today()).days > 366:
+        return redirect("researcher_page_expired")
+
+    response = export_agronomic_data()
+    researcher_instance.download_count += 1
+    researcher_instance.last_download_timestamp = datetime.datetime.now()
+    researcher_instance.save()
+    return response
+
+
+def check_researcher_approvals():
+
+    researchers = Researcher.objects.all()
+    for researcher in researchers:
+        # If the approval was given more than 366 days ago, set
+        #   approved to False
+        if researcher.approved_date is None:
+            continue
+        if abs(researcher.approved_date - datetime.date.today()).days > 366:
+            researcher.approved = False
+            researcher.save()
+
+
+def researcher_page_expired(request):
+
+    return render(request, "wisccc/wisc_cc_researcher_expired.html")
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -1324,7 +1587,10 @@ def get_registration_download():
     #   grab just the year and create and id
     # Add -F for fall sampling
     df["id"] = (
-        df["id"].apply(str).str.zfill(5) + "-" + df["survey_year"].apply(str).str[-2:] + "-F"
+        df["id"].apply(str).str.zfill(5)
+        + "-"
+        + df["survey_year"].apply(str).str[-2:]
+        + "-F"
     )
     df = df.drop("survey_year", axis=1)
     return df
@@ -1367,6 +1633,8 @@ def wisc_cc_signup(request):
         request.POST or None, initial={"client_ip": client_ip}
     )
     signup_form.fields["turnstile"].required = True
+    signup_form.fields["turnstile"].client_ip = client_ip
+
     if request.method == "POST":
         if signup_form.is_valid():
 
