@@ -105,16 +105,8 @@ def grab_and_update_weather_dat(survey_field_instance, season="fall", mode="only
         return None
 
     if season == "fall":
-
-        current_biomass_value = ancillary_data.cc_biomass
-        current_total_precip = ancillary_data.total_precip
-
         cc_collection = ancillary_data.biomass_collection_date
-
     else:
-        current_biomass_value = ancillary_data.spring_cc_biomass
-        current_total_precip = ancillary_data.spring_total_precip
-
         cc_collection = ancillary_data.spring_biomass_collection_date
 
     field_location = (
@@ -144,22 +136,18 @@ def grab_and_update_weather_dat(survey_field_instance, season="fall", mode="only
         "end_date": end_date,
     }
 
-    if current_biomass_value is not None:
-        gdu = current_biomass_value
-    else:
-        gdu = calc_gdu(data)
-
-    if current_total_precip is not None:
-        precip = current_total_precip
-    else:
-        precip = calc_precip(data)
-
     if season == "fall":
-        ancillary_data.acc_gdd = gdu
-        ancillary_data.total_precip = precip
+        if ancillary_data.acc_gdd is None:
+            ancillary_data.acc_gdd = calc_gdu(data)
+
+        if ancillary_data.total_precip is not None:
+            ancillary_data.total_precip = calc_precip(data)
     else:
-        ancillary_data.spring_acc_gdd = gdu
-        ancillary_data.spring_total_precip = precip
+        if ancillary_data.spring_acc_gdd is None:
+            ancillary_data.spring_acc_gdd = calc_gdu(data)
+
+        if ancillary_data.spring_total_precip is not None:
+            ancillary_data.spring_total_precip = calc_precip(data)
 
     ancillary_data.save()
 
