@@ -45,18 +45,19 @@
                             <div class="card-body">
 
 
-                                <h5 class="card-title">Download Survey Results</h5>
+                                <h5 class="card-title">Full Survey Results + Lab Data</h5>
                                 <p class="card-text">
-                                    This dataset contains survey data from all years of the survey.
-                                    Also contains lab data.</p>
+                                    Contains individual contact information. Do not share this file.
+                                </p>
                                 <a href="{% url 'wisccc_download_data' 1 %}" class="btn btn-primary">Download</a>
                             </div>
                             <hr>
                             <div class="card-body">
-                                <h5 class="card-title">Display data</h5>
+                                <h5 class="card-title">Shareable Data File</h5>
                                 <p class="card-text">
-                                    This dataset is what is used in the graph and map display.
-                                    It will not contain much qualitative data.
+                                    This file includes metadata and a download of agronomic and lab data used to create
+                                    the map display. Contains no personal information. Share this file.
+
                                 </p>
                                 <a href="{% url 'wisccc_download_data' 2 %}" class="btn btn-primary">Download</a>
                             </div>
