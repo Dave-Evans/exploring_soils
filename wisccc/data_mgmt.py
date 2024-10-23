@@ -208,7 +208,17 @@ def get_survey_data():
                 "acc_gdd",
                 "total_precip",
                 "spring_biomass_collection_date",
+                "spring_cp",
+                "spring_andf",
+                "spring_undfom30",
+                "spring_ndfd30",
+                "spring_tdn_adf",
+                "spring_milk_ton_milk2013",
+                "spring_rfq",
                 "spring_cc_biomass",
+                "spring_total_nitrogen",
+                "spring_acc_gdd",
+                "spring_total_precip",
             )
         ),
         columns=[
@@ -324,7 +334,17 @@ def get_survey_data():
             "acc_gdd",
             "total_precip",
             "spring_biomass_collection_date",
+            "spring_cp",
+            "spring_andf",
+            "spring_undfom30",
+            "spring_ndfd30",
+            "spring_tdn_adf",
+            "spring_milk_ton_milk2013",
+            "spring_rfq",
             "spring_cc_biomass",
+            "spring_total_nitrogen",
+            "spring_acc_gdd",
+            "spring_total_precip",
         ],
     )
 
@@ -840,7 +860,19 @@ def pull_all_years_together(f_output):
 			from wisccc_surveyfarm as surveyfarm
 			left join wisccc_surveyfield as surveyfield
 			on surveyfarm.id = surveyfield.survey_farm_id
-			left join wisccc_fieldfarm as fieldfarm
+			left join (
+                select 
+                    wff.id,
+                    wff.closest_zip_code,
+                    wff.field_acreage,
+                    wff.derived_county,
+                    wff.farmer_id,
+                    ST_GeometryN(ST_GeneratePoints(wff.b_field_location, 1), 1) as field_location
+                from (
+                    select *, st_buffer(field_location, 0.045) as b_field_location
+                    from wisccc_fieldfarm                
+                ) as wff
+            ) as fieldfarm
 			on surveyfield.field_farm_id = fieldfarm.id
 			left join wisccc_ancillarydata as ancil
 			on surveyfield.id = ancil.survey_field_id  
@@ -869,15 +901,12 @@ def pull_all_years_together(f_output):
                 'properties', to_jsonb(inputs) - 'id' - 'farmlocation'
             ) AS feature
             FROM (
-                select 
-                    *, ST_GeometryN(ST_GeneratePoints(geom.b_farmlocation, 1), 1) as farmlocation 
-                from (
                     select
-                        *, ST_Buffer(ST_SetSRID(ST_MakePoint(site_lon, site_lat), 4326), 0.02) as b_farmlocation
+                        *, 
+                        ST_SetSRID(ST_MakePoint(site_lon, site_lat), 4326) as farmlocation
                     from (
                         {query}
                         ) as b
-                    ) as geom
                 ) as inputs
             ) features;""".format(
             query=query
