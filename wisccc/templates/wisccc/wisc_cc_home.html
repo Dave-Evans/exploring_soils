@@ -53,23 +53,30 @@
 
         </div>
         <div class="card-group">
-          <a href="{% url 'wisc_cc_register_1' %}">
-            <div class="card">
-              <img class="card-img-top" src="{% static 'img/checking_corn.jpg' %}"
-                alt="Lafayette county agronomist checking corn emergence and planting depth">
-              <div class="card-body">
-                <h5 class="card-title">Interested in participating?</h5>
+          <!-- <a href="#"> -->
+          <div class="card">
+            <img class="card-img-top" src="{% static 'img/checking_corn.jpg' %}"
+              alt="Lafayette county agronomist checking corn emergence and planting depth">
+            <div class="card-body">
+              <h5 class="card-title">Interested in participating?</h5>
+              <p class="card-text">
+                Registration closed for 2024-5.
+                If you would like to learn more or participate in the future please email <a
+                  href="mailto:mingram@wisc.edu">Mrill Ingram at mingram@wisc.edu</a>.
+              </p>
 
-                <a href="{% url 'wisc_cc_register_1' %}" class="btn btn-primary">Register here!</a>
-              </div>
+              <!-- <a href="{% url 'wisc_cc_register_1' %}" class="btn btn-primary">Register here!</a> -->
             </div>
-          </a>
+          </div>
+          <!-- </a> -->
           <a href="{% url 'wisc_cc_survey' %}">
             <div class="card">
               <img class="card-img-top" height="228" src="{% static 'img/oats_berseem_481x425.jpg' %}" alt="Oats photo">
               <div class="card-body">
                 <h5 class="card-title">Cover crop survey </h5>
-                <p class="card-text">Survey for the 2024 season is open!</p>
+                <p class="card-text">
+                  If you registered to participate, please fill out cover crop survey here.
+                </p>
                 <!-- <p class="card-text">Click here if you've registered to participate in this year's survey.</p> -->
                 <a href="{% url 'wisc_cc_survey' %}" class="btn btn-primary">Go to survey</a>
               </div>
