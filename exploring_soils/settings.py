@@ -88,7 +88,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
+
+CSP_FRAME_ANCESTORS = ["https://www.evansgeospatial.com"]
 
 ROOT_URLCONF = "exploring_soils.urls"
 
