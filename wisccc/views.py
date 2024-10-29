@@ -208,11 +208,11 @@ def check_section_completed(user_id, section):
 
         return True
 
-
+@xframe_options_exempt
 def wisc_cc_home(request):
     return render(request, "wisccc/wisc_cc_home.html")
 
-
+@xframe_options_exempt
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def wisc_cc_manager_home(request):
     # Not ideal, but whenever a manager navigates to the admin home page
@@ -221,11 +221,11 @@ def wisc_cc_manager_home(request):
 
     return render(request, "wisccc/wisc_cc_manager_home.html")
 
-
+@xframe_options_exempt
 def wisc_cc_about(request):
     return render(request, "wisccc/wisc_cc_about.html")
 
-
+@xframe_options_exempt
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def wisccc_download_data(request, opt):
     # opt == 1 then full survey with qualitative
@@ -253,7 +253,7 @@ def wisccc_download_data(request, opt):
 
         return resp
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_survey(request):
     """Home page for Cover Crop survey. We check progress of different sections of the survey
@@ -284,7 +284,7 @@ def wisc_cc_survey(request):
         },
     )
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_survey1(request):
     """I. General info: Farmer information"""
@@ -310,7 +310,7 @@ def wisc_cc_survey1(request):
         },
     )
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_survey2(request):
     """II. Cover cropping goals and support
@@ -348,7 +348,7 @@ def wisc_cc_survey2(request):
         request, template, {"form_surveyfarm_section_2": form_surveyfarm_section_2}
     )
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_survey3(request):
     """Research Field: Crop rotation and planting rates
@@ -432,7 +432,7 @@ def wisc_cc_survey3(request):
     template = "wisccc/survey_section_3_field_rotation_rates.html"
     return render(request, template, context)
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_survey3a(request):
     """For selecting which field the survey is for.
@@ -448,7 +448,7 @@ def wisc_cc_survey3a(request):
     template = "wisccc/survey_section_3a_select_field.html"
     return render(request, template, context)
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_survey4(request):
     """IV. Research Field: Planting dates & timing
@@ -514,7 +514,7 @@ def wisc_cc_survey4(request):
         },
     )
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_survey5(request):
     """V. Research Field: Manure, tillage, soil conditions
@@ -557,7 +557,7 @@ def wisc_cc_survey5(request):
     template = "wisccc/survey_section_5_field_tillage_manure_soil.html"
     return render(request, template, context)
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_survey6(request):
     """VI. Research Field: Cover crop seeding & cost
@@ -608,7 +608,7 @@ def wisc_cc_survey6(request):
         },
     )
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_survey7(request):
     """VII. Final thoughts
@@ -645,7 +645,7 @@ def wisc_cc_survey7(request):
         request, template, {"form_surveyfarm_section_7": form_surveyfarm_section_7}
     )
 
-
+@xframe_options_exempt
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def update_labdata(request, id):
     """For updating labdata
@@ -681,7 +681,7 @@ def update_labdata(request, id):
         },
     )
 
-
+@xframe_options_exempt
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def update_response(request, id):
     """For updating survey"""
@@ -850,6 +850,7 @@ def update_response(request, id):
 
 
 @login_required
+@xframe_options_exempt
 def update_fieldfarm(request, id):
     """Takes field_farm id"""
     context = {}
@@ -882,6 +883,7 @@ def update_fieldfarm(request, id):
 
 
 @login_required
+@xframe_options_exempt
 def create_fieldfarm(request):
     """Takes field_farm id"""
     survey_year = 2024
@@ -911,6 +913,7 @@ def create_fieldfarm(request):
 
 
 @login_required
+@xframe_options_exempt
 def wisc_cc_survey_populate_fieldfarm(request, id):
     """Update the current years survey (field)
     with this fieldfarm id"""
@@ -944,15 +947,15 @@ def wisc_cc_survey_populate_fieldfarm(request, id):
 
     return redirect("wisc_cc_survey3")
 
-
+@xframe_options_exempt
 def wisc_cc_graph(request):
     return render(request, "wisccc/wisc_cc_graph.html")
 
-
+@xframe_options_exempt
 def wisc_cc_map(request):
     return render(request, "wisccc/wisc_cc_map_toggle.html")
 
-
+@xframe_options_exempt
 def wisc_cc_map_v2(request):
     return render(request, "wisccc/wisc_cc_map_toggle.html")
 
@@ -1190,7 +1193,7 @@ def wisccc_create_researcher_existing_user(request):
             },
         )
 
-
+@xframe_options_exempt
 def researcher_page(request):
 
     # if user has the permission then allow them to see the download page,
@@ -1625,7 +1628,7 @@ def delete_response(request, id):
 
     return render(request, "wisccc/delete_response.html", context)
 
-
+@xframe_options_exempt
 def wisc_cc_signup(request):
     """For creating an account with wisc cc"""
     client_ip = request.META.get("REMOTE_ADDR")
@@ -1661,7 +1664,7 @@ def wisc_cc_signup(request):
         {"form": signup_form},
     )
 
-
+@xframe_options_exempt
 def wisc_cc_register_1(request):
     """Registering for Wisc CC survey, assumes no previous account"""
     if request.user.id is not None:
@@ -1685,7 +1688,7 @@ def wisc_cc_register_1(request):
         {"form": signup_form},
     )
 
-
+@xframe_options_exempt
 @login_required
 def wisc_cc_register_2(request):
     """For when a user already exists."""
