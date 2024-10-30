@@ -248,8 +248,8 @@ else:
 
 
 LOGIN_URL = "login"
-LOGOUT_REDIRECT_URL = "home"
-LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "wisc_cc_home"
+LOGIN_REDIRECT_URL = "wisc_cc_home"
 
 
 LEAFLET_CONFIG = {
