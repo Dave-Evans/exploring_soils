@@ -91,7 +91,10 @@ MIDDLEWARE = [
     "csp.middleware.CSPMiddleware",
 ]
 
-CSP_FRAME_ANCESTORS = ["https://www.evansgeospatial.com"]
+CSP_FRAME_ANCESTORS = [
+    "https://www.evansgeospatial.com",
+    "https://www.michaelfields.org",
+]
 CSP_STYLE_SRC = [
     "'self'",
     "'unsafe-inline'",
