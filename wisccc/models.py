@@ -1578,6 +1578,10 @@ class AncillaryData(models.Model):
         verbose_name="Total precipitation, in inches",
         null=True,
     )
+    fall_notes = models.TextField(
+        verbose_name="Notes about fall biomass sampling",
+        null=True,
+    )
     spring_biomass_collection_date = models.DateField(null=True)
     spring_cc_biomass = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="", null=True
@@ -1621,6 +1625,10 @@ class AncillaryData(models.Model):
     )
     spring_total_nitrogen = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="Total nitrogen", null=True
+    )
+    spring_notes = models.TextField(
+        verbose_name="Notes about spring biomass sampling",
+        null=True,
     )
 
 

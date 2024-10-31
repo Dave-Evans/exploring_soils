@@ -2799,6 +2799,12 @@ class AncillaryDataForm(forms.ModelForm):
         label="Fall Total precipitation, in inches",
         required=False,
     )
+    fall_notes = forms.CharField(
+        label="Place for notes about fall biomass sampling or lab processing.",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=1000,
+    )
     spring_biomass_collection_date = forms.DateField(
         required=False, label="Spring biomass collection date"
     )
@@ -2851,6 +2857,12 @@ class AncillaryDataForm(forms.ModelForm):
     spring_total_nitrogen = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Spring Total nitrogen", required=False
     )
+    spring_notes = forms.CharField(
+        label="Place for notes about spring biomass sampling or lab processing.",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=1000,
+    )    
 
     class Meta:
         model = AncillaryData
@@ -2867,6 +2879,7 @@ class AncillaryDataForm(forms.ModelForm):
             "total_nitrogen",
             "acc_gdd",
             "total_precip",
+            "fall_notes",
             "spring_biomass_collection_date",
             "spring_cc_biomass",
             "spring_rfq",
@@ -2879,6 +2892,7 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_tdn_adf",
             "spring_milk_ton_milk2013",
             "spring_total_nitrogen",
+            "spring_notes"
         )
 
 

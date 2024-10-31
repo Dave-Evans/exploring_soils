@@ -655,7 +655,7 @@ def update_labdata(request, id):
     context = {}
     survey_farm = get_object_or_404(SurveyFarm, id=id)
     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-    # Get any uploaded photos for this survey response
+    # Get any lab data for this survey response
     ancillary_data = AncillaryData.objects.filter(
         survey_field_id=survey_field.id
     ).first()
@@ -1163,7 +1163,7 @@ def wisccc_create_researcher_existing_user(request):
 
         new_researcher = researcher_form.save(commit=False)
         # Form returns a queryset, so we select the first object, there is only one
-        print(select_form.cleaned_data)
+        # print(select_form.cleaned_data)
 
         new_user = User.objects.get(id=select_form.cleaned_data["user_select"])
 
