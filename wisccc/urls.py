@@ -134,6 +134,11 @@ urlpatterns = [
         name="delete_researcher",
     ),
     path(
+        "download_researchers",
+        wisccc_views.download_researchers,
+        name="download_researchers",
+    ),
+    path(
         "wisccc_download_data/<int:opt>",
         wisccc_views.wisccc_download_data,
         name="wisccc_download_data",

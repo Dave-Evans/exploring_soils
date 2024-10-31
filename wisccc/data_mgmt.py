@@ -3,7 +3,15 @@ import pandas as pd
 from django.http import HttpResponse
 import datetime
 from django.db import connection
-from wisccc.models import SurveyFarm, SurveyField, FieldFarm, AncillaryData, Farmer
+from wisccc.models import (
+    Researcher,
+    SurveyFarm,
+    SurveyField,
+    FieldFarm,
+    AncillaryData,
+    Farmer,
+    SurveyRegistration,
+)
 from wisccc.models import (
     CashCropChoices,
     CoverCropChoices,
@@ -25,6 +33,131 @@ from wisccc.models import (
 from django.contrib.auth.models import User
 from django.conf import settings
 import os
+
+
+def get_registration_download():
+    survey_registrants = (
+        SurveyRegistration.objects.all()
+        .select_related("farmer")
+        .select_related("farmer__user")
+    )
+
+    df = pd.DataFrame(
+        list(
+            survey_registrants.values_list(
+                # From registration
+                "signup_timestamp",
+                # From Farmer
+                "farmer__id",
+                # From User
+                "farmer__user__email",
+                "farmer__user__username",
+                # From Farmer
+                "farmer__first_name",
+                "farmer__last_name",
+                "farmer__farm_name",
+                "farmer__county",
+                "farmer__address_street",
+                "farmer__address_municipality",
+                "farmer__address_state",
+                "farmer__address_zipcode",
+                "farmer__phone_number",
+                # From registration
+                "survey_year",
+                "biomass_or_just_survey",
+                "do_you_have_a_biomas_kit",
+                "do_you_need_assistance",
+                "howd_you_hear",
+                "belong_to_groups",
+                "notes",
+            )
+        ),
+        columns=[
+            # From registration
+            "signup_timestamp",
+            # From Farmer
+            "id",
+            # From User
+            "email",
+            "username",
+            # From Farmer
+            "first_name",
+            "last_name",
+            "farm_name",
+            "county",
+            "street",
+            "municipality",
+            "state",
+            "zipcode",
+            "phone_number",
+            # From registrants
+            "survey_year",
+            "biomass_or_just_survey",
+            "do_you_have_a_biomas_kit",
+            "do_you_need_assistance",
+            "howd_you_hear",
+            "belong_to_groups",
+            "notes",
+        ],
+    )
+    # convert farmer id to string, convert survey_year to string
+    #   grab just the year and create and id
+    # Add -F for fall sampling
+    df["id"] = (
+        df["id"].apply(str).str.zfill(5)
+        + "-"
+        + df["survey_year"].apply(str).str[-2:]
+        + "-F"
+    )
+    df = df.drop("survey_year", axis=1)
+    return df
+
+
+def get_researchers_download():
+    """For gathering and formating the data for downloading a list of
+    collaborating researchers"""
+    researchers = Researcher.objects.all().select_related("user")
+
+    df = pd.DataFrame(
+        list(
+            researchers.values_list(
+                # From Researcher
+                "signup_timestamp",
+                # From User
+                "user__email",
+                "user__username",
+                # From Researcher
+                "first_name",
+                "last_name",
+                "institution",
+                "agreement_doc",
+                "notes",
+                "download_count",
+                "last_download_timestamp",
+                "approved",
+                "approved_date",
+            )
+        ),
+        columns=[
+            # From Researcher
+            "signup_timestamp",
+            # From User
+            "email",
+            "username",
+            # From Researcher
+            "first_name",
+            "last_name",
+            "institution",
+            "agreement_doc",
+            "notes",
+            "download_count",
+            "last_download_timestamp",
+            "approved",
+            "approved_date",
+        ],
+    )
+
+    return df
 
 
 def convert_to_human_readable(column, choices_object):
