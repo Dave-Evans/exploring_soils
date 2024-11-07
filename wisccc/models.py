@@ -1697,6 +1697,9 @@ class SurveyRegistration(models.Model):
         verbose_name="I need some assistance",
         null=True,
     )
+    privacy_consent = models.BooleanField(
+        verbose_name="Do you consent to privacy agreement?", null=True
+    )
 
 
 class Researcher(models.Model):

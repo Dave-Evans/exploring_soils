@@ -1685,6 +1685,11 @@ class SurveyRegistrationFullForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
+    privacy_consent = forms.ChoiceField(
+        label="If you agree to this statement above click yes and proceed to the survey.",
+        choices=TRUE_FALSE_CHOICES,
+        required=False,
+    )
 
     class Meta:
         model = SurveyRegistration
@@ -1695,6 +1700,7 @@ class SurveyRegistrationFullForm(forms.ModelForm):
             "biomass_or_just_survey",
             "do_you_have_a_biomas_kit",
             "do_you_need_assistance",
+            "privacy_consent",
         ]
 
 
@@ -1731,6 +1737,11 @@ class SurveyRegistrationPartialForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
     )
+    privacy_consent = forms.ChoiceField(
+        label="If you agree to this statement above click yes and proceed to the survey.",
+        choices=TRUE_FALSE_CHOICES,
+        required=True,
+    )
 
     class Meta:
         model = SurveyRegistration
@@ -1740,6 +1751,7 @@ class SurveyRegistrationPartialForm(forms.ModelForm):
             "biomass_or_just_survey",
             "do_you_have_a_biomas_kit",
             "do_you_need_assistance",
+            "privacy_consent",
         ]
 
 
@@ -2862,7 +2874,7 @@ class AncillaryDataForm(forms.ModelForm):
         required=False,
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=1000,
-    )    
+    )
 
     class Meta:
         model = AncillaryData
@@ -2892,7 +2904,7 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_tdn_adf",
             "spring_milk_ton_milk2013",
             "spring_total_nitrogen",
-            "spring_notes"
+            "spring_notes",
         )
 
 
