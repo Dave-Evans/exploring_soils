@@ -315,7 +315,8 @@
 
 
                         <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
-                            <option value="cc_biomass">Fall Cover crop biomass (tons DM/ac)</option>
+                            <option value="cc_biomass">Fall cover crop biomass (tons DM/ac)</option>
+                            <option value="spring_cc_biomass">Spring cover crop biomass (tons DM/ac)</option>
                             <option value="cc_species">Cover crop types</option>
                             <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_mo">Planting season</option>
@@ -949,6 +950,9 @@
             if (property == "cc_biomass") {
                 text = "Biomass is the weight of aboveground plant material at time of collection, and ton DM/acre = tons of dry matter of biomass per acre (please note this is tons not pounds!)"
             }
+            if (property == "spring_cc_biomass") {
+                text = "This is the mass of plant material sampled in the spring following cover crop planting. Biomass is the weight of aboveground plant material at time of collection, and ton DM/acre = tons of dry matter of biomass per acre (please note this is tons not pounds!)."
+            }
             if (property == "fq_rfq") {
                 text = "Relative forage quality is a measure of how good the harvested cover crop was for use as forage for livestock."
                 text += 'The grades are based on a scale from <a href="https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-10-2023/">UW Extension</a>.'
@@ -991,6 +995,14 @@
                     updateLegend(biomassScale, ".1f")
 
                     createNullLgend("translate(20, 147)")
+                } else if (property == "spring_cc_biomass") {
+                    layer.setStyle({
+                        fillColor: layer.feature.properties.spring_cc_biomass ? biomassScale(layer.feature.properties.spring_cc_biomass) : "#ccc"
+                    })
+                    updateLegend(biomassScale, ".1f")
+
+                    createNullLgend("translate(20, 147)")
+
                 } else if (property == "fq_rfq") {
                     layer.setStyle({
                         fillColor: layer.feature.properties.rfq_bin ? rfqBinsScale(layer.feature.properties.rfq_bin) : "#ccc"
