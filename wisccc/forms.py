@@ -2812,7 +2812,7 @@ class AncillaryDataForm(forms.ModelForm):
         required=False,
     )
     fall_notes = forms.CharField(
-        label="Place for notes about fall biomass sampling or lab processing.",
+        label="Text to be displayed regarding fall biomass sampling or lab processing.",
         required=False,
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=1000,
@@ -2870,7 +2870,7 @@ class AncillaryDataForm(forms.ModelForm):
         decimal_places=2, max_digits=15, label="Spring Total nitrogen", required=False
     )
     spring_notes = forms.CharField(
-        label="Place for notes about spring biomass sampling or lab processing.",
+        label="Text to be displayed regarding spring biomass sampling or lab processing.",
         required=False,
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=1000,
