@@ -26,15 +26,26 @@ days_between_crop_hvst_and_cc_estd	(numerical) Days between when cash crop was h
 site_lon	Longitude of field. To maintain privacy, this value has been randomly shifted up to a mile away from the selected longitude.
 site_lat	Latitude of field. To maintain privacy, this value has been randomly shifted up to a mile away from the selected latitude.
 cc_planting_date	Planting date of cover crop (approximate)
-cc_biomass_collection_date	The date of fall biomass collection.
-total_precip	Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
-acc_gdd	growing degree days/units that have accumulated from when the cover crop was planted to when it was harvested derived from https://mrcc.purdue.edu/data_serv/cli-dap
-cc_biomass	Samples from 2020, 2021, 2022, 2023 were collected by UW Extension personnel. Most samples beginning in 2024 were collected by participants and mailed to AgSource and Dairyland labs for analysis.
-fq_cp	measured: crude protein (%)
-fq_andf	estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om)
-fq_ndfd30	Neutral detergent fiber digestibility after 30 hours
-fq_tdn_adf	total digestible nutrients - acid detergent fiber
-fq_milkton	"a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters."
-fq_rfq	measured: relative forage quality
-total_nitrogen	Total nitrogen in a the plant tissue, mg/L
+cc_biomass_collection_date_fall	The date of fall biomass collection.
+total_precip_fall	Fall – Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
+acc_gdd_fall	Fall – growing degree days/units that have accumulated from when the cover crop was planted to when it was harvested derived from https://mrcc.purdue.edu/data_serv/cli-dap
+cc_biomass_fall	Fall – dried biomass in (English) tons per acre. Samples from 2020, 2021, 2022, 2023 were collected by UW Extension personnel. Most samples beginning in 2024 were collected by participants and mailed to AgSource and Dairyland labs for analysis.
+fq_cp_fall	Fall – measured: crude protein (%)
+fq_andf_fall	Fall – estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om)
+fq_ndfd30_fall	Fall – Neutral detergent fiber digestibility after 30 hours
+fq_tdn_adf_fall	Fall – total digestible nutrients - acid detergent fiber
+fq_milkton_fall	"Fall – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters."
+fq_rfq_fall	Fall – measured: relative forage quality
+total_nitrogen_fall	Fall – Total nitrogen in a the plant tissue, mg/L
+cc_biomass_collection_date_spring	The date of spring biomass collection.
+total_precip_spring	Spring – Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
+acc_gdd_spring	Spring – growing degree days/units that have accumulated from when the cover crop was planted to when it was harvested derived from https://mrcc.purdue.edu/data_serv/cli-dap
+cc_biomass_spring	Spring – dried biomass in (English) tons per acre. Samples from 2020, 2021, 2022, 2023 were collected by UW Extension personnel. Most samples beginning in 2024 were collected by participants and mailed to AgSource and Dairyland labs for analysis.
+fq_cp_spring	Spring – measured: crude protein (%)
+fq_andf_spring	Spring – estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om)
+fq_ndfd30_spring	Spring – Neutral detergent fiber digestibility after 30 hours
+fq_tdn_adf_spring	Spring – total digestible nutrients - acid detergent fiber
+fq_milkton_spring	"Spring – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters."
+fq_rfq_spring	Spring – measured: relative forage quality
+total_nitrogen_spring	Spring – Total nitrogen in a the plant tissue, mg/L
 cc_species_raw	As entered by participant from a list: annual ryegrass; barley; berseem clover; canola/rapeseed; cereal (winter) rye; crimson clover; cowpea; field/forage pea; hairy vetch; kale; oats; other (legume); other (grass); other (broadleaf); radish; red clover; sorghum; sorghum-sudan; soybeans; sunflower; Tritcale; turnip; wheat (spring); wheat (winter); multispecies mix of 2 or more; other. 

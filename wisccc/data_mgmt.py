@@ -173,7 +173,8 @@ def convert_to_human_readable(column, choices_object):
 
 
 def get_survey_data():
-    # Grabbing all agronomic data with new structure and ORM
+    """For creating a pandas dataframe for ALL survey data"""
+
     survey_fields = (
         SurveyField.objects.all()
         .select_related("survey_farm")
@@ -456,30 +457,30 @@ def get_survey_data():
         columns=[
             # From Ancillary Data
             "survey_field_id",
-            "biomass_collection_date",
-            "cp",
-            "andf",
-            "undfom30",
-            "ndfd30",
-            "tdn_adf",
-            "milk_ton_milk2013",
-            "rfq",
-            "cc_biomass",
-            "total_nitrogen",
-            "acc_gdd",
-            "total_precip",
-            "spring_biomass_collection_date",
-            "spring_cp",
-            "spring_andf",
-            "spring_undfom30",
-            "spring_ndfd30",
-            "spring_tdn_adf",
-            "spring_milk_ton_milk2013",
-            "spring_rfq",
-            "spring_cc_biomass",
-            "spring_total_nitrogen",
-            "spring_acc_gdd",
-            "spring_total_precip",
+            "biomass_collection_date_fall",
+            "cp_fall",
+            "andf_fall",
+            "undfom30_fall",
+            "ndfd30_fall",
+            "tdn_adf_fall",
+            "milk_ton_milk2013_fall",
+            "rfq_fall",
+            "cc_biomass_fall",
+            "total_nitrogen_fall",
+            "acc_gdd_fall",
+            "total_precip_fall",
+            "biomass_collection_date_spring",
+            "cp_spring",
+            "andf_spring",
+            "undfom30_spring",
+            "ndfd30_spring",
+            "tdn_adf_spring",
+            "milk_ton_milk2013_spring",
+            "rfq_spring",
+            "cc_biomass_spring",
+            "total_nitrogen_spring",
+            "acc_gdd_spring",
+            "total_precip_spring",
         ],
     )
 
@@ -1104,17 +1105,48 @@ def data_export():
             "county": "county_farm",
             "county_single": "county_field",
             "cc_termination": "cc_termination_timing_method",
+            "cc_biomass_collection_date": "cc_biomass_collection_date_fall",
+            "total_precip": "total_precip_fall",
+            "acc_gdd": "acc_gdd_fall",
+            "cc_biomass": "cc_biomass_fall",
+            "fq_cp": "fq_cp_fall",
+            "fq_andf": "fq_andf_fall",
+            "fq_ndfd30": "fq_ndfd30_fall",
+            "fq_tdn_adf": "fq_tdn_adf_fall",
+            "fq_milkton": "fq_milkton_fall",
+            "fq_rfq": "fq_rfq_fall",
+            "total_nitrogen": "total_nitrogen_fall",
+            "fall_notes": "notes_fall",
+            "spring_cc_biomass_collection_date": "cc_biomass_collection_date_spring",
+            "spring_total_precip": "total_precip_spring",
+            "spring_acc_gdd": "acc_gdd_spring",
+            "spring_cc_biomass": "cc_biomass_spring",
+            "spring_fq_cp": "fq_cp_spring",
+            "spring_fq_andf": "fq_andf_spring",
+            "spring_fq_undfom30": "fq_undfom30_spring",
+            "spring_fq_ndfd30": "fq_ndfd30_spring",
+            "spring_fq_tdn_adf": "fq_tdn_adf_spring",
+            "spring_fq_milkton": "fq_milkton_spring",
+            "spring_fq_rfq": "fq_rfq_spring",
+            "spring_total_nitrogen": "total_nitrogen_spring",
+            "spring_notes": "notes_spring",
         }
     )
+
     # Excel doesn't want datetimes with timezones, so converting
     # to dates
     cols_wtzs = [
         "cash_crop_planting_date",
         "cc_planting_date",
-        "cc_biomass_collection_date",
+        "cc_biomass_collection_date_fall",
+        "cc_biomass_collection_date_spring",
     ]
     for col_wtz in cols_wtzs:
-        df[col_wtz] = df[col_wtz].apply(lambda a: pd.to_datetime(a).date())
+        try:
+            df[col_wtz] = df[col_wtz].apply(lambda a: pd.to_datetime(a).date())
+        except AttributeError:
+            df[col_wtz] = df[col_wtz].where(~pd.isnull(df[col_wtz]), other=pd.NaT)
+            df[col_wtz] = df[col_wtz].apply(lambda a: pd.to_datetime(a).date())
 
     # Surveys before 2023 have periods (".") for nulls,
     #   this will clean them up.
@@ -1159,154 +1191,3 @@ def export_agronomic_data():
     response["Content-Disposition"] = f"attachment; filename={export_name}"
 
     return response
-
-
-# From Ancillary Data
-"id",
-"biomass_collection_date",
-"cp",
-"andf",
-"undfom30",
-"ndfd30",
-"tdn_adf",
-"milk_ton_milk2013",
-"rfq",
-"cc_biomass",
-"total_nitrogen",
-"acc_gdd",
-"total_precip",
-"spring_biomass_collection_date",
-"spring_cc_biomass",
-"survey_response_id",
-"survey_field_id",
-
-# From Farmer
-"id",
-"first_name",
-"last_name",
-"farm_name",
-"county",
-"user_id"
-
-
-# From SurveyFarm
-"id",
-"survey_created",
-"last_updated",
-"survey_year",
-"notes_admin",
-"confirmed_accurate",
-"years_experience",
-"total_acres",
-"percent_of_farm_cc",
-"dominant_soil_series_1",
-"dominant_soil_series_2",
-"dominant_soil_series_3",
-"dominant_soil_series_4",
-"info_source_nutrient_mgmt_1",
-"info_source_nutrient_mgmt_2",
-"info_source_nutrient_mgmt_3",
-"source_nutrient_mgmt_write_in",
-"cov_crops_for_ntrnt_mgmt_comments_questions",
-"info_source_cover_crops_1",
-"info_source_cover_crops_2",
-"info_source_cover_crops_3",
-"info_source_cover_crops_write_in",
-"support_cover_crops_1",
-"support_cover_crops_2",
-"support_cover_crops_3",
-"support_cover_crops_write_in",
-"lacking_any_info_cover_crops",
-"barriers_to_expansion",
-"quit_planting_cover_crops",
-"if_use_crop_insurance",
-"why_cover_crops_write_in",
-"cover_crops_delay_cash_crop",
-"save_cover_crop_seed",
-"source_cover_crop_seed",
-"interesting_tales",
-"where_to_start",
-"additional_thoughts",
-"farmer_id",
-"user_id",
-
-
-# From SurveyField
-"id",
-"created_time",
-"last_updated",
-"crop_rotation",
-"crop_rotation_2021_cover_crop_species",
-"crop_rotation_2021_cash_crop_species",
-"crop_rotation_2022_cover_crop_species",
-"crop_rotation_2022_cash_crop_species",
-"crop_rotation_2023_cover_crop_species",
-"crop_rotation_2023_cash_crop_species",
-"cover_crop_species_1",
-"cover_crop_planting_rate_1",
-"cover_crop_planting_rate_1_units",
-"cover_crop_species_2",
-"cover_crop_planting_rate_2",
-"cover_crop_planting_rate_2_units",
-"cover_crop_species_3",
-"cover_crop_planting_rate_3",
-"cover_crop_planting_rate_3_units",
-"cover_crop_species_4",
-"cover_crop_planting_rate_4",
-"cover_crop_planting_rate_4_units",
-"cover_crop_species_5",
-"cover_crop_planting_rate_5",
-"cover_crop_planting_rate_5_units",
-"cover_crop_species_and_rate_write_in",
-"cover_crop_multispecies_mix_write_in",
-"cash_crop_planting_date",
-"years_with_cover_crops",
-"dominant_soil_texture",
-"manure_prior",
-"manure_prior_rate",
-"manure_prior_rate_units",
-"manure_post",
-"manure_post_rate",
-"manure_post_rate_units",
-"tillage_system_cash_crop",
-"primary_tillage_equipment",
-"primary_tillage_equipment_write_in",
-"secondary_tillage_equipment",
-"secondary_tillage_equipment_write_in",
-"soil_conditions_at_cover_crop_seeding",
-"cover_crop_seeding_method",
-"cover_crop_seeding_method_write_in",
-"cover_crop_seed_cost",
-"cover_crop_planting_cost",
-"cover_crop_planting_date",
-"cover_crop_estimated_termination",
-"days_between_crop_hvst_and_cc_estd",
-"derived_species_class",
-"derived_county",
-"field_farm_id",
-"survey_farm_id",
-
-
-# From FieldFarm
-"id",
-"created_time",
-"last_updated",
-"field_name",
-"closest_zip_code",
-"field_acreage",
-"field_location",
-"farmer_id",
-
-
-# From User
-"id",
-"password",
-"last_login",
-"is_superuser",
-"username",
-"first_name",
-"last_name",
-"email",
-"is_staff",
-"is_active",
-"date_joined",
