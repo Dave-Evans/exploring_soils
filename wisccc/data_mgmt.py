@@ -548,7 +548,7 @@ def pull_all_years_together(f_output):
         , stat.fq_milkton
         , stat.fq_rfq
         , null as total_nitrogen
-        
+        , null as fall_notes
         , null as spring_cc_biomass_collection_date
         , null as spring_total_precip
         , null as spring_acc_gdd        
@@ -561,7 +561,7 @@ def pull_all_years_together(f_output):
         , null as spring_fq_milkton
         , null as spring_fq_rfq
         , null as spring_total_nitrogen        
-        
+        , null as spring_notes
         , stat.cc_rate_and_species
         , stat.cc_species
         , stat.cc_species_raw
@@ -640,7 +640,7 @@ def pull_all_years_together(f_output):
         rfq as fq_rfq,
         
         total_nitrogen as total_nitrogen,
-        
+        fall_notes,
         spring_biomass_collection_date as spring_cc_biomass_collection_date,
         spring_total_precip as spring_total_precip,
         spring_acc_gdd as spring_acc_gdd,    
@@ -653,6 +653,7 @@ def pull_all_years_together(f_output):
         spring_milk_ton_milk2013 as spring_fq_milkton,
         spring_rfq as spring_fq_rfq,
         spring_total_nitrogen as spring_total_nitrogen,
+        spring_notes,
         
         concat(		
             concat(  cover_crop_planting_rate_1, ' ', mod_cover_crop_planting_rate_1_units, ' ', mod_cover_crop_species_1),
