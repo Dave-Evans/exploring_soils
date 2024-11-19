@@ -258,9 +258,28 @@ def wisccc_download_data(request, opt):
 
 @login_required
 def wisc_cc_survey(request):
-    """Home page for Cover Crop survey. We check progress of different sections of the survey
+    """
+    Home page for Cover Crop survey. We check progress of different sections of the survey
     by querying one required question from each section (0 (the farmer section),1,2,3).
     If this is completed then we assume it is all completed."""
+
+    # Before we allow access to the survey page, user must
+    #   be logged in ->
+    #       -> Checked with decorator
+    #   have a farmer entry
+    #       -> Checked with Farmer.objects.get
+    #   be registered for the proper survey season
+    #       -> Check if user has registration record
+
+    try:
+        farmer_instance = Farmer.objects.get(user_id=request.user.id)
+    except:
+        return redirect("wisc_cc_register_1")
+
+    try:
+        registration = SurveyRegistration.objects.get(farmer_id=farmer_instance.id)
+    except:
+        return redirect("wisc_cc_register_1")
 
     completed_1 = check_section_completed(request.user.id, 1)
     completed_2 = check_section_completed(request.user.id, 2)
@@ -1626,10 +1645,8 @@ def wisc_cc_register_1(request):
 def wisc_cc_register_2(request):
     """For when a user already exists."""
     user = User.objects.get(id=request.user.id)
-    try:
-        farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
-    except:
-        farmer_instance = None
+
+    farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
 
     farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
 
