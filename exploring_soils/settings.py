@@ -91,6 +91,11 @@ MIDDLEWARE = [
     "csp.middleware.CSPMiddleware",
 ]
 
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+
 CSP_FRAME_ANCESTORS = [
     "https://www.evansgeospatial.com",
     "https://www.michaelfields.org",
