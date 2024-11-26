@@ -103,6 +103,7 @@ CSP_FRAME_ANCESTORS = [
 CSP_STYLE_SRC = [
     "'self'",
     "'unsafe-inline'",
+    "https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css",
     "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css",
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css",
     "https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css",
@@ -112,6 +113,7 @@ CSP_STYLE_SRC = [
     "https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css",
     "http://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css",
     "https://unpkg.com/leaflet@1.7.1/dist/leaflet.css",
+    "https://unpkg.com/leaflet@1.0.1/dist/leaflet.css",
 ]
 CSP_SCRIPT_SRC = [
     "'self'",
@@ -135,6 +137,7 @@ CSP_SCRIPT_SRC = [
     "https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js",
     "https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js",
     "https://unpkg.com/leaflet@1.7.1/dist/leaflet.js",
+    "https://unpkg.com/leaflet@1.0.1/dist/leaflet.js",
 ]
 CSP_IMG_SRC = [
     "'self'",
