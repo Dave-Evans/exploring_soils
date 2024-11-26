@@ -148,6 +148,7 @@ CSP_IMG_SRC = [
     "http://c.tile.osm.org/",
     "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/",
     "https://unpkg.com/leaflet@1.3.4/dist/images/",
+    "https://unpkg.com/leaflet@1.0.1/dist/images/",
     "https://tile.openstreetmap.org",
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/",
     "http://ows.mundialis.de/services/",
@@ -169,6 +170,7 @@ CSP_FONT_SRC = [
     "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/fonts/",
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/fonts/",
     "https://fonts.gstatic.com/s/",
+    "https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/fonts/",
 ]
 
 CSP_FRAME_SRC = [
