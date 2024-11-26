@@ -1,462 +1,385 @@
 {% load static %}
-{% load render_table from django_tables2 %}
-{% load bootstrap4 %}
 
-<!-- For leaflet marker shapes
-https://stackoverflow.com/questions/54978367/custom-markers-with-different-shapes-and-colors-in-leaflet-r 
 
-For D3 point map
-https://datadrivensecurity.info/blog/vis/malmaps-d3/
--->
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="utf-8">
-    <title>{% block title %}Wisconsin Citizen Science Cover Crop Map{% endblock %}</title>
+    <title>{% block title %}Evans Geospatial{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/app.css' %}">
 
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" />
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"
         integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ=="
         crossorigin="anonymous"></script>
-    {% block stylesheet %}{% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+        integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- For qmark icon -->
+    <script defer type="text/javascript" src='{% static "js/friconix.js" %}'></script>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+    <script src="{% static 'js/L.Control.Window.js' %}"></script>
+    <script type="text/javascript" src='{% static "js/wisccc_legend.js" %}'></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+        integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-    crossorigin="" />
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-    crossorigin=""></script>
-<script src="{% static 'js/L.Control.Window.js' %}"></script>
+<body></body>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<!--[if lte IE 8]><link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet-0.7.2/leaflet.ie.css" /><![endif]-->
+
+<link rel="stylesheet" href="{% static 'css/leaflet-sidebar.css' %}" />
+
+<!-- Map basic styling -->
 <style>
-    html,
     body {
-        height: 100%;
+        padding: 0;
         margin: 0;
     }
 
-    .leaflet-container {
+    html,
+    body,
+    #map {
+        overflow: hidden;
         height: 100%;
-        width: 100%;
-        max-width: 100%;
-        max-height: 100%;
+        /* font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif; */
     }
 
-    .custom-control {
+    /* #map {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    } */
 
-        font-size: 14px;
-        border-radius: 5px;
-        padding: 4px;
-        border: 2px solid rgba(0, 0, 0, 0.2);
+    .lorem {
+        font-style: italic;
+        color: #AAA;
     }
 </style>
-<link rel="stylesheet" href="{% static 'css/L.Control.Window.css' %}" />
-<div id="mapid"></div>
+<!-- Legend and selectize styling -->
+<style>
+    .legend {
+        /*border: 120%;*/
+        /*margin: 70px;*/
+        padding: 5px;
+        text-align: left;
+        line-height: 18px;
+        color: #000;
+        background: #fff;
+    }
 
-<div id="ctrl_inner_html">
-    <img width="200" height="100" src="/static/img/MoshStacked_maroon.png" /><br><br>
+    .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 1;
+    }
 
-    <h5>Set filters</h5>
-    <span>Year
-        <select id="YearFilter" class="YearSelector">
-        </select>
-    </span><br>
-    <span>Soil texture
-        <select id="SoilTextFilter" class="SoilSelector">
-        </select>
-    </span><br>
-    <span>Seeding method
-        <select id="SeedingFilter" class="SeedingSelector">
-        </select>
-    </span><br>
-    <h5>Select property</h5>
-    <select id="PropertySelection" class="PropSelector">
-        <option value="cc_biomass">Cover crop biomass</option>
-        <option value="fq_rfq">Relative forage quality</option>
-        <option value="gdd">Growing degree days</option>
-    </select>
-    <div id="legend"><svg width="260px" height="200px"></svg></div><button id="info-button">Info</button>
+    /*    .legend .circle {
+      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      margin-top: 8px;
+    }*/
+    /* Selectize dropdowns */
+    .selectize-dropdown,
+    .selectize-input {
+        width: 220px !important;
+    }
+</style>
+<!-- Helptip styling -->
+<style>
+    /* https://www.w3schools.com/css/tryit.asp?filename=trycss_tooltip_bottom */
+    .helptip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted #2f2f2f;
+    }
+
+    .bottomtip {
+        top: 100%
+    }
+
+    .toptip {
+        bottom: 100%
+    }
+
+    .helptip .helptiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #2f2f2f;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        left: 50%;
+        margin-left: -80px;
+
+        /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+        opacity: 0;
+        transition: opacity 1s;
+    }
+
+    .helptip:hover .helptiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .helptip .helptiptext::after {
+        content: " ";
+        position: absolute;
+        bottom: 100%;
+        /* At the bottom of the tooltip */
+        left: 30%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent#2f2f2f transparent;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Citizen Science Data Network</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+        aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item" id="nav-home">
+                <a class="nav-link" href="{% url 'wisc_cc_home' %}">Home</a>
+            </li>
+            <li class="nav-item" id="nav-graph">
+                <a class="nav-link" href="{% url 'wisc_cc_graph' %}">Graph</a>
+            </li>
+            <li class="nav-item" id="nav-map">
+                <a class="nav-link" href="{% url 'wisc_cc_map' %}">Map</a>
+            </li>
+            <li class="nav-item" id="nav-survey">
+                <a class="nav-link" href="{% url 'wisc_cc_survey' %}">Survey</a>
+            </li>
+            <li class="nav-item" id="nav-about">
+                <a class="nav-link" href="{% url 'wisc_cc_about' %}">About</a>
+            </li>
+        </ul>
+
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    {{ user.email }}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+                    <a class="dropdown-item" href="{% url 'my_account'  %}">My account</a>
+                    <a class="dropdown-item" href="{% url 'password_change' %}">Change password</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                </div>
+            </li>
+        </ul>
+        {% else %}
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'wisc_cc_signup' %}" class="btn btn-outline-secondary">Sign up</a>
+            </li>
+        </ul>
+        {% endif %}
+    </div>
+
+</nav>
+
+<div id="sidebar" class="sidebar collapsed">
+    <!-- Nav tabs -->
+    <div class="sidebar-tabs">
+        <ul role="tablist">
+            <!-- <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li> -->
+            <li><a href="#home" role="tab"><i class="fa fa-rocket"></i></a></li>
+            <!-- <li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li> -->
+            <!-- <li><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li> -->
+            <!-- <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i
+                        class="fa fa-github"></i></a></li> -->
+        </ul>
+
+        <!-- <ul role="tablist">
+            <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+        </ul> -->
+    </div>
+
+    <!-- Tab panes -->
+    <div class="sidebar-content" style="font-size:12px">
+        <div class="sidebar-pane" id="home">
+            <h1 class="sidebar-header">
+                Display options
+                <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            </h1>
+            <hr>
+            <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
+                <option value="cc_biomass">Fall cover crop biomass (tons DM/ac)</option>
+                <option value="spring_cc_biomass">Spring cover crop biomass (tons DM/ac)</option>
+                <option value="cc_species">Cover crop types</option>
+                <option value="acc_gdd">Growing degree units</option>
+                <option value="cc_planting_date_mo">Planting season</option>
+                <option value="previous_crop">Prior crop</option>
+                <option value="fq_rfq">Relative forage quality</option>
+            </select>
+            <div class="helptip"><sup>
+                    <img width="20"
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
+                </sup>
+                <span id="prop_select_helptip" class="helptiptext bottomtip">
+                    Use the filters below to show only certain data points.
+                    Note that our database is built from about 100 farms, and if you select many filters
+                    at once, you may end up with very few or no data points to display.
+                </span>
+            </div>
+            <div id="legend">
+                <svg width="350px" height="180px"></svg>
+                <p>
+                    Click on map locations for more info.
+                    <br>
+                    Actual locations have been<br>obscured to protect landowner's privacy.
+                </p>
+            </div>
+
+
+            <h4>Filters</h4>
+
+            <span>Year
+                <select id="YearFilter" class="YearSelector">
+                </select>
+            </span><br>
+            <span>Soil texture
+                <select id="SoilTextFilter" class="SoilSelector">
+                </select>
+            </span><br>
+            <span>Prior crop
+                <select id="PriorCropFilter" class="PriorCropSelector">
+                </select>
+            </span><br>
+            <span>Tillage type
+                <select id="TillageFilter" class="TillageSelector">
+                </select>
+            </span><br>
+            <span>Seeding method
+                <select id="SeedingFilter" class="SeedingSelector">
+                </select>
+            </span><br>
+            <span>Cover crop species
+                <div class="helptip"><sup>
+                        <img width="20"
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
+                    </sup>
+                    <span class="helptiptext toptip">
+                        When you check more than one species, all selected cover crops planted at that time
+                        will show on the graph.
+                        For example if you select 'barley' and 'red clover' then only fields where both
+                        barley and red clover are present are shown.
+                        Cases when barley was planted alone will be filtered out.
+                        Other species may be present but the field will contain both barley and red clover
+                        together.
+                        If no points are displayed on the graph then no participating farmer planted that
+                        combination of cover crops.
+                    </span>
+                </div>
+                <select id="SpeciesFilter" class="SpeciesSelector">
+                </select>
+
+
+            </span><br>
+
+            <span>Manure applied prior to cover crop
+                <input type="checkbox" id="PriorManFilter" class="PreManSelector">
+            </span><br>
+
+            <span>Manure applied post cover crop establishment
+                <input type="checkbox" id="PostManFilter" class="PreManSelector">
+            </span>
+            <br>
+
+            <span>Filter for points with photos
+                <input type="checkbox" id="HasPhotoFilter" class="HasPhotoFilter">
+            </span>
+            <br>
+            <a href="{% url 'wisc_cc_graph' %}" class="btn btn-primary">Go to graph</a>
+        </div>
+
+        <!-- <div class="sidebar-pane" id="profile">
+            <h1 class="sidebar-header">Profile<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            </h1>
+        </div> -->
+
+        <!-- <div class="sidebar-pane" id="messages">
+            <h1 class="sidebar-header">Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            </h1>
+            Please let us know what you think of the map by emailing
+            <a href="mailto:mingram@wisc.edu">
+                Mrill Ingram at mingram@wisc.edu
+            </a>.
+        </div> -->
+
+        <div class="sidebar-pane" id="settings">
+            <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            </h1>
+        </div>
+    </div>
 </div>
 
-<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<div id="map" class="sidebar-map"></div>
+
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src="{% static 'js/leaflet-sidebar.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/wisccc_map.js' %}"></script>
+
+
 <script>
+    updateActive = function () {
 
-
-    mapLink =
-        '<a href="http://www.esri.com/">Esri</a>';
-    wholink =
-        'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
-    var satelite = L.tileLayer(
-        'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: '&copy; ' + mapLink + ', ' + wholink,
-        maxZoom: 18,
-    });
-    var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-    });
-
-
-
-    var baseMaps = {
-        "Satelite": satelite,
-        "Streets, landmarks, etc": osm,
-
-    };
-
-
-
-    var max_zoom = 18;
-    var map = L.map('mapid', {
-        layers: [osm],
-        maxZoom: max_zoom,
-        zoomControl: false
-    }).setView([44.6373, -90.012], 7);
-
-    map.createPane('pane_counties');
-    map.getPane('pane_counties').style.zIndex = 300;
-
-    var county_styling = {
-        fillColor: "#f0f0f0",
-        color: "#252525",
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.2
-    };
-
-    function cntyPopup(feature, layer) {
-
-        var popupContent = "<dl><dt>" + feature.properties.countyname + " County</dt></dl>";
-
-        if (feature.properties && feature.properties.popupContent) {
-            popupContent += feature.properties.popupContent;
+        var whichpage = window.location.href.split("/").pop()
+        if (whichpage.includes("graph")) {
+            $("#nav-graph").addClass("active");
+        }
+        if (whichpage.includes("survey")) {
+            $("#nav-survey").addClass("active");
+        }
+        if (whichpage.includes("home")) {
+            $("#nav-home").addClass("active");
+        }
+        if (whichpage.includes("map")) {
+            $("#nav-map").addClass("active");
+        }
+        if (whichpage.includes("about")) {
+            $("#nav-about").addClass("active");
         }
 
-        layer.bindPopup(popupContent);
     }
-    var wi_counties_json_object;
-    var counties_layer = L.layerGroup();
+    updateActive()
 
-    var cnty_result = $.getJSON("/get_wi_counties", function (data) {
-        wi_counties_json_object = L.geoJSON(data, {
-            style: county_styling,
-            pane: "pane_counties",
-            onEachFeature: cntyPopup
-        }).addTo(counties_layer);
-        map.addLayer(wi_counties_json_object)
-
-    });
-
-
-
-    map.createPane('pane_collection_pts');
-    map.getPane('pane_collection_pts').style.zIndex = 650;
-
-
-
-    var layerControl = L.control.layers(baseMaps).addTo(map);
-    layerControl.addOverlay(counties_layer, "Counties")
-
-    // Custom control for controls
-    L.Control.cntrlpanel = L.Control.extend({
-        onAdd: function (map) {
-
-            var controlsdiv = L.DomUtil.create('div', 'custom-control');
-            controlsdiv.style.width = '250px';
-            controlsdiv.style.height = '500px';
-            controlsdiv.style.background = 'white';
-            controlsdiv.id = "controls";
-            controlsdiv.innerHTML = ''
-
-
-            $(controlsdiv).mousedown(function () {
-                map.dragging.disable();
-            });
-            $(document).mouseup(function () {
-                map.dragging.enable();
-            });
-
-            return controlsdiv;
-        },
-        onRemove: function (map) {
-            // Nothing to do here
-        }
-    });
-    L.control.cntrlpanel = function (opts) {
-        return new L.Control.cntrlpanel(opts);
-    }
-    L.control.cntrlpanel({ position: 'topleft' }).addTo(map);
-    // Scale bar
-    L.control.scale().addTo(map);
-    // manageDepthSlider();       
-    // disableDownload();
-
-
-    function onEachFeature(feature, layer) {
-
-
-        var popupContent = "<dl>" +
-            "<dt>ID</dt> <dd>" + feature.id + "</dd>" +
-            "<dt>Cover crop</dt> <dd>" + feature.properties.cc_species + "</dd>" +
-            "<dt>Previous crop</dt> <dd>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</dd>" +
-            "<dt>Planting date</dt> <dd>" + feature.properties.cc_planting_date + "</dd>" +
-            "<dt>Planting rate</dt> <dd>" + feature.properties.cc_planting_rate + "</dd>" +
-            "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
-            "<dt>Biomass (ton DM/acre)</dt> <dd>" + feature.properties.cc_biomass + "</dd>" +
-            "<dt>Cumulative growing degree days</dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
-            "</dl>" + "*This point is not the actual location of the photo. Collection locations have been obscured to protect landowner's privacy.";
-
-
-        if (feature.properties && feature.properties.popupContent) {
-            popupContent += feature.properties.popupContent;
-        }
-
-        layer.bindPopup(popupContent);
-    }
-
-    var geojsonMarkerOptions = {
-        radius: 8,
-        fillColor: "#ff0000",
-        color: "#000",
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-    };
-
-    var dataurl = '/wisc_cc_static_data';
-
-    var geojsonObject;
-    var soilsLayer;
-
-    var soilsCircle = $.getJSON(dataurl, function (data) {
-        soilsLayer = data;
-
-        // geojsonObject = L.geoJSON(data, {
-        //     pointToLayer: function (feature, latlng) {
-        //         soilsPoints.push(latlng);
-        //         return L.circleMarker(latlng, geojsonMarkerOptions);
-        //     },
-        //     //filter: yearFilter,
-        //     pane: "pane_collection_pts",
-        //     onEachFeature: onEachFeature
-        // }).addTo(map);
-        // //map.fitBounds(soilsPoints);
-        // geojsonObject.eachLayer(function (layer) {
-        //     layer.setStyle({ fillColor: gddScale(layer.feature.properties.acc_gdd) })
-        //     updateLegend(gddScale, ".0f")
-        // })
-
-        pop_select_box("YearFilter", "year");
-        pop_select_box("SeedingFilter", "cc_seeding_method");
-        pop_select_box("SoilTextFilter", "dominant_soil_texture");
-        filterer();
-        addLayerToMap();
-    });
-
-    // for populating select boxes
-    var pop_select_box = function (id_selector, field_name) {
-        var all_instances = [];
-        for (item in soilsLayer) {
-
-            all_instances.push(soilsLayer[item]['properties'][field_name])
-
-        }
-        const uniq_instances = [...new Set(all_instances)];
-        var filt = document.getElementById(id_selector);
-        var newOption = document.createElement("option");
-        newOption.text = "All";
-        newOption.value = "All";
-        filt.add(newOption);
-        uniq_instances.forEach(function (item) {
-            console.log(item)
-            if (item === null) { return }
-            var newOption = document.createElement("option");
-            newOption.text = item.toString();
-            newOption.value = item.toString();
-            filt.add(newOption);
-        })
-    }
-    let filter_values;
-
-    var filterer = function (feature) {
-        filter_values = {
-            year: false,
-            seeding_method: false,
-            soil_texture: false,
-        }
-        if (document.getElementById("YearFilter").value == "All") {
-            filter_values['year'] = document.getElementById("YearFilter").value;
-        } else {
-            filter_values['year'] = parseInt(document.getElementById("YearFilter").value);
-        }
-
-        filter_values['cc_seeding_method'] = document.getElementById("SeedingFilter").value;
-        filter_values['dominant_soil_texture'] = document.getElementById("SoilTextFilter").value;
-
-
-    }
-
-
-    function addLayerToMap() {
-        //remove the layer from the map entirely
-        if (map.hasLayer(geojsonObject)) {
-            geojsonObject.remove();
-        }
-        //add the data layer and style based on attribute. 
-
-        geojsonObject = L.geoJson(soilsLayer, {
-
-            filter: (feature) => {
-
-                // Filter each property by the selected filter value
-                // If no filter, the 'All' option, then the filter value is true, hence the or statement
-                const filt_year = (filter_values.year == "All") ? true : (feature.properties.year == filter_values.year);
-                const filt_seeding = (filter_values.cc_seeding_method == "All") ? true : (feature.properties.cc_seeding_method == filter_values.cc_seeding_method);
-                const filt_soiltext = (filter_values.dominant_soil_texture == "All") ? true : (feature.properties.dominant_soil_texture == filter_values.dominant_soil_texture);
-
-                return filt_year && filt_seeding && filt_soiltext //only true if both are true
-            },
-
-            pointToLayer: function (feature, latlng) {
-                return new L.CircleMarker(latlng, geojsonMarkerOptions);
-            },
-            onEachFeature: onEachFeature,
-            style: function (feature) {
-                updateLegend(biomassScale, ".1f");
-                return {
-
-                    fillColor: biomassScale(feature.properties.cc_biomass)
-                };
-            },
-        }).addTo(map);
-        console.log(Object.keys(geojsonObject._layers).length + " locations after filtering.")
-    }
-
-    $("#YearFilter").on("input", function () {
-        filterer()
-        //add the layer to the map again, now that we have changed the filter value. 
-        addLayerToMap();
-    });
-    $("#SeedingFilter").on("input", function () {
-        filterer()
-        //add the layer to the map again, now that we have changed the filter value. 
-        addLayerToMap();
-    });
-    $("#SoilTextFilter").on("input", function () {
-        filterer()
-        //add the layer to the map again, now that we have changed the filter value. 
-        addLayerToMap();
-    });
-
-    function updateStyle(property) {
-        geojsonObject.eachLayer(function (layer) {
-            if (property == "gdd") {
-                layer.setStyle({ fillColor: gddScale(layer.feature.properties.acc_gdd) })
-                updateLegend(gddScale, ".0f")
-            } else if (property == "cc_biomass") {
-                layer.setStyle({ fillColor: biomassScale(layer.feature.properties.cc_biomass) })
-                updateLegend(biomassScale, ".1f")
-            } else if (property == "fq_rfq") {
-                layer.setStyle({ fillColor: rfqScale(layer.feature.properties.fq_rfq) })
-                updateLegend(rfqScale, ".0f")
-            }
-        })
-    }
-
-    //Maybe this: https://github.com/timwis/leaflet-choropleth
-
-    var rfqScale = d3.scaleThreshold()
-        .domain([100, 150, 200, 250, 300, 350])
-        .range(d3.schemeGreens[7]);
-
-
-
-    var gddScale = d3.scaleThreshold()
-        .domain([500, 1000, 1500, 2000, 2500, 3000, 4000])
-        .range(d3.schemeOrRd[8]);
-
-
-    var fgccScale = d3.scaleThreshold()
-        .domain([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-        .range(d3.schemeGreens[7]);
-
-    var biomassScale = d3.scaleThreshold()
-        .domain([0.5, 1, 1.5, 2, 2.5, 3, 3.5])
-        .range(d3.schemePuOr[7]);
-
-
-    function removeLegend(legendClassName) {
-        d3.select(legendClassName).remove();
-    }
-
-    function updateLegend(myscale, fmt_string) {
-
-        removeLegend('.legendSoil');
-
-        var svg = d3.select("#legend svg");
-
-        svg.append("g")
-            .attr("class", "legendSoil")
-            .attr("transform", "translate(20,30)")
-            .style("height", 150);
-
-        var legendSoil = d3.legendColor()
-            .shapeWidth(30)
-            .cells(6)
-            // .orient("horizontal")
-            .scale(myscale)
-
-        // .shapePadding(4)
-
-        legendSoil.labels(d3.legendHelpers.thresholdLabels)
-
-        legendSoil.labelFormat(d3.format(fmt_string))
-
-        svg.select(".legendSoil")
-            .call(legendSoil);
-
-    };
-
-    // Call updateScale when everything is loaded. Seemed to be an issue where
-    //  the on change would try to be attached before the leaflet control containing 
-    //  the dropdown and slider were located was created
-    $('body').on('change', '#PropertySelection', function () {
-        var selected_property = $('#PropertySelection').val();
-        updateStyle(selected_property);
-    });
-
-    new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
-    $('body').on('change', '#ZoomSelection', function () {
-        var selected_zoom = $('#ZoomSelection').val();
-        map.setMaxZoom(parseInt(selected_zoom))
-    });
-
-    $('body').on('click', '#info-button', function () {
-        showInfoWindow();
-    });
-
-    function showInfoWindow() {
-        var winInfo = L.control.window(map,
-            {
-                title: 'MOSH Cover crop growth data project',
-                content: 'Click on data points to view the amount of green cover produced by cover crops. To view other basemaps or toggle the county boundaries, use the menu in the upper righthand counter. Learn more about the MN Office for Soil Health at <a href="https://mosh.umn.edu">mosh.umn.edu</a>',
-                visible: true
-            })
-    }
-    // Moves map controls to proper spot
-    document.getElementById("controls").appendChild(document.getElementById('ctrl_inner_html'))
 </script>
-
-
-
-
 </body>
 
 </html>

@@ -971,7 +971,7 @@ def wisc_cc_graph(request):
 
 
 def wisc_cc_map(request):
-    return render(request, "wisccc/wisc_cc_map_toggle.html")
+    return render(request, "wisccc/wisc_cc_map.html")
 
 
 def wisc_cc_map_v2(request):
