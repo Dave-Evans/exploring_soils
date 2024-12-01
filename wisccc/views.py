@@ -713,22 +713,27 @@ def update_response(request, id):
     # fetch the survey object related to passed id
     survey_farm = get_object_or_404(SurveyFarm, id=id)
 
-    if survey_farm is None:
-        survey_field = None
-    else:
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-
-    if survey_field is None:
-        field_farm = None
-        survey_photo = None
-    else:
-        field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
-        survey_photo = SurveyPhoto.objects.filter(
-            survey_field_id=survey_field.id
-        ).first()
-
     # Get farmer associated with user id of survey response
     farmer = Farmer.objects.filter(id=survey_farm.farmer_id).first()
+
+    # Is there a survey field record for this survey?
+    #   if so grab it, else create one
+    survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+    if survey_field is None:
+        survey_field = SurveyField.objects.create(survey_farm_id=survey_farm.id)
+
+    # Is there a field farm record for this survey?
+    #   if so grab it, else create one
+    field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
+    if field_farm is None:
+        field_farm = FieldFarm.objects.create(farmer=farmer)
+        survey_field.field_farm = field_farm
+        survey_field.save()
+    # Is there a Survey photo record for this survey?
+    #   if so grab it, else create one
+    survey_photo = SurveyPhoto.objects.filter(survey_field_id=survey_field.id).first()
+    if survey_photo is None:
+        survey_photo = SurveyPhoto.objects.create(survey_field=survey_field)
 
     # pass the object as instance in form
     # Section 1 - Farmer
