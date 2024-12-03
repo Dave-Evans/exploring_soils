@@ -313,6 +313,7 @@ def get_survey_data():
                 "cover_crop_planting_cost",
                 "cover_crop_planting_date",
                 "cover_crop_estimated_termination",
+                "cover_crop_estimated_termination_write_in",
                 "days_between_crop_hvst_and_cc_estd",
                 "derived_species_class",
                 # From FieldFarm
@@ -413,6 +414,7 @@ def get_survey_data():
             "cover_crop_planting_cost",
             "cover_crop_planting_date",
             "cover_crop_estimated_termination",
+            "cover_crop_estimated_termination_write_in",
             "days_between_crop_hvst_and_cc_estd",
             "derived_species_class",
             # From FieldFarm

@@ -1505,6 +1505,11 @@ class SurveyField(models.Model):
         null=True,
     )
 
+    cover_crop_estimated_termination_write_in = models.TextField(
+        verbose_name="Estimated termination timing and method for this field, if other write in",
+        null=True,
+    )
+
     # 36	Number of days estimated between crop harvest and cover crop establishment in this field.
     days_between_crop_hvst_and_cc_estd = models.SmallIntegerField(
         verbose_name="Number of days estimated between crop harvest and cover crop establishment in this field.",

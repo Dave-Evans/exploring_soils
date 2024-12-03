@@ -628,11 +628,16 @@ class SurveyFieldFormFull(forms.ModelForm):
     )
     # 47	"Estimated termination timing/method for this field.
     cover_crop_estimated_termination = forms.ChoiceField(
-        label="23. Estimated termination timing/method for this field.",
+        label="23a. Estimated termination timing/method for this field.",
         choices=TerminationMethodTimingChoices.choices,
         required=True,
     )
-
+    cover_crop_estimated_termination_write_in = forms.CharField(
+        label="23b. Please explain if you selected other.",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+        required=False,
+    )
     # 48	Number of days estimated between crop harvest and cover crop establishment in this field.
     days_between_crop_hvst_and_cc_estd = forms.IntegerField(
         label="24. Number of days estimated between crop harvest and cover crop establishment in this field.",
@@ -1143,9 +1148,16 @@ class SurveyFieldFormSection4_part2(forms.ModelForm):
     )
     # 47	"Estimated termination timing/method for this field.
     cover_crop_estimated_termination = forms.ChoiceField(
-        label="23. Estimated termination timing/method for this field.",
+        label="23a. Estimated termination timing/method for this field.",
         choices=TerminationMethodTimingChoices.choices,
         required=True,
+    )
+
+    cover_crop_estimated_termination_write_in = forms.CharField(
+        label="23b. Please explain if you selected other.",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+        required=False,
     )
 
     # 48	Number of days estimated between crop harvest and cover crop establishment in this field.
@@ -1161,6 +1173,7 @@ class SurveyFieldFormSection4_part2(forms.ModelForm):
         fields = (
             "cover_crop_planting_date",
             "cover_crop_estimated_termination",
+            "cover_crop_estimated_termination_write_in",
             "days_between_crop_hvst_and_cc_estd",
         )
 
