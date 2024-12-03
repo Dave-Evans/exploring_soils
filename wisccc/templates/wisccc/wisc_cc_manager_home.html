@@ -14,78 +14,94 @@
             <div class="card-body">
                 <h3 class="card-title">Welcome Survey Managers</h3>
 
-                <div class="card">
-                    <div class="card-deck">
-                        <div class="card">
-                            <div class="card-header">
-                                Create researcher
-                            </div>
-                            <div class="card-body">
-                                <p class="card-text">
-                                    Give a researcher the ability to download the Wisconsin Cover Crop Dataset,
-                                    agronomic subset.
-                                </p>
-                                <a href="{% url 'wisccc_create_researcher' %}" class="btn btn-primary">
-                                    Add researcher
-                                </a>
-                            </div>
-                            <div class="card-body">
-                                <p class="card-text">
-                                    View collaborating researchers
-                                </p>
-                                <a href="{% url 'researcher_table' %}" class="btn btn-primary">
-                                    Go to table
-                                </a>
-                            </div>
+                <div class="card-group">
+                    <div class="card">
+                        <div class="card-header">
+                            Registrations
                         </div>
-                        <div class="card">
-                            <div class="card-header">
-                                Download Data
-                            </div>
-                            <div class="card-body">
+                        <div class="card-body">
 
-
-                                <h5 class="card-title">Full Survey Results + Lab Data</h5>
-                                <p class="card-text">
-                                    Contains individual contact information. Do not share this file.
-                                </p>
-                                <a href="{% url 'wisccc_download_data' 1 %}" class="btn btn-primary">Download</a>
-                            </div>
-                            <hr>
-                            <div class="card-body">
-                                <h5 class="card-title">Shareable Data File</h5>
-                                <p class="card-text">
-                                    This file includes metadata and a download of agronomic and lab data used to create
-                                    the map display. Contains no personal information.
-                                    This file is what collaborating researchers are able to download.
-
-                                </p>
-                                <a href="{% url 'wisccc_download_data' 2 %}" class="btn btn-primary">Download</a>
-                            </div>
-
+                            <h5 class="card-title">View registrants</h5>
+                            <p class="card-text"></p>
+                            <a href="{% url 'registration_table' %}" class="btn btn-primary">Go to table</a>
 
                         </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">View registrants</h5>
-                                <p class="card-text"></p>
-                                <a href="{% url 'registration_table' %}" class="btn btn-primary">View registrants</a>
+                        <div class="card-body">
 
-                            </div>
-                            <hr>
-                            <div class="card-body">
-                                <h5 class="card-title">View survey responses</h5>
-                                <p class="card-text">View and edit survey responses.</p>
-                                <a href="{% url 'response_table' %}" class="btn btn-primary">View responses</a>
+                            <h5 class="card-title"></h5>
+                            <p class="card-text">Create registrant</p>
+                            <a href="{% url 'wisc_cc_register_by_mgmt' %}" class="btn btn-primary">Create</a>
 
-                            </div>
                         </div>
                     </div>
+                    <hr>
+                    <div class="card">
+                        <div class="card-header">
+                            Survey responses
+                        </div>
+                        <div class="card-body">
 
+                            <h5 class="card-title">View survey responses</h5>
+                            <p class="card-text">View and edit survey responses.</p>
+                            <a href="{% url 'response_table' %}" class="btn btn-primary">View responses</a>
+
+                        </div>
+                    </div>
                 </div>
-                <!-- <div class="card-footer text-muted text-center">
-        Questions? See our <a href="{% url 'green_covr_references' %}">references page</a>
-      </div> -->
+
+                <div class="card">
+                    <div class="card-header">
+                        Researcher utilities
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Give a researcher the ability to download the Wisconsin Cover Crop Dataset,
+                            agronomic subset.
+                        </p>
+                        <a href="{% url 'wisccc_create_researcher' %}" class="btn btn-primary btn-sm">
+                            Add researcher
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            View collaborating researchers
+                        </p>
+                        <a href="{% url 'researcher_table' %}" class="btn btn-primary btn-sm">
+                            Go to table
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-group">
+                    <div class="card">
+                        <div class="card-header">
+                            Download Data
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Full Survey Results + Lab Data</h5>
+                            <p class="card-text">
+                                Contains individual contact information. Do not share this file.
+                            </p>
+                            <a href="{% url 'wisccc_download_data' 1 %}" class="btn btn-primary">Download</a>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            Download Data
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Shareable Data File</h5>
+                            <p class="card-text">
+                                This file includes metadata and a download of agronomic and lab data used to create
+                                the map display. Contains no personal information.
+                                This file is what collaborating researchers are able to download.
+
+                            </p>
+                            <a href="{% url 'wisccc_download_data' 2 %}" class="btn btn-primary">Download</a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
