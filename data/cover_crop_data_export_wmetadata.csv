@@ -1,9 +1,10 @@
 Data category	Explanation
-id	random identifer for survey record
+Notes	These data represent survey from farmers. They are asked questions regarding their farming practices and they are also asked about practices about a particular field. In some cases  farmers have entered information for more than one field. This results in duplicated answers for their farming practices, but distinct records for each field.  If you are analyzing at the farm scale, make sure you look at the survey_farm_id field to deduplicate your dataset. If you are interested in the individual fields, then look at survey_field_id.
+survey_farm_id	random identifier for survey farm record
 survey_year	Participants fill out a survey of cover crop agronomic practices each fall.
 county_farm	County as identified by participant as where they farm; may be more than one
 zipcode	Closest zip code for sampled field as identified by participant
-county_field	County based on zipcode centroid for research field for years 2020 through 2022. For 2023 and later the county is determined based on participants's selected location on a map.
+county_field	County based on zipcode centroid for research field for years 2020 through 2022. For 2023 and later the county is determined based on participant's selected location on a map.
 previous_crop	The previously planted cash crop
 cash_crop_planting_date	When the previous cash crop was planted
 dominant_soil_texture	Selected from a list: clay; clay loam; loam; loamy sand; sand; sandy clay; sandy clay loam; sandy loam; silt; silt loam; silty clay; silty clay loam; muck; not sure
@@ -49,3 +50,4 @@ fq_milkton_spring	"Spring – a modeled value (using the ""Milk model"") to esti
 fq_rfq_spring	Spring – measured: relative forage quality
 total_nitrogen_spring	Spring – Total nitrogen in a the plant tissue, mg/L
 cc_species_raw	As entered by participant from a list: annual ryegrass; barley; berseem clover; canola/rapeseed; cereal (winter) rye; crimson clover; cowpea; field/forage pea; hairy vetch; kale; oats; other (legume); other (grass); other (broadleaf); radish; red clover; sorghum; sorghum-sudan; soybeans; sunflower; Tritcale; turnip; wheat (spring); wheat (winter); multispecies mix of 2 or more; other. 
+survey_field_id	Unique identifier for survey field.

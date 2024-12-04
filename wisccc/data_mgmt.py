@@ -193,12 +193,12 @@ def get_survey_data():
         "info_source_cover_crops_2": CoverCropInfoSourcesChoices,
         "info_source_cover_crops_3": CoverCropInfoSourcesChoices,
         "support_cover_crops_1": CoverCropSupportChoices,
-        "crop_rotation_2021_cover_crop_species": CoverCropChoices,
-        "crop_rotation_2021_cash_crop_species": CashCropChoices,
-        "crop_rotation_2022_cover_crop_species": CoverCropChoices,
-        "crop_rotation_2022_cash_crop_species": CashCropChoices,
-        "crop_rotation_2023_cover_crop_species": CoverCropChoices,
-        "crop_rotation_2023_cash_crop_species": CashCropChoices,
+        "two_years_ago_cover_crop_species": CoverCropChoices,
+        "two_years_ago_cash_crop_species": CashCropChoices,
+        "last_years_cover_crop_species": CoverCropChoices,
+        "last_years_cash_crop_species": CashCropChoices,
+        "this_years_cover_crop_species": CoverCropChoices,
+        "this_years_cash_crop_species": CashCropChoices,
         "cover_crop_species_1": CoverCropChoices,
         "cover_crop_species_2": CoverCropChoices,
         "cover_crop_species_3": CoverCropChoices,
@@ -232,12 +232,18 @@ def get_survey_data():
                 "survey_farm__farmer__farm_name",
                 "survey_farm__farmer__county",
                 # From SurveyFarm
+                "survey_farm__id",
                 "survey_farm__survey_created",
                 "survey_farm__last_updated",
                 "survey_farm__survey_year",
                 "survey_farm__notes_admin",
                 "survey_farm__confirmed_accurate",
                 "survey_farm__years_experience",
+                "survey_farm__main_cc_goal_this_year",
+                "survey_farm__satisfied_with_cc_results",
+                "survey_farm__biggest_challenge_cc",
+                "survey_farm__learning_history_cc",
+                "survey_farm__conservation_programs",
                 "survey_farm__total_acres",
                 "survey_farm__percent_of_farm_cc",
                 "survey_farm__dominant_soil_series_1",
@@ -257,6 +263,7 @@ def get_survey_data():
                 "survey_farm__support_cover_crops_write_in",
                 "survey_farm__lacking_any_info_cover_crops",
                 "survey_farm__barriers_to_expansion",
+                "survey_farm__barriers_to_expansion_write_in",
                 "survey_farm__quit_planting_cover_crops",
                 "survey_farm__if_use_crop_insurance",
                 "survey_farm__why_cover_crops_write_in",
@@ -266,6 +273,8 @@ def get_survey_data():
                 "survey_farm__interesting_tales",
                 "survey_farm__where_to_start",
                 "survey_farm__additional_thoughts",
+                "survey_farm__encourage_cc",
+                "survey_farm__encourage_cc_write_in",
                 # From SurveyField
                 "id",
                 "crop_rotation",
@@ -333,12 +342,18 @@ def get_survey_data():
             "farm_name",
             "county",
             # From SurveyFarm
+            "survey_farm_id",
             "survey_created",
             "last_updated",
             "survey_year",
             "notes_admin",
             "confirmed_accurate",
             "years_experience",
+            "main_cc_goal_this_year",
+            "satisfied_with_cc_results",
+            "biggest_challenge_cc",
+            "learning_history_cc",
+            "conservation_programs",
             "total_acres",
             "percent_of_farm_cc",
             "dominant_soil_series_1",
@@ -358,6 +373,7 @@ def get_survey_data():
             "support_cover_crops_write_in",
             "lacking_any_info_cover_crops",
             "barriers_to_expansion",
+            "barriers_to_expansion_write_in",
             "quit_planting_cover_crops",
             "if_use_crop_insurance",
             "why_cover_crops_write_in",
@@ -367,15 +383,17 @@ def get_survey_data():
             "interesting_tales",
             "where_to_start",
             "additional_thoughts",
+            "encourage_cc",
+            "encourage_cc_write_in",
             # From SurveyField
-            "id",
+            "survey_field_id",
             "crop_rotation",
-            "crop_rotation_2021_cover_crop_species",
-            "crop_rotation_2021_cash_crop_species",
-            "crop_rotation_2022_cover_crop_species",
-            "crop_rotation_2022_cash_crop_species",
-            "crop_rotation_2023_cover_crop_species",
-            "crop_rotation_2023_cash_crop_species",
+            "two_years_ago_cover_crop_species",
+            "two_years_ago_cash_crop_species",
+            "last_years_cover_crop_species",
+            "last_years_cash_crop_species",
+            "this_years_cover_crop_species",
+            "this_years_cash_crop_species",
             "cover_crop_species_1",
             "cover_crop_planting_rate_1",
             "cover_crop_planting_rate_1_units",
@@ -486,7 +504,9 @@ def get_survey_data():
         ],
     )
 
-    df = df.merge(df_anc, how="left", left_on="id", right_on="survey_field_id")
+    df = df.merge(
+        df_anc, how="left", left_on="survey_field_id", right_on="survey_field_id"
+    )
 
     for col in dct_choices:
         df[col] = df[col].apply(convert_to_human_readable, args=(dct_choices[col],))
@@ -674,7 +694,7 @@ def pull_all_years_together(f_output):
             nullif(concat(', ', mod_cover_crop_species_5), ', ')
         ) as cc_species_raw,
         survey_response_id,
-        survey_field_id
+        surveyfield_id as survey_field_id
     from (
         select
             surveyfield.*,
@@ -692,6 +712,7 @@ def pull_all_years_together(f_output):
             ) as wisc_cc_id,
             surveyfarm.survey_year as year,
             surveyfarm.id as master_survey_farm_id,
+            surveyfield.id as surveyfield_id,
             case
                 when surveyfield.cover_crop_species_1 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
                 when surveyfield.cover_crop_species_1 = 'BALANSA_CLOVER' then 'balansa clover'
@@ -1091,7 +1112,6 @@ def data_export():
     df = df.drop(
         columns=[
             "survey_response_id",
-            "survey_field_id",
             "years_experience",
             "anpp",
             "days_from_plant_to_bio_hrvst",
@@ -1103,6 +1123,7 @@ def data_export():
     )
     df = df.rename(
         columns={
+            "id": "survey_farm_id",
             "year": "survey_year",
             "county": "county_farm",
             "county_single": "county_field",
