@@ -82,11 +82,11 @@ from wisccc.data_mgmt import (
 
 # REVISE WITH NEW STRUCTURE
 #   This will be dependent on how the forms shake out.
-def check_section_completed(user_id, section):
+def check_section_completed(farmer_id, section, survey_year):
     """Checks a particular section, farmer, 1, 2, 3
     to see if a particualr required field is a completed."""
-    survey_year = 2024
-    farmer = Farmer.objects.filter(user_id=user_id).first()
+
+    farmer = Farmer.objects.filter(id=farmer_id).first()
     if section == 1:
 
         if farmer is None:
@@ -257,7 +257,7 @@ def wisccc_download_data(request, opt):
 
 
 @login_required
-def wisc_cc_survey(request):
+def wisc_cc_survey(request, survey_year=2024):
     """
     Home page for Cover Crop survey. We check progress of different sections of the survey
     by querying one required question from each section (0 (the farmer section),1,2,3).
@@ -270,26 +270,54 @@ def wisc_cc_survey(request):
     #       -> Checked with Farmer.objects.get
     #   be registered for the proper survey season
     #       -> Check if user has registration record
+    # survey_year = 2024
 
     try:
-        farmer_instance = Farmer.objects.get(user_id=request.user.id)
+        farmer_id = int(request.GET.get("farmer_id"))
     except:
-        return redirect("wisc_cc_register_1")
+        farmer_id = None
 
-    try:
-        registration = SurveyRegistration.objects.get(farmer_id=farmer_instance.id)
-    except:
-        return redirect("wisc_cc_register_1")
+    print("Survey year:", survey_year)
+    print("Farmer id:", farmer_id)
 
-    completed_1 = check_section_completed(request.user.id, 1)
-    completed_2 = check_section_completed(request.user.id, 2)
-    completed_3 = check_section_completed(request.user.id, 3)
-    completed_4 = check_section_completed(request.user.id, 4)
-    completed_5 = check_section_completed(request.user.id, 5)
-    completed_6 = check_section_completed(request.user.id, 6)
-    completed_7 = check_section_completed(request.user.id, 7)
+    # If no farmer id specified
+    #   likely it's the logged in farmer attempting their survey
+    # Then make them register if they are not a farmer or if they aren't registered
+    if farmer_id is None:
+        print("Farmer ID is none from query string")
+        try:
+            farmer_instance = Farmer.objects.get(user_id=request.user.id)
+            farmer_id = farmer_instance.id
+            # Verify we are registered
+            registration = SurveyRegistration.objects.get(farmer_id=farmer_instance.id)
+        except:
+            return redirect("wisc_cc_register_1")
+
+    # When farmer id comes from query string,
+    #   likely our user is a survey manager: verify this.
+    if farmer_id != None and not request.user.has_perm("wisccc.survery_manager"):
+        # If not survey manager, verify query string farmer id is the logged in user
+        user_farmer_id = Farmer.objects.get(user_id=request.user.id).id
+        if farmer_id != user_farmer_id:
+            return redirect("wisc_cc_unauthorized")
+
+    completed_1 = check_section_completed(farmer_id, 1, survey_year)
+    completed_2 = check_section_completed(farmer_id, 2, survey_year)
+    completed_3 = check_section_completed(farmer_id, 3, survey_year)
+    completed_4 = check_section_completed(farmer_id, 4, survey_year)
+    completed_5 = check_section_completed(farmer_id, 5, survey_year)
+    completed_6 = check_section_completed(farmer_id, 6, survey_year)
+    completed_7 = check_section_completed(farmer_id, 7, survey_year)
 
     template = "wisccc/wisc_cc_survey.html"
+
+    farmer = Farmer.objects.get(id=farmer_id)
+    # Just grabbing the first for rare cases when there might be two survey farms in a year
+    survey_farm = SurveyFarm.objects.filter(
+        farmer_id=farmer.id, survey_year=survey_year
+    ).first()
+
+    survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id)
 
     return render(
         request,
@@ -302,17 +330,39 @@ def wisc_cc_survey(request):
             "completed_5": completed_5,
             "completed_6": completed_6,
             "completed_7": completed_7,
+            "farmer": farmer,
+            "survey_farm": survey_farm,
+            "survey_fields": survey_fields,
         },
     )
 
 
+def wisc_cc_unauthorized(request):
+
+    template = "wisccc/wisc_cc_unauthorized.html"
+    return render(
+        request,
+        template,
+    )
+
+
 @login_required
-def wisc_cc_survey1(request):
+def wisc_cc_survey1(request, farmer_id):
     """I. General info: Farmer information"""
+
+    # check if user is the logged in farmer
+    user_farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if (user_farmer.id != farmer_id) and (
+        not request.user.has_perm("wisccc.survery_manager")
+    ):
+        return redirect("wisc_cc_unauthorized")
+
+    # The case where a user gets to wisc-cc-survey/1
+    #   but is not a farmer
     try:
-        instance = Farmer.objects.filter(user_id=request.user.id).first()
+        instance = Farmer.objects.get(id=farmer_id)
     except:
-        instance = Farmer.objects.create(user_id=request.user.id)
+        return redirect("wisc_cc_register_1")
 
     form_farmer = FarmerForm(request.POST or None, instance=instance)
     if form_farmer.is_valid():
@@ -333,23 +383,20 @@ def wisc_cc_survey1(request):
 
 
 @login_required
-def wisc_cc_survey2(request):
+def wisc_cc_survey2(request, sfarmid, survey_year=2024):
     """II. Cover cropping goals and support
     only Survey Farm data"""
-    # field names as keys
-    context = {}
-    survey_year = 2024
 
-    farmer = Farmer.objects.filter(user_id=request.user.id).first()
-    if farmer is None:
-        # This is in case someone clicks to fill out the survey before filling in farmer info
-        farmer = Farmer.objects.create(user_id=request.user.id)
+    survey_farm = SurveyFarm.objects.get(id=sfarmid)
 
-    survey_farm = (
-        SurveyFarm.objects.filter(farmer_id=farmer.id)
-        .filter(survey_year=survey_year)
-        .first()
-    )
+    farmer = Farmer.objects.get(id=survey_farm.farmer_id)
+
+    # check if user is the logged in farmer
+    user_farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if (user_farmer.id != survey_farm.farmer.id) and (
+        not request.user.has_perm("wisccc.survery_manager")
+    ):
+        return redirect("wisc_cc_unauthorized")
     # pass the object as instance in form
     form_surveyfarm_section_2 = SurveyFarmFormSection2(
         request.POST or None, instance=survey_farm
@@ -371,7 +418,7 @@ def wisc_cc_survey2(request):
 
 
 @login_required
-def wisc_cc_survey3(request):
+def wisc_cc_survey3(request, sfieldid):
     """Research Field: Crop rotation and planting rates
     Uses SurveyField and FieldFarm
     We will redirect a user to separate page, where they will select
@@ -386,40 +433,47 @@ def wisc_cc_survey3(request):
 
     # Don't forget to grab based on survey_year!!!
     survey_year = 2024
-    farmer = Farmer.objects.filter(user_id=request.user.id).first()
-    if farmer is None:
-        # This is in case someone clicks to fill out the survey before filling in farmer info
-        farmer = Farmer.objects.create(user_id=request.user.id)
+
+    survey_field = SurveyField.objects.get(id=sfieldid)
+
+    # farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    # if farmer is None:
+    #     # This is in case someone clicks to fill out the survey before filling in farmer info
+    #     farmer = Farmer.objects.create(user_id=request.user.id)
 
     # Grab survey farm objects
     survey_farm = (
-        SurveyFarm.objects.filter(farmer_id=farmer.id)
-        .filter(survey_year=survey_year)
+        SurveyFarm.objects.filter(id=survey_field.survey_farm_id)
+        # .filter(survey_year=survey_year)
         .first()
     )
+
+    # check if user is the logged in farmer
+    user_farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if (user_farmer.id != survey_farm.farmer.id) and (
+        not request.user.has_perm("wisccc.survery_manager")
+    ):
+        return redirect("wisc_cc_unauthorized")
 
     # These if/else statements are here in case a record of the SurveyFarm is not yet created for 18.216.216.77
     # the farmer and needs to be created for this year. Without these if/else then errors occur because
     # of the need for the id field later on.
-    if survey_farm is None:
-        survey_farm = SurveyFarm.objects.create(farmer=farmer, survey_year=survey_year)
-        survey_field = None
-    else:
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+    # if survey_farm is None:
+    #     survey_farm = SurveyFarm.objects.create(farmer=farmer, survey_year=survey_year)
+    #     survey_field = None
+    # else:
+    #     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
 
     # If the survey field has not been created then no field populated for this year
-    if survey_field is None:
-        field_farm = None
-    # If the field farm id is not null, then it has been populated already
-    elif survey_field.field_farm_id is not None:
-        field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
+    if survey_field.field_farm_id is not None:
+        field_farm = FieldFarm.objects.get(id=survey_field.field_farm_id)
     else:
         field_farm = None
     print("field_farm is None", field_farm is None)
     # Is there a field_farm associated with this survey_field?
     if field_farm is None:
         # Check for fields associated with this farmer, if one or more, then send to selection page
-        field_farms = FieldFarm.objects.filter(farmer_id=farmer.id)
+        field_farms = FieldFarm.objects.filter(farmer_id=survey_farm.farmer.id)
         print("field_farms is None", field_farms is None)
         print("len(field_farms)", len(field_farms))
         if len(field_farms) >= 1:
@@ -437,7 +491,7 @@ def wisc_cc_survey3(request):
     if form_surveyfield_section_3.is_valid() and form_fieldfarm_section_3.is_valid():
 
         new_field_farm_form = form_fieldfarm_section_3.save(commit=False)
-        new_field_farm_form.farmer = farmer
+        new_field_farm_form.farmer = survey_farm.farmer
         new_survey_field_form = form_surveyfield_section_3.save(commit=False)
         new_survey_field_form.survey_farm = survey_farm
         new_survey_field_form.field_farm = new_field_farm_form
@@ -471,25 +525,25 @@ def wisc_cc_survey3a(request):
 
 
 @login_required
-def wisc_cc_survey4(request):
+def wisc_cc_survey4(request, sfieldid):
     """IV. Research Field: Planting dates & timing
     Uses survey_field and one question, cash crop planting date, from surveyfarm"""
     # Don't forget to grab based on survey_year!!!
     survey_year = 2024
-    farmer = Farmer.objects.filter(user_id=request.user.id).first()
-    if farmer is None:
-        # This is in case someone clicks to fill out the survey before filling in farmer info
-        farmer = Farmer.objects.create(user_id=request.user.id)
-    survey_farm = (
-        SurveyFarm.objects.filter(farmer_id=farmer.id)
-        .filter(survey_year=survey_year)
-        .first()
-    )
-    if survey_farm is None:
-        survey_farm = SurveyFarm.objects.create(farmer=farmer, survey_year=survey_year)
-        survey_field = None
-    else:
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+
+    survey_field = SurveyField.objects.get(id=sfieldid)
+    # Grab survey farm objects
+    #   !! Just filtering here, could be issues when multiple survey farms!! #
+    survey_farm = SurveyFarm.objects.filter(id=survey_field.survey_farm_id).first()
+
+    # check if user is the logged in farmer
+    user_farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if (user_farmer.id != survey_farm.farmer.id) and (
+        not request.user.has_perm("wisccc.survery_manager")
+    ):
+        return redirect("wisc_cc_unauthorized")
+
+    farmer = Farmer.objects.get(id=survey_farm.farmer.id)
 
     form_surveyfarm_section_4 = SurveyFarmFormSection4(
         request.POST or None, instance=survey_farm
@@ -537,28 +591,27 @@ def wisc_cc_survey4(request):
 
 
 @login_required
-def wisc_cc_survey5(request):
+def wisc_cc_survey5(request, sfieldid):
     """V. Research Field: Manure, tillage, soil conditions
     Uses SurveyField"""
     # field names as keys
     context = {}
-
     # Don't forget to grab based on survey_year!!!
     survey_year = 2024
-    farmer = Farmer.objects.filter(user_id=request.user.id).first()
-    if farmer is None:
-        # This is in case someone clicks to fill out the survey before filling in farmer info
-        farmer = Farmer.objects.create(user_id=request.user.id)
-    survey_farm = (
-        SurveyFarm.objects.filter(farmer_id=farmer.id)
-        .filter(survey_year=survey_year)
-        .first()
-    )
-    if survey_farm is None:
-        survey_farm = SurveyFarm.objects.create(farmer=farmer, survey_year=survey_year)
-        survey_field = None
-    else:
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+
+    survey_field = SurveyField.objects.get(id=sfieldid)
+    # Grab survey farm objects
+    #   !! Just filtering here, could be issues when multiple survey farms!! #
+    survey_farm = SurveyFarm.objects.filter(id=survey_field.survey_farm_id).first()
+
+    # check if user is the logged in farmer
+    user_farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if (user_farmer.id != survey_farm.farmer.id) and (
+        not request.user.has_perm("wisccc.survery_manager")
+    ):
+        return redirect("wisc_cc_unauthorized")
+
+    farmer = Farmer.objects.get(id=survey_farm.farmer.id)
 
     # pass the object as instance in form
     form_surveyfield_section_5 = SurveyFieldFormSection5(
@@ -580,25 +633,25 @@ def wisc_cc_survey5(request):
 
 
 @login_required
-def wisc_cc_survey6(request):
+def wisc_cc_survey6(request, sfieldid):
     """VI. Research Field: Cover crop seeding & cost
     Uses survey_field and surveyfarm"""
     # Don't forget to grab based on survey_year!!!
     survey_year = 2024
-    farmer = Farmer.objects.filter(user_id=request.user.id).first()
-    if farmer is None:
-        # This is in case someone clicks to fill out the survey before filling in farmer info
-        farmer = Farmer.objects.create(user_id=request.user.id)
-    survey_farm = (
-        SurveyFarm.objects.filter(farmer_id=farmer.id)
-        .filter(survey_year=survey_year)
-        .first()
-    )
-    if survey_farm is None:
-        survey_farm = SurveyFarm.objects.create(farmer=farmer, survey_year=survey_year)
-        survey_field = None
-    else:
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+
+    survey_field = SurveyField.objects.get(id=sfieldid)
+    # Grab survey farm objects
+    #   !! Just filtering here, could be issues when multiple survey farms!! #
+    survey_farm = SurveyFarm.objects.filter(id=survey_field.survey_farm_id).first()
+
+    # check if user is the logged in farmer
+    user_farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if (user_farmer.id != survey_farm.farmer.id) and (
+        not request.user.has_perm("wisccc.survery_manager")
+    ):
+        return redirect("wisc_cc_unauthorized")
+
+    farmer = Farmer.objects.get(id=survey_farm.farmer.id)
 
     form_surveyfarm_section_6 = SurveyFarmFormSection6(
         request.POST or None, instance=survey_farm
@@ -613,6 +666,7 @@ def wisc_cc_survey6(request):
         new_form_survey_farm.farmer = farmer
         new_form_survey_farm.survey_year = survey_year
         new_form_survey_farm.save()
+
         new_form_survey_field = form_surveyfield_section_6.save(commit=False)
         new_form_survey_field.survey_farm = survey_farm
         new_form_survey_field.save()
@@ -631,22 +685,22 @@ def wisc_cc_survey6(request):
 
 
 @login_required
-def wisc_cc_survey7(request):
+def wisc_cc_survey7(request, sfarmid):
     """VII. Final thoughts
     Uses SurveyFarm"""
     context = {}
     survey_year = 2024
 
-    farmer = Farmer.objects.filter(user_id=request.user.id).first()
-    if farmer is None:
-        # This is in case someone clicks to fill out the survey before filling in farmer info
-        farmer = Farmer.objects.create(user_id=request.user.id)
+    survey_farm = SurveyFarm.objects.get(id=sfarmid)
 
-    survey_farm = (
-        SurveyFarm.objects.filter(farmer_id=farmer.id)
-        .filter(survey_year=survey_year)
-        .first()
-    )
+    farmer = Farmer.objects.get(id=survey_farm.farmer_id)
+
+    # check if user is the logged in farmer
+    user_farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if (user_farmer.id != survey_farm.farmer.id) and (
+        not request.user.has_perm("wisccc.survery_manager")
+    ):
+        return redirect("wisc_cc_unauthorized")
 
     # pass the object as instance in form
     form_surveyfarm_section_7 = SurveyFarmFormSection7(
@@ -1649,18 +1703,23 @@ def wisc_cc_register_1(request):
 @login_required
 def wisc_cc_register_2(request):
     """For when a user already exists."""
+    survey_year = 2024
     user = User.objects.get(id=request.user.id)
-
+    # !!!!!!!!!!!!!!!!!!!!!!!!! #
+    # CREATE necessary records here!
+    # survey farm
+    # survey field
+    # farm field?
+    # !!!!!!!!!!!!!!!!!!!!!!!!! #
     farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
 
     farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
 
-    try:
-        registration_instance = SurveyRegistration.objects.filter(
-            farmer_id=farmer_instance.id
-        ).first()
-    except:
-        registration_instance = None
+    registration_instance = SurveyRegistration.objects.filter(
+        farmer_id=farmer_instance.id, survey_year=survey_year
+    ).first()
+
+    is_new_registration = registration_instance is None
 
     registration_form = SurveyRegistrationPartialForm(
         request.POST or None, instance=registration_instance
@@ -1675,10 +1734,15 @@ def wisc_cc_register_2(request):
         new_farmer.save()
 
         new_register.farmer = new_farmer
-        new_register.survey_year = 2024
+        new_register.survey_year = survey_year
         new_register.save()
 
-        messages.success(request, "Account created successfully")
+        if is_new_registration:
+            survey_farm = SurveyFarm.objects.create(
+                farmer=new_farmer, survey_year=survey_year
+            )
+            survey_field = SurveyField.objects.create(survey_farm=survey_farm)
+
         return redirect("wisc_cc_register_3")
 
     return render(
@@ -1728,16 +1792,17 @@ def wisc_cc_register_by_mgmt_exist_user(request, pk):
     survey_year = 2024
 
     selected_user = get_object_or_404(User, id=pk)
-    try:
-        farmer_instance = Farmer.objects.filter(user_id=selected_user.id).first()
-    except:
-        farmer_instance = Farmer.objects.create(user_id=selected_user.id)
+
+    farmer_instance = Farmer.objects.filter(user_id=selected_user.id).first()
 
     form_farmer = FarmerForm(request.POST or None, instance=farmer_instance)
 
     registration_instance = SurveyRegistration.objects.filter(
-        farmer=farmer_instance
+        farmer_id=farmer_instance.id, survey_year=survey_year
     ).first()
+
+    is_new_registration = registration_instance is None
+
     registration_form = SurveyRegistrationFullForm(
         request.POST or None, instance=registration_instance
     )
@@ -1752,8 +1817,13 @@ def wisc_cc_register_by_mgmt_exist_user(request, pk):
 
         new_registrant.farmer = new_farmer
         new_registrant.survey_year = survey_year
-
         new_registrant.save()
+
+        if is_new_registration:
+            survey_farm = SurveyFarm.objects.create(
+                farmer=new_farmer, survey_year=survey_year
+            )
+            survey_field = SurveyField.objects.create(survey_farm=survey_farm)
 
         return redirect("registration_table")
     else:
@@ -1795,15 +1865,19 @@ def wisc_cc_register_by_mgmt(request):
         new_farmer = farmer_form.save(commit=False)
         new_registrant = registration_form.save(commit=False)
         new_user = signup_form.save(commit=False)
+        new_user.save()
 
         new_farmer.user = new_user
         new_farmer.save()
 
         new_registrant.farmer = new_farmer
         new_registrant.survey_year = survey_year
-
         new_registrant.save()
-        new_user.save()
+
+        survey_farm = SurveyFarm.objects.create(
+            farmer=new_farmer, survey_year=survey_year
+        )
+        survey_field = SurveyField.objects.create(survey_farm=survey_farm)
 
         return redirect("registration_table")
     else:

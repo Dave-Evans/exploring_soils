@@ -52,84 +52,120 @@
         <div class="col-md-10">
           <div class="list-group">
             {% if completed_1 %}
-            <a href="{% url 'wisc_cc_survey1' %}"
+            <a href="{% url 'wisc_cc_survey1' farmer.id %}"
               class="list-group-item list-group-item-action list-group-item-success">
               I. General info - completed! Click to edit your response.
             </a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey1' %}"
+            <a href="{% url 'wisc_cc_survey1' farmer.id %}"
               class="list-group-item list-group-item-action list-group-item-warning">
               I. General info
             </a>
             {% endif %}
 
             {% if completed_2 %}
-            <a href="{% url 'wisc_cc_survey2' %}"
+            <a href="{% url 'wisc_cc_survey2' survey_farm.id %}"
               class="list-group-item list-group-item-action list-group-item-success">
               II. Cover cropping goals & support - completed! Click to edit your response.
             </a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey2' %}"
+            <a href="{% url 'wisc_cc_survey2' survey_farm.id %}"
               class="list-group-item list-group-item-action list-group-item-warning">
               II. Cover cropping goals & support
             </a>
             {% endif %}
+          </div>
 
-            {% if completed_3 %}
-            <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-success">
-              III. Research Field: Crop rotation and planting rates - completed! Click to edit your response.
-            </a>
-            {% else %}
-            <a href="{% url 'wisc_cc_survey3' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">
-              III. Research Field: Crop rotation and planting rates
-            </a>
-            {% endif %}
+          {% for survey_field in survey_fields %}
+
+          <div class="card">
+            <div class="card-header" id="headingOne">
+
+              <button class="btn btn-warning btn-block text-left" type="button" data-toggle="collapse"
+                data-target="#collapse-{{ forloop.counter }}" aria-expanded="true" aria-controls="collapseOne">
+                Field {{ forloop.counter }}
+              </button>
+
+            </div>
+
+            <div id="collapse-{{ forloop.counter }}" class="collapse show" aria-labelledby="headingOne"
+              data-parent="#accordionExample">
+              <div class="card-body">
+                <div class="list-group">
+                  {% if completed_3 %}
+                  <a href="{% url 'wisc_cc_survey3' survey_field.id %}"
+                    class="list-group-item list-group-item-action list-group-item-success">
+                    III. Research Field: Crop rotation and planting rates - completed! Click to edit your response.
+                  </a>
+                  {% else %}
+                  <a href="{% url 'wisc_cc_survey3' survey_field.id %}"
+                    class="list-group-item list-group-item-action list-group-item-warning">
+                    III. Research Field: Crop rotation and planting rates
+                  </a>
+                  {% endif %}
 
 
-            {% if completed_4 %}
-            <a href="{% url 'wisc_cc_survey4' %}"
-              class="list-group-item list-group-item-action list-group-item-success">
-              IV. Research Field: Planting dates & timing - completed! Click to edit your response.
-            </a>
-            {% else %}
-            <a href="{% url 'wisc_cc_survey4' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">
-              IV. Research Field: Planting dates & timing
-            </a>
-            {% endif %}
+                  {% if completed_4 %}
+                  <a href="{% url 'wisc_cc_survey4' survey_field.id %}"
+                    class="list-group-item list-group-item-action list-group-item-success">
+                    IV. Research Field: Planting dates & timing - completed! Click to edit your response.
+                  </a>
+                  {% else %}
+                  <a href="{% url 'wisc_cc_survey4' survey_field.id %}"
+                    class="list-group-item list-group-item-action list-group-item-warning">
+                    IV. Research Field: Planting dates & timing
+                  </a>
+                  {% endif %}
 
-            {% if completed_5 %}
-            <a href="{% url 'wisc_cc_survey5' %}"
-              class="list-group-item list-group-item-action list-group-item-success">
-              V. Research Field: Manure, tillage, soil conditions - completed! Click to edit your response.
-            </a>
-            {% else %}
-            <a href="{% url 'wisc_cc_survey5' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">
-              V. Research Field: Manure, tillage, soil conditions
-            </a>
-            {% endif %}
+                  {% if completed_5 %}
+                  <a href="{% url 'wisc_cc_survey5' survey_field.id %}"
+                    class="list-group-item list-group-item-action list-group-item-success">
+                    V. Research Field: Manure, tillage, soil conditions - completed! Click to edit your response.
+                  </a>
+                  {% else %}
+                  <a href="{% url 'wisc_cc_survey5' survey_field.id %}"
+                    class="list-group-item list-group-item-action list-group-item-warning">
+                    V. Research Field: Manure, tillage, soil conditions
+                  </a>
+                  {% endif %}
 
-            {% if completed_6 %}
-            <a href="{% url 'wisc_cc_survey6' %}"
-              class="list-group-item list-group-item-action list-group-item-success">
-              VI. Research Field: Cover crop seeding & cost - completed! Click to edit your response.
-            </a>
-            {% else %}
-            <a href="{% url 'wisc_cc_survey6' %}"
-              class="list-group-item list-group-item-action list-group-item-warning">
-              VI. Research Field: Cover crop seeding & cost
-            </a>
-            {% endif %}
+                  {% if completed_6 %}
+                  <a href="{% url 'wisc_cc_survey6' survey_field.id %}"
+                    class="list-group-item list-group-item-action list-group-item-success">
+                    VI. Research Field: Cover crop seeding & cost - completed! Click to edit your response.
+                  </a>
+                  {% else %}
+                  <a href="{% url 'wisc_cc_survey6' survey_field.id %}"
+                    class="list-group-item list-group-item-action list-group-item-warning">
+                    VI. Research Field: Cover crop seeding & cost
+                  </a>
+                  {% endif %}
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+          {% endfor %}
+
+          <div class="card">
+            <div class="card-header" id="headingOne">
+
+              <button class="btn btn-warning btn-block text-left" type="button" href="#">
+                Add another field - TODO: create options for creating a new field!
+              </button>
+
+            </div>
+          </div>
+
+          <div class="list-group">
             {% if completed_7 %}
-            <a href="{% url 'wisc_cc_survey7' %}"
+            <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
               class="list-group-item list-group-item-action list-group-item-success">
               VII. Final thoughts - completed! Click to edit your response.
             </a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey7' %}"
+            <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
               class="list-group-item list-group-item-action list-group-item-warning">
               VII. Final thoughts
             </a>

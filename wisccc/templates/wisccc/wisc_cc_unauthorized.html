@@ -1,0 +1,42 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h5>Not authorized</h5>
+                <div>
+                    <p>
+                        You have just tried to access a part of survey which is not your own.
+                        Sorry if there is some confusion.
+                    </p>
+                    <p>
+                        Please make sure that you have registerd for this year's survey at the
+                        <a href="{% url 'wisc_cc_register_1' %}">
+                            registration page.
+                        </a>.
+                    </p>
+                    <p>
+                        You could try restarting at the <a href="{% url 'wisc_cc_survey' %}">
+                            survey home page.
+                        </a>.
+                    </p>
+                    <p>
+                        If you continue having problems, please email me.
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}

@@ -169,31 +169,61 @@ urlpatterns = [
         wisccc_views.wisccc_researcher_download_data,
         name="wisccc_researcher_download_data",
     ),
-    # Temporarily directing people to the home page rather than the survey page.
-    re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),
     re_path(
-        r"^wisc-cc-survey/1$", wisccc_views.wisc_cc_survey1, name="wisc_cc_survey1"
+        r"^wisc_cc_unauthorized$",
+        wisccc_views.wisc_cc_unauthorized,
+        name="wisc_cc_unauthorized",
     ),
-    re_path(
-        r"^wisc-cc-survey/2$", wisccc_views.wisc_cc_survey2, name="wisc_cc_survey2"
+    # No year specified, then default is hardcoded in view
+    re_path(r"^wisc-cc-survey$", wisccc_views.wisc_cc_survey, name="wisc_cc_survey"),
+    path(
+        "wisc-cc-survey/<int:survey_year>/",
+        wisccc_views.wisc_cc_survey,
+        name="wisc_cc_survey",
+    ),
+    # re_path(
+    #     r"^wisc-cc-survey/1$", wisccc_views.wisc_cc_survey1, name="wisc_cc_survey1"
+    # ),
+    path(
+        r"wisc-cc-survey/1/<int:farmer_id>/",
+        wisccc_views.wisc_cc_survey1,
+        name="wisc_cc_survey1",
+    ),
+    # re_path(
+    #     r"^wisc-cc-survey/2$", wisccc_views.wisc_cc_survey2, name="wisc_cc_survey2"
+    # ),
+    path(
+        r"wisc-cc-survey/2/<int:sfarmid>/",
+        wisccc_views.wisc_cc_survey2,
+        name="wisc_cc_survey2",
     ),
     re_path(
         r"^wisc-cc-survey/3a$", wisccc_views.wisc_cc_survey3a, name="wisc_cc_survey3a"
     ),
-    re_path(
-        r"^wisc-cc-survey/3$", wisccc_views.wisc_cc_survey3, name="wisc_cc_survey3"
+    path(
+        r"wisc-cc-survey/3/<int:sfieldid>/",
+        wisccc_views.wisc_cc_survey3,
+        name="wisc_cc_survey3",
     ),
-    re_path(
-        r"^wisc-cc-survey/4$", wisccc_views.wisc_cc_survey4, name="wisc_cc_survey4"
+    path(
+        r"^wisc-cc-survey/4/<int:sfieldid>/",
+        wisccc_views.wisc_cc_survey4,
+        name="wisc_cc_survey4",
     ),
-    re_path(
-        r"^wisc-cc-survey/5$", wisccc_views.wisc_cc_survey5, name="wisc_cc_survey5"
+    path(
+        r"wisc-cc-survey/5/<int:sfieldid>/",
+        wisccc_views.wisc_cc_survey5,
+        name="wisc_cc_survey5",
     ),
-    re_path(
-        r"^wisc-cc-survey/6$", wisccc_views.wisc_cc_survey6, name="wisc_cc_survey6"
+    path(
+        r"wisc-cc-survey/6/<int:sfieldid>/",
+        wisccc_views.wisc_cc_survey6,
+        name="wisc_cc_survey6",
     ),
-    re_path(
-        r"^wisc-cc-survey/7$", wisccc_views.wisc_cc_survey7, name="wisc_cc_survey7"
+    path(
+        r"wisc-cc-survey/7/<int:sfarmid>/",
+        wisccc_views.wisc_cc_survey7,
+        name="wisc_cc_survey7",
     ),
     path(
         "update_fieldfarm/<id>",
