@@ -16,13 +16,16 @@
 </script>
 
 <h3 class="card-title">I. General info</h3>
+<p>{{ form_farmer.id}}</p>
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
   {% include 'wisccc/includes/form_farmer.html' %}
 
   <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
-  <a href="{% url 'wisc_cc_survey' %}"><button type="button" class="warn btn btn-secondary">Back to survey home
+  <a href="{% url 'wisc_cc_survey' %}?farmer_id={{ farmer_id }}"><button type="button"
+      class="warn btn btn-secondary">Back to survey
+      home
       page</button></a>
 
 

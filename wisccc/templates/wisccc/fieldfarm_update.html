@@ -22,14 +22,13 @@
 
   {% include 'wisccc/includes/form_fieldfarm_full.html' %}
 
-  <button type="submit" class="noprompt-required btn btn-primary">Submit edits</button>
+  <button type="submit" class="noprompt-required btn btn-primary">Select as field for this survey</button>
+
+  <!-- <a class="btn btn-info btn-sm" href="{% url 'wisc_cc_survey_populate_fieldfarm' field_farm.id %}">Select as this years
+    field</a> -->
 
 
-  <a class="btn btn-info btn-sm" href="{% url 'wisc_cc_survey_populate_fieldfarm' field_farm.id %}">Select as this years
-    field</a>
-
-
-  <a href="{% url 'wisc_cc_survey' %}">
+  <a href="{% url 'wisc_cc_survey' %}?farmer_id={{ farmer_id }}">
     <button type="button" class="warn btn-sm btn-info">
       Back to survey home page
     </button>

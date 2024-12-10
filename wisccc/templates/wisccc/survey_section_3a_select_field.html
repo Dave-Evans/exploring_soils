@@ -9,12 +9,12 @@
 {% block form %}
 
 <h3 class="card-title">III. Research Field: Select a field</h3>
-<p>Are you filling out this survey for the same field as last year?</p>
-<p>If you are going to use the same field, select it, and verify the information is correct.
+<p>Are you filling out this survey for a field for which you have already entered in one of our surveys?</p>
+<p>If you are going to use an existing field, select it, and verify the information is correct.
   Then click "Select as this year's field"
 </p>
 <p>If you are going to enter information for a different field, then please select "Create New",
-  enter the necessary information.
+  and enter the necessary information.
 </p>
 
 {% if field_farm_list %}
@@ -22,15 +22,16 @@
   <div class="list-group">
 
     {% for field_farm in field_farm_list %}
-    <a href="{% url 'update_fieldfarm' field_farm.id %}"
+    <a href="{% url 'update_fieldfarm' farmer_id survey_field_id field_farm.id %}"
       class="list-group-item list-group-item-action list-group-item-success">
 
-      Field from 2023: {{field_farm.field_acreage}} acres
+      Field with {{field_farm.field_acreage}} acres
 
     </a>
     {% endfor %}
-    <a href="{% url 'create_fieldfarm' %}" class="list-group-item list-group-item-action list-group-item-success">
-      Create new!
+    <a href="{% url 'create_fieldfarm' farmer_id survey_field_id %}"
+      class="list-group-item list-group-item-action list-group-item-success">
+      Create new! - This should go straight to section 3, with blank field farm
     </a>
   </div>
 </div>

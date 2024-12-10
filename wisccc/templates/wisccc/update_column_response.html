@@ -1,2 +1,6 @@
+{% if record.survey_year == 2024 %}
 <a class="btn btn-info btn-sm"
     href="{% url 'wisc_cc_survey' record.survey_year %}?farmer_id={{ record.farmer_id }}">Open</a>
+{% else %}
+<a class="btn btn-info btn-sm" href="{% url 'update_response' record.id %}">Open</a>
+{% endif %}

@@ -192,8 +192,10 @@ urlpatterns = [
         wisccc_views.wisc_cc_survey2,
         name="wisc_cc_survey2",
     ),
-    re_path(
-        r"^wisc-cc-survey/3a$", wisccc_views.wisc_cc_survey3a, name="wisc_cc_survey3a"
+    path(
+        r"wisc-cc-survey/3a/<int:farmer_id>/<int:sfieldid>/",
+        wisccc_views.wisc_cc_survey3a,
+        name="wisc_cc_survey3a",
     ),
     path(
         r"wisc-cc-survey/3/<int:sfieldid>/",
@@ -221,12 +223,12 @@ urlpatterns = [
         name="wisc_cc_survey7",
     ),
     path(
-        "update_fieldfarm/<id>",
+        "update_fieldfarm/<int:farmer_id>/<int:sfieldid>/<int:farmfield_id>",
         wisccc_views.update_fieldfarm,
         name="update_fieldfarm",
     ),
     path(
-        "create_fieldfarm",
+        "create_fieldfarm/<int:farmer_id>/<int:sfieldid>/",
         wisccc_views.create_fieldfarm,
         name="create_fieldfarm",
     ),
