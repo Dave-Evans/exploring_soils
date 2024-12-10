@@ -10,7 +10,7 @@ class ResponseTable(tables.Table):
     last_name = tables.Column()
     # username = tables.Column()
     email = tables.Column()
-    survey_created = tables.Column()
+    survey_year = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column_response.html")
     upload_photo = TemplateColumn(template_name="wisccc/upload_photo_column.html")
     update_labdata = TemplateColumn(

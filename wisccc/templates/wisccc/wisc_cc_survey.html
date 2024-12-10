@@ -1,6 +1,6 @@
 {% extends 'wisccc/base_wisccc.html' %}
 {% load static %}
-
+{% load crispy_forms_tags %}
 {% block content %}
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> -->
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"> -->
@@ -51,7 +51,7 @@
 
         <div class="col-md-10">
           <div class="list-group">
-            {% if completed_1 %}
+            {% if farmer.last_name is not None %}
             <a href="{% url 'wisc_cc_survey1' farmer.id %}"
               class="list-group-item list-group-item-action list-group-item-success">
               I. General info - completed! Click to edit your response.
@@ -63,7 +63,7 @@
             </a>
             {% endif %}
 
-            {% if completed_2 %}
+            {% if survey_farm.percent_of_farm_cc is not None %}
             <a href="{% url 'wisc_cc_survey2' survey_farm.id %}"
               class="list-group-item list-group-item-action list-group-item-success">
               II. Cover cropping goals & support - completed! Click to edit your response.
@@ -76,66 +76,72 @@
             {% endif %}
           </div>
 
-          {% for survey_field in survey_fields %}
+          {% for survey_field_id, dict_vals in dict_survey_fields.items %}
 
           <div class="card">
             <div class="card-header" id="headingOne">
-
+              {% if dict_vals.is_completed %}
+              <button class="btn btn-success btn-block text-left" type="button" data-toggle="collapse"
+                data-target="#collapse-{{ forloop.counter }}" aria-expanded="true" aria-controls="collapseOne">
+                Field {{ forloop.counter }} click to see sections
+              </button>
+              {% else %}
               <button class="btn btn-warning btn-block text-left" type="button" data-toggle="collapse"
                 data-target="#collapse-{{ forloop.counter }}" aria-expanded="true" aria-controls="collapseOne">
-                Field {{ forloop.counter }}
+                Field {{ forloop.counter }} click to see sections
               </button>
+              {% endif %}
 
             </div>
 
-            <div id="collapse-{{ forloop.counter }}" class="collapse show" aria-labelledby="headingOne"
+            <div id="collapse-{{ forloop.counter }}" class="collapse" aria-labelledby="headingOne"
               data-parent="#accordionExample">
               <div class="card-body">
                 <div class="list-group">
-                  {% if completed_3 %}
-                  <a href="{% url 'wisc_cc_survey3' survey_field.id %}"
+                  {% if dict_vals.section_3 %}
+                  <a href="{% url 'wisc_cc_survey3' survey_field_id %}"
                     class="list-group-item list-group-item-action list-group-item-success">
                     III. Research Field: Crop rotation and planting rates - completed! Click to edit your response.
                   </a>
                   {% else %}
-                  <a href="{% url 'wisc_cc_survey3' survey_field.id %}"
+                  <a href="{% url 'wisc_cc_survey3' survey_field_id %}"
                     class="list-group-item list-group-item-action list-group-item-warning">
                     III. Research Field: Crop rotation and planting rates
                   </a>
                   {% endif %}
 
 
-                  {% if completed_4 %}
-                  <a href="{% url 'wisc_cc_survey4' survey_field.id %}"
+                  {% if dict_vals.section_4 %}
+                  <a href="{% url 'wisc_cc_survey4' survey_field_id %}"
                     class="list-group-item list-group-item-action list-group-item-success">
                     IV. Research Field: Planting dates & timing - completed! Click to edit your response.
                   </a>
                   {% else %}
-                  <a href="{% url 'wisc_cc_survey4' survey_field.id %}"
+                  <a href="{% url 'wisc_cc_survey4' survey_field_id %}"
                     class="list-group-item list-group-item-action list-group-item-warning">
                     IV. Research Field: Planting dates & timing
                   </a>
                   {% endif %}
 
-                  {% if completed_5 %}
-                  <a href="{% url 'wisc_cc_survey5' survey_field.id %}"
+                  {% if dict_vals.section_5 %}
+                  <a href="{% url 'wisc_cc_survey5' survey_field_id %}"
                     class="list-group-item list-group-item-action list-group-item-success">
                     V. Research Field: Manure, tillage, soil conditions - completed! Click to edit your response.
                   </a>
                   {% else %}
-                  <a href="{% url 'wisc_cc_survey5' survey_field.id %}"
+                  <a href="{% url 'wisc_cc_survey5' survey_field_id %}"
                     class="list-group-item list-group-item-action list-group-item-warning">
                     V. Research Field: Manure, tillage, soil conditions
                   </a>
                   {% endif %}
 
-                  {% if completed_6 %}
-                  <a href="{% url 'wisc_cc_survey6' survey_field.id %}"
+                  {% if dict_vals.section_6 %}
+                  <a href="{% url 'wisc_cc_survey6' survey_field_id %}"
                     class="list-group-item list-group-item-action list-group-item-success">
                     VI. Research Field: Cover crop seeding & cost - completed! Click to edit your response.
                   </a>
                   {% else %}
-                  <a href="{% url 'wisc_cc_survey6' survey_field.id %}"
+                  <a href="{% url 'wisc_cc_survey6' survey_field_id %}"
                     class="list-group-item list-group-item-action list-group-item-warning">
                     VI. Research Field: Cover crop seeding & cost
                   </a>
@@ -149,17 +155,25 @@
           {% endfor %}
 
           <div class="card">
-            <div class="card-header" id="headingOne">
+            <div class="card-header">
 
-              <button class="btn btn-warning btn-block text-left" type="button" href="#">
-                Add another field - TODO: create options for creating a new field!
-              </button>
+              {% if one_incomplete %}
+              <a class="list-group-item list-group-item-action list-group-item-warning">
+                Please finish the survey for all your current fields before adding another field.
+              </a>
+              {% else %}
+              <a href="{% url 'create_addtl_surveyfield' survey_farm.id %}"
+                class="list-group-item list-group-item-action list-group-item-success">
+                Add another field to this survey. Please note support for sampling this additional field may not be
+                available.
+              </a>
 
+              {% endif %}
             </div>
           </div>
 
           <div class="list-group">
-            {% if completed_7 %}
+            {% if survey_farm.encourage_cc is not None %}
             <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
               class="list-group-item list-group-item-action list-group-item-success">
               VII. Final thoughts - completed! Click to edit your response.
@@ -173,6 +187,31 @@
 
           </div>
         </div>
+        <hr>
+        {% if perms.wisccc.survery_manager %}
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <h3 class="card-title">Reviewer notes and accuracy confirmation</h3>
+          <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+              {{ form_surveyfarm_review.notes_admin|as_crispy_field }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+              {{ form_surveyfarm_review.confirmed_accurate|as_crispy_field }}
+            </div>
+          </div>
+
+          <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
+          <a href="{% url 'response_table' %}">
+            <button type="button" class="warn btn btn-secondary">
+              Back to survey response table
+            </button>
+          </a>
+
+        </form>
+        {% endif %}
         <br>
 
 

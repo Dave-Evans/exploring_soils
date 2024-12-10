@@ -10,22 +10,17 @@ urlpatterns = [
     re_path(
         r"^wisc_cc_manager_home$",
         wisccc_views.wisc_cc_manager_home,
-        name="wisc_cc_manager_home",
+        name="wisc_cc_manager",
     ),
     re_path(
         r"^wisc_cc_manager$",
         wisccc_views.wisc_cc_manager_home,
-        name="wisc_cc_manager_home",
+        name="wisc_cc_manager",
     ),
     re_path(
         r"^wisc_cc_about$",
         wisccc_views.wisc_cc_about,
         name="wisc_cc_about",
-    ),
-    re_path(
-        r"^wisc_cc_admin$",
-        wisccc_views.wisc_cc_manager_home,
-        name="wisc_cc_manager_home",
     ),
     re_path(
         r"^wisc_cc_register$",
@@ -206,7 +201,7 @@ urlpatterns = [
         name="wisc_cc_survey3",
     ),
     path(
-        r"^wisc-cc-survey/4/<int:sfieldid>/",
+        r"wisc-cc-survey/4/<int:sfieldid>/",
         wisccc_views.wisc_cc_survey4,
         name="wisc_cc_survey4",
     ),
@@ -234,6 +229,11 @@ urlpatterns = [
         "create_fieldfarm",
         wisccc_views.create_fieldfarm,
         name="create_fieldfarm",
+    ),
+    path(
+        "create_addtl_surveyfield/<int:sfarmid>/",
+        wisccc_views.create_addtl_surveyfield,
+        name="create_addtl_surveyfield",
     ),
     path(
         "wisc_cc_survey_populate_fieldfarm/<id>",

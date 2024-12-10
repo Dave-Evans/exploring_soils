@@ -82,133 +82,57 @@ from wisccc.data_mgmt import (
 
 # REVISE WITH NEW STRUCTURE
 #   This will be dependent on how the forms shake out.
-def check_section_completed(farmer_id, section, survey_year):
-    """Checks a particular section, farmer, 1, 2, 3
+def check_section_completed(farmer_id, survey_year, survey_farm, survey_fields):
+    """Checks a particular section, farmer, 1, 2, and 7 must survey_farm
+    3, 4, 5, 6 need survey_field
     to see if a particualr required field is a completed."""
+    section_statuses = {
+        "section_1": False,
+        "section_2": False,
+        "section_7": False,
+        "section_3_surveyfield_1": False,
+        "section_4_surveyfield_1": False,
+        "section_5_surveyfield_1": False,
+        "section_6_surveyfield_1": False,
+    }
+    dict_survey_fields = {}
+    one_incomplete = False
 
     farmer = Farmer.objects.filter(id=farmer_id).first()
-    if section == 1:
 
-        if farmer is None:
-            return False
-        if farmer.last_name == "" or farmer.last_name is None:
-            return False
+    if farmer.last_name != "" or farmer.last_name is not None:
+        section_statuses["section_1"] = True
 
-        return True
+    if survey_farm.percent_of_farm_cc is not None:
+        section_statuses["section_2"] = True
 
-    if section == 2:
-        if farmer is None:
-            return False
-        survey_farm = (
-            SurveyFarm.objects.filter(farmer_id=farmer.id)
-            .filter(survey_year=survey_year)
-            .first()
-        )
-        if survey_farm is None:
-            return False
-        if survey_farm.percent_of_farm_cc is None:
-            return False
+    if survey_farm.encourage_cc is not None:
+        section_statuses["section_7"] = True
 
-        return True
+    for i, survey_field in enumerate(survey_fields):
 
-    if section == 3:
-        if farmer is None:
-            return False
-        survey_farm = (
-            SurveyFarm.objects.filter(farmer_id=farmer.id)
-            .filter(survey_year=survey_year)
-            .first()
-        )
-        if survey_farm is None:
-            return False
+        section_3 = survey_field.crop_rotation_2023_cash_crop_species is not None
 
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-        if survey_field is None:
-            return False
+        section_4 = survey_field.cash_crop_planting_date is not None
 
-        if survey_field.crop_rotation_2023_cash_crop_species is None:
-            return False
+        section_5 = survey_field.manure_post is not None
 
-        return True
+        section_6 = survey_field.cover_crop_seeding_method is not None
 
-    if section == 4:
-        if farmer is None:
-            return False
-        survey_farm = (
-            SurveyFarm.objects.filter(farmer_id=farmer.id)
-            .filter(survey_year=survey_year)
-            .first()
-        )
-        if survey_farm is None:
-            return False
+        completed = section_3 and section_4 and section_5 and section_6
 
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-        if survey_field is None:
-            return False
+        if not completed:
+            one_incomplete = True
 
-        if survey_field.cash_crop_planting_date is None:
-            return False
+        dict_survey_fields[survey_field.id] = {
+            "is_completed": completed,
+            "section_3": section_3,
+            "section_4": section_4,
+            "section_5": section_5,
+            "section_6": section_6,
+        }
 
-        return True
-
-    if section == 5:
-        if farmer is None:
-            return False
-        survey_farm = (
-            SurveyFarm.objects.filter(farmer_id=farmer.id)
-            .filter(survey_year=survey_year)
-            .first()
-        )
-        if survey_farm is None:
-            return False
-
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-        if survey_field is None:
-            return False
-
-        if survey_field.manure_post is None:
-            return False
-
-        return True
-
-    if section == 6:
-        if farmer is None:
-            return False
-        survey_farm = (
-            SurveyFarm.objects.filter(farmer_id=farmer.id)
-            .filter(survey_year=survey_year)
-            .first()
-        )
-        if survey_farm is None:
-            return False
-
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-        if survey_field is None:
-            return False
-
-        if survey_field.cover_crop_seeding_method is None:
-            return False
-
-        return True
-
-    if section == 7:
-        if farmer is None:
-            return False
-        survey_farm = (
-            SurveyFarm.objects.filter(farmer_id=farmer.id)
-            .filter(survey_year=survey_year)
-            .first()
-        )
-        if survey_farm is None:
-            return False
-        if (
-            survey_farm.additional_thoughts is None
-            and survey_farm.encourage_cc is None
-            and survey_farm.encourage_cc_write_in is None
-        ):
-            return False
-
-        return True
+    return dict_survey_fields, one_incomplete
 
 
 def wisc_cc_home(request):
@@ -301,16 +225,6 @@ def wisc_cc_survey(request, survey_year=2024):
         if farmer_id != user_farmer_id:
             return redirect("wisc_cc_unauthorized")
 
-    completed_1 = check_section_completed(farmer_id, 1, survey_year)
-    completed_2 = check_section_completed(farmer_id, 2, survey_year)
-    completed_3 = check_section_completed(farmer_id, 3, survey_year)
-    completed_4 = check_section_completed(farmer_id, 4, survey_year)
-    completed_5 = check_section_completed(farmer_id, 5, survey_year)
-    completed_6 = check_section_completed(farmer_id, 6, survey_year)
-    completed_7 = check_section_completed(farmer_id, 7, survey_year)
-
-    template = "wisccc/wisc_cc_survey.html"
-
     farmer = Farmer.objects.get(id=farmer_id)
     # Just grabbing the first for rare cases when there might be two survey farms in a year
     survey_farm = SurveyFarm.objects.filter(
@@ -319,20 +233,37 @@ def wisc_cc_survey(request, survey_year=2024):
 
     survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id)
 
+    if request.user.has_perm("wisccc.survery_manager"):
+        form_surveyfarm_review = SurveyFarmFormReview(
+            request.POST or None, instance=survey_farm
+        )
+    else:
+        form_surveyfarm_review = None
+
+    dict_survey_fields, one_incomplete = check_section_completed(
+        farmer_id, survey_year, survey_farm, survey_fields
+    )
+
+    template = "wisccc/wisc_cc_survey.html"
+
+    if request.method == "POST":
+
+        if form_surveyfarm_review.is_valid():
+            new_form_surveyfarm_review = form_surveyfarm_review.save()
+            return redirect("response_table")
+
     return render(
         request,
         template,
-        {
-            "completed_1": completed_1,
-            "completed_2": completed_2,
-            "completed_3": completed_3,
-            "completed_4": completed_4,
-            "completed_5": completed_5,
-            "completed_6": completed_6,
-            "completed_7": completed_7,
-            "farmer": farmer,
-            "survey_farm": survey_farm,
-            "survey_fields": survey_fields,
+        context={
+            **{"dict_survey_fields": dict_survey_fields},
+            **{
+                "one_incomplete": one_incomplete,
+                "farmer": farmer,
+                "survey_farm": survey_farm,
+                "survey_fields": survey_fields,
+                "form_surveyfarm_review": form_surveyfarm_review,
+            },
         },
     )
 
@@ -719,6 +650,28 @@ def wisc_cc_survey7(request, sfarmid):
     return render(
         request, template, {"form_surveyfarm_section_7": form_surveyfarm_section_7}
     )
+
+
+@login_required
+def create_addtl_surveyfield(request, sfarmid):
+    """Takes survey farm id"""
+    survey_year = 2024
+    context = {}
+
+    survey_farm = SurveyFarm.objects.get(id=sfarmid)
+
+    farmer = Farmer.objects.get(id=survey_farm.farmer_id)
+
+    # check if user is the logged in farmer
+    user_farmer = Farmer.objects.filter(user_id=request.user.id).first()
+    if (user_farmer.id != survey_farm.farmer.id) and (
+        not request.user.has_perm("wisccc.survery_manager")
+    ):
+        return redirect("wisc_cc_unauthorized")
+
+    new_survey_field = SurveyField.objects.create(survey_farm=survey_farm)
+
+    return redirect("wisc_cc_survey")
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -1434,17 +1387,13 @@ def researcher_page_expired(request):
     return render(request, "wisccc/wisc_cc_researcher_expired.html")
 
 
+# Currently does not handle cases where more than one survey per year per farmer
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def response_table(request):
     """List wisc response entries"""
-    all_surveys = SurveyFarm.objects.all()
+    all_surveys = SurveyFarm.objects.filter(survey_year__gt=2022)
     total_surveys = all_surveys.count()
-    completed_surveys = (
-        all_surveys.filter(percent_of_farm_cc__isnull=False)
-        .filter(save_cover_crop_seed__isnull=False)
-        .filter(additional_thoughts__isnull=False)
-        .count()
-    )
+    completed_surveys = all_surveys.filter(confirmed_accurate=True).count()
 
     # REVISE!
     #   Revise according to new structure
@@ -1453,8 +1402,10 @@ def response_table(request):
         query = """
             select 
                 s.id as id
+                , s.survey_year
                 , u.username 
                 , u.email
+                , f.id as farmer_id
                 , f.first_name 
                 , f.last_name
                 , s.survey_created::Date
