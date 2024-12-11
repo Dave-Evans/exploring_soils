@@ -18,6 +18,7 @@ from wisccc.models import (
     SurveyRegistration,
     Researcher,
     AncillaryData,
+    InterestedParty,
 )
 from wisccc.models import (
     CashCropChoices,
@@ -2168,3 +2169,25 @@ class SelectUserForm(forms.Form):
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
     #     self.fields["user_select"].queryset = User.objects.all()
+
+
+class InterestedPartyForm(forms.ModelForm):
+    first_name = forms.CharField(label="First name", max_length=250, required=True)
+    last_name = forms.CharField(label="Last name", max_length=250, required=True)
+    email = forms.EmailField(required=True)
+    cover_crops_interest = forms.CharField(
+        label="What is your interest in cover crops? What are your biggest questions?",
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=1000,
+        required=False,
+    )
+    notes = forms.CharField(
+        label="Notes about interested party",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=500,
+    )
+
+    class Meta:
+        model = InterestedParty
+        fields = ("first_name", "last_name", "email", "cover_crops_interest")

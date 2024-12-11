@@ -50,6 +50,7 @@ from wisccc.forms import (
     ResearcherFullForm,
     AncillaryDataForm,
     SelectUserForm,
+    InterestedPartyForm,
 )
 from wisccc.forms_2023 import (
     SurveyFarmFormPart1_2023,
@@ -226,6 +227,29 @@ def wisc_cc_manager_home(request):
 
 def wisc_cc_about(request):
     return render(request, "wisccc/wisc_cc_about.html")
+
+
+def wisc_cc_interested(request):
+
+    form_interested_party = InterestedPartyForm(request.POST or None)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if form_interested_party.is_valid():
+        form_interested_party.save()
+        # new_form = form_interested_party.save(commit=False)
+        # new_form.save()
+        return redirect("wisc_cc_interested_thanks")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_interested.html",
+        {"form_interested_party": form_interested_party},
+    )
+
+
+def wisc_cc_interested_thanks(request):
+    return render(request, "wisccc/wisc_cc_interested_thanks.html")
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)

@@ -1738,3 +1738,15 @@ class Researcher(models.Model):
 
     class Meta:
         permissions = (("approved_researcher", "Approved researcher"),)
+
+
+class InterestedParty(models.Model):
+    """For folks interested in the project
+    Not registered, no account necessary"""
+
+    signup_timestamp = models.DateTimeField(auto_now_add=True)
+    first_name = models.CharField(max_length=250, blank=True)
+    last_name = models.CharField(max_length=250, blank=True)
+    email = models.EmailField(null=True)
+    cover_crops_interest = models.TextField(blank=True)
+    admin_notes = models.TextField(blank=True)
