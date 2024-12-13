@@ -38,7 +38,7 @@ urlpatterns = [
         name="wisc_cc_interested_thanks",
     ),
     re_path(
-        r"^wisc_cc_register$",
+        r"^wisc_cc_register_1$",
         wisccc_views.wisc_cc_interested,
         name="wiscc_cc_interested",
         # wisccc_views.wisc_cc_register_1,
@@ -46,8 +46,10 @@ urlpatterns = [
     ),
     re_path(
         r"^wisc_cc_register_1$",
-        wisccc_views.wisc_cc_register_1,
-        name="wisc_cc_register_1",
+        wisccc_views.wisc_cc_interested,
+        name="wiscc_cc_interested",
+        # wisccc_views.wisc_cc_register_1,
+        # name="wisc_cc_register_1",
     ),
     re_path(
         r"^wisc_cc_register_2$",
