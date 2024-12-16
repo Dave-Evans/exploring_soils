@@ -2052,6 +2052,12 @@ class AncillaryDataForm(forms.ModelForm):
     total_nitrogen = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Fall Total nitrogen", required=False
     )
+    height_of_stand = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Height of cover crop stand stand (in)",
+        required=False,
+    )
     acc_gdd = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -2122,10 +2128,22 @@ class AncillaryDataForm(forms.ModelForm):
     spring_total_nitrogen = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Spring Total nitrogen", required=False
     )
+    spring_height_of_stand = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring height of cover crop stand stand (in)",
+        required=False,
+    )
     spring_notes = forms.CharField(
         label="Text to be displayed regarding spring biomass sampling or lab processing.",
         required=False,
         widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=1000,
+    )
+    notes_admin = forms.CharField(
+        label="Notes about lab data or sampling or about edits. These notes will not be displayed.",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 10}),
         max_length=1000,
     )
 
@@ -2142,6 +2160,7 @@ class AncillaryDataForm(forms.ModelForm):
             "rfq",
             "cc_biomass",
             "total_nitrogen",
+            "height_of_stand",
             "acc_gdd",
             "total_precip",
             "fall_notes",
@@ -2157,7 +2176,9 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_tdn_adf",
             "spring_milk_ton_milk2013",
             "spring_total_nitrogen",
+            "spring_height_of_stand",
             "spring_notes",
+            "notes_admin",
         )
 
 
