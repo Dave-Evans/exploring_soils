@@ -1690,7 +1690,7 @@ def wisc_cc_register_2(request):
     farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
 
     farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
-
+    is_new_registration = False
     try:
         registration_instance = SurveyRegistration.objects.get(
             farmer_id=farmer_instance.id, survey_year=survey_year
