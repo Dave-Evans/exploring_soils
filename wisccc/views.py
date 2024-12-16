@@ -699,6 +699,11 @@ def update_labdata(request, id):
     """
     context = {}
     survey_farm = get_object_or_404(SurveyFarm, id=id)
+    first_and_last_name = (
+        f"{survey_farm.farmer.first_name} {survey_farm.farmer.last_name}"
+    )
+    survey_year = f"{survey_farm.survey_year}"
+
     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
     # Get any lab data for this survey response
     ancillary_data = AncillaryData.objects.filter(
@@ -723,6 +728,8 @@ def update_labdata(request, id):
         template,
         {
             "form": form_ancillary_data,
+            "first_and_last_name": first_and_last_name,
+            "survey_year": survey_year,
         },
     )
 
@@ -770,7 +777,6 @@ def update_response(request, id):
     )
 
     form_context = {
-        "first_and_last_name": first_and_last_name,
         "form_farmer": form_farmer_section_1,
         "form_surveyfarm_review": form_surveyfarm_review,
         "survey_photo_form": form_survey_photo,
@@ -897,6 +903,7 @@ def update_response(request, id):
 
         return redirect("response_table")
 
+    form_context["first_and_last_name"] = first_and_last_name
     return render(request, template, form_context)
 
 
