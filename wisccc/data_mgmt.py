@@ -571,6 +571,7 @@ def pull_all_years_together(f_output):
         , stat.fq_milkton
         , stat.fq_rfq
         , null as total_nitrogen
+        , null as height_of_stand
         , null as fall_notes
         , null as spring_cc_biomass_collection_date
         , null as spring_total_precip
@@ -584,12 +585,14 @@ def pull_all_years_together(f_output):
         , null as spring_fq_milkton
         , null as spring_fq_rfq
         , null as spring_total_nitrogen        
+        , null as spring_height_of_stand
         , null as spring_notes
         , stat.cc_rate_and_species
         , stat.cc_species
         , stat.cc_species_raw
         , null as survey_response_id
         , null as survey_field_id
+        
     from wisc_cc as stat
     inner join
   	(select
@@ -663,6 +666,7 @@ def pull_all_years_together(f_output):
         rfq as fq_rfq,
         
         total_nitrogen as total_nitrogen,
+        height_of_stand,
         fall_notes,
         spring_biomass_collection_date as spring_cc_biomass_collection_date,
         spring_total_precip as spring_total_precip,
@@ -676,6 +680,7 @@ def pull_all_years_together(f_output):
         spring_milk_ton_milk2013 as spring_fq_milkton,
         spring_rfq as spring_fq_rfq,
         spring_total_nitrogen as spring_total_nitrogen,
+        spring_height_of_stand,
         spring_notes,
         
         concat(		
@@ -1139,6 +1144,7 @@ def data_export():
             "fq_milkton": "fq_milkton_fall",
             "fq_rfq": "fq_rfq_fall",
             "total_nitrogen": "total_nitrogen_fall",
+            "height_of_stand": "height_of_stand_fall",
             "fall_notes": "notes_fall",
             "spring_cc_biomass_collection_date": "cc_biomass_collection_date_spring",
             "spring_total_precip": "total_precip_spring",
@@ -1152,6 +1158,7 @@ def data_export():
             "spring_fq_milkton": "fq_milkton_spring",
             "spring_fq_rfq": "fq_rfq_spring",
             "spring_total_nitrogen": "total_nitrogen_spring",
+            "spring_height_of_stand": "height_of_stand_spring",
             "spring_notes": "notes_spring",
         }
     )
