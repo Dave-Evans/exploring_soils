@@ -214,8 +214,10 @@ def wisc_cc_survey(request, survey_year=2024):
             farmer_instance = Farmer.objects.get(user_id=request.user.id)
             print("Farmer instance id:", farmer_instance.id)
             farmer_id = farmer_instance.id
-            # Verify we are registered
-            registration = SurveyRegistration.objects.get(farmer_id=farmer_instance.id)
+            # Verify we are registered for this year
+            registration = SurveyRegistration.objects.get(
+                farmer_id=farmer_instance.id, survey_year=survey_year
+            )
             print("We're registered.")
         except:
             return redirect("wisc_cc_register_1")
