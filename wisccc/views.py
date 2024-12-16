@@ -739,7 +739,7 @@ def update_response(request, id):
 
     # Get farmer associated with user id of survey response
     farmer = Farmer.objects.filter(id=survey_farm.farmer_id).first()
-
+    first_and_last_name = f"{farmer.first_name} {farmer.last_name}"
     # Is there a survey field record for this survey?
     #   if so grab it, else create one
     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
@@ -770,6 +770,7 @@ def update_response(request, id):
     )
 
     form_context = {
+        "first_and_last_name": first_and_last_name,
         "form_farmer": form_farmer_section_1,
         "form_surveyfarm_review": form_surveyfarm_review,
         "survey_photo_form": form_survey_photo,
@@ -1851,10 +1852,15 @@ def wisc_cc_register_3(request):
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def upload_photo(request, id):
-    """For uploading photos for survey response"""
+    """For uploading photos for survey response,
+    from survey farm id"""
     context = {}
     # fetch the survey object related to passed id
     survey_farm = get_object_or_404(SurveyFarm, id=id)
+    first_and_last_name = (
+        f"{survey_farm.farmer.first_name} {survey_farm.farmer.last_name}"
+    )
+    survey_year = f"{survey_farm.survey_year}"
     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
     # Get any uploaded photos for this survey response
     survey_photo = SurveyPhoto.objects.filter(survey_field_id=survey_field.id).first()
@@ -1882,5 +1888,7 @@ def upload_photo(request, id):
         template,
         {
             "survey_photo_form": survey_photo_form,
+            "first_and_last_name": first_and_last_name,
+            "survey_year": survey_year,
         },
     )

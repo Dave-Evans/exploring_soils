@@ -15,7 +15,7 @@
     //https://stackoverflow.com/questions/140460/client-js-framework-for-unsaved-data-protection
 </script>
 
-<h3 class="card-title">Upload photo for survey</h3>
+<h3 class="card-title">Upload photo for {{ first_and_last_name }}, {{ survey_year }}</h3>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
