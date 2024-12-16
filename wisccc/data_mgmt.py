@@ -458,6 +458,7 @@ def get_survey_data():
                 "rfq",
                 "cc_biomass",
                 "total_nitrogen",
+                "height_of_stand",
                 "acc_gdd",
                 "total_precip",
                 "spring_biomass_collection_date",
@@ -470,8 +471,10 @@ def get_survey_data():
                 "spring_rfq",
                 "spring_cc_biomass",
                 "spring_total_nitrogen",
+                "spring_height_of_stand",
                 "spring_acc_gdd",
                 "spring_total_precip",
+                "notes_admin",
             )
         ),
         columns=[
@@ -487,6 +490,7 @@ def get_survey_data():
             "rfq_fall",
             "cc_biomass_fall",
             "total_nitrogen_fall",
+            "height_of_stand",
             "acc_gdd_fall",
             "total_precip_fall",
             "biomass_collection_date_spring",
@@ -499,8 +503,10 @@ def get_survey_data():
             "rfq_spring",
             "cc_biomass_spring",
             "total_nitrogen_spring",
+            "spring_height_of_stand",
             "acc_gdd_spring",
             "total_precip_spring",
+            "notes_admin",
         ],
     )
 
