@@ -450,7 +450,8 @@ def wisc_cc_survey3a(request, farmer_id, sfieldid):
         not request.user.has_perm("wisccc.survery_manager")
     ):
         return redirect("wisc_cc_unauthorized")
-
+    # think about filtering these so only fields that have not
+    # been selected for this years survey are returned.
     field_farms = FieldFarm.objects.filter(farmer_id=farmer.id)
     context["field_farm_list"] = field_farms
     context["farmer_id"] = farmer_id
@@ -683,7 +684,7 @@ def create_addtl_surveyfield(request, sfarmid):
 
     new_survey_field = SurveyField.objects.create(survey_farm=survey_farm)
 
-    return redirect("wisc_cc_survey" + f"?farmer_id={farmer.id}")
+    return redirect("wisc-cc-survey" + f"?farmer_id={farmer.id}")
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -949,7 +950,7 @@ def create_fieldfarm(request, farmer_id, sfieldid):
     survey_field.field_farm = field_farm
     survey_field.save()
 
-    return redirect("wisc_survey3", sfieldid)
+    return redirect("wisc_cc_survey3", sfieldid)
     # form_field_farm = FieldFarmFormFull(request.POST or None)
     # save the data from the form and
     # redirect to detail_view
@@ -1002,7 +1003,7 @@ def wisc_cc_survey_populate_fieldfarm(request, id):
     survey_field.field_farm_id = id
     survey_field.save()
 
-    return redirect("wisc_cc_survey3")
+    return redirect("wisc_cc_survey3", survey_field.id)
 
 
 def wisc_cc_graph(request):
