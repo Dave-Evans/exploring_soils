@@ -9,7 +9,7 @@
   <div class="col-lg-8 col-md-10 col-sm-12">
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">Welcome {{ user.username }}</h3>
+        <h3 class="card-title">Welcome {{ farmer.first_name }} {{ farmer.last_name }}</h3>
 
         {% if completed_1 and completed_2 and completed_3 and completed_4 and completed_5 and completed_6 %}
 
@@ -165,6 +165,7 @@
             </div>
             {% endfor %}
 
+            {% if perms.wisccc.survery_manager %}
             <div class="card">
               <div class="card-body">
                 <div class="list-group">
@@ -183,22 +184,23 @@
                   {% endif %}
                 </div>
               </div>
-
-              <div class="list-group">
-                {% if survey_farm.encourage_cc is not None %}
-                <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
-                  class="list-group-item list-group-item-action list-group-item-success">
-                  VII. Final thoughts - completed! Click to edit your response.
-                </a>
-                {% else %}
-                <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
-                  class="list-group-item list-group-item-action list-group-item-warning">
-                  VII. Final thoughts
-                </a>
-                {% endif %}
-
-              </div>
             </div>
+            {% endif %}
+            <div class="list-group">
+              {% if survey_farm.encourage_cc is not None %}
+              <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
+                class="list-group-item list-group-item-action list-group-item-success">
+                VII. Final thoughts - completed! Click to edit your response.
+              </a>
+              {% else %}
+              <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
+                class="list-group-item list-group-item-action list-group-item-warning">
+                VII. Final thoughts
+              </a>
+              {% endif %}
+
+            </div>
+
             <hr>
             {% if perms.wisccc.survery_manager %}
             <form method="post" enctype="multipart/form-data">
