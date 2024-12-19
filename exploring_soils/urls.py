@@ -39,7 +39,6 @@ from bikemileage.views import (
     BicycleDeleteView,
 )
 
-
 urlpatterns = [
     # For soils in depth
     path("", include("plotter.urls")),
@@ -74,12 +73,8 @@ urlpatterns = [
     path("", books_views.home, name="home"),
     path("books/", books_views.book_list, name="book_list"),
     path("books/create/", books_views.book_create, name="book_create"),
-    path(
-        "books/<int:pk>/update/", books_views.book_update, name="book_update"
-    ),
-    path(
-        "books/<int:pk>/delete/", books_views.book_delete, name="book_delete"
-    ),
+    path("books/<int:pk>/update/", books_views.book_update, name="book_update"),
+    path("books/<int:pk>/delete/", books_views.book_delete, name="book_delete"),
     # Accounts
     path(
         "settings/password/",
@@ -147,9 +142,7 @@ urlpatterns = [
         name="topic_posts",
     ),
     # re_path(r'^boards/(?P<pk>\d+)/$', views.board_topics, name='board_topics'),
-    path(
-        "boards/<int:pk>/", views.TopicListView.as_view(), name="board_topics"
-    ),
+    path("boards/<int:pk>/", views.TopicListView.as_view(), name="board_topics"),
     path("boards/<int:pk>/new/", views.new_topic, name="new_topic"),
     path("admin/", admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

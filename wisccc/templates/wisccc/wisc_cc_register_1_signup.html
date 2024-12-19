@@ -1,5 +1,9 @@
 {% extends 'wisccc/wisc_cc_register_1.html' %}
 {% load static %}
+{% block scripts %}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endblock scripts %}
+
 
 {% block register_1 %}
 <style>
