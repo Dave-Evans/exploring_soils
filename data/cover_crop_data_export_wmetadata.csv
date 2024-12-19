@@ -1,6 +1,7 @@
 Data category	Explanation
-Notes	These data represent survey from farmers. They are asked questions regarding their farming practices and they are also asked about practices about a particular field. In some cases  farmers have entered information for more than one field. This results in duplicated answers for their farming practices, but distinct records for each field.  If you are analyzing at the farm scale, make sure you look at the survey_farm_id field to deduplicate your dataset. If you are interested in the individual fields, then look at survey_field_id.
-survey_farm_id	random identifier for survey farm record
+Notes	These data represent survey from farmers. They are asked questions regarding their farming practices and they are also asked about practices about a particular field. In some cases  farmers have entered information for more than one field. This results in duplicated answers for their farming practices, but distinct records for each field.  If you are analyzing at the farm scale, make sure you look at the farm_id column to deduplicate your dataset. If you are interested in the individual fields, then look at field_id.
+farm_id	Identifier for farm record, this is will change across years.
+field_id	Identifier for the field
 survey_year	Participants fill out a survey of cover crop agronomic practices each fall.
 county_farm	County as identified by participant as where they farm; may be more than one
 zipcode	Closest zip code for sampled field as identified by participant
