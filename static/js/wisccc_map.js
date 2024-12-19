@@ -664,7 +664,7 @@ $('body').on('change', '#PropertySelection', function () {
 
     updateHelpTipText(selected_property);
 });
-updateStyle();
+// updateStyle();
 // new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
 // $('body').on('change', '#ZoomSelection', function () {
 //     var selected_zoom = $('#ZoomSelection').val();
