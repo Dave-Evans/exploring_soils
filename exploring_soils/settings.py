@@ -148,6 +148,7 @@ CSP_IMG_SRC = [
     "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/",
     "https://unpkg.com/leaflet@1.3.4/dist/images/",
     "https://unpkg.com/leaflet@1.0.1/dist/images/",
+    "https://unpkg.com/leaflet@1.7.1/dist/images/",
     "https://tile.openstreetmap.org",
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/",
     "http://ows.mundialis.de/services/",
