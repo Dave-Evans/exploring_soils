@@ -1130,6 +1130,8 @@ def data_export():
     df = df.drop(
         columns=[
             "survey_response_id",
+            "id",
+            "farm_id",
             "years_experience",
             "anpp",
             "days_from_plant_to_bio_hrvst",
