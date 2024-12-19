@@ -532,7 +532,9 @@ def pull_all_years_together(f_output):
     query = """
  
 	SELECT 
-		prevsurv.survey_farm_id as id
+		prevsurv.survey_farm_id as farm_id
+        , prevsurv.survey_field_id as survey_field_id
+        , prevsurv.survey_field_id as id
         , stat.year
         , stat.county
         , stat.county_single
@@ -597,21 +599,27 @@ def pull_all_years_together(f_output):
         , stat.cc_species
         , stat.cc_species_raw
         , null as survey_response_id
-        , null as survey_field_id
         
     from wisc_cc as stat
     inner join
-  	(select
-		id as survey_farm_id,
-		split_part(notes_admin, ';', 1) as mrill_id
-	from wisccc_surveyfarm  
-	where survey_year < 2023) as prevsurv
+  	(
+        select
+            wsf.id as survey_farm_id,
+            wsfld.id as survey_field_id,
+            split_part(notes_admin, ';', 1) as mrill_id
+        from wisccc_surveyfarm as wsf
+        left join wisccc_surveyfield as wsfld
+        on wsf.id = wsfld.survey_farm_id
+        where survey_year < 2023      
+    ) as prevsurv
 	on stat.id = prevsurv.mrill_id
 
     union all
 
     select
-        a.master_survey_farm_id as id,
+        a.master_survey_farm_id as farm_id,
+        surveyfield_id as survey_field_id,
+        surveyfield_id as id,
         year,
         a.county,
         derived_county as county_single,
@@ -704,8 +712,7 @@ def pull_all_years_together(f_output):
             nullif(concat(', ', mod_cover_crop_species_4), ', '), 
             nullif(concat(', ', mod_cover_crop_species_5), ', ')
         ) as cc_species_raw,
-        survey_response_id,
-        surveyfield_id as survey_field_id
+        survey_response_id
     from (
         select
             surveyfield.*,
@@ -1134,7 +1141,7 @@ def data_export():
     )
     df = df.rename(
         columns={
-            "id": "survey_farm_id",
+            "survey_field_id": "field_id",
             "year": "survey_year",
             "county": "county_farm",
             "county_single": "county_field",

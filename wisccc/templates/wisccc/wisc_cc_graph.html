@@ -683,7 +683,7 @@
 
             var tool_tip_string =
                 //"Total precip: " + feature.properties.total_precip + " in" + "<br/>" +
-                "ID: " + feature.id + "<br/>" +
+                "Field ID: " + feature.id + "<br/>" +
                 feature.properties.county_single + " County" + "<br/>" +
                 feature.properties.cc_species_raw + "<br/>"
             if (feature.properties.cc_planting_rate == '.' | feature.properties.cc_planting_rate == null) {
@@ -777,6 +777,7 @@
             // data = data.filter(function (d) { return d.properties.cc_planting_date_flat.getFullYear() == 2020 })
             data = data.filter(function (el) { return el.properties.cc_biomass != null });
             data = data.filter(function (el) { return el.properties.cc_species_raw != null });
+            // submission_data = data;
             var pop_selectize_box = function (geojson_data, id_selector, field_name) {
                 var all_instances = [];
                 for (item in geojson_data) {
