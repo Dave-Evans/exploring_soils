@@ -97,7 +97,6 @@ SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
 
 CSP_FRAME_ANCESTORS = [
-    "https://www.evansgeospatial.com",
     "https://www.michaelfields.org",
 ]
 CSP_STYLE_SRC = [
