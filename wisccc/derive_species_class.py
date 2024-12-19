@@ -646,7 +646,12 @@ def derive_species_class(list_species):
     """
 
     # keep null if all null
-    if list_species is None or list_species[0] == "." or list_species[0] is None:
+    if (
+        list_species is None
+        or list_species[0] == "."
+        or list_species[0] is None
+        or list_species[0] == ""
+    ):
         return None
 
     sp_dct = give_species_options(list_species[0].isupper())
@@ -819,8 +824,7 @@ def update_2020_2022():
             print("Null for", cc[1])
             continue
         id = cc[1]
-        # if id in ["53034-RH-22", "54733-AB-20"]:
-        #     break
+
         old_class = cc[-4]
 
         cc_sps = cc[-3].split(", ")

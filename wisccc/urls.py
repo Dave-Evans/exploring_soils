@@ -28,14 +28,28 @@ urlpatterns = [
         name="wisc_cc_manager_home",
     ),
     re_path(
-        r"^wisc_cc_register$",
-        wisccc_views.wisc_cc_register_1,
-        name="wisc_cc_register_1",
+        r"^wisc_cc_interested$",
+        wisccc_views.wisc_cc_interested,
+        name="wisc_cc_interested",
+    ),
+    re_path(
+        r"^wisc_cc_interested_thanks$",
+        wisccc_views.wisc_cc_interested_thanks,
+        name="wisc_cc_interested_thanks",
     ),
     re_path(
         r"^wisc_cc_register_1$",
-        wisccc_views.wisc_cc_register_1,
-        name="wisc_cc_register_1",
+        wisccc_views.wisc_cc_interested,
+        name="wiscc_cc_interested",
+        # wisccc_views.wisc_cc_register_1,
+        # name="wisc_cc_register_1",
+    ),
+    re_path(
+        r"^wisc_cc_register_1$",
+        wisccc_views.wisc_cc_interested,
+        name="wiscc_cc_interested",
+        # wisccc_views.wisc_cc_register_1,
+        # name="wisc_cc_register_1",
     ),
     re_path(
         r"^wisc_cc_register_2$",
@@ -132,6 +146,11 @@ urlpatterns = [
         "delete_researcher/<id>",
         wisccc_views.delete_researcher,
         name="delete_researcher",
+    ),
+    path(
+        "download_researchers",
+        wisccc_views.download_researchers,
+        name="download_researchers",
     ),
     path(
         "wisccc_download_data/<int:opt>",

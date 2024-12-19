@@ -3,7 +3,15 @@ import pandas as pd
 from django.http import HttpResponse
 import datetime
 from django.db import connection
-from wisccc.models import SurveyFarm, SurveyField, FieldFarm, AncillaryData, Farmer
+from wisccc.models import (
+    Researcher,
+    SurveyFarm,
+    SurveyField,
+    FieldFarm,
+    AncillaryData,
+    Farmer,
+    SurveyRegistration,
+)
 from wisccc.models import (
     CashCropChoices,
     CoverCropChoices,
@@ -27,6 +35,131 @@ from django.conf import settings
 import os
 
 
+def get_registration_download():
+    survey_registrants = (
+        SurveyRegistration.objects.all()
+        .select_related("farmer")
+        .select_related("farmer__user")
+    )
+
+    df = pd.DataFrame(
+        list(
+            survey_registrants.values_list(
+                # From registration
+                "signup_timestamp",
+                # From Farmer
+                "farmer__id",
+                # From User
+                "farmer__user__email",
+                "farmer__user__username",
+                # From Farmer
+                "farmer__first_name",
+                "farmer__last_name",
+                "farmer__farm_name",
+                "farmer__county",
+                "farmer__address_street",
+                "farmer__address_municipality",
+                "farmer__address_state",
+                "farmer__address_zipcode",
+                "farmer__phone_number",
+                # From registration
+                "survey_year",
+                "biomass_or_just_survey",
+                "do_you_have_a_biomas_kit",
+                "do_you_need_assistance",
+                "howd_you_hear",
+                "belong_to_groups",
+                "notes",
+            )
+        ),
+        columns=[
+            # From registration
+            "signup_timestamp",
+            # From Farmer
+            "id",
+            # From User
+            "email",
+            "username",
+            # From Farmer
+            "first_name",
+            "last_name",
+            "farm_name",
+            "county",
+            "street",
+            "municipality",
+            "state",
+            "zipcode",
+            "phone_number",
+            # From registrants
+            "survey_year",
+            "biomass_or_just_survey",
+            "do_you_have_a_biomas_kit",
+            "do_you_need_assistance",
+            "howd_you_hear",
+            "belong_to_groups",
+            "notes",
+        ],
+    )
+    # convert farmer id to string, convert survey_year to string
+    #   grab just the year and create and id
+    # Add -F for fall sampling
+    df["id"] = (
+        df["id"].apply(str).str.zfill(5)
+        + "-"
+        + df["survey_year"].apply(str).str[-2:]
+        + "-F"
+    )
+    df = df.drop("survey_year", axis=1)
+    return df
+
+
+def get_researchers_download():
+    """For gathering and formating the data for downloading a list of
+    collaborating researchers"""
+    researchers = Researcher.objects.all().select_related("user")
+
+    df = pd.DataFrame(
+        list(
+            researchers.values_list(
+                # From Researcher
+                "signup_timestamp",
+                # From User
+                "user__email",
+                "user__username",
+                # From Researcher
+                "first_name",
+                "last_name",
+                "institution",
+                "agreement_doc",
+                "notes",
+                "download_count",
+                "last_download_timestamp",
+                "approved",
+                "approved_date",
+            )
+        ),
+        columns=[
+            # From Researcher
+            "signup_timestamp",
+            # From User
+            "email",
+            "username",
+            # From Researcher
+            "first_name",
+            "last_name",
+            "institution",
+            "agreement_doc",
+            "notes",
+            "download_count",
+            "last_download_timestamp",
+            "approved",
+            "approved_date",
+        ],
+    )
+
+    return df
+
+
 def convert_to_human_readable(column, choices_object):
     """Takes a column and a choices objects and converts it to
     the human readable format"""
@@ -40,24 +173,18 @@ def convert_to_human_readable(column, choices_object):
 
 
 def get_survey_data():
-    # Grabbing all agronomic data with new structure and ORM
+    """For creating a pandas dataframe for ALL survey data"""
+
     survey_fields = (
         SurveyField.objects.all()
         .select_related("survey_farm")
         .select_related("field_farm")
+        .select_related("survey_farm__farmer")
+        .select_related("survey_farm__farmer__user")
     )
 
-    ancillary_data = (
-        AncillaryData.objects.all()
-        .select_related("survey_field")
-        .select_related("survey_field__survey_farm")
-        .select_related("survey_field__field_farm")
-        .select_related("survey_field__survey_farm__farmer")
-        .select_related("survey_field__survey_farm__farmer__user")
-    )
-    ## Leaving off
-    # survey_field__survey_farm__support_cover_crops_2 and support_cover_crops_2
-    # survey_field__survey_farm__support_cover_crops_3 and support_cover_crops_3
+    ancillary_data = AncillaryData.objects.all()
+
     dct_choices = {
         "info_source_nutrient_mgmt_1": NutrientMgmtSourcesChoices,
         "info_source_nutrient_mgmt_2": NutrientMgmtSourcesChoices,
@@ -66,12 +193,12 @@ def get_survey_data():
         "info_source_cover_crops_2": CoverCropInfoSourcesChoices,
         "info_source_cover_crops_3": CoverCropInfoSourcesChoices,
         "support_cover_crops_1": CoverCropSupportChoices,
-        "crop_rotation_2021_cover_crop_species": CoverCropChoices,
-        "crop_rotation_2021_cash_crop_species": CashCropChoices,
-        "crop_rotation_2022_cover_crop_species": CoverCropChoices,
-        "crop_rotation_2022_cash_crop_species": CashCropChoices,
-        "crop_rotation_2023_cover_crop_species": CoverCropChoices,
-        "crop_rotation_2023_cash_crop_species": CashCropChoices,
+        "two_years_ago_cover_crop_species": CoverCropChoices,
+        "two_years_ago_cash_crop_species": CashCropChoices,
+        "last_years_cover_crop_species": CoverCropChoices,
+        "last_years_cash_crop_species": CashCropChoices,
+        "this_years_cover_crop_species": CoverCropChoices,
+        "this_years_cash_crop_species": CashCropChoices,
         "cover_crop_species_1": CoverCropChoices,
         "cover_crop_species_2": CoverCropChoices,
         "cover_crop_species_3": CoverCropChoices,
@@ -95,130 +222,114 @@ def get_survey_data():
     # Any column added here will need to have its name added in the below list!
     df = pd.DataFrame(
         list(
-            ancillary_data.values_list(
+            survey_fields.values_list(
                 # From User
-                "survey_field__survey_farm__farmer__user__username",
-                "survey_field__survey_farm__farmer__user__email",
+                "survey_farm__farmer__user__username",
+                "survey_farm__farmer__user__email",
                 # From Farmer
-                "survey_field__survey_farm__farmer__first_name",
-                "survey_field__survey_farm__farmer__last_name",
-                "survey_field__survey_farm__farmer__farm_name",
-                "survey_field__survey_farm__farmer__county",
+                "survey_farm__farmer__first_name",
+                "survey_farm__farmer__last_name",
+                "survey_farm__farmer__farm_name",
+                "survey_farm__farmer__county",
                 # From SurveyFarm
-                "survey_field__survey_farm__survey_created",
-                "survey_field__survey_farm__last_updated",
-                "survey_field__survey_farm__survey_year",
-                "survey_field__survey_farm__notes_admin",
-                "survey_field__survey_farm__confirmed_accurate",
-                "survey_field__survey_farm__years_experience",
-                "survey_field__survey_farm__total_acres",
-                "survey_field__survey_farm__percent_of_farm_cc",
-                "survey_field__survey_farm__dominant_soil_series_1",
-                "survey_field__survey_farm__dominant_soil_series_2",
-                "survey_field__survey_farm__dominant_soil_series_3",
-                "survey_field__survey_farm__dominant_soil_series_4",
-                "survey_field__survey_farm__info_source_nutrient_mgmt_1",
-                "survey_field__survey_farm__info_source_nutrient_mgmt_2",
-                "survey_field__survey_farm__info_source_nutrient_mgmt_3",
-                "survey_field__survey_farm__source_nutrient_mgmt_write_in",
-                "survey_field__survey_farm__cov_crops_for_ntrnt_mgmt_comments_questions",
-                "survey_field__survey_farm__info_source_cover_crops_1",
-                "survey_field__survey_farm__info_source_cover_crops_2",
-                "survey_field__survey_farm__info_source_cover_crops_3",
-                "survey_field__survey_farm__info_source_cover_crops_write_in",
-                "survey_field__survey_farm__support_cover_crops_1",
-                "survey_field__survey_farm__support_cover_crops_write_in",
-                "survey_field__survey_farm__lacking_any_info_cover_crops",
-                "survey_field__survey_farm__barriers_to_expansion",
-                "survey_field__survey_farm__quit_planting_cover_crops",
-                "survey_field__survey_farm__if_use_crop_insurance",
-                "survey_field__survey_farm__why_cover_crops_write_in",
-                "survey_field__survey_farm__cover_crops_delay_cash_crop",
-                "survey_field__survey_farm__save_cover_crop_seed",
-                "survey_field__survey_farm__source_cover_crop_seed",
-                "survey_field__survey_farm__interesting_tales",
-                "survey_field__survey_farm__where_to_start",
-                "survey_field__survey_farm__additional_thoughts",
+                "survey_farm__id",
+                "survey_farm__survey_created",
+                "survey_farm__last_updated",
+                "survey_farm__survey_year",
+                "survey_farm__notes_admin",
+                "survey_farm__confirmed_accurate",
+                "survey_farm__years_experience",
+                "survey_farm__main_cc_goal_this_year",
+                "survey_farm__satisfied_with_cc_results",
+                "survey_farm__biggest_challenge_cc",
+                "survey_farm__learning_history_cc",
+                "survey_farm__conservation_programs",
+                "survey_farm__total_acres",
+                "survey_farm__percent_of_farm_cc",
+                "survey_farm__dominant_soil_series_1",
+                "survey_farm__dominant_soil_series_2",
+                "survey_farm__dominant_soil_series_3",
+                "survey_farm__dominant_soil_series_4",
+                "survey_farm__info_source_nutrient_mgmt_1",
+                "survey_farm__info_source_nutrient_mgmt_2",
+                "survey_farm__info_source_nutrient_mgmt_3",
+                "survey_farm__source_nutrient_mgmt_write_in",
+                "survey_farm__cov_crops_for_ntrnt_mgmt_comments_questions",
+                "survey_farm__info_source_cover_crops_1",
+                "survey_farm__info_source_cover_crops_2",
+                "survey_farm__info_source_cover_crops_3",
+                "survey_farm__info_source_cover_crops_write_in",
+                "survey_farm__support_cover_crops_1",
+                "survey_farm__support_cover_crops_write_in",
+                "survey_farm__lacking_any_info_cover_crops",
+                "survey_farm__barriers_to_expansion",
+                "survey_farm__barriers_to_expansion_write_in",
+                "survey_farm__quit_planting_cover_crops",
+                "survey_farm__if_use_crop_insurance",
+                "survey_farm__why_cover_crops_write_in",
+                "survey_farm__cover_crops_delay_cash_crop",
+                "survey_farm__save_cover_crop_seed",
+                "survey_farm__source_cover_crop_seed",
+                "survey_farm__interesting_tales",
+                "survey_farm__where_to_start",
+                "survey_farm__additional_thoughts",
+                "survey_farm__encourage_cc",
+                "survey_farm__encourage_cc_write_in",
                 # From SurveyField
-                "survey_field__crop_rotation",
-                "survey_field__crop_rotation_2021_cover_crop_species",
-                "survey_field__crop_rotation_2021_cash_crop_species",
-                "survey_field__crop_rotation_2022_cover_crop_species",
-                "survey_field__crop_rotation_2022_cash_crop_species",
-                "survey_field__crop_rotation_2023_cover_crop_species",
-                "survey_field__crop_rotation_2023_cash_crop_species",
-                "survey_field__cover_crop_species_1",
-                "survey_field__cover_crop_planting_rate_1",
-                "survey_field__cover_crop_planting_rate_1_units",
-                "survey_field__cover_crop_species_2",
-                "survey_field__cover_crop_planting_rate_2",
-                "survey_field__cover_crop_planting_rate_2_units",
-                "survey_field__cover_crop_species_3",
-                "survey_field__cover_crop_planting_rate_3",
-                "survey_field__cover_crop_planting_rate_3_units",
-                "survey_field__cover_crop_species_4",
-                "survey_field__cover_crop_planting_rate_4",
-                "survey_field__cover_crop_planting_rate_4_units",
-                "survey_field__cover_crop_species_5",
-                "survey_field__cover_crop_planting_rate_5",
-                "survey_field__cover_crop_planting_rate_5_units",
-                "survey_field__cover_crop_species_and_rate_write_in",
-                "survey_field__cover_crop_multispecies_mix_write_in",
-                "survey_field__cash_crop_planting_date",
-                "survey_field__years_with_cover_crops",
-                "survey_field__dominant_soil_texture",
-                "survey_field__manure_prior",
-                "survey_field__manure_prior_rate",
-                "survey_field__manure_prior_rate_units",
-                "survey_field__manure_post",
-                "survey_field__manure_post_rate",
-                "survey_field__manure_post_rate_units",
-                "survey_field__tillage_system_cash_crop",
-                "survey_field__primary_tillage_equipment",
-                "survey_field__primary_tillage_equipment_write_in",
-                "survey_field__secondary_tillage_equipment",
-                "survey_field__secondary_tillage_equipment_write_in",
-                "survey_field__soil_conditions_at_cover_crop_seeding",
-                "survey_field__cover_crop_seeding_method",
-                "survey_field__cover_crop_seeding_method_write_in",
-                "survey_field__cover_crop_seed_cost",
-                "survey_field__cover_crop_planting_cost",
-                "survey_field__cover_crop_planting_date",
-                "survey_field__cover_crop_estimated_termination",
-                "survey_field__days_between_crop_hvst_and_cc_estd",
-                "survey_field__derived_species_class",
+                "id",
+                "crop_rotation",
+                "crop_rotation_2021_cover_crop_species",
+                "crop_rotation_2021_cash_crop_species",
+                "crop_rotation_2022_cover_crop_species",
+                "crop_rotation_2022_cash_crop_species",
+                "crop_rotation_2023_cover_crop_species",
+                "crop_rotation_2023_cash_crop_species",
+                "cover_crop_species_1",
+                "cover_crop_planting_rate_1",
+                "cover_crop_planting_rate_1_units",
+                "cover_crop_species_2",
+                "cover_crop_planting_rate_2",
+                "cover_crop_planting_rate_2_units",
+                "cover_crop_species_3",
+                "cover_crop_planting_rate_3",
+                "cover_crop_planting_rate_3_units",
+                "cover_crop_species_4",
+                "cover_crop_planting_rate_4",
+                "cover_crop_planting_rate_4_units",
+                "cover_crop_species_5",
+                "cover_crop_planting_rate_5",
+                "cover_crop_planting_rate_5_units",
+                "cover_crop_species_and_rate_write_in",
+                "cover_crop_multispecies_mix_write_in",
+                "cash_crop_planting_date",
+                "years_with_cover_crops",
+                "dominant_soil_texture",
+                "manure_prior",
+                "manure_prior_rate",
+                "manure_prior_rate_units",
+                "manure_post",
+                "manure_post_rate",
+                "manure_post_rate_units",
+                "tillage_system_cash_crop",
+                "primary_tillage_equipment",
+                "primary_tillage_equipment_write_in",
+                "secondary_tillage_equipment",
+                "secondary_tillage_equipment_write_in",
+                "soil_conditions_at_cover_crop_seeding",
+                "cover_crop_seeding_method",
+                "cover_crop_seeding_method_write_in",
+                "cover_crop_seed_cost",
+                "cover_crop_planting_cost",
+                "cover_crop_planting_date",
+                "cover_crop_estimated_termination",
+                "cover_crop_estimated_termination_write_in",
+                "days_between_crop_hvst_and_cc_estd",
+                "derived_species_class",
                 # From FieldFarm
-                "survey_field__field_farm__field_name",
-                "survey_field__field_farm__closest_zip_code",
-                "survey_field__field_farm__field_acreage",
-                "survey_field__field_farm__field_location",
-                "survey_field__field_farm__derived_county",
-                # From Ancillary Data
-                # "id",
-                "biomass_collection_date",
-                "cp",
-                "andf",
-                "undfom30",
-                "ndfd30",
-                "tdn_adf",
-                "milk_ton_milk2013",
-                "rfq",
-                "cc_biomass",
-                "total_nitrogen",
-                "acc_gdd",
-                "total_precip",
-                "spring_biomass_collection_date",
-                "spring_cp",
-                "spring_andf",
-                "spring_undfom30",
-                "spring_ndfd30",
-                "spring_tdn_adf",
-                "spring_milk_ton_milk2013",
-                "spring_rfq",
-                "spring_cc_biomass",
-                "spring_total_nitrogen",
-                "spring_acc_gdd",
-                "spring_total_precip",
+                "field_farm__closest_zip_code",
+                "field_farm__field_acreage",
+                "field_farm__field_location",
+                "field_farm__derived_county",
             )
         ),
         columns=[
@@ -231,12 +342,18 @@ def get_survey_data():
             "farm_name",
             "county",
             # From SurveyFarm
+            "survey_farm_id",
             "survey_created",
             "last_updated",
             "survey_year",
             "notes_admin",
             "confirmed_accurate",
             "years_experience",
+            "main_cc_goal_this_year",
+            "satisfied_with_cc_results",
+            "biggest_challenge_cc",
+            "learning_history_cc",
+            "conservation_programs",
             "total_acres",
             "percent_of_farm_cc",
             "dominant_soil_series_1",
@@ -256,6 +373,7 @@ def get_survey_data():
             "support_cover_crops_write_in",
             "lacking_any_info_cover_crops",
             "barriers_to_expansion",
+            "barriers_to_expansion_write_in",
             "quit_planting_cover_crops",
             "if_use_crop_insurance",
             "why_cover_crops_write_in",
@@ -265,14 +383,17 @@ def get_survey_data():
             "interesting_tales",
             "where_to_start",
             "additional_thoughts",
+            "encourage_cc",
+            "encourage_cc_write_in",
             # From SurveyField
+            "survey_field_id",
             "crop_rotation",
-            "crop_rotation_2021_cover_crop_species",
-            "crop_rotation_2021_cash_crop_species",
-            "crop_rotation_2022_cover_crop_species",
-            "crop_rotation_2022_cash_crop_species",
-            "crop_rotation_2023_cover_crop_species",
-            "crop_rotation_2023_cash_crop_species",
+            "two_years_ago_cover_crop_species",
+            "two_years_ago_cash_crop_species",
+            "last_years_cover_crop_species",
+            "last_years_cash_crop_species",
+            "this_years_cover_crop_species",
+            "this_years_cash_crop_species",
             "cover_crop_species_1",
             "cover_crop_planting_rate_1",
             "cover_crop_planting_rate_1_units",
@@ -311,41 +432,86 @@ def get_survey_data():
             "cover_crop_planting_cost",
             "cover_crop_planting_date",
             "cover_crop_estimated_termination",
+            "cover_crop_estimated_termination_write_in",
             "days_between_crop_hvst_and_cc_estd",
             "derived_species_class",
             # From FieldFarm
-            "field_name",
             "closest_zip_code",
             "field_acreage",
             "field_location",
             "derived_county",
-            # From Ancillary Data
-            # "id",
-            "biomass_collection_date",
-            "cp",
-            "andf",
-            "undfom30",
-            "ndfd30",
-            "tdn_adf",
-            "milk_ton_milk2013",
-            "rfq",
-            "cc_biomass",
-            "total_nitrogen",
-            "acc_gdd",
-            "total_precip",
-            "spring_biomass_collection_date",
-            "spring_cp",
-            "spring_andf",
-            "spring_undfom30",
-            "spring_ndfd30",
-            "spring_tdn_adf",
-            "spring_milk_ton_milk2013",
-            "spring_rfq",
-            "spring_cc_biomass",
-            "spring_total_nitrogen",
-            "spring_acc_gdd",
-            "spring_total_precip",
         ],
+    )
+
+    df_anc = pd.DataFrame(
+        list(
+            ancillary_data.values_list(
+                # From Ancillary Data
+                "survey_field_id",
+                "biomass_collection_date",
+                "cp",
+                "andf",
+                "undfom30",
+                "ndfd30",
+                "tdn_adf",
+                "milk_ton_milk2013",
+                "rfq",
+                "cc_biomass",
+                "total_nitrogen",
+                "height_of_stand",
+                "acc_gdd",
+                "total_precip",
+                "spring_biomass_collection_date",
+                "spring_cp",
+                "spring_andf",
+                "spring_undfom30",
+                "spring_ndfd30",
+                "spring_tdn_adf",
+                "spring_milk_ton_milk2013",
+                "spring_rfq",
+                "spring_cc_biomass",
+                "spring_total_nitrogen",
+                "spring_height_of_stand",
+                "spring_acc_gdd",
+                "spring_total_precip",
+                "notes_admin",
+            )
+        ),
+        columns=[
+            # From Ancillary Data
+            "survey_field_id",
+            "biomass_collection_date_fall",
+            "cp_fall",
+            "andf_fall",
+            "undfom30_fall",
+            "ndfd30_fall",
+            "tdn_adf_fall",
+            "milk_ton_milk2013_fall",
+            "rfq_fall",
+            "cc_biomass_fall",
+            "total_nitrogen_fall",
+            "height_of_stand",
+            "acc_gdd_fall",
+            "total_precip_fall",
+            "biomass_collection_date_spring",
+            "cp_spring",
+            "andf_spring",
+            "undfom30_spring",
+            "ndfd30_spring",
+            "tdn_adf_spring",
+            "milk_ton_milk2013_spring",
+            "rfq_spring",
+            "cc_biomass_spring",
+            "total_nitrogen_spring",
+            "spring_height_of_stand",
+            "acc_gdd_spring",
+            "total_precip_spring",
+            "notes_admin",
+        ],
+    )
+
+    df = df.merge(
+        df_anc, how="left", left_on="survey_field_id", right_on="survey_field_id"
     )
 
     for col in dct_choices:
@@ -366,7 +532,9 @@ def pull_all_years_together(f_output):
     query = """
  
 	SELECT 
-		prevsurv.survey_farm_id as id
+		prevsurv.survey_farm_id as farm_id
+        , prevsurv.survey_field_id as survey_field_id
+        , prevsurv.survey_field_id as id
         , stat.year
         , stat.county
         , stat.county_single
@@ -411,7 +579,8 @@ def pull_all_years_together(f_output):
         , stat.fq_milkton
         , stat.fq_rfq
         , null as total_nitrogen
-        
+        , null as height_of_stand
+        , null as fall_notes
         , null as spring_cc_biomass_collection_date
         , null as spring_total_precip
         , null as spring_acc_gdd        
@@ -424,25 +593,33 @@ def pull_all_years_together(f_output):
         , null as spring_fq_milkton
         , null as spring_fq_rfq
         , null as spring_total_nitrogen        
-        
+        , null as spring_height_of_stand
+        , null as spring_notes
         , stat.cc_rate_and_species
         , stat.cc_species
         , stat.cc_species_raw
         , null as survey_response_id
-        , null as survey_field_id
+        
     from wisc_cc as stat
     inner join
-  	(select
-		id as survey_farm_id,
-		split_part(notes_admin, ';', 1) as mrill_id
-	from wisccc_surveyfarm  
-	where survey_year < 2023) as prevsurv
+  	(
+        select
+            wsf.id as survey_farm_id,
+            wsfld.id as survey_field_id,
+            split_part(notes_admin, ';', 1) as mrill_id
+        from wisccc_surveyfarm as wsf
+        left join wisccc_surveyfield as wsfld
+        on wsf.id = wsfld.survey_farm_id
+        where survey_year < 2023      
+    ) as prevsurv
 	on stat.id = prevsurv.mrill_id
 
     union all
 
     select
-        a.master_survey_farm_id as id,
+        a.master_survey_farm_id as farm_id,
+        surveyfield_id as survey_field_id,
+        surveyfield_id as id,
         year,
         a.county,
         derived_county as county_single,
@@ -503,7 +680,8 @@ def pull_all_years_together(f_output):
         rfq as fq_rfq,
         
         total_nitrogen as total_nitrogen,
-        
+        height_of_stand,
+        fall_notes,
         spring_biomass_collection_date as spring_cc_biomass_collection_date,
         spring_total_precip as spring_total_precip,
         spring_acc_gdd as spring_acc_gdd,    
@@ -516,6 +694,8 @@ def pull_all_years_together(f_output):
         spring_milk_ton_milk2013 as spring_fq_milkton,
         spring_rfq as spring_fq_rfq,
         spring_total_nitrogen as spring_total_nitrogen,
+        spring_height_of_stand,
+        spring_notes,
         
         concat(		
             concat(  cover_crop_planting_rate_1, ' ', mod_cover_crop_planting_rate_1_units, ' ', mod_cover_crop_species_1),
@@ -532,8 +712,7 @@ def pull_all_years_together(f_output):
             nullif(concat(', ', mod_cover_crop_species_4), ', '), 
             nullif(concat(', ', mod_cover_crop_species_5), ', ')
         ) as cc_species_raw,
-        survey_response_id,
-        survey_field_id
+        survey_response_id
     from (
         select
             surveyfield.*,
@@ -551,6 +730,7 @@ def pull_all_years_together(f_output):
             ) as wisc_cc_id,
             surveyfarm.survey_year as year,
             surveyfarm.id as master_survey_farm_id,
+            surveyfield.id as surveyfield_id,
             case
                 when surveyfield.cover_crop_species_1 = 'ANNUAL_RYEGRASS' then 'annual ryegrass'
                 when surveyfield.cover_crop_species_1 = 'BALANSA_CLOVER' then 'balansa clover'
@@ -950,7 +1130,8 @@ def data_export():
     df = df.drop(
         columns=[
             "survey_response_id",
-            "survey_field_id",
+            "id",
+            "farm_id",
             "years_experience",
             "anpp",
             "days_from_plant_to_bio_hrvst",
@@ -962,21 +1143,55 @@ def data_export():
     )
     df = df.rename(
         columns={
+            "survey_field_id": "field_id",
             "year": "survey_year",
             "county": "county_farm",
             "county_single": "county_field",
             "cc_termination": "cc_termination_timing_method",
+            "cc_biomass_collection_date": "cc_biomass_collection_date_fall",
+            "total_precip": "total_precip_fall",
+            "acc_gdd": "acc_gdd_fall",
+            "cc_biomass": "cc_biomass_fall",
+            "fq_cp": "fq_cp_fall",
+            "fq_andf": "fq_andf_fall",
+            "fq_ndfd30": "fq_ndfd30_fall",
+            "fq_tdn_adf": "fq_tdn_adf_fall",
+            "fq_milkton": "fq_milkton_fall",
+            "fq_rfq": "fq_rfq_fall",
+            "total_nitrogen": "total_nitrogen_fall",
+            "height_of_stand": "height_of_stand_fall",
+            "fall_notes": "notes_fall",
+            "spring_cc_biomass_collection_date": "cc_biomass_collection_date_spring",
+            "spring_total_precip": "total_precip_spring",
+            "spring_acc_gdd": "acc_gdd_spring",
+            "spring_cc_biomass": "cc_biomass_spring",
+            "spring_fq_cp": "fq_cp_spring",
+            "spring_fq_andf": "fq_andf_spring",
+            "spring_fq_undfom30": "fq_undfom30_spring",
+            "spring_fq_ndfd30": "fq_ndfd30_spring",
+            "spring_fq_tdn_adf": "fq_tdn_adf_spring",
+            "spring_fq_milkton": "fq_milkton_spring",
+            "spring_fq_rfq": "fq_rfq_spring",
+            "spring_total_nitrogen": "total_nitrogen_spring",
+            "spring_height_of_stand": "height_of_stand_spring",
+            "spring_notes": "notes_spring",
         }
     )
+
     # Excel doesn't want datetimes with timezones, so converting
     # to dates
     cols_wtzs = [
         "cash_crop_planting_date",
         "cc_planting_date",
-        "cc_biomass_collection_date",
+        "cc_biomass_collection_date_fall",
+        "cc_biomass_collection_date_spring",
     ]
     for col_wtz in cols_wtzs:
-        df[col_wtz] = df[col_wtz].apply(lambda a: pd.to_datetime(a).date())
+        try:
+            df[col_wtz] = df[col_wtz].apply(lambda a: pd.to_datetime(a).date())
+        except AttributeError:
+            df[col_wtz] = df[col_wtz].where(~pd.isnull(df[col_wtz]), other=pd.NaT)
+            df[col_wtz] = df[col_wtz].apply(lambda a: pd.to_datetime(a).date())
 
     # Surveys before 2023 have periods (".") for nulls,
     #   this will clean them up.
@@ -1021,154 +1236,3 @@ def export_agronomic_data():
     response["Content-Disposition"] = f"attachment; filename={export_name}"
 
     return response
-
-
-# From Ancillary Data
-"id",
-"biomass_collection_date",
-"cp",
-"andf",
-"undfom30",
-"ndfd30",
-"tdn_adf",
-"milk_ton_milk2013",
-"rfq",
-"cc_biomass",
-"total_nitrogen",
-"acc_gdd",
-"total_precip",
-"spring_biomass_collection_date",
-"spring_cc_biomass",
-"survey_response_id",
-"survey_field_id",
-
-# From Farmer
-"id",
-"first_name",
-"last_name",
-"farm_name",
-"county",
-"user_id"
-
-
-# From SurveyFarm
-"id",
-"survey_created",
-"last_updated",
-"survey_year",
-"notes_admin",
-"confirmed_accurate",
-"years_experience",
-"total_acres",
-"percent_of_farm_cc",
-"dominant_soil_series_1",
-"dominant_soil_series_2",
-"dominant_soil_series_3",
-"dominant_soil_series_4",
-"info_source_nutrient_mgmt_1",
-"info_source_nutrient_mgmt_2",
-"info_source_nutrient_mgmt_3",
-"source_nutrient_mgmt_write_in",
-"cov_crops_for_ntrnt_mgmt_comments_questions",
-"info_source_cover_crops_1",
-"info_source_cover_crops_2",
-"info_source_cover_crops_3",
-"info_source_cover_crops_write_in",
-"support_cover_crops_1",
-"support_cover_crops_2",
-"support_cover_crops_3",
-"support_cover_crops_write_in",
-"lacking_any_info_cover_crops",
-"barriers_to_expansion",
-"quit_planting_cover_crops",
-"if_use_crop_insurance",
-"why_cover_crops_write_in",
-"cover_crops_delay_cash_crop",
-"save_cover_crop_seed",
-"source_cover_crop_seed",
-"interesting_tales",
-"where_to_start",
-"additional_thoughts",
-"farmer_id",
-"user_id",
-
-
-# From SurveyField
-"id",
-"created_time",
-"last_updated",
-"crop_rotation",
-"crop_rotation_2021_cover_crop_species",
-"crop_rotation_2021_cash_crop_species",
-"crop_rotation_2022_cover_crop_species",
-"crop_rotation_2022_cash_crop_species",
-"crop_rotation_2023_cover_crop_species",
-"crop_rotation_2023_cash_crop_species",
-"cover_crop_species_1",
-"cover_crop_planting_rate_1",
-"cover_crop_planting_rate_1_units",
-"cover_crop_species_2",
-"cover_crop_planting_rate_2",
-"cover_crop_planting_rate_2_units",
-"cover_crop_species_3",
-"cover_crop_planting_rate_3",
-"cover_crop_planting_rate_3_units",
-"cover_crop_species_4",
-"cover_crop_planting_rate_4",
-"cover_crop_planting_rate_4_units",
-"cover_crop_species_5",
-"cover_crop_planting_rate_5",
-"cover_crop_planting_rate_5_units",
-"cover_crop_species_and_rate_write_in",
-"cover_crop_multispecies_mix_write_in",
-"cash_crop_planting_date",
-"years_with_cover_crops",
-"dominant_soil_texture",
-"manure_prior",
-"manure_prior_rate",
-"manure_prior_rate_units",
-"manure_post",
-"manure_post_rate",
-"manure_post_rate_units",
-"tillage_system_cash_crop",
-"primary_tillage_equipment",
-"primary_tillage_equipment_write_in",
-"secondary_tillage_equipment",
-"secondary_tillage_equipment_write_in",
-"soil_conditions_at_cover_crop_seeding",
-"cover_crop_seeding_method",
-"cover_crop_seeding_method_write_in",
-"cover_crop_seed_cost",
-"cover_crop_planting_cost",
-"cover_crop_planting_date",
-"cover_crop_estimated_termination",
-"days_between_crop_hvst_and_cc_estd",
-"derived_species_class",
-"derived_county",
-"field_farm_id",
-"survey_farm_id",
-
-
-# From FieldFarm
-"id",
-"created_time",
-"last_updated",
-"field_name",
-"closest_zip_code",
-"field_acreage",
-"field_location",
-"farmer_id",
-
-
-# From User
-"id",
-"password",
-"last_login",
-"is_superuser",
-"username",
-"first_name",
-"last_name",
-"email",
-"is_staff",
-"is_active",
-"date_joined",

@@ -315,7 +315,8 @@
 
 
                         <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
-                            <option value="cc_biomass">Fall Cover crop biomass (tons DM/ac)</option>
+                            <option value="cc_biomass">Fall cover crop biomass (tons DM/ac)</option>
+                            <option value="spring_cc_biomass">Spring cover crop biomass (tons DM/ac)</option>
                             <option value="cc_species">Cover crop types</option>
                             <option value="acc_gdd">Growing degree units</option>
                             <option value="cc_planting_date_mo">Planting season</option>
@@ -530,10 +531,27 @@
             }
 
 
-            var biomass_val = feature.properties.cc_biomass;
-            var biomass_val = (biomass_val === null) ? 'Not sampled.' : roundUp(feature.properties.cc_biomass, 2);
-            var spring_biomass_val = feature.properties.spring_cc_biomass;
-            var spring_biomass_val = (spring_biomass_val === null) ? 'Not sampled.' : roundUp(feature.properties.spring_cc_biomass, 2);
+
+
+            var biomass_val = (feature.properties.cc_biomass === null) ? 'No value.' : roundUp(feature.properties.cc_biomass, 2);
+            var spring_biomass_val = (feature.properties.spring_cc_biomass === null) ? 'Not sampled.' : roundUp(feature.properties.spring_cc_biomass, 2);
+
+            var fall_gdu = (feature.properties.acc_gdd === null) ? 'No value.' : roundUp(feature.properties.acc_gdd, 2);
+            var spring_gdu = (feature.properties.spring_acc_gdd === null) ? 'No value.' : roundUp(feature.properties.spring_acc_gdd, 2);
+            var fall_precip = (feature.properties.total_precip === null) ? 'No value.' : roundUp(feature.properties.total_precip, 2);
+            var spring_precip = (feature.properties.spring_total_precip === null) ? 'No value.' : roundUp(feature.properties.spring_total_precip, 2);
+
+
+            var fall_sampling_notes = ""
+            var spring_sampling_notes = ""
+            if (feature.properties.fall_notes != null) {
+                console.log(feature.id)
+                fall_sampling_notes = "<dt>" + "Fall sampling notes" + "</dt> <dd>" + feature.properties.fall_notes + "</dd>"
+            }
+            if (feature.properties.spring_notes != null) {
+                spring_sampling_notes = "<dt>" + "Spring sampling notes" + "</dt> <dd>" + feature.properties.fall_notes + "</dd>"
+            }
+
             var image_1 = ""
             var image_2 = ""
             if (feature.properties.image_1_url != null) {
@@ -543,7 +561,7 @@
                 image_2 = "<dt>" + feature.properties.caption_photo_2 + "</dt> <dd>" + '<img src="' + feature.properties.image_2_url + '" width="250" height="250">' + "</dd>"
             }
             var popupContent = "<dl>" +
-                "<dt>ID</dt> <dd>" + feature.id + "</dd>" +
+                "<dt>Field ID</dt> <dd>" + feature.id + "</dd>" +
                 "<dt>Cover crops</dt> <dd>" + feature.properties.cc_species_raw + "</dd>" +
                 "<dt>Seeding rate</dt> <dd>" + planting_rate + "</dd>" +
                 "<dt>Seeding method</dt> <dd>" + feature.properties.cc_seeding_method + "</dd>" +
@@ -552,11 +570,15 @@
                 "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
 
                 "<dt>Fall Cumulative GDU </dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
+                "<dt>Fall Precip (in) </dt> <dd>" + fall_precip + "</dd>" +
                 "<dt>Fall Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
+                fall_sampling_notes +
 
-                "<dt>Spring Cumulative GDU </dt> <dd>" + feature.properties.spring_acc_gdd + "</dd>" +
+
+                "<dt>Spring Cumulative GDU </dt> <dd>" + spring_gdu + "</dd>" +
+                "<dt>Spring Precip (in) </dt> <dd>" + spring_precip + "</dd>" +
                 "<dt>Spring Biomass (ton DM/acre)</dt> <dd>" + spring_biomass_val + "</dd>" +
-
+                spring_sampling_notes +
                 image_1 +
                 image_2 +
                 "</dl>"
@@ -949,6 +971,9 @@
             if (property == "cc_biomass") {
                 text = "Biomass is the weight of aboveground plant material at time of collection, and ton DM/acre = tons of dry matter of biomass per acre (please note this is tons not pounds!)"
             }
+            if (property == "spring_cc_biomass") {
+                text = "This is the mass of plant material sampled in the spring. Biomass is the weight of aboveground plant material at time of collection, and ton DM/acre = tons of dry matter of biomass per acre (please note this is tons not pounds!)."
+            }
             if (property == "fq_rfq") {
                 text = "Relative forage quality is a measure of how good the harvested cover crop was for use as forage for livestock."
                 text += 'The grades are based on a scale from <a href="https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-10-2023/">UW Extension</a>.'
@@ -991,6 +1016,14 @@
                     updateLegend(biomassScale, ".1f")
 
                     createNullLgend("translate(20, 147)")
+                } else if (property == "spring_cc_biomass") {
+                    layer.setStyle({
+                        fillColor: layer.feature.properties.spring_cc_biomass ? biomassScale(layer.feature.properties.spring_cc_biomass) : "#ccc"
+                    })
+                    updateLegend(biomassScale, ".1f")
+
+                    createNullLgend("translate(20, 147)")
+
                 } else if (property == "fq_rfq") {
                     layer.setStyle({
                         fillColor: layer.feature.properties.rfq_bin ? rfqBinsScale(layer.feature.properties.rfq_bin) : "#ccc"

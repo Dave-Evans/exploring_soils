@@ -50,6 +50,7 @@ from wisccc.forms import (
     ResearcherFullForm,
     AncillaryDataForm,
     SelectUserForm,
+    InterestedPartyForm,
 )
 from wisccc.forms_2023 import (
     SurveyFarmFormPart1_2023,
@@ -75,6 +76,8 @@ from wisccc.data_mgmt import (
     get_survey_data,
     data_export,
     export_agronomic_data,
+    get_registration_download,
+    get_researchers_download,
 )
 
 
@@ -226,6 +229,29 @@ def wisc_cc_about(request):
     return render(request, "wisccc/wisc_cc_about.html")
 
 
+def wisc_cc_interested(request):
+
+    form_interested_party = InterestedPartyForm(request.POST or None)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if form_interested_party.is_valid():
+        form_interested_party.save()
+        # new_form = form_interested_party.save(commit=False)
+        # new_form.save()
+        return redirect("wisc_cc_interested_thanks")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_interested.html",
+        {"form_interested_party": form_interested_party},
+    )
+
+
+def wisc_cc_interested_thanks(request):
+    return render(request, "wisccc/wisc_cc_interested_thanks.html")
+
+
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def wisccc_download_data(request, opt):
     # opt == 1 then full survey with qualitative
@@ -256,9 +282,28 @@ def wisccc_download_data(request, opt):
 
 @login_required
 def wisc_cc_survey(request):
-    """Home page for Cover Crop survey. We check progress of different sections of the survey
+    """
+    Home page for Cover Crop survey. We check progress of different sections of the survey
     by querying one required question from each section (0 (the farmer section),1,2,3).
     If this is completed then we assume it is all completed."""
+
+    # Before we allow access to the survey page, user must
+    #   be logged in ->
+    #       -> Checked with decorator
+    #   have a farmer entry
+    #       -> Checked with Farmer.objects.get
+    #   be registered for the proper survey season
+    #       -> Check if user has registration record
+
+    try:
+        farmer_instance = Farmer.objects.get(user_id=request.user.id)
+    except:
+        return redirect("wisc_cc_register_1")
+
+    try:
+        registration = SurveyRegistration.objects.get(farmer_id=farmer_instance.id)
+    except:
+        return redirect("wisc_cc_register_1")
 
     completed_1 = check_section_completed(request.user.id, 1)
     completed_2 = check_section_completed(request.user.id, 2)
@@ -654,8 +699,13 @@ def update_labdata(request, id):
     """
     context = {}
     survey_farm = get_object_or_404(SurveyFarm, id=id)
+    first_and_last_name = (
+        f"{survey_farm.farmer.first_name} {survey_farm.farmer.last_name}"
+    )
+    survey_year = f"{survey_farm.survey_year}"
+
     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-    # Get any uploaded photos for this survey response
+    # Get any lab data for this survey response
     ancillary_data = AncillaryData.objects.filter(
         survey_field_id=survey_field.id
     ).first()
@@ -678,6 +728,8 @@ def update_labdata(request, id):
         template,
         {
             "form": form_ancillary_data,
+            "first_and_last_name": first_and_last_name,
+            "survey_year": survey_year,
         },
     )
 
@@ -692,22 +744,27 @@ def update_response(request, id):
     # fetch the survey object related to passed id
     survey_farm = get_object_or_404(SurveyFarm, id=id)
 
-    if survey_farm is None:
-        survey_field = None
-    else:
-        survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-
-    if survey_field is None:
-        field_farm = None
-        survey_photo = None
-    else:
-        field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
-        survey_photo = SurveyPhoto.objects.filter(
-            survey_field_id=survey_field.id
-        ).first()
-
     # Get farmer associated with user id of survey response
     farmer = Farmer.objects.filter(id=survey_farm.farmer_id).first()
+    first_and_last_name = f"{farmer.first_name} {farmer.last_name}"
+    # Is there a survey field record for this survey?
+    #   if so grab it, else create one
+    survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
+    if survey_field is None:
+        survey_field = SurveyField.objects.create(survey_farm_id=survey_farm.id)
+
+    # Is there a field farm record for this survey?
+    #   if so grab it, else create one
+    field_farm = FieldFarm.objects.filter(id=survey_field.field_farm_id).first()
+    if field_farm is None:
+        field_farm = FieldFarm.objects.create(farmer=farmer)
+        survey_field.field_farm = field_farm
+        survey_field.save()
+    # Is there a Survey photo record for this survey?
+    #   if so grab it, else create one
+    survey_photo = SurveyPhoto.objects.filter(survey_field_id=survey_field.id).first()
+    if survey_photo is None:
+        survey_photo = SurveyPhoto.objects.create(survey_field=survey_field)
 
     # pass the object as instance in form
     # Section 1 - Farmer
@@ -846,6 +903,7 @@ def update_response(request, id):
 
         return redirect("response_table")
 
+    form_context["first_and_last_name"] = first_and_last_name
     return render(request, template, form_context)
 
 
@@ -1163,7 +1221,7 @@ def wisccc_create_researcher_existing_user(request):
 
         new_researcher = researcher_form.save(commit=False)
         # Form returns a queryset, so we select the first object, there is only one
-        print(select_form.cleaned_data)
+        # print(select_form.cleaned_data)
 
         new_user = User.objects.get(id=select_form.cleaned_data["user_select"])
 
@@ -1518,88 +1576,22 @@ def delete_registration(request, id):
     return render(request, "wisccc/delete_registration.html", context)
 
 
-def get_registration_download():
-    survey_registrants = (
-        SurveyRegistration.objects.all()
-        .select_related("farmer")
-        .select_related("farmer__user")
-    )
-
-    df = pd.DataFrame(
-        list(
-            survey_registrants.values_list(
-                # From registration
-                "signup_timestamp",
-                # From Farmer
-                "farmer__id",
-                # From User
-                "farmer__user__email",
-                "farmer__user__username",
-                # From Farmer
-                "farmer__first_name",
-                "farmer__last_name",
-                "farmer__farm_name",
-                "farmer__county",
-                "farmer__address_street",
-                "farmer__address_municipality",
-                "farmer__address_state",
-                "farmer__address_zipcode",
-                "farmer__phone_number",
-                # From registration
-                "survey_year",
-                "biomass_or_just_survey",
-                "do_you_have_a_biomas_kit",
-                "do_you_need_assistance",
-                "howd_you_hear",
-                "belong_to_groups",
-                "notes",
-            )
-        ),
-        columns=[
-            # From registration
-            "signup_timestamp",
-            # From Farmer
-            "id",
-            # From User
-            "email",
-            "username",
-            # From Farmer
-            "first_name",
-            "last_name",
-            "farm_name",
-            "county",
-            "street",
-            "municipality",
-            "state",
-            "zipcode",
-            "phone_number",
-            # From registrants
-            "survey_year",
-            "biomass_or_just_survey",
-            "do_you_have_a_biomas_kit",
-            "do_you_need_assistance",
-            "howd_you_hear",
-            "belong_to_groups",
-            "notes",
-        ],
-    )
-    # convert farmer id to string, convert survey_year to string
-    #   grab just the year and create and id
-    # Add -F for fall sampling
-    df["id"] = (
-        df["id"].apply(str).str.zfill(5)
-        + "-"
-        + df["survey_year"].apply(str).str[-2:]
-        + "-F"
-    )
-    df = df.drop("survey_year", axis=1)
-    return df
-
-
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def download_registrants(request):
     df = get_registration_download()
     filename = "registrants.csv"
+    resp = HttpResponse(content_type="text/csv")
+    resp["Content-Disposition"] = f"attachment; filename={filename}"
+
+    df.to_csv(path_or_buf=resp, sep=",", index=False)
+    return resp
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def download_researchers(request):
+    df = get_researchers_download()
+
+    filename = "researchers_{}.csv".format(datetime.datetime.now().strftime("%Y_%m_%d"))
     resp = HttpResponse(content_type="text/csv")
     resp["Content-Disposition"] = f"attachment; filename={filename}"
 
@@ -1690,10 +1682,8 @@ def wisc_cc_register_1(request):
 def wisc_cc_register_2(request):
     """For when a user already exists."""
     user = User.objects.get(id=request.user.id)
-    try:
-        farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
-    except:
-        farmer_instance = None
+
+    farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
 
     farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
 
@@ -1869,10 +1859,15 @@ def wisc_cc_register_3(request):
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def upload_photo(request, id):
-    """For uploading photos for survey response"""
+    """For uploading photos for survey response,
+    from survey farm id"""
     context = {}
     # fetch the survey object related to passed id
     survey_farm = get_object_or_404(SurveyFarm, id=id)
+    first_and_last_name = (
+        f"{survey_farm.farmer.first_name} {survey_farm.farmer.last_name}"
+    )
+    survey_year = f"{survey_farm.survey_year}"
     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
     # Get any uploaded photos for this survey response
     survey_photo = SurveyPhoto.objects.filter(survey_field_id=survey_field.id).first()
@@ -1900,5 +1895,7 @@ def upload_photo(request, id):
         template,
         {
             "survey_photo_form": survey_photo_form,
+            "first_and_last_name": first_and_last_name,
+            "survey_year": survey_year,
         },
     )
