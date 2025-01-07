@@ -1571,6 +1571,12 @@ class AncillaryData(models.Model):
     total_nitrogen = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="Total nitrogen", null=True
     )
+    height_of_stand = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Height of cover crop stand stand (in)",
+        null=True,
+    )
     acc_gdd = models.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -1631,8 +1637,18 @@ class AncillaryData(models.Model):
     spring_total_nitrogen = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="Total nitrogen", null=True
     )
+    spring_height_of_stand = models.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        verbose_name="Spring height of cover crop stand stand (in)",
+        null=True,
+    )
     spring_notes = models.TextField(
         verbose_name="Notes about spring biomass sampling",
+        null=True,
+    )
+    notes_admin = models.TextField(
+        verbose_name="Notes about lab data or sampling or about edits. These notes will not be displayed.",
         null=True,
     )
 
@@ -1738,3 +1754,15 @@ class Researcher(models.Model):
 
     class Meta:
         permissions = (("approved_researcher", "Approved researcher"),)
+
+
+class InterestedParty(models.Model):
+    """For folks interested in the project
+    Not registered, no account necessary"""
+
+    signup_timestamp = models.DateTimeField(auto_now_add=True)
+    first_name = models.CharField(max_length=250, blank=True)
+    last_name = models.CharField(max_length=250, blank=True)
+    email = models.EmailField(null=True)
+    cover_crops_interest = models.TextField(blank=True)
+    admin_notes = models.TextField(blank=True)

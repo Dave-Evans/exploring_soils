@@ -50,6 +50,7 @@ from wisccc.forms import (
     ResearcherFullForm,
     AncillaryDataForm,
     SelectUserForm,
+    InterestedPartyForm,
 )
 from wisccc.forms_2023 import (
     SurveyFarmFormPart1_2023,
@@ -150,6 +151,29 @@ def wisc_cc_manager_home(request):
 
 def wisc_cc_about(request):
     return render(request, "wisccc/wisc_cc_about.html")
+
+
+def wisc_cc_interested(request):
+
+    form_interested_party = InterestedPartyForm(request.POST or None)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if form_interested_party.is_valid():
+        form_interested_party.save()
+        # new_form = form_interested_party.save(commit=False)
+        # new_form.save()
+        return redirect("wisc_cc_interested_thanks")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_interested.html",
+        {"form_interested_party": form_interested_party},
+    )
+
+
+def wisc_cc_interested_thanks(request):
+    return render(request, "wisccc/wisc_cc_interested_thanks.html")
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -695,6 +719,11 @@ def update_labdata(request, id):
     """
     context = {}
     survey_farm = get_object_or_404(SurveyFarm, id=id)
+    first_and_last_name = (
+        f"{survey_farm.farmer.first_name} {survey_farm.farmer.last_name}"
+    )
+    survey_year = f"{survey_farm.survey_year}"
+
     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
     # Get any lab data for this survey response
     ancillary_data = AncillaryData.objects.filter(
@@ -719,6 +748,8 @@ def update_labdata(request, id):
         template,
         {
             "form": form_ancillary_data,
+            "first_and_last_name": first_and_last_name,
+            "survey_year": survey_year,
         },
     )
 
@@ -735,7 +766,7 @@ def update_response(request, id):
 
     # Get farmer associated with user id of survey response
     farmer = Farmer.objects.filter(id=survey_farm.farmer_id).first()
-
+    first_and_last_name = f"{farmer.first_name} {farmer.last_name}"
     # Is there a survey field record for this survey?
     #   if so grab it, else create one
     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
@@ -892,6 +923,7 @@ def update_response(request, id):
 
         return redirect("response_table")
 
+    form_context["first_and_last_name"] = first_and_last_name
     return render(request, template, form_context)
 
 
@@ -1011,7 +1043,7 @@ def wisc_cc_graph(request):
 
 
 def wisc_cc_map(request):
-    return render(request, "wisccc/wisc_cc_map_toggle.html")
+    return render(request, "wisccc/wisc_cc_map.html")
 
 
 def wisc_cc_map_v2(request):
@@ -1882,10 +1914,15 @@ def wisc_cc_register_3(request):
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def upload_photo(request, id):
-    """For uploading photos for survey response"""
+    """For uploading photos for survey response,
+    from survey farm id"""
     context = {}
     # fetch the survey object related to passed id
     survey_farm = get_object_or_404(SurveyFarm, id=id)
+    first_and_last_name = (
+        f"{survey_farm.farmer.first_name} {survey_farm.farmer.last_name}"
+    )
+    survey_year = f"{survey_farm.survey_year}"
     survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
     # Get any uploaded photos for this survey response
     survey_photo = SurveyPhoto.objects.filter(survey_field_id=survey_field.id).first()
@@ -1913,5 +1950,7 @@ def upload_photo(request, id):
         template,
         {
             "survey_photo_form": survey_photo_form,
+            "first_and_last_name": first_and_last_name,
+            "survey_year": survey_year,
         },
     )

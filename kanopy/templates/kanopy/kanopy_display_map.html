@@ -131,7 +131,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             onEachFeature: cntyPopup
         }).addTo(counties_layer);
         map.addLayer(mn_counties_json_object)
-
+        map.fitBounds(mn_counties_json_object.getBounds());
     });
 
 
@@ -236,7 +236,7 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
             pane: "pane_collection_pts",
             onEachFeature: onEachFeature
         }).addTo(map);
-        map.fitBounds(soilsPoints);
+        // map.fitBounds(soilsPoints);
         geojsonObject.eachLayer(function (layer) {
             layer.setStyle({ fillColor: fgccScale(layer.feature.properties.fgcc_value) })
             updateLegend(fgccScale, pct = true)

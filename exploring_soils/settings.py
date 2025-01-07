@@ -88,7 +88,96 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
+
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+
+CSP_FRAME_ANCESTORS = [
+    "https://www.michaelfields.org",
+]
+CSP_STYLE_SRC = [
+    "'self'",
+    "'unsafe-inline'",
+    "https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css",
+    "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css",
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css",
+    "https://unpkg.com/leaflet@1.3.4/dist/leaflet.css",
+    "https://fonts.googleapis.com/css?family=Peralta",
+    "https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css",
+    "https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css",
+    "http://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css",
+    "https://unpkg.com/leaflet@1.7.1/dist/leaflet.css",
+    "https://unpkg.com/leaflet@1.0.1/dist/leaflet.css",
+]
+CSP_SCRIPT_SRC = [
+    "'self'",
+    "'unsafe-inline'",
+    "http://code.jquery.com/jquery-2.1.0.min.js",
+    "https://code.jquery.com/jquery-3.3.1.slim.min.js",
+    "https://d3js.org/d3.v4.js",
+    "https://code.jquery.com/jquery.js",
+    "http://code.jquery.com/jquery.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js",
+    "https://d3js.org/d3-scale-chromatic.v1.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/regression/2.0.1/regression.min.js",
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js",
+    "https://mathjax.rstudio.com/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
+    "https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js",
+    "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js",
+    "http://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js",
+    "https://unpkg.com/leaflet@1.3.4/dist/leaflet.js",
+    "https://challenges.cloudflare.com/turnstile/v0/api.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js",
+    "https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js",
+    "https://unpkg.com/leaflet@1.7.1/dist/leaflet.js",
+    "https://unpkg.com/leaflet@1.0.1/dist/leaflet.js",
+]
+CSP_IMG_SRC = [
+    "'self'",
+    "data:",
+    "blob:",
+    "http://a.tile.osm.org/",
+    "http://b.tile.osm.org/",
+    "http://c.tile.osm.org/",
+    "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/",
+    "https://unpkg.com/leaflet@1.3.4/dist/images/",
+    "https://unpkg.com/leaflet@1.0.1/dist/images/",
+    "https://unpkg.com/leaflet@1.7.1/dist/images/",
+    "https://tile.openstreetmap.org",
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/",
+    "http://ows.mundialis.de/services/",
+    "https://{}.s3.amazonaws.com/media/private/".format(
+        config("AWS_STORAGE_BUCKET_NAME")
+    ),
+    "https://{}.s3.amazonaws.com/media/private/".format(
+        config("AWS_WISC_CC_PHOTO_LOCATION")
+    ),
+    "https://{}.s3.amazonaws.com/media/private/".format(
+        config("AWS_WISC_CC_RESEARCHER_DOC_LOCATION")
+    ),
+    "https://greencover-photos-dev.s3.amazonaws.com/media/private/",
+    "https://davemike-wisc-cc-dev.s3.amazonaws.com/media/private/",
+]
+
+CSP_FONT_SRC = [
+    "'self'",
+    "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/fonts/",
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/fonts/",
+    "https://fonts.gstatic.com/s/",
+    "https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/fonts/",
+]
+
+CSP_FRAME_SRC = [
+    "'self'",
+    "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/",
+]
+CSP_CONNECT_SRC = ("'self'",)
 
 ROOT_URLCONF = "exploring_soils.urls"
 
@@ -169,8 +258,8 @@ else:
 
 
 LOGIN_URL = "login"
-LOGOUT_REDIRECT_URL = "home"
-LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "wisc_cc_home"
+LOGIN_REDIRECT_URL = "wisc_cc_home"
 
 
 LEAFLET_CONFIG = {

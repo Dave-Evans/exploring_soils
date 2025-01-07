@@ -1,6 +1,5 @@
 Data category	Explanation
-Notes	These data represent survey from farmers. They are asked questions regarding their farming practices and they are also asked about practices about a particular field. In some cases  farmers have entered information for more than one field. This results in duplicated answers for their farming practices, but distinct records for each field.  If you are analyzing at the farm scale, make sure you look at the survey_farm_id field to deduplicate your dataset. If you are interested in the individual fields, then look at survey_field_id.
-survey_farm_id	random identifier for survey farm record
+field_id	Identifier for the field
 survey_year	Participants fill out a survey of cover crop agronomic practices each fall.
 county_farm	County as identified by participant as where they farm; may be more than one
 zipcode	Closest zip code for sampled field as identified by participant
@@ -38,6 +37,7 @@ fq_tdn_adf_fall	Fall – total digestible nutrients - acid detergent fiber
 fq_milkton_fall	"Fall – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters."
 fq_rfq_fall	Fall – measured: relative forage quality
 total_nitrogen_fall	Fall – Total nitrogen in a the plant tissue, mg/L
+height_of_stand_fall	Fall – The height, in inches, of the cover crop stand when fall sample was taken. This was assessed from a photo taken by the farmer at sampling time.
 cc_biomass_collection_date_spring	The date of spring biomass collection.
 total_precip_spring	Spring – Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
 acc_gdd_spring	Spring – growing degree days/units that have accumulated from when the cover crop was planted to when it was harvested derived from https://mrcc.purdue.edu/data_serv/cli-dap
@@ -49,5 +49,5 @@ fq_tdn_adf_spring	Spring – total digestible nutrients - acid detergent fiber
 fq_milkton_spring	"Spring – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters."
 fq_rfq_spring	Spring – measured: relative forage quality
 total_nitrogen_spring	Spring – Total nitrogen in a the plant tissue, mg/L
+height_of_stand_spring	Spring – The height, in inches, of the cover crop stand when spring sample was taken. This was assessed from a photo taken by the farmer at sampling time.
 cc_species_raw	As entered by participant from a list: annual ryegrass; barley; berseem clover; canola/rapeseed; cereal (winter) rye; crimson clover; cowpea; field/forage pea; hairy vetch; kale; oats; other (legume); other (grass); other (broadleaf); radish; red clover; sorghum; sorghum-sudan; soybeans; sunflower; Tritcale; turnip; wheat (spring); wheat (winter); multispecies mix of 2 or more; other. 
-survey_field_id	Unique identifier for survey field.

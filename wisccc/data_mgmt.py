@@ -458,6 +458,7 @@ def get_survey_data():
                 "rfq",
                 "cc_biomass",
                 "total_nitrogen",
+                "height_of_stand",
                 "acc_gdd",
                 "total_precip",
                 "spring_biomass_collection_date",
@@ -470,8 +471,10 @@ def get_survey_data():
                 "spring_rfq",
                 "spring_cc_biomass",
                 "spring_total_nitrogen",
+                "spring_height_of_stand",
                 "spring_acc_gdd",
                 "spring_total_precip",
+                "notes_admin",
             )
         ),
         columns=[
@@ -487,6 +490,7 @@ def get_survey_data():
             "rfq_fall",
             "cc_biomass_fall",
             "total_nitrogen_fall",
+            "height_of_stand",
             "acc_gdd_fall",
             "total_precip_fall",
             "biomass_collection_date_spring",
@@ -499,8 +503,10 @@ def get_survey_data():
             "rfq_spring",
             "cc_biomass_spring",
             "total_nitrogen_spring",
+            "spring_height_of_stand",
             "acc_gdd_spring",
             "total_precip_spring",
+            "notes_admin",
         ],
     )
 
@@ -526,7 +532,9 @@ def pull_all_years_together(f_output):
     query = """
  
 	SELECT 
-		prevsurv.survey_farm_id as id
+		prevsurv.survey_farm_id as farm_id
+        , prevsurv.survey_field_id as survey_field_id
+        , prevsurv.survey_field_id as id
         , stat.year
         , stat.county
         , stat.county_single
@@ -571,6 +579,7 @@ def pull_all_years_together(f_output):
         , stat.fq_milkton
         , stat.fq_rfq
         , null as total_nitrogen
+        , null as height_of_stand
         , null as fall_notes
         , null as spring_cc_biomass_collection_date
         , null as spring_total_precip
@@ -584,25 +593,33 @@ def pull_all_years_together(f_output):
         , null as spring_fq_milkton
         , null as spring_fq_rfq
         , null as spring_total_nitrogen        
+        , null as spring_height_of_stand
         , null as spring_notes
         , stat.cc_rate_and_species
         , stat.cc_species
         , stat.cc_species_raw
         , null as survey_response_id
-        , null as survey_field_id
+        
     from wisc_cc as stat
     inner join
-  	(select
-		id as survey_farm_id,
-		split_part(notes_admin, ';', 1) as mrill_id
-	from wisccc_surveyfarm  
-	where survey_year < 2023) as prevsurv
+  	(
+        select
+            wsf.id as survey_farm_id,
+            wsfld.id as survey_field_id,
+            split_part(notes_admin, ';', 1) as mrill_id
+        from wisccc_surveyfarm as wsf
+        left join wisccc_surveyfield as wsfld
+        on wsf.id = wsfld.survey_farm_id
+        where survey_year < 2023      
+    ) as prevsurv
 	on stat.id = prevsurv.mrill_id
 
     union all
 
     select
-        a.master_survey_farm_id as id,
+        a.master_survey_farm_id as farm_id,
+        surveyfield_id as survey_field_id,
+        surveyfield_id as id,
         year,
         a.county,
         derived_county as county_single,
@@ -663,6 +680,7 @@ def pull_all_years_together(f_output):
         rfq as fq_rfq,
         
         total_nitrogen as total_nitrogen,
+        height_of_stand,
         fall_notes,
         spring_biomass_collection_date as spring_cc_biomass_collection_date,
         spring_total_precip as spring_total_precip,
@@ -676,6 +694,7 @@ def pull_all_years_together(f_output):
         spring_milk_ton_milk2013 as spring_fq_milkton,
         spring_rfq as spring_fq_rfq,
         spring_total_nitrogen as spring_total_nitrogen,
+        spring_height_of_stand,
         spring_notes,
         
         concat(		
@@ -693,8 +712,7 @@ def pull_all_years_together(f_output):
             nullif(concat(', ', mod_cover_crop_species_4), ', '), 
             nullif(concat(', ', mod_cover_crop_species_5), ', ')
         ) as cc_species_raw,
-        survey_response_id,
-        surveyfield_id as survey_field_id
+        survey_response_id
     from (
         select
             surveyfield.*,
@@ -1112,6 +1130,8 @@ def data_export():
     df = df.drop(
         columns=[
             "survey_response_id",
+            "id",
+            "farm_id",
             "years_experience",
             "anpp",
             "days_from_plant_to_bio_hrvst",
@@ -1123,7 +1143,7 @@ def data_export():
     )
     df = df.rename(
         columns={
-            "id": "survey_farm_id",
+            "survey_field_id": "field_id",
             "year": "survey_year",
             "county": "county_farm",
             "county_single": "county_field",
@@ -1139,6 +1159,7 @@ def data_export():
             "fq_milkton": "fq_milkton_fall",
             "fq_rfq": "fq_rfq_fall",
             "total_nitrogen": "total_nitrogen_fall",
+            "height_of_stand": "height_of_stand_fall",
             "fall_notes": "notes_fall",
             "spring_cc_biomass_collection_date": "cc_biomass_collection_date_spring",
             "spring_total_precip": "total_precip_spring",
@@ -1152,6 +1173,7 @@ def data_export():
             "spring_fq_milkton": "fq_milkton_spring",
             "spring_fq_rfq": "fq_rfq_spring",
             "spring_total_nitrogen": "total_nitrogen_spring",
+            "spring_height_of_stand": "height_of_stand_spring",
             "spring_notes": "notes_spring",
         }
     )
