@@ -76,6 +76,8 @@ INSTALLED_APPS = [
     "kanopy",
     ## Wisconsin Cover crop citizen science
     "wisccc",
+    ## Great Lakes Cover Crop Project
+    "glccp",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
