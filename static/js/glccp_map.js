@@ -77,35 +77,118 @@ function roundUp(num, precision) {
 
 function onEachFeature(feature, layer) {
 
-    var popupContent = "<dl>" +
-        "<dt>Year (spring)</dt> <dd>" + feature.properties.year + "</dd>" +
-        "<dt>Farm</dt> <dd>" + feature.properties.farm + "</dd>" +
-        "<dt>Field</dt> <dd>" + feature.properties.field + "</dd>" +
-        "<dt>Farm type</dt> <dd>" + feature.properties.farmtype + "</dd>" +
-        "<dt>Soil texture</dt> <dd>" + feature.properties.soil_texture + "</dd>" +
-        "<dt>Topography</dt> <dd>" + feature.properties.topography + "</dd>" +
-        "<dt>Tillage intensity (0 = high soil disturbance, 1 = low soil disturbance)</dt> <dd>" + feature.properties.tillage_intensity_norm_v2 + "</dd>" +
-        "<dt>Use of compost/manure (0 = no use; 1 = frequent use)</dt> <dd>" + feature.properties.orgamend_norm + "</dd>" +
-        "<dt>Cover crop - overwintering species</dt> <dd>" + feature.properties.cc_current_overwintering + "</dd>" +
-        "<dt>Cover crop - overwintering species seeding rate</dt> <dd>" + feature.properties.cc_current_rate_overwintering + "</dd>" +
-        "<dt>Cover crop - winterkill species</dt> <dd>" + feature.properties.cc_current_winterkill + "</dd>" +
-        "<dt>Cover crop - winterkill species seeding rate</dt> <dd>" + feature.properties.cc_current_rate_winterkill + "</dd>" +
-        "<dt>Spring cover crop biomass (lbs/ac)</dt> <dd>" + feature.properties.agb + "</dd>" +
-        "<dt>Spring cover crop nitrogen (lbs/ac)</dt> <dd>" + feature.properties.agbn + "</dd>" +
-        "<dt>% ground cover</dt> <dd>" + feature.properties.percent_cover + "</dd>" +
-        "<dt>Weed control (1 = excellent; 5 = poor)</dt> <dd>" + feature.properties.weedsuppression + "</dd>" +
-        "<dt>Planting method</dt> <dd>" + feature.properties.cc_plantstrat + "</dd>" +
-        "<dt>Planting date</dt> <dd>" + feature.properties.cc_plantdate + "</dd>" +
-        "<dt>Sampling date</dt> <dd>" + feature.properties.cc_sampledate + "</dd>" +
-        "<dt>GDD</dt> <dd>" + feature.properties.gdd + "</dd>" +
-        "<dt>Precipitation (in)</dt> <dd>" + feature.properties.precip + "</dd>" +
-        "<dt>Prior crop</dt> <dd>" + feature.properties.pc + "</dd>" +
-        "<dt>N applied fertillizer to cover crop? (Y/N)</dt> <dd>" + feature.properties.cc_current_n + "</dd>" +
-        "<dt>P  fertillizer applied to cover crop? (Y/N)</dt> <dd>" + feature.properties.cc_current_p + "</dd>" +
-        "<dt>Manure applied to cover crop? (Y/N)</dt> <dd>" + feature.properties.cc_current_manure + "</dd>" +
-        "<dt>Compost applied to cover crop? (Y/N)</dt> <dd>" + feature.properties.cc_current_compost + "</dd>" +
+    var popupContent =
+        "<table><tr><th>Year (spring)</th><th>Farm</th><th>Field</th></tr>" +
+        "<tr>" +
+        "<td>" + feature.properties.year + "</td>" +
+        "<td>" + feature.properties.farm + "</td>" +
+        "<td>" + feature.properties.field + "</td>" +
+        "</tr>" +
+        "</table>" +
+        "<br>" +
+        "<b><em>General farm info:</em></b>" +
+        "<table>" +
+        "<td>Farm type:</td>" +
+        "<td>" + feature.properties.farmtype + "</td>" +
+        "</tr>" +
 
-        "</dl>"
+        "<tr>" +
+        "<td>Soil texture:</td>" +
+        "<td>" + feature.properties.soil_texture + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Topography:</td>" +
+        "<td>" + feature.properties.topography + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Tillage intensity (0 = high soil disturbance, 1 = low soil disturbance)</td><td>" + feature.properties.tillage_intensity_norm_v2 + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Use of compost/manure (0 = no use; 1 = frequent use)</td><td>" + feature.properties.orgamend_norm + "</td>" +
+        "</tr>" +
+        "</tr>" +
+        "</table>" +
+        "<br>" +
+        "<b><em>Cover crop info:</em></b>" +
+
+        "<table>" +
+        "<tr>" +
+        "<td>Cover crop - overwintering species</td><td>" + feature.properties.cc_current_overwintering + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Cover crop - overwintering species seeding rate (lbs/acre)</td><td>" + feature.properties.cc_current_rate_overwintering + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Cover crop - winterkill species</td><td>" + feature.properties.cc_current_winterkill + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Cover crop - winterkill species seeding rate (lbs/acre)</td><td>" + feature.properties.cc_current_rate_winterkill + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Spring cover crop biomass (lbs/ac)</td><td>" + feature.properties.agb + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Spring cover crop biomass nitrogen (lbs/ac)</td><td>" + feature.properties.agbn + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>% ground cover</td><td>" + feature.properties.percent_cover + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Weed control (1 = excellent; 5 = poor)</td><td>" + feature.properties.weedsuppression + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Planting method</td><td>" + feature.properties.cc_plantstrat + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Planting date</td><td>" + feature.properties.cc_plantdate + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Sampling date</td><td>" + feature.properties.cc_sampledate + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>GDD</td><td>" + feature.properties.gdd + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Precipitation (in)</td><td>" + feature.properties.precip + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Prior crop</td><td>" + feature.properties.pc + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>N applied fertillizer to cover crop? (Y/N)</td><td>" + feature.properties.cc_current_n + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>P fertillizer applied to cover crop? (Y/N)</td><td>" + feature.properties.cc_current_p + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Manure applied to cover crop? (Y/N)</td><td>" + feature.properties.cc_current_manure + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Compost applied to cover crop? (Y/N)</td><td>" + feature.properties.cc_current_compost + "</td>" +
+        "</tr>" +
+
+        "</table>"
+
 
 
     if (feature.properties && feature.properties.popupContent) {
@@ -113,7 +196,8 @@ function onEachFeature(feature, layer) {
     }
     var popup = L.popup({
 
-        maxHeight: 400
+        maxHeight: 400,
+        maxWidth: 400
 
     })
     popup.setContent(popupContent)
