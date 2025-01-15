@@ -41,11 +41,16 @@ def get_glccp_data(request):
     # retrieve signed url for accessing private s3 images
     # There is probably a better way to do this but while there aren't many
     #   submissions this is fine.
-    # for feat in data["features"]:
-    #     id = feat["id"]
+    for feat in data["features"]:
+        id = feat["id"]
 
-    #     submission_object = Groundcoverdoc.objects.get(pk=id)
-    #     feat["properties"]["image_url"] = submission_object.image.url
+        glccp_record = CleanedData.objects.get(pk=id)
+        if glccp_record.image_1:
+            feat["properties"]["image_1_url"] = glccp_record.image_1.url
+        if glccp_record.image_2:
+            feat["properties"]["image_2_url"] = glccp_record.image_2.url
+        if glccp_record.image_3:
+            feat["properties"]["image_3_url"] = glccp_record.image_3.url
 
     return JsonResponse(list(data["features"]), safe=False)
 

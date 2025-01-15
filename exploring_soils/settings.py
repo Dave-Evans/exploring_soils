@@ -163,6 +163,7 @@ CSP_IMG_SRC = [
     "https://{}.s3.amazonaws.com/media/private/".format(
         config("AWS_WISC_CC_RESEARCHER_DOC_LOCATION")
     ),
+    "https://{}.s3.amazonaws.com/dev/".format(config("AWS_GLCCP_PHOTO_LOCATION")),
     "https://greencover-photos-dev.s3.amazonaws.com/media/private/",
     "https://davemike-wisc-cc-dev.s3.amazonaws.com/media/private/",
 ]

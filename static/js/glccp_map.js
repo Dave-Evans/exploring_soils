@@ -189,6 +189,16 @@ function onEachFeature(feature, layer) {
 
         "</table>"
 
+    if (feature.properties.image_1_url != null) {
+        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_1_url + '" width="250" height="250">'
+    }
+    if (feature.properties.image_2_url != null) {
+        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_2_url + '" width="250" height="250">'
+    }
+    if (feature.properties.image_3_url != null) {
+        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_3_url + '" width="250" height="250">'
+    }
+
 
 
     if (feature.properties && feature.properties.popupContent) {
