@@ -23,7 +23,7 @@ var map = L.map('map', {
     layers: [osm],
     maxZoom: max_zoom,
     zoomControl: false
-}).setView([41.84, -87.2], 6);
+}).setView([41.84, -88.2], 6);
 new L.Control.Zoom({ position: 'topright' }).addTo(map);
 
 $("#map").css("zIndex", 1)
@@ -65,7 +65,7 @@ sidebar.open('home');
 
 // });
 
-// var layerControl = L.control.layers(baseMaps).addTo(map);
+var layerControl = L.control.layers(baseMaps).addTo(map);
 // layerControl.addOverlay(counties_layer, "Counties")
 
 function roundUp(num, precision) {
@@ -530,10 +530,9 @@ function updateStyle(property) {
             layer.setStyle({
                 fillColor: layer.feature.properties.weedsuppression ? weedsuppressionScale(layer.feature.properties.weedsuppression) : "#ccc"
             })
-            updateLegend(weedsuppressionScale, ".2f")
+            updateLegend(weedsuppressionScale, ".0f")
+            createNullLgend("translate(20, 113)")
 
-
-            createNullLgend("translate(20, 147)")
         } else if (property == "percent_cover") {
             layer.setStyle({
                 fillColor: layer.feature.properties.percent_cover ? percentCoverScale(layer.feature.properties.percent_cover) : "#ccc"

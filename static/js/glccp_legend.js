@@ -255,19 +255,21 @@ const colorScalePriorCrops = d3.scaleOrdinal()
 
 var biomassScale = d3.scaleThreshold()
     .domain([500, 1000, 1500, 2000, 2500, 3000, 3500, 4000])
-    .range(d3.schemeGreens[8]);
+    .range(d3.schemeYlGn[8]);
 
 var biomassNitScale = d3.scaleThreshold()
     .domain([25, 50, 75, 100, 125, 150, 175, 200, 250])
     .range(d3.schemeYlOrBr[8]);
 
 var weedsuppressionScale = d3.scaleThreshold()
-    .domain([1, 1.5, 1.75, 2, 2.5, 3, 3.5, 4, 4.5])
-    .range(d3.schemeBuPu[8]);
+    .domain([1, 2, 3, 4, 5])
+    .range(d3.schemeBuPu[6]);
+// .domain([1, 1.5, 1.75, 2, 2.5, 3, 3.5, 4, 4.5])
+// .range(d3.schemeBuPu[8]);
 
 var percentCoverScale = d3.scaleThreshold()
     .domain([10, 20, 30, 40, 50, 60, 70, 80, 90])
-    .range(d3.schemeYlGn[9]);
+    .range(d3.schemeGreens[9]);
 
 var gddScale = d3.scaleThreshold()
     .domain([500, 1000, 1500, 2000, 3000, 4000, 5000])
