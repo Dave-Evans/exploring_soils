@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.gis.db import models as geo_models
+from exploring_soils.storage_backends import GlccpPhotoStorage
 
 
 class CleanedData(models.Model):
@@ -115,3 +116,7 @@ class CleanedData(models.Model):
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
     farm_location = geo_models.PointField(verbose_name="Location", null=True)
+
+    image_1 = models.ImageField(storage=GlccpPhotoStorage(), blank=True)
+    image_2 = models.ImageField(storage=GlccpPhotoStorage(), blank=True)
+    image_3 = models.ImageField(storage=GlccpPhotoStorage(), blank=True)
