@@ -78,13 +78,17 @@ function roundUp(num, precision) {
 function onEachFeature(feature, layer) {
 
     var popupContent =
-        "<table><tr><th>Year (spring)</th><th>Farm</th><th>Field</th></tr>" +
-        "<tr>" +
-        "<td>" + feature.properties.year + "</td>" +
-        "<td>" + feature.properties.farm + "</td>" +
-        "<td>" + feature.properties.field + "</td>" +
-        "</tr>" +
-        "</table>" +
+        // "<table><tr><th>Year (spring)</th><th>Farm</th><th>Field</th></tr>" +
+        // "<tr>" +
+        // "<td>" + feature.properties.year + "</td>" +
+        // "<td>" + feature.properties.farm + "</td>" +
+        // "<td>" + feature.properties.field + "</td>" +
+        // "</tr>" +
+        // "</table>" +
+        "<dl>" +
+        "<dt>Farm</dt> <dd>" + feature.properties.farm + "</dd>" +
+        "<dt>Field</dt> <dd>" + feature.properties.field + "</dd>" + "</dl>" +
+        "<dt>Year</dt> <dd>" + feature.properties.year + "</dd>" +
         "<br>" +
         "<b><em>General farm info:</em></b>" +
         "<table>" +
