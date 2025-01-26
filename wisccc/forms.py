@@ -2019,6 +2019,18 @@ class AncillaryDataForm(forms.ModelForm):
     biomass_collection_date = forms.DateField(
         required=False, label="Fall biomass collection date"
     )
+    height_of_stand = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="FALL Height of cover crop stand stand (in)",
+        required=False,
+    )
+    spring_height_of_stand = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring height of cover crop stand stand (in)",
+        required=False,
+    )
     cp = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Fall Crude protein", required=False
     )
@@ -2043,6 +2055,31 @@ class AncillaryDataForm(forms.ModelForm):
         label="Fall Relative forage quality (RFQ)",
         required=False,
     )
+
+    undfom240 = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall uNDFOM240",
+        required=False,
+    )
+    dry_matter = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall dry_matter (%)",
+        required=False,
+    )
+    ndf = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall NDF (units?)",
+        required=False,
+    )
+    rfv = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall Relative forage value (?) (RFV)",
+        required=False,
+    )
     cc_biomass = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -2052,12 +2089,7 @@ class AncillaryDataForm(forms.ModelForm):
     total_nitrogen = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Fall Total nitrogen", required=False
     )
-    height_of_stand = forms.DecimalField(
-        decimal_places=2,
-        max_digits=15,
-        label="Height of cover crop stand stand (in)",
-        required=False,
-    )
+
     acc_gdd = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -2104,6 +2136,31 @@ class AncillaryDataForm(forms.ModelForm):
         label="Spring Relative forage quality (RFQ)",
         required=False,
     )
+
+    spring_undfom240 = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring uNDFOM240",
+        required=False,
+    )
+    spring_dry_matter = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring dry_matter (%)",
+        required=False,
+    )
+    spring_ndf = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring NDF (units?)",
+        required=False,
+    )
+    spring_rfv = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring Relative forage value (?) (RFV)",
+        required=False,
+    )
     spring_cp = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Spring Crude protein", required=False
     )
@@ -2128,12 +2185,6 @@ class AncillaryDataForm(forms.ModelForm):
     spring_total_nitrogen = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Spring Total nitrogen", required=False
     )
-    spring_height_of_stand = forms.DecimalField(
-        decimal_places=2,
-        max_digits=15,
-        label="Spring height of cover crop stand stand (in)",
-        required=False,
-    )
     spring_notes = forms.CharField(
         label="Text to be displayed regarding spring biomass sampling or lab processing.",
         required=False,
@@ -2151,6 +2202,8 @@ class AncillaryDataForm(forms.ModelForm):
         model = AncillaryData
         fields = (
             "biomass_collection_date",
+            "height_of_stand",
+            "spring_height_of_stand",
             "cp",
             "andf",
             "undfom30",
@@ -2158,15 +2211,22 @@ class AncillaryDataForm(forms.ModelForm):
             "tdn_adf",
             "milk_ton_milk2013",
             "rfq",
+            "undfom240",
+            "dry_matter",
+            "ndf",
+            "rfv",
             "cc_biomass",
             "total_nitrogen",
-            "height_of_stand",
             "acc_gdd",
             "total_precip",
             "fall_notes",
             "spring_biomass_collection_date",
             "spring_cc_biomass",
             "spring_rfq",
+            "spring_undfom240",
+            "spring_dry_matter",
+            "spring_ndf",
+            "spring_rfv",
             "spring_acc_gdd",
             "spring_total_precip",
             "spring_cp",
@@ -2176,7 +2236,6 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_tdn_adf",
             "spring_milk_ton_milk2013",
             "spring_total_nitrogen",
-            "spring_height_of_stand",
             "spring_notes",
             "notes_admin",
         )

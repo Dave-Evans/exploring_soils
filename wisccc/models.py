@@ -1562,6 +1562,18 @@ class AncillaryData(models.Model):
         verbose_name="Relative forage quality",
         null=True,
     )
+    undfom240 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    dry_matter = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    ndf = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    rfv = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
     cc_biomass = models.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -1615,6 +1627,18 @@ class AncillaryData(models.Model):
         max_digits=15,
         verbose_name="Relative forage quality",
         null=True,
+    )
+    spring_undfom240 = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_dry_matter = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_ndf = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
+    )
+    spring_rfv = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="", null=True
     )
     spring_cp = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="Crude protein", null=True
