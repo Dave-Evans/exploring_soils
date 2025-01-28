@@ -76,3 +76,16 @@ class ResearcherTable(tables.Table):
         template_name = "django_tables2/bootstrap4.html"
 
         attrs = {"class": "table table-hover"}
+
+
+class InterestedPartyTable(tables.Table):
+
+    signup_timestamp = tables.Column()
+    first_name = tables.Column()
+    last_name = tables.Column()
+    email = tables.Column()
+    cover_crops_interest = tables.Column()
+    admin_notes = tables.Column()
+
+    edit = TemplateColumn(template_name="wisccc/update_column_interested_party.html")
+    delete = TemplateColumn(template_name="wisccc/delete_column_interested_party.html")

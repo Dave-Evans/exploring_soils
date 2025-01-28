@@ -48,29 +48,44 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        Researcher utilities
+                <div class="card-group">
+                    <div class="card">
+                        <div class="card-header">
+                            Researcher utilities
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                Give a researcher the ability to download the Wisconsin Cover Crop Dataset,
+                                agronomic subset.
+                            </p>
+                            <a href="{% url 'wisccc_create_researcher' %}" class="btn btn-primary btn-sm">
+                                Add researcher
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                View collaborating researchers
+                            </p>
+                            <a href="{% url 'researcher_table' %}" class="btn btn-primary btn-sm">
+                                Go to table
+                            </a>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            Give a researcher the ability to download the Wisconsin Cover Crop Dataset,
-                            agronomic subset.
-                        </p>
-                        <a href="{% url 'wisccc_create_researcher' %}" class="btn btn-primary btn-sm">
-                            Add researcher
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            View collaborating researchers
-                        </p>
-                        <a href="{% url 'researcher_table' %}" class="btn btn-primary btn-sm">
-                            Go to table
-                        </a>
+                    <div class="card">
+                        <div class="card-header">
+                            Interested Parties
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                View interested parties
+                            </p>
+                            <a href="{% url 'interested_party_table' %}" class="btn btn-primary btn-sm">
+                                Go to table
+                            </a>
+                        </div>
                     </div>
                 </div>
+
 
                 <div class="card-group">
                     <div class="card">

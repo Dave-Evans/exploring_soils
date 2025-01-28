@@ -2261,7 +2261,7 @@ class InterestedPartyForm(forms.ModelForm):
         max_length=1000,
         required=False,
     )
-    notes = forms.CharField(
+    admin_notes = forms.CharField(
         label="Notes about interested party",
         required=False,
         widget=forms.Textarea(attrs={"rows": 10}),
@@ -2270,4 +2270,10 @@ class InterestedPartyForm(forms.ModelForm):
 
     class Meta:
         model = InterestedParty
-        fields = ("first_name", "last_name", "email", "cover_crops_interest")
+        fields = (
+            "first_name",
+            "last_name",
+            "email",
+            "cover_crops_interest",
+            "admin_notes",
+        )
