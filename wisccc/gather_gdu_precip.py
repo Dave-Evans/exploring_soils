@@ -55,9 +55,10 @@ class RetrieveACIS:
             end_valid_date = datetime.datetime.strptime(
                 station["valid_daterange"][0][1], "%Y-%m-%d"
             )
-            if target_date > end_valid_date:
-                print(f"\n{station['name']} outside valid date range")
-            else:
+            if target_date < end_valid_date:
+                #     print(f"\n{station['name']} outside valid date range")
+
+                # else:
                 list_stations.append(station)
 
         return list_stations
@@ -134,7 +135,11 @@ class RetrieveACIS:
             data={"params": json.dumps(params)},
             headers={"Accept": "application/json"},
         )
-        resp = resp.json()
+        try:
+            resp = resp.json()
+        except:
+            print("Error converting result to json")
+            print(resp.text)
         if resp["smry"][0][1] > null_threshold_cnt:
             print(f"\tNull threshold is {null_threshold_cnt}")
             print(f"\tCount missing from station {resp['smry'][0][1]}")
@@ -198,7 +203,9 @@ class RetrieveACIS:
         # get df of distance to all stations
         logging.info("Calculating distance from point to all stations")
         self.sorted_list_stations = self.get_dist_to_stations(lon, lat)
-
+        print("---------")
+        print(f"First station id: {self.sorted_list_stations[0]['name']}")
+        print("---------")
         result = self.calc_cum_precip(start_date, end_date)
 
         result["lon"] = lon
@@ -360,6 +367,10 @@ def grab_and_update_weather_dat(
         print(f"\tPlanting date {cc_planting_date}")
         print(f"\tcc_collection: {cc_collection}")
         print(f"\tFarm location: {field_location}")
+        return None
+
+    if datetime.datetime.strptime(cc_planting_date, "%Y-%m-%d").date() > cc_collection:
+        print("Planting date is AFTER collection date.")
         return None
 
     data = {
