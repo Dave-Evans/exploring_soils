@@ -92,9 +92,63 @@
       </div>
     </div>
   </nav>
+
+
+
+
+
   <div class="hero-image elevation">
     <div class="hero-text">
-      <h1 style="font-size:50px">Evans Geospatial</h1>
+      <div class="card text-center">
+        <div class="card-body">
+          <h1 class="card-title">Evans Geospatial</h1>
+          <p class="card-text">Geospatial data generalists</p>
+          <a href="#" class="btn btn-primary">Get in touch</a>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Wisconsin Cover Crop Data Network</h5>
+              <p class="card-text">Supporting farms with farmer-driven data.</p>
+              <a href="{% url 'wisc_cc_home' %}" class="btn btn-primary">Check it out</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Great Lakes Cover Crop Project</h5>
+              <p class="card-text">Interactive map of farmers participating in the Great Lakes Cover Crop Projects</p>
+              <a href="{% url 'glccp_map' %}" class="btn btn-primary">Check it out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Soils in Depth</h5>
+              <p class="card-text">View soil properties at different depths.</p>
+              <a href="{% url 'soils_in_depth' %}" class="btn btn-primary">Check it out</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Green Covr</h5>
+              <p class="card-text">MN Office for Soil Health (MOSH) Green CovR database</p>
+              <a href="{% url 'kanopy_home' %}" class="btn btn-primary">Check it out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <h1 style="font-size:50px">Evans Geospatial</h1>
       <h3>Geospatial data specialists</h3>
       <ul class="list-group list-group-flush">
         <a href="{% url 'soils_in_depth' %}">
@@ -109,20 +163,11 @@
             Wisconsin Cover Crop Data Network, Soil Health Alliance for Research and Education (SHARE)
           </li>
         </a>
-      </ul>
+      </ul> -->
+    </div>
+  </div>
+  </div>
 
-    </div>
-  </div>
-  </div>
-  <div class="hero-image hillshade">
-    <div class="hero-text">
-      <h1 style="font-size:50px">Projects</h1>
-      <h4><a href="{% url 'soils_in_depth' %}">Exploring soils in depth</a>: easily view SSURGO data properties</h4>
-      <h4><a href="{% url 'kanopy_home' %}">Green CovR</a>: portal for submitting cover crop photos</h4>
-      <h4><a href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Data Network, Soil Health Alliance for Research and
-          Education (SHARE)</h4>
-    </div>
-  </div>
   <script src="{% static 'js/popper.min.js' %}"></script>
   <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
