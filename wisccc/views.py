@@ -306,6 +306,7 @@ def delete_interested_party(request, id):
     return render(request, "wisccc/delete_interested_party.html", context)
 
 
+@permission_required("wisccc.survery_manager", raise_exception=True)
 def interested_party_table(request):
     """List interested parties who have or have had access to download data"""
 
