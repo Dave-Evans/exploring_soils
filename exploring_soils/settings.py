@@ -324,6 +324,7 @@ EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+NOTIFY_EMAIL = config("NOTIFY_EMAIL")
 
 DEFAULT_FROM_EMAIL = "Evans Geospatial <noreply@evansgeospatial.com>"
 EMAIL_SUBJECT_PREFIX = "[Evans Geospatial] "
