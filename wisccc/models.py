@@ -1790,3 +1790,33 @@ class InterestedParty(models.Model):
     email = models.EmailField(null=True)
     cover_crops_interest = models.TextField(blank=True)
     admin_notes = models.TextField(blank=True)
+
+
+class InterestedAgronomist(models.Model):
+    """For CCAs and Agronomists interested in a
+    focus group; Not registered, no account necessary"""
+
+    class AvailabilityChoices(models.TextChoices):
+        FEB_18_NOON = (
+            "FEB_18_NOON",
+            "February 18, 12:00-1:30pm, virtual (via Zoom) for consultants based in Wisconsin or other upper Midwestern states",
+        )
+        FEB_25_NOON = (
+            "FEB_25_NOON",
+            "February 25, 12:00-1:30pm, virtual (via Zoom) for consultants based in Wisconsin or other upper Midwestern states",
+        )
+        UNAVAIL_BUT_INTERESTED = (
+            "UNAVAIL_BUT_INTERESTED",
+            "I can't attend either of these sessions but am interested in learning more about the on farm data network and sharing my input.",
+        )
+
+    signup_timestamp = models.DateTimeField(auto_now_add=True)
+    first_name = models.CharField(max_length=250, blank=True)
+    last_name = models.CharField(max_length=250, blank=True)
+    affiliation = models.CharField(max_length=250, blank=True)
+    location_area_of_work = models.CharField(max_length=500, blank=True)
+    phone_number = models.CharField(max_length=250, blank=True)
+    email = models.EmailField(null=True)
+    questions_for_us = models.TextField(blank=True)
+    availability = models.CharField(max_length=50, choices=AvailabilityChoices.choices)
+    admin_notes = models.TextField(blank=True)

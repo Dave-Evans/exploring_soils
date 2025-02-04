@@ -19,6 +19,7 @@ from wisccc.models import (
     Researcher,
     AncillaryData,
     InterestedParty,
+    InterestedAgronomist,
 )
 from wisccc.models import (
     CashCropChoices,
@@ -2275,5 +2276,56 @@ class InterestedPartyForm(forms.ModelForm):
             "last_name",
             "email",
             "cover_crops_interest",
+            "admin_notes",
+        )
+
+
+class InterestedAgronomistForm(forms.ModelForm):
+    first_name = forms.CharField(label="First name", max_length=250, required=True)
+    last_name = forms.CharField(label="Last name", max_length=250, required=True)
+    email = forms.EmailField(label="Email", required=True)
+    phone_number = forms.CharField(label="Phone number", max_length=250, required=True)
+    affiliation = forms.CharField(
+        label="Affiliation",
+        required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=250,
+    )
+    location_area_of_work = forms.CharField(
+        label="What is your location or area of work?",
+        required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    questions_for_us = forms.CharField(
+        label="Do you have any questions for us?",
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=1000,
+        required=False,
+    )
+    availability = forms.ChoiceField(
+        label="Choose one or more option below:",
+        widget=forms.RadioSelect,
+        choices=InterestedAgronomist.AvailabilityChoices.choices,
+        required=True,
+    )
+    admin_notes = forms.CharField(
+        label="Notes about interested party",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=500,
+    )
+
+    class Meta:
+        model = InterestedAgronomist
+        fields = (
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+            "affiliation",
+            "location_area_of_work",
+            "questions_for_us",
+            "availability",
             "admin_notes",
         )

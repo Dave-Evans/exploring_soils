@@ -1,0 +1,56 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h5>How it works:</h5>
+                <div>
+                    <p>
+                        We welcome Wisconsin growers with all levels of experience and production systems interested in
+                        contributing to building better information about cover cropping. Participants fill out a survey
+                        on cover cropping practices and experience, and gather a fall and spring sample from one cover
+                        cropped field. We provide a sampling kit and addressed/stamped mailers for mailing samples to
+                        the labs for analysis. We share fall and spring results on cover crop biomass production and
+                        nutrient quality and forage analyses with each participant, along with a $100 honorarium. To
+                        learn more, visit the interactive cover crop dashboard with a <a
+                            href="{% url 'wisc_cc_map' %}">map</a> and a <a href="{% url 'wisc_cc_graph' %}">graph</a>,
+                        created using the data we've gathered
+                        from farms around Wisconsin, and read more in our <a
+                            href="{% url 'wisc_cc_about' %}">"about"</a> section.
+                    </p>
+                    <p>
+                        If you are interested in participating (next season beginning fall 2025) please email Dan Marzu
+                        at dan.marzu@wisc.edu or Mrill Ingram at mingram@wisc.edu, or share your name and email via this
+                        form:
+                    </p>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% include 'wisccc/includes/form_interested_agronomist.html' %}
+
+                        <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
+                        <a href="{% url 'wisc_cc_home' %}">
+                            <button type="button" class="btn btn-secondary">
+                                Back to home page
+                            </button>
+                        </a>
+
+                    </form>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}

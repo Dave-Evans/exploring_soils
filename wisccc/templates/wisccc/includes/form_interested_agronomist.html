@@ -1,0 +1,36 @@
+{% load crispy_forms_tags %}
+
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ form_interested_agronomist.first_name|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ form_interested_agronomist.last_name|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ form_interested_agronomist.phone_number|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ form_interested_agronomist.email|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ form_interested_agronomist.affiliation|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ form_interested_agronomist.location_area_of_work|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+        {{ form_interested_agronomist.availability|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-6 mb-0">
+        {{ form_interested_agronomist.questions_for_us|as_crispy_field }}
+    </div>
+</div>
+
+{{ form_interested_agronomist.errors}}
