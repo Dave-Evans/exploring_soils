@@ -346,7 +346,7 @@ def get_survey_data():
             "survey_created",
             "last_updated",
             "survey_year",
-            "notes_admin",
+            "notes_admin_farm",
             "confirmed_accurate",
             "years_experience",
             "main_cc_goal_this_year",
@@ -456,6 +456,9 @@ def get_survey_data():
                 "tdn_adf",
                 "milk_ton_milk2013",
                 "rfq",
+                "undfom240",
+                "dry_matter",
+                "rfv",
                 "cc_biomass",
                 "total_nitrogen",
                 "height_of_stand",
@@ -469,6 +472,9 @@ def get_survey_data():
                 "spring_tdn_adf",
                 "spring_milk_ton_milk2013",
                 "spring_rfq",
+                "spring_undfom240",
+                "spring_dry_matter",
+                "spring_rfv",
                 "spring_cc_biomass",
                 "spring_total_nitrogen",
                 "spring_height_of_stand",
@@ -488,6 +494,9 @@ def get_survey_data():
             "tdn_adf_fall",
             "milk_ton_milk2013_fall",
             "rfq_fall",
+            "undfom240_fall",
+            "dry_matter_fall",
+            "rfv_fall",
             "cc_biomass_fall",
             "total_nitrogen_fall",
             "height_of_stand",
@@ -501,12 +510,15 @@ def get_survey_data():
             "tdn_adf_spring",
             "milk_ton_milk2013_spring",
             "rfq_spring",
+            "undfom240_spring",
+            "dry_matter_spring",
+            "rfv_spring",
             "cc_biomass_spring",
             "total_nitrogen_spring",
             "spring_height_of_stand",
             "acc_gdd_spring",
             "total_precip_spring",
-            "notes_admin",
+            "notes_admin_lab_data",
         ],
     )
 
@@ -578,6 +590,9 @@ def pull_all_years_together(f_output):
         , stat.fq_tdn_adf
         , stat.fq_milkton
         , stat.fq_rfq
+        , null as fq_undfom240
+        , null as fq_dry_matter
+        , null as fq_rfv        
         , null as total_nitrogen
         , null as height_of_stand
         , null as fall_notes
@@ -592,6 +607,10 @@ def pull_all_years_together(f_output):
         , null as spring_fq_tdn_adf
         , null as spring_fq_milkton
         , null as spring_fq_rfq
+        , null as spring_fq_undfom240
+        , null as spring_fq_dry_matter
+        , null as spring_fq_rfv
+
         , null as spring_total_nitrogen        
         , null as spring_height_of_stand
         , null as spring_notes
@@ -678,7 +697,9 @@ def pull_all_years_together(f_output):
         tdn_adf as fq_tdn_adf,
         milk_ton_milk2013 as fq_milkton,
         rfq as fq_rfq,
-        
+        undfom240 as fq_undfom240,
+        dry_matter as fq_dry_matter,
+        rfv as fq_rfv,                
         total_nitrogen as total_nitrogen,
         height_of_stand,
         fall_notes,
@@ -693,6 +714,9 @@ def pull_all_years_together(f_output):
         spring_tdn_adf as spring_fq_tdn_adf,
         spring_milk_ton_milk2013 as spring_fq_milkton,
         spring_rfq as spring_fq_rfq,
+        spring_undfom240 as spring_fq_undfom240,
+        spring_dry_matter as spring_fq_dry_matter,
+        spring_rfv as spring_fq_rfv,
         spring_total_nitrogen as spring_total_nitrogen,
         spring_height_of_stand,
         spring_notes,
@@ -1137,7 +1161,6 @@ def data_export():
             "days_from_plant_to_bio_hrvst",
             "cc_rate_and_species",
             "cc_species",
-            "fq_undfom30",
             "tillage_system",
         ]
     )
@@ -1154,10 +1177,14 @@ def data_export():
             "cc_biomass": "cc_biomass_fall",
             "fq_cp": "fq_cp_fall",
             "fq_andf": "fq_andf_fall",
+            "fq_undfom30": "fq_undfom30_fall",
             "fq_ndfd30": "fq_ndfd30_fall",
             "fq_tdn_adf": "fq_tdn_adf_fall",
             "fq_milkton": "fq_milkton_fall",
             "fq_rfq": "fq_rfq_fall",
+            "fq_undfom240": "fq_undfom240_fall",
+            "fq_dry_matter": "fq_dry_matter_fall",
+            "fq_rfv": "fq_rfv_fall",
             "total_nitrogen": "total_nitrogen_fall",
             "height_of_stand": "height_of_stand_fall",
             "fall_notes": "notes_fall",
@@ -1172,6 +1199,9 @@ def data_export():
             "spring_fq_tdn_adf": "fq_tdn_adf_spring",
             "spring_fq_milkton": "fq_milkton_spring",
             "spring_fq_rfq": "fq_rfq_spring",
+            "spring_fq_undfom240": "fq_undfom240_spring",
+            "spring_fq_dry_matter": "fq_dry_matter_spring",
+            "spring_fq_rfv": "fq_rfv_spring",
             "spring_total_nitrogen": "total_nitrogen_spring",
             "spring_height_of_stand": "height_of_stand_spring",
             "spring_notes": "notes_spring",
