@@ -76,6 +76,8 @@ INSTALLED_APPS = [
     "kanopy",
     ## Wisconsin Cover crop citizen science
     "wisccc",
+    ## Great Lakes Cover Crop Project
+    "glccp",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -161,6 +163,7 @@ CSP_IMG_SRC = [
     "https://{}.s3.amazonaws.com/media/private/".format(
         config("AWS_WISC_CC_RESEARCHER_DOC_LOCATION")
     ),
+    "https://{}.s3.amazonaws.com/dev/".format(config("AWS_GLCCP_PHOTO_LOCATION")),
     "https://greencover-photos-dev.s3.amazonaws.com/media/private/",
     "https://davemike-wisc-cc-dev.s3.amazonaws.com/media/private/",
 ]
@@ -283,6 +286,7 @@ AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
 AWS_WISC_CC_PHOTO_LOCATION = config("AWS_WISC_CC_PHOTO_LOCATION")
 AWS_WISC_CC_RESEARCHER_DOC_LOCATION = config("AWS_WISC_CC_RESEARCHER_DOC_LOCATION")
+AWS_GLCCP_PHOTO_LOCATION = config("AWS_GLCCP_PHOTO_LOCATION")
 AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME")
 AWS_S3_CUSTOM_DOMAIN = "%s.s3.amazonaws.com" % AWS_STORAGE_BUCKET_NAME
 
@@ -320,6 +324,7 @@ EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+NOTIFY_EMAIL = config("NOTIFY_EMAIL")
 
 DEFAULT_FROM_EMAIL = "Evans Geospatial <noreply@evansgeospatial.com>"
 EMAIL_SUBJECT_PREFIX = "[Evans Geospatial] "

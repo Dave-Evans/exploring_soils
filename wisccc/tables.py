@@ -61,13 +61,13 @@ class ResearcherTable(tables.Table):
     email = tables.Column()
     # username = tables.Column()
     signup_timestamp = tables.Column()
-    # institution = tables.Column()
-    # agreement_doc = tables.Column()
-    # notes = tables.Column()
-    # approved = tables.Column()
-    # approved_date = tables.Column()
-    # number_of_downloads = tables.Column()
-    # last_downloaded = tables.Column()
+    institution = tables.Column()
+    agreement_doc = tables.Column()
+    notes = tables.Column()
+    approved = tables.Column()
+    approved_date = tables.Column()
+    number_of_downloads = tables.Column()
+    last_downloaded = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column_researcher.html")
     delete = TemplateColumn(template_name="wisccc/delete_researcher_column.html")
 
@@ -76,3 +76,40 @@ class ResearcherTable(tables.Table):
         template_name = "django_tables2/bootstrap4.html"
 
         attrs = {"class": "table table-hover"}
+
+
+class InterestedPartyTable(tables.Table):
+
+    signup_timestamp = tables.Column()
+    first_name = tables.Column()
+    last_name = tables.Column()
+    email = tables.Column()
+    cover_crops_interest = tables.Column()
+    admin_notes = tables.Column()
+
+    edit = TemplateColumn(template_name="wisccc/update_column_interested_party.html")
+    delete = TemplateColumn(template_name="wisccc/delete_column_interested_party.html")
+
+
+class InterestedAgronomistTable(tables.Table):
+
+    signup = tables.Column()
+    first_name = tables.Column()
+    last_name = tables.Column()
+    email = tables.Column()
+
+    availability = tables.Column()
+    admin_notes = tables.Column()
+
+    edit = TemplateColumn(
+        template_name="wisccc/update_column_interested_agronomist.html"
+    )
+    delete = TemplateColumn(
+        template_name="wisccc/delete_column_interested_agronomist.html"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.columns["signup"].column.attrs = {"td": {"style": "width:12%;"}}
+        self.columns["first_name"].column.attrs = {"td": {"style": "width:10%;"}}
+        self.columns["last_name"].column.attrs = {"td": {"style": "width:10%;"}}

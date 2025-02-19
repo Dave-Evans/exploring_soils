@@ -1,5 +1,6 @@
 #!/bin/bash
 # First arg is backup s3 bucket
+
 # Enter repository
 cd /home/ubuntu/exploring_soils
 
@@ -23,9 +24,17 @@ bkup_fl="dump_$(printf '%(%Y%m%d)T\n' -1).json"
 #   use them to build the database
 #   and load data
 source myvenv/bin/activate
+echo "Checking out working state"
+git checkout d3aa27aec4ec38a3af6b746251df6d4e14f63726
 echo "Making migrations"
 python ./manage.py makemigrations
 echo "Running migrate"
+python ./manage.py migrate
+echo "Back to update todate"
+git switch -
+echo "Making migrations, again"
+python ./manage.py makemigrations
+echo "Running migrate, again"
 python ./manage.py migrate
 echo "Loading data"
 python ./manage.py loaddata data/$fl_bkup

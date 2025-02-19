@@ -28,3 +28,11 @@ class WiscCCResearcherDocStorage(S3Boto3Storage):
     default_acl = "private"
     file_overwrite = False
     custom_domain = False
+
+
+class GlccpPhotoStorage(S3Boto3Storage):
+    bucket_name = settings.AWS_GLCCP_PHOTO_LOCATION
+    location = "dev"
+    default_acl = "private"
+    file_overwrite = False
+    custom_domain = False

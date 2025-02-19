@@ -19,6 +19,7 @@ from wisccc.models import (
     Researcher,
     AncillaryData,
     InterestedParty,
+    InterestedAgronomist,
 )
 from wisccc.models import (
     CashCropChoices,
@@ -2019,6 +2020,18 @@ class AncillaryDataForm(forms.ModelForm):
     biomass_collection_date = forms.DateField(
         required=False, label="Fall biomass collection date"
     )
+    height_of_stand = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="FALL Height of cover crop stand stand (in)",
+        required=False,
+    )
+    spring_height_of_stand = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring height of cover crop stand stand (in)",
+        required=False,
+    )
     cp = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Fall Crude protein", required=False
     )
@@ -2043,6 +2056,31 @@ class AncillaryDataForm(forms.ModelForm):
         label="Fall Relative forage quality (RFQ)",
         required=False,
     )
+
+    undfom240 = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall uNDFOM240",
+        required=False,
+    )
+    dry_matter = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall dry_matter (%)",
+        required=False,
+    )
+    ndf = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall NDF (units?)",
+        required=False,
+    )
+    rfv = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Fall Relative forage value (?) (RFV)",
+        required=False,
+    )
     cc_biomass = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -2052,12 +2090,7 @@ class AncillaryDataForm(forms.ModelForm):
     total_nitrogen = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Fall Total nitrogen", required=False
     )
-    height_of_stand = forms.DecimalField(
-        decimal_places=2,
-        max_digits=15,
-        label="Height of cover crop stand stand (in)",
-        required=False,
-    )
+
     acc_gdd = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -2104,6 +2137,31 @@ class AncillaryDataForm(forms.ModelForm):
         label="Spring Relative forage quality (RFQ)",
         required=False,
     )
+
+    spring_undfom240 = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring uNDFOM240",
+        required=False,
+    )
+    spring_dry_matter = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring dry_matter (%)",
+        required=False,
+    )
+    spring_ndf = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring NDF (units?)",
+        required=False,
+    )
+    spring_rfv = forms.DecimalField(
+        decimal_places=2,
+        max_digits=15,
+        label="Spring Relative forage value (?) (RFV)",
+        required=False,
+    )
     spring_cp = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Spring Crude protein", required=False
     )
@@ -2128,12 +2186,6 @@ class AncillaryDataForm(forms.ModelForm):
     spring_total_nitrogen = forms.DecimalField(
         decimal_places=2, max_digits=15, label="Spring Total nitrogen", required=False
     )
-    spring_height_of_stand = forms.DecimalField(
-        decimal_places=2,
-        max_digits=15,
-        label="Spring height of cover crop stand stand (in)",
-        required=False,
-    )
     spring_notes = forms.CharField(
         label="Text to be displayed regarding spring biomass sampling or lab processing.",
         required=False,
@@ -2151,6 +2203,8 @@ class AncillaryDataForm(forms.ModelForm):
         model = AncillaryData
         fields = (
             "biomass_collection_date",
+            "height_of_stand",
+            "spring_height_of_stand",
             "cp",
             "andf",
             "undfom30",
@@ -2158,15 +2212,22 @@ class AncillaryDataForm(forms.ModelForm):
             "tdn_adf",
             "milk_ton_milk2013",
             "rfq",
+            "undfom240",
+            "dry_matter",
+            "ndf",
+            "rfv",
             "cc_biomass",
             "total_nitrogen",
-            "height_of_stand",
             "acc_gdd",
             "total_precip",
             "fall_notes",
             "spring_biomass_collection_date",
             "spring_cc_biomass",
             "spring_rfq",
+            "spring_undfom240",
+            "spring_dry_matter",
+            "spring_ndf",
+            "spring_rfv",
             "spring_acc_gdd",
             "spring_total_precip",
             "spring_cp",
@@ -2176,7 +2237,6 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_tdn_adf",
             "spring_milk_ton_milk2013",
             "spring_total_nitrogen",
-            "spring_height_of_stand",
             "spring_notes",
             "notes_admin",
         )
@@ -2202,7 +2262,7 @@ class InterestedPartyForm(forms.ModelForm):
         max_length=1000,
         required=False,
     )
-    notes = forms.CharField(
+    admin_notes = forms.CharField(
         label="Notes about interested party",
         required=False,
         widget=forms.Textarea(attrs={"rows": 10}),
@@ -2211,4 +2271,61 @@ class InterestedPartyForm(forms.ModelForm):
 
     class Meta:
         model = InterestedParty
-        fields = ("first_name", "last_name", "email", "cover_crops_interest")
+        fields = (
+            "first_name",
+            "last_name",
+            "email",
+            "cover_crops_interest",
+            "admin_notes",
+        )
+
+
+class InterestedAgronomistForm(forms.ModelForm):
+    first_name = forms.CharField(label="First name", max_length=250, required=True)
+    last_name = forms.CharField(label="Last name", max_length=250, required=True)
+    email = forms.EmailField(label="Email", required=True)
+    phone_number = forms.CharField(label="Phone number", max_length=250, required=True)
+    affiliation = forms.CharField(
+        label="Affiliation",
+        required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=250,
+    )
+    location_area_of_work = forms.CharField(
+        label="What is your location or area of work?",
+        required=True,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=500,
+    )
+    questions_for_us = forms.CharField(
+        label="Do you have any questions for us?",
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=1000,
+        required=False,
+    )
+    availability = forms.ChoiceField(
+        label="Choose one or more option below:",
+        widget=forms.RadioSelect,
+        choices=InterestedAgronomist.AvailabilityChoices.choices,
+        required=True,
+    )
+    admin_notes = forms.CharField(
+        label="Notes about interested party",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=500,
+    )
+
+    class Meta:
+        model = InterestedAgronomist
+        fields = (
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+            "affiliation",
+            "location_area_of_work",
+            "questions_for_us",
+            "availability",
+            "admin_notes",
+        )

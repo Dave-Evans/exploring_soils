@@ -33,9 +33,49 @@ urlpatterns = [
         name="wisc_cc_interested",
     ),
     re_path(
+        r"^wisc_cc_interested_table$",
+        wisccc_views.interested_party_table,
+        name="interested_party_table",
+    ),
+    path(
+        "update_interested_party/<id>",
+        wisccc_views.update_interested_party,
+        name="update_interested_party",
+    ),
+    path(
+        "delete_interested_party/<id>",
+        wisccc_views.delete_interested_party,
+        name="delete_interested_party",
+    ),
+    re_path(
         r"^wisc_cc_interested_thanks$",
         wisccc_views.wisc_cc_interested_thanks,
         name="wisc_cc_interested_thanks",
+    ),
+    re_path(
+        r"^wisc_cc_interested_agronomist$",
+        wisccc_views.wisc_cc_interested_agronomist,
+        name="wisc_cc_interested_agronomist",
+    ),
+    re_path(
+        r"^wisc_cc_interested_agronomist_table$",
+        wisccc_views.interested_agronomist_table,
+        name="interested_agronomist_table",
+    ),
+    path(
+        "update_interested_agronomisty/<id>",
+        wisccc_views.update_interested_agronomist,
+        name="update_interested_agronomist",
+    ),
+    path(
+        "delete_interested_agronomist/<id>",
+        wisccc_views.delete_interested_agronomist,
+        name="delete_interested_agronomist",
+    ),
+    re_path(
+        r"^wisc_cc_interested_agronomist_thanks$",
+        wisccc_views.wisc_cc_interested_agronomist_thanks,
+        name="wisc_cc_interested_agronomist_thanks",
     ),
     re_path(
         r"^wisc_cc_register_1$",

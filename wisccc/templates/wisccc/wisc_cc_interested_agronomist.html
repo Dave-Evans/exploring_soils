@@ -1,0 +1,60 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h5>How it works:</h5>
+                <div>
+                    <p>
+                        Agronomists/CCAs Needed!
+                        Earn a $50 honorarium participating in a cover crop focus group for agronomists and help test a
+                        new data visualization tool (checkout our
+                        <a href="{% url 'wisc_cc_map' %}">map</a> and <a href="{% url 'wisc_cc_graph' %}">graph</a>).
+                    </p>
+                    <p>
+                        Are you a certified crop advisor or agronomist? What on-farm cover crop data do you find most
+                        useful, and how would you prefer that information be shared?
+                        Eligible participants will be located in Wisconsin or another upper midwestern state
+                        and have at least some experience advising growers on cover crops.
+                    </p>
+                    <p>
+                        Your input will help us develop a tool that shows how different practices and conditions affect
+                        cover crop performance, making sure the data is practical and relevant to your work with
+                        farmers.
+                    </p>
+                    <p>
+                        If you are interested in participating please email <a href="mailto:mingram@wisc.edu">Mrill
+                            Ingram</a>, or share your name and email via this
+                        form:
+                    </p>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% include 'wisccc/includes/form_interested_agronomist.html' %}
+
+                        <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
+                        <a href="{% url 'wisc_cc_home' %}">
+                            <button type="button" class="btn btn-secondary">
+                                Back to home page
+                            </button>
+                        </a>
+
+                    </form>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}

@@ -24,7 +24,13 @@ from django.views.generic import (
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django_tables2 import RequestConfig
-from wisccc.tables import ResponseTable, RegistrationTable, ResearcherTable
+from wisccc.tables import (
+    ResponseTable,
+    RegistrationTable,
+    ResearcherTable,
+    InterestedPartyTable,
+    InterestedAgronomistTable,
+)
 from wisccc.forms import (
     SurveyFieldFormFull,
     SurveyFarmFormSection2,
@@ -51,6 +57,7 @@ from wisccc.forms import (
     AncillaryDataForm,
     SelectUserForm,
     InterestedPartyForm,
+    InterestedAgronomistForm,
 )
 from wisccc.forms_2023 import (
     SurveyFarmFormPart1_2023,
@@ -70,6 +77,8 @@ from wisccc.models import (
     FieldFarm,
     Researcher,
     AncillaryData,
+    InterestedParty,
+    InterestedAgronomist,
 )
 from wisccc.data_mgmt import (
     pull_all_years_together,
@@ -174,6 +183,87 @@ def wisc_cc_interested(request):
 
 def wisc_cc_interested_thanks(request):
     return render(request, "wisccc/wisc_cc_interested_thanks.html")
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def update_interested_party(request, id):
+    """For updating interested party"""
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the survey object related to passed id
+    interested_party = get_object_or_404(InterestedParty, id=id)
+
+    # pass the object as instance in form
+    form_interested_party = InterestedPartyForm(
+        request.POST or None, instance=interested_party
+    )
+
+    # save the data from the form and
+    # redirect to detail_view
+
+    if form_interested_party.is_valid():
+
+        form_interested_party.save()
+
+        return redirect("interested_party_table")
+    # add form dictionary to context
+    context["form_interested_party"] = form_interested_party
+
+    return render(request, "wisccc/wisc_cc_interested_review.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def delete_interested_party(request, id):
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(InterestedParty, id=id)
+
+    if request.method == "POST":
+        # delete object
+        obj.delete()
+        # after deleting redirect to
+        # home page
+        return redirect("interested_party_table")
+
+    return render(request, "wisccc/delete_interested_party.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def interested_party_table(request):
+    """List interested parties who have or have had access to download data"""
+
+    def get_table_data():
+        """For getting interested party data"""
+        query = """
+            select
+                ip.id
+                , ip.signup_timestamp
+                , ip.first_name
+                , ip.last_name
+                , ip.email
+                , ip.cover_crops_interest
+                , ip.admin_notes
+            from wisccc_interestedparty ip"""
+        dat = pd.read_sql(query, connection)
+        dat = dat.to_dict("records")
+
+        return dat
+
+    data = get_table_data()
+
+    table = InterestedPartyTable(data)
+    RequestConfig(request, paginate={"per_page": 15}).configure(table)
+
+    return render(
+        request,
+        "wisccc/interested_party_table.html",
+        {"table": table},
+    )
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -1953,4 +2043,108 @@ def upload_photo(request, id):
             "first_and_last_name": first_and_last_name,
             "survey_year": survey_year,
         },
+    )
+
+
+def wisc_cc_interested_agronomist(request):
+
+    form_interested_agronomist = InterestedAgronomistForm(request.POST or None)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if form_interested_agronomist.is_valid():
+        form_interested_agronomist.save()
+        # new_form = form_interested_party.save(commit=False)
+        # new_form.save()
+        return redirect("wisc_cc_interested_agronomist_thanks")
+
+    return render(
+        request,
+        "wisccc/wisc_cc_interested_agronomist.html",
+        {"form_interested_agronomist": form_interested_agronomist},
+    )
+
+
+def wisc_cc_interested_agronomist_thanks(request):
+    return render(request, "wisccc/wisc_cc_interested_agronomist_thanks.html")
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def update_interested_agronomist(request, id):
+    """For updating interested_agronomist"""
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the survey object related to passed id
+    interested_agronomist = get_object_or_404(InterestedAgronomist, id=id)
+
+    # pass the object as instance in form
+    form_interested_agronomist = InterestedAgronomistForm(
+        request.POST or None, instance=interested_agronomist
+    )
+
+    # save the data from the form and
+    # redirect to detail_view
+
+    if form_interested_agronomist.is_valid():
+
+        form_interested_agronomist.save()
+
+        return redirect("interested_agronomist_table")
+    # add form dictionary to context
+    context["form_interested_agronomist"] = form_interested_agronomist
+
+    return render(request, "wisccc/wisc_cc_interested_agronomist_review.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def delete_interested_agronomist(request, id):
+    # dictionary for initial data with
+    # field names as keys
+    context = {}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(InterestedAgronomist, id=id)
+
+    if request.method == "POST":
+        # delete object
+        obj.delete()
+        # after deleting redirect to
+        # home page
+        return redirect("interested_agronomist_table")
+
+    return render(request, "wisccc/delete_interested_agronomist.html", context)
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def interested_agronomist_table(request):
+    """List interested agronomists"""
+
+    def get_table_data():
+        """For getting interested agronomist data"""
+        query = """
+            select
+                ia.id
+                , ia.signup_timestamp::date as signup
+                , ia.first_name
+                , ia.last_name
+                , ia.availability
+                , ia.email
+                , ia.admin_notes
+            from wisccc_interestedagronomist ia"""
+        dat = pd.read_sql(query, connection)
+        dat = dat.to_dict("records")
+
+        return dat
+
+    data = get_table_data()
+
+    table = InterestedAgronomistTable(data)
+    RequestConfig(request, paginate={"per_page": 15}).configure(table)
+
+    return render(
+        request,
+        "wisccc/interested_agronomist_table.html",
+        {"table": table},
     )

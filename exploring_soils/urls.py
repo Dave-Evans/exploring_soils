@@ -46,6 +46,10 @@ urlpatterns = [
     path("", include("kanopy.urls")),
     # wisccc app
     path("", include("wisccc.urls")),
+    # glccp app
+    path("", include("glccp.urls")),
+    path("contact/", books_views.ContactView.as_view(), name="contact"),
+    path("success/", books_views.SuccessView.as_view(), name="success"),
     # bikemileage App
     # re_path(r'^mileage/$',mileage_views.mileage_list, name='mileage_list' ),
     path("custom_mileage", CustomMileageListView.as_view(), name="custom_mileage"),

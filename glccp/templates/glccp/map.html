@@ -1,0 +1,328 @@
+{% load static %}
+
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %} GLCCP {% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" />
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"
+        integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+        integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- For qmark icon -->
+    <script defer type="text/javascript" src='{% static "js/friconix.js" %}'></script>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+    <script src="{% static 'js/L.Control.Window.js' %}"></script>
+    <script type="text/javascript" src='{% static "js/glccp_legend.js" %}'></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+        integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+
+<body></body>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<!--[if lte IE 8]><link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet-0.7.2/leaflet.ie.css" /><![endif]-->
+
+<link rel="stylesheet" href="{% static 'css/leaflet-sidebar.css' %}" />
+
+<!-- Map basic styling -->
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    html,
+    body,
+    #map {
+        overflow: hidden;
+        height: 100%;
+        /* font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif; */
+    }
+
+    /* #map {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    } */
+</style>
+<!-- Legend and selectize styling -->
+<style>
+    .legend {
+        /*border: 120%;*/
+        /*margin: 70px;*/
+        padding: 5px;
+        text-align: left;
+        line-height: 18px;
+        color: #000;
+        background: #fff;
+    }
+
+    .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 1;
+    }
+
+    /*    .legend .circle {
+      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      margin-top: 8px;
+    }*/
+    /* Selectize dropdowns */
+    .selectize-dropdown,
+    .selectize-input {
+        width: 220px !important;
+    }
+</style>
+<!-- Helptip styling -->
+<style>
+    /* https://www.w3schools.com/css/tryit.asp?filename=trycss_tooltip_bottom */
+    .helptip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted #2f2f2f;
+    }
+
+    .bottomtip {
+        top: 100%
+    }
+
+    .toptip {
+        bottom: 100%
+    }
+
+    .helptip .helptiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #2f2f2f;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        left: 50%;
+        margin-left: -80px;
+
+        /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+        opacity: 0;
+        transition: opacity 1s;
+    }
+
+    .helptip:hover .helptiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .helptip .helptiptext::after {
+        content: " ";
+        position: absolute;
+        bottom: 100%;
+        /* At the bottom of the tooltip */
+        left: 30%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent#2f2f2f transparent;
+    }
+</style>
+<!-- Bringing sidebar up a bit -->
+<style>
+    @media (min-width: 768px) {
+        .sidebar {
+            top: 25px;
+            bottom: 10px;
+            transition: width 500ms;
+        }
+    }
+</style>
+<style>
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+
+    .popupphoto {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+        border: 1px solid #555;
+    }
+</style>
+
+
+<div id="sidebar" class="sidebar collapsed">
+    <!-- Nav tabs -->
+    <div class="sidebar-tabs">
+        <ul role="tablist">
+            <!-- <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li> -->
+            <li><a href="#home" role="tab"><i class="fa fa-rocket"></i></a></li>
+            <li><a href="#info" role="tab"><i class="fa fa-question-circle"></i></a></li>
+            <!-- <li><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li> -->
+            <!-- <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i
+                        class="fa fa-github"></i></a></li> -->
+        </ul>
+
+        <!-- <ul role="tablist">
+            <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+        </ul> -->
+    </div>
+
+    <!-- Tab panes -->
+    <div class="sidebar-content" style="font-size:12px">
+        <div class="sidebar-pane" id="home">
+            <h1 class="sidebar-header">
+                Display options
+                <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            </h1>
+            <h3>
+                Great Lakes<br>
+                Cover Crops Project
+            </h3>
+            <hr>
+            <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
+                <option value="agb">Spring cover crop biomass (lbs/ac)</option>
+                <option value="agbn">Spring cover crop biomass nitrogen (lbs N/ac)</option>
+                <option value="weedsuppression">Weed control (1=excellent, 5=poor)</option>
+                <option value="percent_cover">Percent ground cover</option>
+                <option value="gdd">Total growing degree days</option>
+                <option value="precip">Total precipitation (in)</option>
+            </select>
+            <div id="legend">
+                <svg width="350px" height="180px"></svg>
+                <p>
+                    Click on map locations for more info.
+                    <br>
+                    Locations are based on zipcode centroid, <br>
+                    and do not represent actual locations of participating farmers.
+                </p>
+            </div>
+
+
+            <h4>Filter data points</h4>
+
+            <span>Year
+                <select id="YearFilter" class="YearSelector">
+                </select>
+            </span><br>
+            <span>Farm type
+                <select id="FarmTypeFilter" class="FarmTypeSelector">
+                </select>
+            </span><br>
+            <span>Soil texture
+                <select id="SoilTextFilter" class="SoilSelector">
+                </select>
+            </span><br>
+            <span>Cover crop type
+                <select id="CoverCropFilter" class="CoverCropSelector">
+                </select>
+            </span><br>
+            <span>No. of overwintering species
+                <select id="NoOfOverwinterFilter" class="NoOfOverwinterSelector">
+                </select>
+            </span><br>
+            <span>Planting method
+                <select id="PlantingFilter" class="PlantingSelector">
+                </select>
+            </span><br>
+            <span>Prior crop
+                <select id="PriorCropFilter" class="PriorCropSelector">
+                </select>
+            </span>
+        </div>
+
+        <div class="sidebar-pane" id="info">
+            <h1 class="sidebar-header">
+                Information
+                <span class="sidebar-close">
+                    <i class="fa fa-caret-left"></i>
+                </span>
+            </h1>
+            <h3>
+                Great Lakes<br>
+                Cover Crops Project
+            </h3>
+            <br>
+            <p>
+                The Great Lakes Cover Crops Project (GLCCP) is a collaborative
+                project that brings together farmers, researchers,
+                and conservation professionals from across the upper Midwest to build
+                a regional database of cover crop performance.
+                Participating farmers help collect and report cover crop data from their fields,
+                providing a real world snapshot of cover crop use and performance across the region.
+                This map displays data collected as part of GLCCP beginning in 2021, with new data points added each
+                year.
+                Our aim is for this map to serve as a collective learning tool that can aid farmers in identifying
+                strategies for successfully managing cover crops in their fields.
+
+
+            </p>
+            <p>
+                This digital visualization of cover crop data is made possible through the support
+                of the <a href="https://www.michaelfields.org/" target="_blank" rel="noopener noreferrer">
+                    Michael Fields Agricultural Institute </a>
+                and Evansgeospatial.
+            </p>
+            <p>
+                This work is led by the University of Michigan, Michigan Agriculture Advancement,
+                and the University of Missouri, with support from USDA NIFA, NCR-SARE,
+                and the Rackham Program in Public Scholarship. For more information about GLCCP,
+                contact
+                <a href="mailto:etiennesutton@missouri.edu">etiennesutton@missouri.edu</a>
+                or visit our website:
+                <a href="https://sites.google.com/umich.edu/greatlakescovercropsproject/home" target="_blank"
+                    rel="noopener noreferrer">https://sites.google.com/umich.edu/greatlakescovercropsproject/home</a>
+            </p>
+            <p>
+                <img src="{% static 'img/MiAA_logo.png'%}" max-height="100%" max-width="100%" height="70px">
+                <img src="{% static 'img/NorthCentral-SARE-logo.jpg'%}" max-height="100%" max-width="100%"
+                    height="75px">
+
+                <img src="{% static 'img/USDA NIFA logo.jpg'%}" max-height="100%" max-width="100%" height="95px">
+                <img src="{% static 'img/MU CRA_logo_cropped.jpeg'%}">
+                <br>
+                <img src="{% static 'img/logo-seas.avif'%}" max-height="100%" max-width="100%" width="250px">
+                <img src="{% static 'img/MFAI Logo White on Green BG.png'%}" max-height="100%" max-width="100%"
+                    height="100px">
+
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="map" class="sidebar-map"></div>
+
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src="{% static 'js/leaflet-sidebar.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/glccp_map.js' %}"></script>
+
+</body>
+
+</html>
