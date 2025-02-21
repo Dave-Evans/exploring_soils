@@ -1,19 +1,9 @@
 import requests
 import datetime
-from decouple import config, Csv
-
-from wisccc.models import SurveyFarm, SurveyField, FieldFarm, AncillaryData
-
-lambda_url = config("GDU_LAMBDA_URL")
-
-import requests
-import math
-
-# import geopandas
-# from shapely.geometry import Point
-import datetime
-import json
 import logging
+import math
+import json
+from wisccc.models import SurveyFarm, SurveyField, FieldFarm, AncillaryData
 
 
 class RetrieveACIS:
@@ -21,18 +11,25 @@ class RetrieveACIS:
     def __init__(self):
         self.url_station_meta = "https://data.rcc-acis.org/StnMeta"
         self.url_station_collect = "https://data.rcc-acis.org/StnData"
-        self.list_stations = self.get_stations()
-        self.sorted_list_stations = []
+        # Master list of stations, this will stay the same for the life
+        #   of the object, updated with new distances
+        self.list_stations_pcpn = self.get_stations("pcpn")
+        self.list_stations_gdu = self.get_stations("gdd")
+        # Sorted whenever a new location is queried
+        self.sorted_list_stations_pcpn = []
+        self.sorted_list_stations_gdu = []
 
     # Look up stations
-    def get_stations(self):
-
+    def get_stations(self, elem="pcpn"):
+        # elem should be "pcpn" or "gdd"
         headers = {"Accept": "application/json"}
         params = {
             # Bounding box for just WI
             "bbox": "-86,41.5,-93.5,48",
             "meta": "name,sids,ll,valid_daterange",
-            "elems": "pcpn",
+            "elems": elem,
+            "sdate": "2020-01-01",
+            "edate": "2025-12-31",
         }
 
         response = requests.post(
@@ -49,19 +46,17 @@ class RetrieveACIS:
         rslt_meta = rslt["meta"]
 
         # This would be the min of all planting dates
-        target_date = datetime.datetime(2022, 1, 1)
-        list_stations = []
-        for station in rslt_meta:
-            end_valid_date = datetime.datetime.strptime(
-                station["valid_daterange"][0][1], "%Y-%m-%d"
-            )
-            if target_date < end_valid_date:
-                #     print(f"\n{station['name']} outside valid date range")
+        # target_date = datetime.datetime(2020, 1, 1)
+        # list_stations = []
+        # for station in rslt_meta:
+        #     end_valid_date = datetime.datetime.strptime(
+        #         station["valid_daterange"][0][1], "%Y-%m-%d"
+        #     )
+        #     if target_date < end_valid_date:
 
-                # else:
-                list_stations.append(station)
+        #         list_stations.append(station)
 
-        return list_stations
+        return rslt_meta
 
     def calc_dist(self, lon1, lat1, lon2, lat2):
         """For calculating the distance between two points
@@ -83,16 +78,64 @@ class RetrieveACIS:
 
         return d
 
+    def calcHeat(self, fk1, tsum, diff):
+        twopi = 6.283185308
+        pihlf = 1.570796327
+        d2 = fk1 - tsum
+        theta = math.atan(d2 / math.sqrt(diff * diff - d2 * d2))
+        if (d2 < 0) & (theta > 0):
+            theta = theta - math.pi
+
+        return (diff * math.cos(theta) - d2 * (pihlf - theta)) / twopi
+
+    def gdu_be(self, nearest_station_data, base_number=40, upper_thresh=86):
+        data = nearest_station_data["data"]
+
+        heat = 0
+        fk1 = 2 * base_number
+
+        cumulative_gdd = 0
+
+        for datum in data:
+
+            try:
+                tmax = int(datum[1])
+                tmin = int(datum[2])
+            except ValueError:
+                print(f"Missing data:\n\ttmin:{datum[2]}\n\ttmax:{datum[1]}...")
+
+                continue
+
+            diff = tmax - tmin
+            tsum = tmax + tmin
+
+            # return 0 if invalid inputs or max below base_number
+            if (tmin > tmax) | (tmax <= tmin) | (tmax <= base_number):
+                gdu = 0
+            elif tmin >= base_number:
+                gdu = (tsum - fk1) / 2
+            elif tmin < base_number:
+                gdu = self.calcHeat(fk1, tsum, diff)
+            elif tmax > upper_thresh:
+                # fk1 = 2 * upper_thresh
+                zheat = heat
+                heat = self.calcHeat(2 * upper_thresh, tsum, diff)
+                gdu = zheat - 2 * heat
+
+            cumulative_gdd += gdu
+
+        return cumulative_gdd
+
     # find nearest station to covercrop location
-    def get_dist_to_stations(self, lon, lat):
+    def get_dist_to_stations(self, stnt_list, lon, lat):
         """Calculate distance to point from each station"""
-        for station in self.list_stations:
+        for station in stnt_list:
             station["distance"] = self.calc_dist(
                 station["ll"][0], station["ll"][1], lon, lat
             )
 
         # sort by distance, smallest to largest
-        return sorted(self.list_stations, key=lambda d: d["distance"])
+        return sorted(stnt_list, key=lambda d: d["distance"])
 
     # collect data from that station
     def retrieve_station_data_precip(
@@ -150,14 +193,79 @@ class RetrieveACIS:
 
         return resp
 
-    def calc_cum_precip(self, start_date, end_date):
+    # collect data from that station
+    def retrieve_station_data_gdu(
+        self,
+        stationid,
+        start_date,
+        end_date,
+        null_threshold=0.1,
+    ):
+        logging.info(f"stationid: {stationid}")
+        logging.info(f"start_date: {start_date}")
+        logging.info(f"end_date: {end_date}")
+        logging.info(f"null_threshold: {null_threshold}")
+
+        null_threshold_cnt = round(
+            null_threshold
+            * (
+                datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                - datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            ).days
+        )
+
+        sdate = start_date
+        edate = end_date
+
+        params = {
+            "sid": stationid,
+            "sdate": sdate,
+            "edate": edate,
+            "elems": "1,2",
+        }
+
+        resp = requests.post(
+            self.url_station_collect,
+            data={"params": json.dumps(params)},
+            headers={"Accept": "application/json"},
+        )
+        try:
+            resp = resp.json()
+        except:
+            print("Error converting result to json")
+            print(resp.text)
+
+        cnt_missing = 0
+        for datum in resp["data"]:
+            try:
+                datum.index("M")
+                cnt_missing += 1
+            except ValueError:
+                continue
+
+        if cnt_missing > null_threshold_cnt + 2:
+            print(f"\tNull threshold is {null_threshold_cnt}")
+            print(f"\tCount missing from station {cnt_missing}")
+            return None
+
+        if resp == {}:
+            print("No data.")
+            return None
+
+        return resp
+
+    def calc_cum_precip(self, start_date, end_date, lon, lat):
         """Get cumulative precipitation
         Based on hourly data"""
-
+        # get df of distance to all stations
+        logging.info("Calculating distance from point to all stations")
+        self.sorted_list_stations_pcpn = self.get_dist_to_stations(
+            self.list_stations_pcpn, lon, lat
+        )
         attempt = 0
         while True:
             logging.info(f"Attempt no. {attempt}")
-            closest_station = self.sorted_list_stations[attempt]
+            closest_station = self.sorted_list_stations_pcpn[attempt]
             stationid = closest_station["sids"][0]
             distance = closest_station["distance"]
             logging.info(f"Pulling data from: {stationid}")
@@ -184,9 +292,54 @@ class RetrieveACIS:
 
         return result
 
-    def get_weather_data(self, start_date, end_date, lon, lat, target="PRE"):
-        """if target = PRE then cumulative precip
-        else target = GDU then GDU
+    def calc_gdu(self, start_date, end_date, lon, lat):
+        """Get gdu daily data"""
+        """test
+        start_date = '2024-08-05'
+        end_date = '2024-10-25'
+        lon = -92.61638
+        lat = 45.23695
+        """
+        logging.info("Calculating distance from point to all stations")
+        self.sorted_list_stations_gdu = self.get_dist_to_stations(
+            self.list_stations_gdu, lon, lat
+        )
+        attempt = 0
+        while True:
+            logging.info(f"Attempt no. {attempt}")
+            closest_station = self.sorted_list_stations_gdu[attempt]
+            stationid = closest_station["sids"][0]
+            distance = closest_station["distance"]
+            logging.info(f"Pulling data from: {stationid}")
+            logging.info(f"Distance away: {distance} km")
+
+            nearest_station_data = self.retrieve_station_data_gdu(
+                stationid, start_date, end_date
+            )
+
+            if nearest_station_data is None:
+                logging.info("No data found.")
+                attempt += 1
+            else:
+                break
+
+        gdu = self.gdu_be(nearest_station_data)
+
+        # gdu = nearest_station_data["smry"][0][0]
+        # Result object to return
+        result = {
+            "dist_to_station_km": closest_station["distance"],
+            "stationid": stationid,
+            "gdu": gdu,
+            "start_date": start_date,
+            "end_date": end_date,
+        }
+
+        return result
+
+    def get_weather_data(self, start_date, end_date, lon, lat, target="pcpn"):
+        """if target = pcpn then cumulative precip
+        else target = gdu then GDU
         """
         try:
             datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
@@ -200,13 +353,10 @@ class RetrieveACIS:
             logging.error(f"Unexpected {err=}, {type(err)=}")
             return {"error": err}
 
-        # get df of distance to all stations
-        logging.info("Calculating distance from point to all stations")
-        self.sorted_list_stations = self.get_dist_to_stations(lon, lat)
-        print("---------")
-        print(f"First station id: {self.sorted_list_stations[0]['name']}")
-        print("---------")
-        result = self.calc_cum_precip(start_date, end_date)
+        if target == "pcpn":
+            result = self.calc_cum_precip(start_date, end_date, lon, lat)
+        elif target == "gdu":
+            result = self.calc_gdu(start_date, end_date, lon, lat)
 
         result["lon"] = lon
         result["lat"] = lat
@@ -349,11 +499,18 @@ def grab_and_update_weather_dat(
     else:
         cc_collection = ancillary_data.spring_biomass_collection_date
 
-    field_location = (
-        FieldFarm.objects.filter(id=survey_field_instance.field_farm_id)
-        .first()
-        .field_location
-    )
+    try:
+
+        field_location = (
+            FieldFarm.objects.filter(id=survey_field_instance.field_farm_id)
+            .first()
+            .field_location
+        )
+    except:
+        logging.error(
+            f"No field farm record for survey field {survey_field_instance.id}"
+        )
+        return None
 
     if all([cc_planting_date, cc_collection, field_location]):
 
@@ -392,7 +549,8 @@ def grab_and_update_weather_dat(
             ancillary_data.spring_acc_gdd = calc_gdu(data)
 
         if ancillary_data.spring_total_precip is not None:
-            ancillary_data.spring_total_precip = calc_precip(data)
+            result = retrieve_acis.get_weather_data(start_date, end_date, lon, lat)
+            ancillary_data.spring_total_precip = float(result["cumulative_precip"])
 
     ancillary_data.save()
 
