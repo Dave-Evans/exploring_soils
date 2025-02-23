@@ -464,7 +464,7 @@ def update_static_record(static_id, column_name, val):
         )
 
 
-def gather_gdu_precip_2023plus():
+def gather_gdu_precip_2023plus(seasons=["fall"]):
 
     # If survey year is before 2023 then we skip and handle elsewhere.
     # These years had poorly formed dates.
@@ -475,14 +475,13 @@ def gather_gdu_precip_2023plus():
     for survey_field in survey_fields:
 
         print(survey_field.survey_farm.id)
-        print("\tFall...")
-        grab_and_update_weather_dat(survey_field, retrieve_acis, "fall")
-        # print("\tSpring...")
-        # grab_and_update_weather_dat(survey_field, "spring")
+        for season in seasons:
+            print("\tSeason")
+            grab_and_update_weather_dat(survey_field, retrieve_acis, season)
 
 
 def grab_and_update_weather_dat(
-    survey_field_instance, retrieve_acis, season="fall", mode="only_null"
+    survey_field_instance, retrieve_acis, season="fall", mode="if_missing"
 ):
 
     cc_planting_date = survey_field_instance.cover_crop_planting_date
@@ -496,8 +495,12 @@ def grab_and_update_weather_dat(
 
     if season == "fall":
         cc_collection = ancillary_data.biomass_collection_date
+        precip_field_name = "total_precip"
+        gdu_field_name = "acc_gdd"
     else:
         cc_collection = ancillary_data.spring_biomass_collection_date
+        precip_field_name = "spring_total_precip"
+        gdu_field_name = "spring_acc_gdd"
 
     try:
 
@@ -537,66 +540,25 @@ def grab_and_update_weather_dat(
         "end_date": end_date,
     }
 
-    if season == "fall":
-        # if ancillary_data.acc_gdd is None:
-        #     ancillary_data.acc_gdd = calc_gdu(data)
+    if getattr(ancillary_data, precip_field_name) is None and mode == "if_missing":
+        result = retrieve_acis.get_weather_data(
+            start_date, end_date, lon, lat, target="pcpn"
+        )
+        setattr(ancillary_data, precip_field_name, float(result["cumulative_precip"]))
 
-        if ancillary_data.total_precip is None:
-            result = retrieve_acis.get_weather_data(start_date, end_date, lon, lat)
-            ancillary_data.total_precip = float(result["cumulative_precip"])
-    else:
-        if ancillary_data.spring_acc_gdd is None:
-            ancillary_data.spring_acc_gdd = calc_gdu(data)
-
-        if ancillary_data.spring_total_precip is not None:
-            result = retrieve_acis.get_weather_data(start_date, end_date, lon, lat)
-            ancillary_data.spring_total_precip = float(result["cumulative_precip"])
+    if getattr(ancillary_data, gdu_field_name) is None and mode == "if_missing":
+        result = retrieve_acis.get_weather_data(
+            start_date, end_date, lon, lat, target="gdu"
+        )
+        setattr(ancillary_data, gdu_field_name, float(result["gdu"]))
 
     ancillary_data.save()
 
 
-def calc_gdu(data):
-
-    headers = {"Accept": "application/json"}
-
-    data["target"] = "GDU"
-
-    resp = requests.get(
-        lambda_url,
-        headers=headers,
-        data=data,
-    )
-    gdu = None
-    if resp.status_code != 200 or resp.text != "null":
-        gdu = resp.json()["body"]["cumulative_gdd"]
-    else:
-        print("Error: " + resp.text)
-
-    return gdu
-
-
-def calc_precip(data):
-
-    headers = {"Accept": "application/json"}
-
-    data["target"] = "PRE"
-
-    resp = requests.get(
-        lambda_url,
-        headers=headers,
-        data=data,
-    )
-    total_precip = None
-    if resp.status_code == 200 or resp.text != "null":
-        total_precip = resp.json()["body"]["cumulative_precip"]
-    else:
-        print("Error: " + resp.text)
-
-    return total_precip
-
-
 def update_gdu_precip_2020_2022():
     from django.db import connection
+
+    retrieve_acis = RetrieveACIS()
 
     with connection.cursor() as cursor:
         cursor.execute("select * from wisc_cc")
@@ -620,16 +582,15 @@ def update_gdu_precip_2020_2022():
         old_gdu = cc[27]
 
         static_id = cc[1]
-        data = {
-            "lon": lon,
-            "lat": lat,
-            "start_date": start_date,
-            "end_date": end_date,
-        }
+
         # calc precip
-        total_precip = calc_precip(data)
+        total_precip = retrieve_acis.get_weather_data(
+            start_date, end_date, lon, lat, target="pcpn"
+        )["cumulative_precip"]
         # calc gdu
-        gdu = calc_gdu(data)
+        gdu = retrieve_acis.get_weather_data(
+            start_date, end_date, lon, lat, target="gdu"
+        )["gdu"]
 
         print("Old => new")
         print(f"{old_precip} => {total_precip}")
@@ -637,3 +598,12 @@ def update_gdu_precip_2020_2022():
         # update
         update_static_record(static_id, "total_precip", total_precip)
         update_static_record(static_id, "acc_gdd", gdu)
+
+
+def weather_data():
+    """For updating weather data
+    update_null_precip - update precip where it is null
+    update_null_gdu - update gud where it is null
+    update_all_precip - update all precip
+    update_all_gdu - update all gdu
+    """
