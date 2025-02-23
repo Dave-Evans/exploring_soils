@@ -102,8 +102,6 @@ class RetrieveACIS:
                 tmax = int(datum[1])
                 tmin = int(datum[2])
             except ValueError:
-                print(f"Missing data:\n\ttmin:{datum[2]}\n\ttmax:{datum[1]}...")
-
                 continue
 
             diff = tmax - tmin
@@ -464,7 +462,7 @@ def update_static_record(static_id, column_name, val):
         )
 
 
-def gather_gdu_precip_2023plus(seasons=["fall"]):
+def gather_gdu_precip_2023plus(seasons=["fall"], mode="if_missing"):
 
     # If survey year is before 2023 then we skip and handle elsewhere.
     # These years had poorly formed dates.
@@ -476,8 +474,8 @@ def gather_gdu_precip_2023plus(seasons=["fall"]):
 
         print(survey_field.survey_farm.id)
         for season in seasons:
-            print("\tSeason")
-            grab_and_update_weather_dat(survey_field, retrieve_acis, season)
+            print(f"\t{season}")
+            grab_and_update_weather_dat(survey_field, retrieve_acis, season, mode=mode)
 
 
 def grab_and_update_weather_dat(
@@ -533,20 +531,17 @@ def grab_and_update_weather_dat(
         print("Planting date is AFTER collection date.")
         return None
 
-    data = {
-        "lon": lon,
-        "lat": lat,
-        "start_date": start_date,
-        "end_date": end_date,
-    }
-
-    if getattr(ancillary_data, precip_field_name) is None and mode == "if_missing":
+    if (
+        getattr(ancillary_data, precip_field_name) is None and mode == "if_missing"
+    ) or mode != "if_missing":
         result = retrieve_acis.get_weather_data(
             start_date, end_date, lon, lat, target="pcpn"
         )
         setattr(ancillary_data, precip_field_name, float(result["cumulative_precip"]))
 
-    if getattr(ancillary_data, gdu_field_name) is None and mode == "if_missing":
+    if (
+        getattr(ancillary_data, gdu_field_name) is None and mode == "if_missing"
+    ) or mode != "if_missing":
         result = retrieve_acis.get_weather_data(
             start_date, end_date, lon, lat, target="gdu"
         )
