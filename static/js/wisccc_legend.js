@@ -379,7 +379,7 @@ function createNullLgend(trnslte = "translate(20, 130)") {
 
     var svg = d3.select("#legend svg");
     var nullOrdScale = d3.scaleOrdinal()
-        .domain(["Not analyzed"])
+        .domain(["No data"])
         .range(["#ccc"]);
 
     svg.append("g")
