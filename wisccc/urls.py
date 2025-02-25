@@ -3,6 +3,7 @@ from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
 from wisccc import views as wisccc_views
 from wisccc.forms import UserLoginForm
+from django.contrib.auth.decorators import login_required, permission_required
 
 urlpatterns = [
     re_path(r"^wisc-cc-home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
@@ -145,7 +146,14 @@ urlpatterns = [
     path("update_response/<id>", wisccc_views.update_response, name="update_response"),
     path("delete_response/<id>", wisccc_views.delete_response, name="delete_response"),
     path("update_labdata/<id>", wisccc_views.update_labdata, name="update_labdata"),
-    re_path(r"^response_table$", wisccc_views.response_table, name="response_table"),
+    # re_path(r"^response_table$", wisccc_views.response_table, name="response_table"),
+    re_path(
+        r"^response_table$",
+        permission_required("wisccc.survery_manager")(
+            wisccc_views.ResponseTableListView.as_view()
+        ),
+        name="response_table",
+    ),
     re_path(
         r"^registration_table$",
         wisccc_views.registration_table,
