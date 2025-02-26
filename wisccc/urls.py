@@ -80,16 +80,16 @@ urlpatterns = [
     ),
     re_path(
         r"^wisc_cc_register_1$",
-        wisccc_views.wisc_cc_interested,
-        name="wiscc_cc_interested",
-        # wisccc_views.wisc_cc_register_1,
-        # name="wisc_cc_register_1",
+        # wisccc_views.wisc_cc_interested,
+        wisccc_views.wisc_cc_register_1,
+        name="wisc_cc_register_1",
     ),
     re_path(
         r"^wisc_cc_register_1$",
         wisccc_views.wisc_cc_interested,
+        name="wiscc_cc_interested",
         # wisccc_views.wisc_cc_register_1,
-        name="wisc_cc_register_1",
+        # name="wisc_cc_register_1",
     ),
     re_path(
         r"^wisc_cc_register_2$",
@@ -142,10 +142,20 @@ urlpatterns = [
         ),
         name="register_1a",
     ),
+    # Assuming single field, uses survey farm id
     path("upload_photo/<id>", wisccc_views.upload_photo, name="upload_photo"),
+    path("update_labdata/<id>", wisccc_views.update_labdata, name="update_labdata"),
+    # Allowing multiple fields, uses survey field id
+    path(
+        "upload_photo_fld/<id>", wisccc_views.upload_photo_fld, name="upload_photo_fld"
+    ),
+    path(
+        "update_labdata_fld/<id>",
+        wisccc_views.update_labdata_fld,
+        name="update_labdata_fld",
+    ),
     path("update_response/<id>", wisccc_views.update_response, name="update_response"),
     path("delete_response/<id>", wisccc_views.delete_response, name="delete_response"),
-    path("update_labdata/<id>", wisccc_views.update_labdata, name="update_labdata"),
     # re_path(r"^response_table$", wisccc_views.response_table, name="response_table"),
     re_path(
         r"^response_table$",

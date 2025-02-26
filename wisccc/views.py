@@ -352,7 +352,9 @@ def wisc_cc_survey(request, survey_year=2024):
         farmer_id=farmer.id, survey_year=survey_year
     ).first()
 
-    survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id)
+    survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id).order_by(
+        "id"
+    )
 
     if request.user.has_perm("wisccc.survery_manager"):
         form_surveyfarm_review = SurveyFarmFormReview(
@@ -799,8 +801,12 @@ def create_addtl_surveyfield(request, sfarmid):
         return redirect("wisc_cc_unauthorized")
 
     new_survey_field = SurveyField.objects.create(survey_farm=survey_farm)
+    ancillary_data = AncillaryData.objects.create(survey_field=new_survey_field)
+    survey_photo = SurveyPhoto.objects.create(survey_field=new_survey_field)
 
-    return redirect("wisc-cc-survey" + f"?farmer_id={farmer.id}")
+    return redirect(
+        reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
+    )
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -842,6 +848,49 @@ def update_labdata(request, id):
             "form": form_ancillary_data,
             "first_and_last_name": first_and_last_name,
             "survey_year": survey_year,
+            "farmer_id": survey_field.survey_farm.farmer.id,
+        },
+    )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def update_labdata_fld(request, id):
+    """For updating labdata
+    Will navigate to this page from new wisc survey page
+    uses survey field id to grab ancillary data
+    """
+    context = {}
+    survey_field = SurveyField.objects.get(id=id)
+    first_and_last_name = f"{survey_field.survey_farm.farmer.first_name} {survey_field.survey_farm.farmer.last_name}"
+    survey_year = f"{survey_field.survey_farm.survey_year}"
+
+    # Get any lab data for this survey response
+    ancillary_data = AncillaryData.objects.get(survey_field_id=survey_field.id)
+
+    form_ancillary_data = AncillaryDataForm(
+        request.POST or None, instance=ancillary_data
+    )
+    if form_ancillary_data.is_valid():
+
+        new_ancillary_data = form_ancillary_data.save()
+        new_ancillary_data.survey_field_id = survey_field.id
+
+        new_ancillary_data.save()
+
+        return redirect(
+            reverse("wisc_cc_survey")
+            + f"/{survey_year}/?farmer_id={survey_field.survey_farm.farmer.id}"
+        )
+
+    template = "wisccc/wisc_cc_ancillarydata_review.html"
+    return render(
+        request,
+        template,
+        {
+            "form": form_ancillary_data,
+            "first_and_last_name": first_and_last_name,
+            "survey_year": survey_year,
+            "farmer_id": survey_field.survey_farm.farmer.id,
         },
     )
 
@@ -1840,6 +1889,8 @@ def wisc_cc_register_2(request):
                 farmer=new_farmer, survey_year=survey_year
             )
             survey_field = SurveyField.objects.create(survey_farm=survey_farm)
+            ancillary_data = AncillaryData.objects.create(survey_field=survey_field)
+            survey_photo = SurveyPhoto.objects.create(survey_field=survey_field)
 
         return redirect("wisc_cc_register_3")
 
@@ -1922,6 +1973,8 @@ def wisc_cc_register_by_mgmt_exist_user(request, pk):
                 farmer=new_farmer, survey_year=survey_year
             )
             survey_field = SurveyField.objects.create(survey_farm=survey_farm)
+            ancillary_data = AncillaryData.objects.create(survey_field=survey_field)
+            survey_photo = SurveyPhoto.objects.create(survey_field=survey_field)
 
         return redirect("registration_table")
     else:
@@ -1976,6 +2029,8 @@ def wisc_cc_register_by_mgmt(request):
             farmer=new_farmer, survey_year=survey_year
         )
         survey_field = SurveyField.objects.create(survey_farm=survey_farm)
+        ancillary_data = AncillaryData.objects.create(survey_field=survey_field)
+        survey_photo = SurveyPhoto.objects.create(survey_field=survey_field)
 
         return redirect("registration_table")
     else:
@@ -2037,6 +2092,52 @@ def upload_photo(request, id):
             "survey_photo_form": survey_photo_form,
             "first_and_last_name": first_and_last_name,
             "survey_year": survey_year,
+            "farmer_id": survey_field.survey_farm.farmer.id,
+        },
+    )
+
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def upload_photo_fld(request, id):
+    """For uploading photos for survey response,
+    from survey field id"""
+    context = {}
+    # fetch the survey field object related to passed id
+    survey_field = SurveyField.objects.get(id=id)
+    first_and_last_name = f"{survey_field.survey_farm.farmer.first_name} {survey_field.survey_farm.farmer.last_name}"
+    survey_year = f"{survey_field.survey_farm.survey_year}"
+
+    # Get any uploaded photos for this survey response
+    survey_photo = SurveyPhoto.objects.get(survey_field_id=survey_field.id)
+
+    survey_photo_form = SurveyPhotoForm(request.POST or None, instance=survey_photo)
+    # save the data from the form and
+    # redirect to detail_view
+
+    if survey_photo_form.is_valid():
+
+        new_survey_photo = survey_photo_form.save()
+        new_survey_photo.survey_field_id = survey_field.id
+        if "image_1" in request.FILES.keys():
+            new_survey_photo.image_1 = request.FILES["image_1"]
+        if "image_2" in request.FILES.keys():
+            new_survey_photo.image_2 = request.FILES["image_2"]
+
+        new_survey_photo.save()
+        return redirect(
+            reverse("wisc_cc_survey")
+            + f"/{survey_year}/?farmer_id={survey_field.survey_farm.farmer.id}"
+        )
+
+    template = "wisccc/photo_upload.html"
+    return render(
+        request,
+        template,
+        {
+            "survey_photo_form": survey_photo_form,
+            "first_and_last_name": first_and_last_name,
+            "survey_year": survey_year,
+            "farmer_id": survey_field.survey_farm.farmer.id,
         },
     )
 

@@ -163,6 +163,16 @@
                       VI. Research Field: Cover crop seeding & cost
                     </a>
                     {% endif %}
+                    {% if perms.wisccc.survery_manager %}
+                    <a href="{% url 'update_labdata_fld' survey_field_id %}"
+                      class="list-group-item list-group-item-action list-group-item-info">
+                      Edit Lab data
+                    </a>
+                    <a href="{% url 'upload_photo_fld' survey_field_id %}"
+                      class="list-group-item list-group-item-action list-group-item-info">
+                      Upload or edit photo
+                    </a>
+                    {% endif %}
 
                   </div>
                 </div>
@@ -207,8 +217,9 @@
 
             </div>
 
-            <hr>
+
             {% if perms.wisccc.survery_manager %}
+            <hr>
             <form method="post" enctype="multipart/form-data">
               {% csrf_token %}
               <h3 class="card-title">Reviewer notes and accuracy confirmation</h3>
