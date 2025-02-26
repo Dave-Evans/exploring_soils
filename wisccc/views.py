@@ -23,7 +23,7 @@ from django.views.generic import (
 )
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
-from django_tables2 import RequestConfig
+from django_tables2 import RequestConfig, SingleTableMixin
 from wisccc.tables import (
     ResponseTable,
     RegistrationTable,
@@ -31,6 +31,8 @@ from wisccc.tables import (
     InterestedPartyTable,
     InterestedAgronomistTable,
 )
+from wisccc.filters import SurveyResponseFilter
+from django_filters.views import FilterView
 from wisccc.forms import (
     SurveyFieldFormFull,
     SurveyFarmFormSection2,
@@ -1537,45 +1539,37 @@ def researcher_page_expired(request):
     return render(request, "wisccc/wisc_cc_researcher_expired.html")
 
 
-# Currently does not handle cases where more than one survey per year per farmer
+# @permission_required("wisccc.survery_manager", raise_exception=True)
+# @method_decorator(permission_required, name="dispatch")
+class ResponseTableListView(SingleTableMixin, FilterView):
+    """List survey responses, with filters"""
+
+    table_class = ResponseTable
+    model = SurveyFarm
+    template_name = "wisccc/response_table.html"
+
+    filterset_class = SurveyResponseFilter
+
+    def get_queryset(self):
+        return super().get_queryset().filter(survey_year__gt=2022)
+
+    # def get_table_kwargs(self):
+    #     return {"template_name": "django_tables2/bootstrap.html"}
+
+
 @permission_required("wisccc.survery_manager", raise_exception=True)
-def response_table(request):
+def response_table_bkup(request):
     """List wisc response entries"""
-    all_surveys = SurveyFarm.objects.filter(survey_year__gt=2022)
+    all_surveys = (
+        SurveyFarm.objects.select_related("farmer")
+        .select_related("farmer__user")
+        .filter(survey_year__gt=2022)
+    )
     total_surveys = all_surveys.count()
     completed_surveys = all_surveys.filter(confirmed_accurate=True).count()
 
-    # REVISE!
-    #   Revise according to new structure
-    def get_table_data():
-        """For getting survey data and returning an excel doc"""
-        query = """
-            select 
-                s.id as id
-                , s.survey_year
-                , u.username 
-                , u.email
-                , f.id as farmer_id
-                , f.first_name 
-                , f.last_name
-                , s.survey_created::Date
-                , s.confirmed_accurate
-            from wisccc_surveyfarm s 
-            left join wisccc_farmer f
-            on s.farmer_id = f.id 
-            left join auth_user as u
-            on f.user_id = u.id
-            where s.survey_year >= 2023
-            order by s.survey_created desc"""
-        dat = pd.read_sql(query, connection)
-        dat = dat.to_dict("records")
-
-        return dat
-
-    data = get_table_data()
-
-    # table = ResponseTable(Survey.objects.all())
-    table = ResponseTable(data)
+    table = ResponseTable(all_surveys)
+    filter = SurveyResponseFilter(request.GET, queryset=all_surveys)
     RequestConfig(request, paginate={"per_page": 15}).configure(table)
 
     return render(
@@ -1585,6 +1579,7 @@ def response_table(request):
             "table": table,
             "total_surveys": total_surveys,
             "completed_surveys": completed_surveys,
+            "filter": filter,
         },
     )
 

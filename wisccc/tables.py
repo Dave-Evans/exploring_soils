@@ -6,11 +6,11 @@ from wisccc.models import Survey, Farmer, SurveyRegistration
 
 
 class ResponseTable(tables.Table):
-    first_name = tables.Column()
-    last_name = tables.Column()
+    farmer__first_name = tables.Column()
+    farmer__last_name = tables.Column()
     # username = tables.Column()
-    email = tables.Column()
-    survey_year = tables.Column()
+    farmer__user__email = tables.Column()
+    survey_created = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column_response.html")
     upload_photo = TemplateColumn(template_name="wisccc/upload_photo_column.html")
     update_labdata = TemplateColumn(
@@ -27,10 +27,10 @@ class ResponseTable(tables.Table):
             # For highlighting rows according to if confirmed good
             "class": lambda record: (
                 "table-success"
-                if record["confirmed_accurate"] == True
+                if record.confirmed_accurate == True
                 else (
                     "table-danger"
-                    if record["confirmed_accurate"] == False
+                    if record.confirmed_accurate == False
                     else "table-warning"
                 )
             )

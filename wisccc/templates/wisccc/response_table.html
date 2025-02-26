@@ -22,8 +22,16 @@
         <h3 class="card-title">Survey Responses</h3>
         <h7 class="card-title">
           <span><a href="{% url 'wisccc_download_data' 1 %}">Download all data</a></span>
-          <span style="float: right">{{ completed_surveys }} completed/{{ total_surveys }} initiated</span>
+          <span style="float: right">{{ filter.qs.count }} surveys</span>
         </h7>
+        {% if filter %}
+        <div class="col-sm-10">
+          <form action="" method="get" class="form">
+            {% bootstrap_form filter.form layout='floating' %}
+            {% bootstrap_button 'filter' %}
+          </form>
+        </div>
+        {% endif %}
         <div class="col-md-12">
           {% render_table table %}
         </div>

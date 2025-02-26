@@ -40,7 +40,7 @@ fq_tdn_adf_fall	Fall – total digestible nutrients - acid detergent fiber. Anal
 fq_milkton_fall	"Fall – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters.. Analyzed by Dairyland Labs."
 fq_rfq_fall	Fall – measured: relative forage quality. Analyzed by Dairyland Labs.
 total_nitrogen_fall	Fall – Total nitrogen in a the plant tissue, mg/L. Analyzed by AgSource labs.
-height_of_stand_fall	Fall – The height, in inches, of the cover crop stand when fall sample was taken. This was assessed from a photo taken by the farmer at sampling time.
+height_of_stand_fall	Fall – The average height, in inches, of the cover crop, measured by the participant when fall sample was taken.
 cc_biomass_collection_date_spring	The date of spring biomass collection.
 total_precip_spring	Spring – Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
 acc_gdd_spring	Spring – growing degree days/units that have accumulated from when the cover crop was planted to when it was harvested derived from https://mrcc.purdue.edu/data_serv/cli-dap
@@ -52,5 +52,5 @@ fq_tdn_adf_spring	Spring – total digestible nutrients - acid detergent fiber. 
 fq_milkton_spring	"Spring – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters. Analyzed by Dairyland Labs."
 fq_rfq_spring	Spring – measured: relative forage quality. Analyzed by Dairyland Labs.
 total_nitrogen_spring	Spring – Total nitrogen in a the plant tissue, mg/L. Analyzed by AgSource Labs.
-height_of_stand_spring	Spring – The height, in inches, of the cover crop stand when spring sample was taken. This was assessed from a photo taken by the farmer at sampling time.
+height_of_stand_spring	Spring – The average height, in inches, of the cover crop, measured by the participant when spring sample was taken.
 cc_species_raw	As entered by participant from a list: annual ryegrass; barley; berseem clover; canola/rapeseed; cereal (winter) rye; crimson clover; cowpea; field/forage pea; hairy vetch; kale; oats; other (legume); other (grass); other (broadleaf); radish; red clover; sorghum; sorghum-sudan; soybeans; sunflower; Tritcale; turnip; wheat (spring); wheat (winter); multispecies mix of 2 or more; other. 

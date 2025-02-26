@@ -136,9 +136,6 @@ d3.json(dataurl, function (data) {
 
     }
 
-
-    // Hack to limit the graphs to just 2020 and 2021 (years flattened so just need  == 2020)
-    // data = data.filter(function (d) { return d.properties.cc_planting_date_flat.getFullYear() == 2020 })
     data = data.filter(function (el) { return el.properties.cc_biomass != null });
     data = data.filter(function (el) { return el.properties.cc_species_raw != null });
     var pop_selectize_box = function (geojson_data, id_selector, field_name) {
@@ -175,46 +172,6 @@ d3.json(dataurl, function (data) {
         })
         return option_array;
     }
-
-
-    var pop_select_box = function (geojson_data, id_selector, field_name) {
-        var all_instances = [];
-
-        for (item in geojson_data) {
-            if (field_name == "cc_species_raw") {
-                var cc_species_raw = geojson_data[item]['properties'][field_name]
-
-                if (cc_species_raw === null) { continue; }
-
-                all_instances = all_instances.concat(cc_species_raw.split(", "));
-
-            } else {
-                all_instances.push(geojson_data[item]['properties'][field_name])
-            }
-
-
-        }
-        // Deduplicating
-        const uniq_instances = [...new Set(all_instances)];
-        uniq_instances.sort()
-        var filt = document.getElementById(id_selector);
-
-        var newOption = document.createElement("option");
-        newOption.text = "All";
-        newOption.value = "All";
-        filt.add(newOption);
-
-        uniq_instances.forEach(function (item) {
-            // console.log(item)
-            if (item === null) { return }
-            var newOption = document.createElement("option");
-            newOption.text = item.toString();
-            newOption.value = item.toString();
-            filt.add(newOption);
-        })
-
-    }
-
 
     // an object of the id of the select, and the field it targets
     var boxes_select = {
@@ -273,8 +230,6 @@ d3.json(dataurl, function (data) {
     var yAxis = d3.axisLeft(yScale);
     yAxis.ticks(10, ".1f")
 
-
-
     svg.append("g")
         .call(yAxis)
         .attr("class", "myYAxis")
@@ -285,6 +240,7 @@ d3.json(dataurl, function (data) {
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
+        .attr("class", "y_axis_label")
         .text("Aboveground cover crop biomass (ton/acre)");
 
     svg.append("text")      // text label for the x axis
@@ -293,21 +249,20 @@ d3.json(dataurl, function (data) {
         .attr("class", "x_axis_label")
         .text("");
 
-
     // Add dots
     function enterPoints(data, property_and_scale) {
         var property = property_and_scale[0]
         var scale = property_and_scale[1]
         var color_property = property_and_scale[2]
         var color_scale = property_and_scale[3]
-
+        var y_property = property_and_scale[4]
         svg.append('g')
             .selectAll("dot")
             .data(data)
             .enter()
             .append("circle")
             .attr("cx", function (d) { return scale(d.properties[property]); })
-            .attr("cy", function (d) { return yScale(d.properties.cc_biomass); })
+            .attr("cy", function (d) { return yScale(d.properties[y_property]); })
             .attr("r", 5)
             .style("fill", function (d) { return color_scale((d.properties[color_property])); })
             .style("stroke", "#252525")
@@ -354,11 +309,12 @@ d3.json(dataurl, function (data) {
         var scale = property_and_scale[1]
         var color_property = property_and_scale[2]
         var color_scale = property_and_scale[3]
+        var y_property = property_and_scale[4]
         svg.selectAll("circle")
             .data(data)
             .transition().duration(1000)
             .attr("cx", function (d) { return scale(d.properties[property]); })
-            .attr("cy", function (d) { return yScale(d.properties.cc_biomass); })
+            .attr("cy", function (d) { return yScale(d.properties[y_property]); })
             .style("fill", function (d) {
 
                 return d.properties[color_property] ? color_scale((d.properties[color_property])) : "#ccc";
@@ -388,6 +344,17 @@ d3.json(dataurl, function (data) {
         svg.select('.x_axis_label')
             .transition().duration(1000)
             .text(pretty_property);
+
+        if (y_property == "cc_biomass") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall cover crop biomass (ton/acre)");
+        } else if (y_property == "spring_cc_biomass") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring cover crop biomass (ton/acre)");
+        }
+
 
         updateLegendGraph(color_scale)
 
@@ -645,7 +612,7 @@ d3.json(dataurl, function (data) {
     function filterDataNulls(data, sdd) {
         // Removing points with null biomass
         return data.filter(function (d) {
-            return d.properties.cc_biomass != null;
+            return d.properties[d3.select("#yFactor").node().value] != null;
         });
 
     }
@@ -671,6 +638,13 @@ d3.json(dataurl, function (data) {
 
     d3.select("#xFactor").on("change", function () {
         console.log("Changed x to: " + this.value);
+
+        updateChart(false);
+        updateHelpTipText(this.value)
+
+    })
+    d3.select("#yFactor").on("change", function () {
+        console.log("Changed y to: " + this.value);
 
         updateChart(false);
         updateHelpTipText(this.value)
@@ -726,6 +700,7 @@ d3.json(dataurl, function (data) {
     function getScaleAndProperty(filtered_data, sdd) {
 
         var property = d3.select("#xFactor").node().value
+        var y_property = d3.select("#yFactor").node().value
         var color_property = d3.select("#select_color").node().value
 
 
@@ -775,7 +750,7 @@ d3.json(dataurl, function (data) {
             );
         }
 
-        return [property, scale, color_property, color_scale]
+        return [property, scale, color_property, color_scale, y_property]
     }
 
     // Legend
