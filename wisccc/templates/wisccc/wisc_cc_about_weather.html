@@ -1,0 +1,55 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h5>Weather data</h5>
+                <div>
+                    <p>
+                        We calculate growing degree units and and cumulative
+                        precipation to understand how these factors influence cover crop growth.
+                        This information is gathered from the
+                        <a href="https://www.rcc-acis.org/index.html">Applied Climate Information System (ACIS)</a>.
+                    </p>
+                    <p>
+                        Precipitation is calculated as the sum of all the measured precipitation that has
+                        fallen from when the cover crop was planted to when the biomass was sampled.
+                        The precipitation data is collected from the ACIS weather station nearest to participating
+                        field.
+
+                    </p>
+                    <p>
+                        Growing degree units (GDU) are a measure of how much heat has accumulated over a season.
+                        This can indicate how favorable were conditions for plants.
+                        This is calculated as the sum of daily warming units over time
+                        window of when the cover crop was planted to when the biomass sample was collected.
+                        For our growing degree unit calculation we use the Baskerville-Emin method, this method
+                        does a better job of assessing heat units during cool periods, such as early in the spring.
+                        Michigan State University has a <a
+                            href="https://www.canr.msu.edu/uploads/files/Research_Center/NW_Mich_Hort/General/CalculatingGrowingDegreeDays.pdf">nice
+                            discussion</a> of how this method is different from the
+                        averaging method.
+                        As with our precipation calculation, the minimum and maximum daily temperature data is
+                        collected from the ACIS weather station nearest the farm for which GDU is being caluclated.
+                        If the weather station has more than 10% of missing values for window period,
+                        then the next nearest weather station is used.
+                    </p>
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}
