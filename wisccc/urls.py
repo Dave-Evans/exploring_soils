@@ -24,6 +24,16 @@ urlpatterns = [
         name="wisc_cc_about",
     ),
     re_path(
+        r"^wisc_cc_acis$",
+        wisccc_views.wisc_cc_acis,
+        name="wisc_cc_acis",
+    ),
+    re_path(
+        r"^wisc_cc_clireg$",
+        wisccc_views.wisc_cc_clireg,
+        name="wisc_cc_clireg",
+    ),
+    re_path(
         r"^wisc_cc_admin$",
         wisccc_views.wisc_cc_manager_home,
         name="wisc_cc_manager_home",

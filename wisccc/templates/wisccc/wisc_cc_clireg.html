@@ -1,0 +1,181 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h5>Wisconsin Climate Regions</h5>
+                <div>
+                    <p> Climate regions refer to nine areas of Wisconsin delineated by the
+                        <a href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">
+                            National Oceanic and Atmospheric Administration</a>
+                        as having similar temperature and precipitation.
+                        We use them in our graph to help group points according to similar latitudes with similar
+                        weather patterns.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <style>
+        /* .map {
+            border: medium solid #999;
+        } */
+
+        .counties {
+            stroke: #211;
+            stroke-width: 1px;
+        }
+
+        div.tooltip {
+            position: absolute;
+            text-align: left;
+            padding: 5px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0.5px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
+    <script>
+        window.onload = setMap();
+
+        //set up choropleth map
+        function setMap() {
+            function highlight(props) {
+                //change stroke
+                var selected = d3.selectAll("." + props.mod_countyname)
+                    .style("stroke", "blue")
+                    .style("stroke-width", "2");
+            };
+            function dehighlight(props) {
+                //change stroke
+                var selected = d3.selectAll("." + props.mod_countyname)
+                    .style("stroke", "#211")
+                    .style("stroke-width", "1px");
+            };
+
+            var o_region_cty_lu = {
+                "Northwest": ["Bayfield", "Douglas", "Polk", "Barron", "Chippewa", "Rusk", "Washburn", "Sawyer", "Burnett"],
+                "North Central": ["Ashland", "Iron", "Vilas", "Oneida", "Price", "Lincoln", "Taylor", "Marathon", "Clark"],
+                "Northeast": ["Florence", "Forest", "Marinette", "Langlade", "Oconto", "Menominee", "Shawano"],
+                "West Central": ["StCroix", "Dunn", "Pierce", "Pepin", "EauClaire", "Buffalo", "Trempealeau", "Jackson", "LaCrosse", "Monroe"],
+                "East Central": ["Outagamie", "Brown", "Door", "Kewaunee", "Manitowoc", "Calumet", "Winnebago", "FondduLac", "Sheboygan"],
+                "Central": ["Wood", "Portage", "Waupaca", "Juneau", "Adams", "Waushara", "Marquette", "GreenLake"],
+                "Southwest": ["Vernon", "Richland", "Sauk", "Crawford", "Grant", "Iowa", "Lafayette"],
+                "South Central": ["Columbia", "Dane", "Green", "Dodge", "Jefferson", "Rock"],
+                "Southeast": ["Washington", "Ozaukee", "Waukesha", "Milwaukee", "Walworth", "Racine", "Kenosha"]
+            }
+            var getRegion = function (county) {
+
+                let region;
+                for (k in Object.keys(o_region_cty_lu)) {
+                    region = Object.keys(o_region_cty_lu)[k];
+                    if (o_region_cty_lu[region].includes(county)) { return region }
+                }
+            }
+            var colorScaleRegion = d3.scaleOrdinal()
+                .domain(Object.keys(o_region_cty_lu))
+                .range(['#3288bd',
+                    '#66c2a5',
+                    '#abdda4',
+                    '#e6f598',
+                    '#ffffbf',
+                    '#fee08b',
+                    '#fdae61',
+                    '#f46d43',
+                    '#d53e4f'])
+            //map frame dimensions
+            var width = 560,
+                height = 460;
+
+            //create new svg container for the map
+            var map = d3.select("div.card")
+                .append("svg")
+                .attr("class", "map")
+                .attr("width", width)
+                .attr("height", height);
+
+            // Create tooltip container
+            var div = d3.select("div.card")
+                .append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
+            //create Albers equal area conic projection centered on France
+            var projection = d3.geoAlbers()
+                .center([0, 44.5])
+                .rotate([90.5, 0, 0])
+                .parallels([29.5, 47])
+                .scale(4947.48)
+                .translate([width / 2, height / 2]);
+
+            var path = d3.geoPath()
+                .projection(projection);
+            //use Promise.all to parallelize asynchronous data loading
+            var promises = [
+                d3.json("/get_wi_counties")
+            ];
+            Promise.all(promises).then(callback);
+
+            function callback(data) {
+                var counties = data[0].features;
+                for (i in counties) {
+                    counties[i].properties.mod_countyname = counties[i].properties.countyname.replace(".", "").replaceAll(" ", "")
+                }
+                var wi_counties = map.selectAll("counties")
+                    .data(counties)
+                    .enter()
+                    .append("path")
+                    .attr("class", function (d) {
+                        return "counties " + d.properties.mod_countyname
+                    })
+                    .attr("d", path)
+
+                    .style("fill", function (d) {
+                        return colorScaleRegion(getRegion(d.properties.mod_countyname))
+                    })//.properties.countyname + " " + getRegion(d.properties.countyname)
+                    .on("mouseover", function (event, d) {
+                        highlight(d.properties)
+                        div.transition()
+                            .duration(200)
+                            .style("opacity", .9)
+                            .attr("r", 5);
+                        div.html("<h5>" + getRegion(d.properties.mod_countyname) + "</h5>" + d.properties.countyname + " County")
+                            .style("left", (event.clientX - 522) + "px")
+                            .style("top", (event.clientY - 128) + "px");
+                    })
+                    .on("mouseout", function (event, d) {
+                        dehighlight(d.properties)
+                        div.transition()
+                            .duration(500)
+                            .attr("r", 3)
+                            .style("opacity", 0);
+                    });
+                // .on("mouseout", function (d) {
+                //     div.transition()
+                //         .duration(500)
+                //         .attr("r", 3)
+                //         .style("opacity", 0);
+                // });
+
+            }
+        };
+
+
+    </script>
+    {% endblock %}

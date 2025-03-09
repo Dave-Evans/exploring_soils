@@ -240,6 +240,14 @@ def wisc_cc_about(request):
     return render(request, "wisccc/wisc_cc_about.html")
 
 
+def wisc_cc_acis(request):
+    return render(request, "wisccc/wisc_cc_acis.html")
+
+
+def wisc_cc_clireg(request):
+    return render(request, "wisccc/wisc_cc_clireg.html")
+
+
 def wisc_cc_interested(request):
 
     form_interested_party = InterestedPartyForm(request.POST or None)
