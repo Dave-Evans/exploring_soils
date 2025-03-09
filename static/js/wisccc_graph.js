@@ -104,6 +104,9 @@ d3.json(dataurl, function (data) {
             console.log(data[i].properties.county_single)
         }
         // Formatting for pretty display
+        if (data[i].properties.previous_crop === null) {
+            data[i].properties.previous_crop = 'unknown'
+        }
         data[i].properties.previous_crop = data[i].properties.previous_crop[0] + data[i].properties.previous_crop.substring(1).toLowerCase().replace("_", " ")
 
         // Converting planting dates to be all same year for 
@@ -391,7 +394,8 @@ d3.json(dataurl, function (data) {
 
         }
         if (property == "region") {
-            text = "Climate regions refer to nine areas of Wisconsin delineated by the <a href = 'https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions'>National Oceanic and Atmospheric Administration</a> as having similar temperature and precipitation."
+            text = "<a href='wisc_cc_clireg'>See map for regions</a>. "
+            text = text + "Climate regions refer to nine areas of Wisconsin delineated by the <a href = 'https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions'>National Oceanic and Atmospheric Administration</a> as having similar temperature and precipitation."
         }
         $("#legend_helptip").html(text);
     }
