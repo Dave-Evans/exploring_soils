@@ -139,6 +139,7 @@ CSP_SCRIPT_SRC = [
     "https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js",
     "https://unpkg.com/leaflet@1.7.1/dist/leaflet.js",
     "https://unpkg.com/leaflet@1.0.1/dist/leaflet.js",
+    "https://cdn.jsdelivr.net/npm/d3@7",
 ]
 CSP_IMG_SRC = [
     "'self'",
