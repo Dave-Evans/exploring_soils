@@ -1,3 +1,4 @@
+console.log(tst)
 
 var margin = { top: 10, right: 5, bottom: 55, left: 60 },
     width = 700 - margin.left - margin.right,
@@ -179,8 +180,8 @@ d3.json(dataurl, function (data) {
             options: pop_selectize_box(data, id_selector, target_field),
             onChange: function (value, isOnInitialize) {
                 updateChart(false)
-                updateHelpTipText()
-                updateYHelpTipText()
+                // updateHelpTipText()
+                // updateYHelpTipText()
             }
         })
     }
@@ -245,6 +246,14 @@ d3.json(dataurl, function (data) {
             .attr("cy", function (d) { return y_scale(d.properties[y_property]); })
             .attr("r", 5)
             .style("fill", function (d) { return color_scale((d.properties[color_property])); })
+            .style("fill-opacity", function (d) {
+                if (tst.includes(d.properties.id)) {
+                    console.log("Found it:" + d.properties.id)
+                    return 1;
+                } else {
+                    return 0.1;
+                }
+            })
             .style("stroke", "#252525")
             .on("mouseover", function (d) {
                 div.transition()
@@ -301,6 +310,21 @@ d3.json(dataurl, function (data) {
                 return d.properties[color_property] ? color_scale((d.properties[color_property])) : "#ccc";
 
             })
+            .style("fill-opacity", function (d) {
+                if (tst.includes(d.id)) {
+                    return 1;
+                } else {
+                    return 0.3;
+                }
+            })
+            .attr("r", function (d) {
+                if (tst.includes(d.id)) {
+                    return 10;
+                } else {
+                    return 5;
+                }
+            })
+
 
         svg.select(".myYAxis")
             .transition()
@@ -455,8 +479,8 @@ d3.json(dataurl, function (data) {
         }
 
         var n_removed = 99 - mod_data.length
-        console.log(n_removed, " values were removed")
-        console.log(mod_data)
+        // console.log(n_removed, " values were removed")
+        // console.log(mod_data)
         for (let i = 0; i < mod_data.length; i++) {
             if (mod_data[i][0] == undefined) {
 
@@ -592,7 +616,7 @@ d3.json(dataurl, function (data) {
     }
     function filterDataSelectize(data, id_selector, target_field) {
 
-        console.log("FilterDataSelectize for:", id_selector, target_field)
+        // console.log("FilterDataSelectize for:", id_selector, target_field)
         var array = $('#' + id_selector).selectize()[0].selectize.getValue()
 
         if (array == null | array.length == 0) {
@@ -785,22 +809,20 @@ d3.json(dataurl, function (data) {
             y_scale = yScale
 
             y_scale.domain(
-                [0,
-                    d3.max(filtered_data.map(function (child) {
-                        return child.properties[y_property]
-                    }))
-                ]
-            );
+                [0, 4.5]
+            ).nice();
         } else if (y_property == "fq_milkton" | y_property == "spring_fq_milkton") {
 
             y_scale = yScale
 
-            y_scale.domain([0,
-                d3.max(filtered_data.map(function (child) {
-                    return child.properties[y_property]
-                }))
-            ]
-            );
+            y_scale.domain(
+                [
+                    0,
+                    d3.max(filtered_data.map(function (child) {
+                        return child.properties[y_property]
+                    }))
+                ]
+            ).nice();
         } else if ((y_property == "fq_rfq") || (y_property == "spring_fq_rfq")) {
 
             y_scale = yScale
@@ -809,7 +831,7 @@ d3.json(dataurl, function (data) {
                 d3.extent(filtered_data.map(function (child) {
                     return child.properties[y_property]
                 }))
-            );
+            ).nice();
         }
 
         return [property, scale, color_property, color_scale, y_property, y_scale]
