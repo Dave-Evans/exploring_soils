@@ -48,7 +48,7 @@
 
         <p>
           The survey has seven sections, some of them very short.
-          Please submit each section before leaving so you don’t lose the information you’ve put in.
+          Please submit each section before leaving so you don't lose the information you've put in.
         </p>
 
 
@@ -93,13 +93,27 @@
                 aria-controls="collapseOne" class="list-group-item list-group-item-action list-group-item-success">
                 Field {{ forloop.counter }} click to see sections
               </a>
-
+              <br>
+              <a href="{% url 'delete_survey_field' survey_field_id %}">
+                <button type=" button" class="warn btn btn-danger btn-sm">
+                  Delete this field
+                </button>
+              </a>
               {% else %}
 
               <a data-target="#collapse-{{ forloop.counter }}" data-toggle="collapse" aria-expanded="true"
                 aria-controls="collapseOne" class="list-group-item list-group-item-action list-group-item-warning">
                 Field {{ forloop.counter }}
               </a>
+              <br>
+              <a href="{% url 'delete_survey_field' survey_field_id %}">
+                <button type=" button" class="warn btn btn-danger btn-sm">
+                  Delete this field
+                </button>
+              </a>
+
+
+
 
               {% endif %}
 
@@ -186,18 +200,20 @@
               <div class="card-body">
                 <div class="list-group">
 
-                  {% if one_incomplete %}
+                  <!-- {# if one_incomplete #}
                   <a class="list-group-item list-group-item-action list-group-item-warning">
                     Please finish the survey for all your current fields before adding another field.
                   </a>
-                  {% else %}
+                  {# else #} -->
                   <a href="{% url 'create_addtl_surveyfield' survey_farm.id %}"
                     class="list-group-item list-group-item-action list-group-item-success">
-                    Add another field to this survey. Please note support for sampling this additional field may not be
-                    available.
+                    Add another field to this survey.
+                    This will allow the farmer to fill out information about another field and
+                    skip duplicating information relevant to their farm.
+                    <!-- Please note support for sampling this additional field may not be available. -->
                   </a>
 
-                  {% endif %}
+                  <!-- {# endif #} -->
                 </div>
               </div>
             </div>
