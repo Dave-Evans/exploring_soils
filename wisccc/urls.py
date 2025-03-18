@@ -314,6 +314,11 @@ urlpatterns = [
         name="create_addtl_surveyfield",
     ),
     path(
+        "delete_survey_field/<int:sfieldid>/",
+        wisccc_views.delete_survey_field,
+        name="delete_survey_field",
+    ),    
+    path(
         "wisc_cc_survey_populate_fieldfarm/<id>",
         wisccc_views.wisc_cc_survey_populate_fieldfarm,
         name="wisc_cc_survey_populate_fieldfarm",

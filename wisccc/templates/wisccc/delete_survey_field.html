@@ -1,0 +1,136 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Delete this survey field?</h3>
+
+                <!-- Create a Form -->
+                <form method="POST">
+                    <!-- Security token by Django -->
+                    {% csrf_token %}
+                    <p>Are you sure you want to delete this field for {{ farmer.first_name }} {{ farmer.last_name }}?
+                        Please view the below sections and confirm that no important information will be lost if you
+                        delte
+                        this field.
+                    </p>
+                    <p>Green indicate the section has been completed by the farmer.
+                        Yellow indicates the section has not been completed.
+                        <br>
+                        Confirm too that no photo or lab data has been uploaded as this information will be lost if the
+                        field is deleted.
+                    </p>
+
+                    <div class="card">
+                        <div class="card-body">
+                            {% if completed %}
+
+                            <a data-target="#collapse-1" data-toggle="collapse" aria-expanded="true"
+                                aria-controls="collapseOne"
+                                class="list-group-item list-group-item-action list-group-item-success">
+                                Field click to see sections
+                            </a>
+
+                            {% else %}
+
+                            <a data-target="#collapse-1" data-toggle="collapse" aria-expanded="true"
+                                aria-controls="collapseOne"
+                                class="list-group-item list-group-item-action list-group-item-warning">
+                                Field
+                            </a>
+                            {% endif %}
+
+
+                        </div>
+                        <div id="collapse-1" aria-labelledby="headingOne" data-parent="#accordionExample"
+                            class="collapse show">
+                            <div class="card-body">
+                                <div class="list-group">
+                                    {% if section_3 %}
+                                    <a href="{% url 'wisc_cc_survey3' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-success">
+                                        III. Research Field: Crop rotation and planting rates - completed! Click to view
+                                        and edit
+                                        the response.
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'wisc_cc_survey3' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-warning">
+                                        III. Research Field: Crop rotation and planting rates - not filled out.
+                                    </a>
+                                    {% endif %}
+
+
+                                    {% if section_4 %}
+                                    <a href="{% url 'wisc_cc_survey4' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-success">
+                                        IV. Research Field: Planting dates & timing - completed! Click to view and edit
+                                        the
+                                        response.
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'wisc_cc_survey4' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-warning">
+                                        IV. Research Field: Planting dates & timing - not filled out.
+                                    </a>
+                                    {% endif %}
+
+                                    {% if section_5 %}
+                                    <a href="{% url 'wisc_cc_survey5' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-success">
+                                        V. Research Field: Manure, tillage, soil conditions - completed! Click to view
+                                        and edit the response.
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'wisc_cc_survey5' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-warning">
+                                        V. Research Field: Manure, tillage, soil conditions - not filled out.
+                                    </a>
+                                    {% endif %}
+
+                                    {% if section_6 %}
+                                    <a href="{% url 'wisc_cc_survey6' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-success">
+                                        VI. Research Field: Cover crop seeding & cost - completed! Click to view and
+                                        edit the
+                                        response.
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'wisc_cc_survey6' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-warning">
+                                        VI. Research Field: Cover crop seeding & cost - not filled out.
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.wisccc.survery_manager %}
+                                    <a href="{% url 'update_labdata_fld' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-info">
+                                        Edit Lab data
+                                    </a>
+                                    <a href="{% url 'upload_photo_fld' survey_field.id %}"
+                                        class="list-group-item list-group-item-action list-group-item-info">
+                                        Upload or edit photo
+                                    </a>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <input type="submit" value="Yes" class="warn btn btn-danger" />
+                    <a href="{% url 'wisc_cc_survey' %}/{{ survey_farm.survey_year }}/?farmer_id={{ farmer.id }}">
+                        <button type="button" class="warn btn btn-secondary">
+                            Cancel - back to survey edit page
+                        </button>
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

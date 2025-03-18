@@ -808,6 +808,41 @@ def create_addtl_surveyfield(request, sfarmid):
         reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
     )
 
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def delete_survey_field(request, sfieldid):
+    '''For delete a survey field'''
+    context = {}
+
+    survey_field = SurveyField.objects.get(id=sfieldid)
+    section_3 = survey_field.crop_rotation_2023_cash_crop_species is not None
+    section_4 = survey_field.cash_crop_planting_date is not None
+    section_5 = survey_field.manure_post is not None
+    section_6 = survey_field.cover_crop_seeding_method is not None
+    completed = section_3 and section_4 and section_5 and section_6    
+
+    survey_farm = SurveyFarm.objects.get(id = survey_field.survey_farm_id)
+    survey_year = survey_farm.survey_year
+    farmer = survey_farm.farmer
+    context = {
+        "survey_field": survey_field,
+        "survey_farm": survey_farm,
+        "farmer": farmer,
+        "section_3": section_3,
+        "section_4": section_4,
+        "section_5": section_5,
+        "section_6": section_6,
+        "completed": completed,
+    }
+    if request.method == "POST":
+        # delete object
+        survey_field.delete()
+        # after deleting redirect back to
+        # reponse table
+        return redirect(
+            reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
+        )    
+
+    return render(request, "wisccc/delete_survey_field.html", context)
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def update_labdata(request, id):
