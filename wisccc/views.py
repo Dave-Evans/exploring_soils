@@ -1230,10 +1230,6 @@ def wisc_cc_map(request):
     return render(request, "wisccc/wisc_cc_map.html")
 
 
-def wisc_cc_map_v2(request):
-    return render(request, "wisccc/wisc_cc_map_toggle.html")
-
-
 @xframe_options_exempt
 def wisc_cc_map_embed(request):
     return render(request, "wisccc/wisc_cc_map_embed.html")
