@@ -119,27 +119,30 @@ CSP_STYLE_SRC = [
 CSP_SCRIPT_SRC = [
     "'self'",
     "'unsafe-inline'",
-    "http://code.jquery.com/jquery-2.1.0.min.js",
-    "https://code.jquery.com/jquery-3.3.1.slim.min.js",
+    "https://code.jquery.com/jquery-2.1.0.min.js",
+    # "https://code.jquery.com/jquery-3.3.1.slim.min.js",
+    
+    # "https://code.jquery.com/jquery.js",
+    # "http://code.jquery.com/jquery.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js",
     "https://d3js.org/d3.v4.js",
-    "https://code.jquery.com/jquery.js",
-    "http://code.jquery.com/jquery.js",
+    "https://cdn.jsdelivr.net/npm/d3@7",
     "https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js",
     "https://d3js.org/d3-scale-chromatic.v1.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/regression/2.0.1/regression.min.js",
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js",
     "https://mathjax.rstudio.com/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
-    "https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js",
     "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js",
-    "http://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js",
-    "https://unpkg.com/leaflet@1.3.4/dist/leaflet.js",
     "https://challenges.cloudflare.com/turnstile/v0/api.js",
     "https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js",
     "https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js",
+    "http://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js",
+    "https://unpkg.com/leaflet@1.3.4/dist/leaflet.js",    
     "https://unpkg.com/leaflet@1.7.1/dist/leaflet.js",
     "https://unpkg.com/leaflet@1.0.1/dist/leaflet.js",
-    "https://cdn.jsdelivr.net/npm/d3@7",
+    
 ]
 CSP_IMG_SRC = [
     "'self'",
@@ -181,7 +184,7 @@ CSP_FRAME_SRC = [
     "'self'",
     "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/",
 ]
-CSP_CONNECT_SRC = ("'self'",)
+CSP_CONNECT_SRC = ("'self'","https://data.rcc-acis.org/StnData")
 
 ROOT_URLCONF = "exploring_soils.urls"
 
