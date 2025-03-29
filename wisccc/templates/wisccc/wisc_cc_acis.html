@@ -1,0 +1,296 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+{% block content %}
+<style>
+    a p,
+    h5 {
+        color: #212529;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h5>Wisconsin Climate Regions</h5>
+                <div>
+                    <p> Climate regions refer to nine areas of Wisconsin delineated by the
+                        <a href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">
+                            National Oceanic and Atmospheric Administration</a>
+                        as having similar temperature and precipitation.
+                        We use them in our graph to help group points according to similar latitudes with similar
+                        weather patterns.
+                    </p>
+                </div>
+                <a id="getDataButton" class="btn-sm btn-secondary">Check it.</a>
+                <select name="station_select" id="stnSelect">
+                    <option value="US1MNHN0169 6">Nate's</option>
+                    <option value="US1MNHN0042 6">Eden Prairie station</option>
+                    <option value="US1MNRM0054 6">St. Paul</option>
+                    <option value="14922 1">MSP</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <style>
+        /* .map {
+            border: medium solid #999;
+        } */
+
+        .counties {
+            stroke: #211;
+            stroke-width: 1px;
+        }
+
+        div.tooltip {
+            position: absolute;
+            text-align: left;
+            padding: 5px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0.5px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
+    <script>
+        window.onload = setMap();
+
+        //set up choropleth map
+        function setMap() {
+
+            const precipData = [];
+
+            $("#getDataButton").on("click", function () {
+                // var sid = "US1MNHN0169 6" 2024-04-28 to 2025-03-28
+                //"US1MNHN0042 6" Eden Prairie station 2011-04-01 to 2023-10-25
+                // "US1MNRM0054 6" St. Paul; 2015-04-19 to 2025-03-28
+                // "14922 1" MSP; 1938-04-01 to 2025-03-28
+                var sid = $("#stnSelect").val()
+                console.log("Selected sid: " + sid)
+                if (sid == "US1MNHN0169 6") {
+                    getStnData(sid, "2024-04-28", "2025-03-28")
+                } else if (sid == "US1MNHN0042 6") {
+                    getStnData(sid, "2011-04-01", "2023-10-25")
+                } else if (sid == "US1MNRM0054 6") {
+                    getStnData(sid, "2015-04-19", "2025-03-28")
+                } else if (sid == "14922 1") {
+                    getStnData(sid, "1938-04-01", "2025-03-28")
+                }
+
+            });
+
+
+            var colorScale = d3.scaleLinear()
+                .range(["#9ecae1", "#08306b"])
+                // Replace with min and max precip
+                .domain([
+                    0,
+                    10
+                ]);
+
+            //map frame dimensions
+            var margin = { top: 10, right: 30, bottom: 30, left: 50 }
+            var width = 600 - margin.left - margin.right,
+                height = 460 - margin.top - margin.bottom;
+
+            //create new svg container for the map
+            var chart = d3.select("div.card")
+                .append("svg")
+                .attr("class", "chart")
+                // .attr("class", "justify-content-center chart")
+                .attr("id", "chart")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                // To see where the graph lies
+                //.style("background-color", "dodgerblue")
+                // For centering graph
+                .style("margin", "0 auto");
+
+            var xScale = d3.scaleTime()
+                .range([0, width])
+                // Replace with min and max dates
+                .domain([new Date('2024/04/01'), new Date('2025/04/01')])
+                .nice();
+
+            var xAxis = d3.axisBottom(xScale);
+            var axisX = chart.append("g")
+                //create axis g element and add axis
+                .attr("class", "axisx")
+                // translate(0,0) puts this at the top
+                .attr("transform", "translate(" + margin.right + "," + (height) + ")")
+                .call(xAxis);
+
+            var axisXText = axisX.selectAll("text")
+                .attr("transform", "translate(-10,0)rotate(-25)")
+                .style("text-anchor", "end");
+
+            // Range is high to low
+            // Range influences height of chart, how much space it takes up 
+            var yScale = d3.scaleLinear()
+                //.range([height - margin.bottom, 0 + margin.bottom])
+                .range([height, 0 + margin.bottom])
+                .domain([0, 9])            // Y Axis generator
+            var yAxis = d3.axisLeft(yScale);
+            //create axis g element and add axis
+            var axisY = chart.append("g")
+                .attr("class", "axisy")
+                // shifts the axis
+                .attr("transform", "translate(" + margin.right + "," + 0 + ")")
+                .call(yAxis);
+
+
+
+
+            // function getStnData(sid, sdate, edate) {
+            function getStnData(sid, sdate, edate) {
+
+                var url_station_collect = "https://data.rcc-acis.org/StnData"
+                // var sdate = '2024-04-01';
+                // var edate = '2025-03-01';
+                // var sid = "US1MNHN0169 6";
+                var monthly_level = [{ "name": "pcpn", "interval": [0, 1], "reduce": "sum" }];
+                var params = {
+                    sid: sid,
+                    sdate: sdate,
+                    edate: edate,
+                    elems: monthly_level //"pcpn"
+                }
+                //use Promise.all to parallelize asynchronous data loading
+                // var promises = [
+                //     d3.json("/get_wi_counties"),
+                // ];
+
+                Promise.all(
+                    [fetch(url_station_collect, {
+                        method: "POST",
+                        body: JSON.stringify(
+                            params
+                        ),
+                        headers: {
+                            "Content-type": "application/json; charset=UTF-8"
+                        }
+                    }).then((response) => response.json())
+                        // .then((json) => precipData = json)
+                        .then((json) => json.data)
+                    ]
+                ).then(updateGraph);
+            }
+
+            function updateGraph(data) {
+
+                data = data[0]
+
+                // Process our data
+                for (i in data) {
+                    d = data[i]
+
+                    // Converting all characters to 0
+                    // "T" is a trace
+                    // "M" is missing
+                    // "A" is appended or something
+                    var pcpn = parseFloat(d[1]);
+                    if (isNaN(pcpn)) {
+                        pcpn = 0;
+                    }
+                    d[1] = pcpn;
+                    // If Monthly, e.g. 2025-03
+                    //  convert to 2025-03-01
+                    if (d[0].length == 7) {
+                        d[0] += "-01"
+                    }
+                    // With a "/" we get js to take local timezone into account
+                    d[0] = d[0].replaceAll("-", "/")
+                    // console.log(i, d)
+                }
+                // Get updated min and max for X and U variables
+                var minDate = d3.min(data, function (d) {
+                    return new Date(d[0]);
+                });
+                var maxDate = d3.max(data, function (d) {
+                    return new Date(d[0]);
+                });
+                var minPcpn = d3.min(data, function (d) {
+                    return (d[1]);
+                });
+                var maxPcpn = d3.max(data, function (d) {
+                    return (d[1]);
+                });
+                // console.log("Min date: " + minDate)
+                // console.log("Max date: " + maxDate)
+
+                // update X scale
+                xScale.domain([minDate, maxDate])
+                // Update X axis
+                axisX.transition().duration(1000).call(d3.axisBottom(xScale))
+                axisXText = axisX.selectAll("text")
+                    .attr("transform", "translate(-10,0)rotate(-25)")
+                    .style("text-anchor", "end");
+                // update Y scale
+                yScale.domain([minPcpn, maxPcpn]);
+                axisY.transition().duration(1000).call(d3.axisLeft(yScale));
+                // Update Y axis
+
+                // Update the bars
+                var rects = chart.selectAll("rect")
+                    .data(data);
+
+                rects
+                    .join("rect") //one of the great mysteries of the universe
+                    .transition(1000)
+                    .attr("class", function (d) {
+                        return "bars d" + d[0];
+                    })
+                    .attr("width", width / data.length)
+                    .attr("x", function (d, i) {
+                        return xScale(new Date(d[0])) + (margin.right);
+                    })
+                    // drawing from the top, minus the scaled value
+                    //  removing the height of the X axis
+                    .attr("height", function (d) {
+                        return height - yScale(d[1]);
+                    })
+                    //the vertical coordinate of the rectangle bottom
+                    .attr("y", function (d) {
+                        return yScale(d[1]);
+                    })
+                    .attr("fill", function (d) {
+                        return colorScale(d[1]);
+                    })
+                    .style("stroke", "#000");
+
+                // var bars = chart.selectAll(".bars")
+                //     .data(data) //here we feed in an array
+                //     .enter() //one of the great mysteries of the universe
+                //     .append("rect") //add a circle for each datum
+                //     .attr("class", function (d) {
+                //         return "bars d" + d[0];
+                //     })
+                //     .attr("width", width / data.length)
+                //     .attr("x", function (d, i) {
+                //         return xScale(new Date(d[0])) + (margin.right);
+                //     })
+                //     // drawing from the top, minus the scaled value
+                //     //  removing the height of the X axis
+                //     .attr("height", function (d) {
+                //         return height - yScale(d[1]);
+                //     })
+                //     //the vertical coordinate of the rectangle bottom
+                //     .attr("y", function (d) {
+                //         return yScale(d[1]);
+                //     })
+                //     .attr("fill", function (d) {
+                //         return colorScale(d[1]);
+                //     })
+                //     .style("stroke", "#000");
+
+            }
+        };
+
+
+    </script>
+    {% endblock %}

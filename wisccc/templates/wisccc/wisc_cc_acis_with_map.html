@@ -1,0 +1,610 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}ACIS Stations{% endblock %}</title>
+
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+
+    <link rel="stylesheet" href="{% static '/css/leaflet-sidebar.css' %}" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+        integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <style>
+        @media (min-width: 768px) {
+            .sidebar {
+                top: 10px;
+                bottom: 10px;
+                transition: width 500ms;
+            }
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        html,
+        body,
+        #map {
+            height: 100%;
+            font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+
+        .lorem {
+            font-style: italic;
+            color: #AAA;
+        }
+    </style>
+    <style>
+        .chart {
+            /* float: right; */
+            /* margin: 7px 20px 0 0; */
+            height: 500;
+            width: 500
+        }
+
+        .chartTitle {
+            font-family: sans-serif;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .chartBackground {
+            fill: rgba(128, 128, 128, .2);
+        }
+
+        .chartFrame {
+            fill: none;
+            stroke: #999;
+            stroke-width: 3px;
+            shape-rendering: crispEdges;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #999;
+            stroke-width: 1px;
+            shape-rendering: crispEdges;
+        }
+
+        .axis text {
+            font-family: sans-serif;
+            font-size: 0.8em;
+            fill: #999;
+        }
+
+        .infolabel {
+            margin: 0 20px 0 0;
+            position: absolute;
+            height: 50px;
+            min-width: 100px;
+            color: #fff;
+            background-color: #000;
+            border: solid thin #fff;
+            padding: 5px 10px;
+            top: -75px;
+        }
+
+        .infolabel h4 {
+            margin: 0 20px 0 0;
+            padding: 0;
+            display: inline-block;
+            line-height: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar" class="sidebar collapsed">
+        <!-- Nav tabs -->
+        <div class="sidebar-tabs">
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+                <li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li>
+                <li class="disabled"><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li>
+                <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i
+                            class="fa fa-github"></i></a></li>
+            </ul>
+
+            <ul role="tablist">
+                <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+            </ul>
+        </div>
+
+        <!-- Tab panes -->
+        <div class="sidebar-content">
+            <div class="sidebar-pane" id="home">
+                <h1 class="sidebar-header">
+                    sidebar-v2
+                    <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+
+                <p>A responsive sidebar for mapping libraries like <a href="http://leafletjs.com/">Leaflet</a> or <a
+                        href="http://openlayers.org/">OpenLayers</a>.</p>
+
+                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                    sit amet.</p>
+
+                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                    sit amet.</p>
+
+                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                    sit amet.</p>
+
+                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
+                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                    sit amet.</p>
+            </div>
+
+            <div class="sidebar-pane" id="profile">
+                <h1 class="sidebar-header">Profile<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+                <div id="chart"></div>
+                <div id="brush-holder"></div>
+            </div>
+
+            <div class="sidebar-pane" id="messages">
+                <h1 class="sidebar-header">Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+            </div>
+
+            <div class="sidebar-pane" id="settings">
+                <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <div id="map" class="sidebar-map"></div>
+
+
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <script src="{% static '/js/leaflet-sidebar.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js"
+        integrity="sha512-tWHlutFnuG0C6nQRlpvrEhE4QpkG1nn2MOUMWmUeRePl4e3Aki0VB6W1v3oLjFtd0hVOtRQ9PHpSfN6u6/QXkQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'js/spin.min.js' %}" charset="utf-8"></script>
+    <script src="{% static 'js/leaflet.spin.min.js' %}" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+        integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        mapLink =
+            ' <a href="http://www.esri.com/">Esri</a>';
+        wholink =
+            'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+        var satelite = L.tileLayer(
+            'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; ' + mapLink + ', ' + wholink,
+            maxZoom: 18,
+        });
+        var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        });
+
+        var baseMaps = {
+            "Satelite": satelite,
+            "Streets, landmarks, etc": osm,
+
+        };
+        function infoPopup(feature, layer) {
+
+            var popupContent = "<dl><dt>" + feature.properties.name + "</dt></dl>";
+
+
+            // popupContent += '<div id="chart_holder" style="width:400; height:500; border: 1px solid black;"><div style="width:400; height:500;" id="chart"></div></div>'
+            popupContent += '<dl><dd id="sid_"' + feature.properties.sids[0].replaceAll(" ", "_") + '>' + feature.properties.sids[0] + '</dd></dl>'
+            popupContent += '<dl><dd id="mindate">' + feature.properties.mindate + " to " + feature.properties.maxdate + '</dd></dl>';
+            popupContent += '<a id="graphit_' + feature.properties.sids[0].replaceAll(" ", "_") + '" class="btn-sm btn-secondary">Check it.</a>'
+            var popup = L.popup({
+
+                maxHeight: 500,
+                // maxWidth: "auto"
+            })
+            popup.setContent(popupContent)
+            layer.bindPopup(popup);
+
+        }
+
+        var max_zoom = 18;
+        var map = L.map('map', {
+            layers: [osm],
+            maxZoom: max_zoom,
+            zoomControl: false
+        }).setView([44.6373, -90.012], 7);
+        new L.Control.Zoom({ position: 'topright' }).addTo(map);
+
+        // $("#map").css("zIndex", 1)
+        var layerControl = L.control.layers(baseMaps).addTo(map);
+        var sidebar = L.control.sidebar('sidebar').addTo(map);
+
+        var geojsonMarkerOptions = {
+            radius: 8,
+            fillColor: "#ff0000",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+        };
+        var url_station_meta = "https://data.rcc-acis.org/StnMeta";
+        var params = {
+            // Bounding box for just WI
+            // W, S, E, N
+            "bbox": "-93,44.8,-93.5,45",
+            "meta": "name,sids,ll,valid_daterange",
+            "elems": "pcpn",
+            // "sdate": "2020-01-01",
+            // "edate": "2025-12-31",
+        }
+        var station_layer;
+        map.spin(true);
+        fetch(url_station_meta, {
+            method: "POST",
+            body: JSON.stringify(
+                params
+            ),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        }).then((response) => response.json())
+            .then((json) => stations = createGeoJSON(json))
+            .then((stations) => layer = addUpdatePoints(stations));
+        // .then(console.log(json));
+        var stations_geo = [];
+        var createGeoJSON = function (json) {
+            console.log("Made it to createGeoJSON")
+            // var stations_geo = [];
+            for (i in json.meta) {
+                var pt_ft = {
+                    "id": i,
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": json.meta[i]["ll"]
+                    },
+                    "properties": {
+                        "name": json.meta[i]["name"],
+                        "sids": json.meta[i]["sids"],
+                        "mindate": json.meta[i]["valid_daterange"][0][0],
+                        "maxdate": json.meta[i]["valid_daterange"][0][1]
+                    }
+                }
+                stations_geo.push(pt_ft);
+            }
+
+            return stations_geo;
+        }
+
+        var addUpdatePoints = function (stations_geo) {
+            console.log("Made it to addUpdatePoints");
+            if (station_layer !== undefined) {
+                //console.log("removing old points")
+                station_layer.remove();
+            }
+            // if (map.hasLayer(station_layer)) {
+            //     station_layer.remove();
+            // }
+            station_layer = L.geoJSON(stations_geo, {
+                pointToLayer: function (feature, latlng) {
+                    return L.circleMarker(latlng, geojsonMarkerOptions);
+                },
+                onEachFeature: infoPopup
+            }).addTo(map);
+            map.fitBounds(station_layer.getBounds());
+
+            station_layer.on('popupopen', function (e) {
+
+                console.log("SID: " + e.popup._source.feature.properties.sids[0])
+                console.log("Mindate: " + e.popup._source.feature.properties.mindate)
+                console.log("Maxdate: " + e.popup._source.feature.properties.maxdate)
+                var sid = e.popup._source.feature.properties.sids[0];
+                var mindate = e.popup._source.feature.properties.mindate;
+                var maxdate = e.popup._source.feature.properties.maxdate;
+                $("#graphit_" + sid.replaceAll(" ", "_")).on("click", function () {
+
+                    drawGraph(
+                        sid,
+                        mindate,
+                        maxdate
+                    )
+                });
+            });
+
+            map.spin(false);
+        }
+        var dataArray;
+        function drawGraph(sid, sdate, edate) {
+
+
+            console.log("We're in drawGraph.")
+
+
+            var url_station_collect = "https://data.rcc-acis.org/StnData"
+            // var sdate = '2024-04-01';
+            // var edate = '2025-03-01';
+            // var sid = "US1MNHN0169 6";
+            var monthly_level = [{ "name": "pcpn", "interval": [0, 1], "reduce": "sum" }];
+            var params = {
+                sid: sid,
+                sdate: sdate,
+                edate: edate,
+                elems: monthly_level //"pcpn"
+            }
+            // var params = {
+            //     "sid": "US1MNHN0169 6",
+            //     "sdate": sdate,
+            //     "edate": edate,
+            //     "elems": "pcpn",
+            // }
+
+            function highlight(props) {
+                //change stroke
+                var selected = d3.selectAll(".d" + props[0])
+                    .style("stroke", "blue")
+                    .style("stroke-width", "2");
+                setLabel(props);
+            };
+            function dehighlight(props) {
+                //change stroke
+                var selected = d3.selectAll(".d" + props[0])
+                    .style("stroke", "#000")
+                    .style("stroke-width", "0.5px");
+                d3.select(".infolabel")
+                    .remove();
+            };
+            function setLabel(props) {
+                //label content
+                var labelAttribute = "<h4>" + props[0] +
+                    "</h4><br><b>" + props[1] + " inches</b>";
+
+                //create info label div
+                var infolabel = d3.select("body")
+                    .append("div")
+                    .attr("class", "infolabel")
+                    .attr("id", "label_" + props[0])
+                    .html(labelAttribute);
+            };
+            function moveLabel() {
+                //use coordinates of mousemove event to set label coordinates
+                //get width of label
+                var labelWidth = d3.select(".infolabel")
+                    .node()
+                    .getBoundingClientRect()
+                    .width;
+
+                //use coordinates of mousemove event to set label coordinates
+                var x1 = event.clientX + 10,
+                    y1 = event.clientY - 75,
+                    x2 = event.clientX - labelWidth - 10,
+                    y2 = event.clientY + 25;
+
+                //horizontal label coordinate, testing for overflow
+                var x = event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+                //vertical label coordinate, testing for overflow
+                var y = event.clientY < 75 ? y2 : y1;
+
+                d3.select(".infolabel")
+                    .style("left", x + "px")
+                    .style("top", y + "px");
+            };
+            var chartWidth = 300,//window.   * 0.425,
+                chartHeight = 320,
+                leftPadding = 25,
+                rightPadding = 2,
+                topBottomPadding = 10,
+                chartInnerWidth = chartWidth - leftPadding - rightPadding,
+                chartInnerHeight = chartHeight - topBottomPadding,
+                translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+
+
+            //create a second svg element to hold the bar chart
+            var chart = d3.select("#chart")
+                .append("svg")
+                .attr("width", chartWidth)
+                .attr("height", chartHeight + 15)
+                .attr("class", "chart");
+
+            //create a rectangle for chart background fill
+            var chartBackground = chart.append("rect")
+                .attr("class", "chartBackground")
+                .attr("width", chartInnerWidth)
+                .attr("height", chartInnerHeight - topBottomPadding)
+                .attr("transform", translate);
+
+
+            fetch(url_station_collect, {
+                method: "POST",
+                body: JSON.stringify(
+                    params
+                ),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            }).then((response) => response.json())
+                // .then((json) => dataArray = json);
+                .then(callback);
+
+            Date.prototype.addDays = function (days) {
+                var date = new Date(this.valueOf());
+                date.setDate(date.getDate() + days);
+                return date;
+            }
+
+            function callback(data) {
+                console.log("calling callback!")
+                dataArray = data.data;
+                for (i in dataArray) {
+                    d = dataArray[i]
+                    var pcpn = parseFloat(d[1]);
+                    if (isNaN(pcpn)) {
+                        pcpn = 0;
+                    }
+                    // if (d[1] != "T" & d[1] != "M") {
+                    //     pcpn = parseFloat(d[1])
+                    // }
+                    d[1] = pcpn;
+                }
+                console.log(data.data)
+                if (dataArray[0][0].length == 7) {
+                    for (i in dataArray) {
+                        dataArray[i][0] += "-01"
+                    }
+                }
+                var minDate = d3.min(dataArray, function (d) {
+                    return new Date(d[0].replaceAll("-", "/"));
+                });
+                var maxDate = d3.max(dataArray, function (d) {
+                    return new Date(d[0].replaceAll("-", "/"));
+                });
+
+                console.log("Min date: " + minDate)
+                console.log("Max date: " + maxDate)
+                var xScale = d3.scaleTime()
+                    .range([leftPadding, chartInnerWidth + rightPadding])
+                    .domain([minDate, maxDate.addDays(2)])
+                    .nice();
+
+                var xAxis = d3.axisBottom(xScale);
+                var axisX = chart.append("g")
+                    //create axis g element and add axis
+                    .attr("class", "axisx")
+                    .attr("transform", "translate(0," + chartInnerHeight + ")")
+                    // .attr("transform", "translate(" + leftPadding + "," + chartInnerHeight + ")")
+                    .call(xAxis);
+
+                var minPcpn = d3.min(dataArray, function (d) {
+                    // var pcpn = 0;
+                    // // We should handle missing better...
+                    // if (d[1] != "T" & d[1] != "M") {
+                    //     pcpn = parseFloat(d[1])
+                    // }
+                    // return (pcpn);
+                    return (d[1]);
+                });
+                var maxPcpn = d3.max(dataArray, function (d) {
+                    // var pcpn = 0;
+                    // // We should handle missing better...
+                    // if (d[1] != "T" & d[1] != "M") {
+                    //     pcpn = parseFloat(d[1])
+                    // }
+                    // return (pcpn);
+                    return (d[1]);
+                });
+                var yScale = d3.scaleLinear()
+                    .range([chartInnerHeight, topBottomPadding])
+                    .domain([minPcpn, maxPcpn])
+                    .nice();
+
+                // Y Axis generator
+                var yAxis = d3.axisLeft(yScale);
+                //create axis g element and add axis
+                var axisY = chart.append("g")
+                    .attr("class", "axisy")
+                    .attr("transform", "translate(" + leftPadding + "," + 0 + ")")
+                    .call(yAxis);
+
+                var colorScale = d3.scaleLinear()
+                    .range(["#9ecae1", "#08306b"])
+                    .domain([
+                        minPcpn,
+                        maxPcpn
+                    ]);
+
+
+
+                var bars = chart.selectAll(".bars")
+                    .data(dataArray) //here we feed in an array
+                    .enter() //one of the great mysteries of the universe
+                    .append("rect") //add a circle for each datum
+                    .attr("class", function (d) {
+                        return "bars d" + d[0];
+                    })
+                    .attr("width", chartInnerWidth / dataArray.length)
+                    .attr("x", function (d, i) {
+                        // return i * (w / dataArray.length);\
+                        return xScale(new Date(d[0].replaceAll("-", "/")));
+                    })
+                    .attr("height", function (d) {
+                        // var pcpn = 0;
+                        // // We should handle missing better...
+                        // if (d[1] != "T" & d[1] != "M") {
+                        //     pcpn = parseFloat(d[1])
+                        // }
+
+                        return chartHeight - yScale(d[1]);
+
+                    })
+                    .attr("y", function (d) {
+                        // var pcpn = 0;
+                        // // We should handle missing better...
+                        // if (d[1] != "T" & d[1] != "M") {
+                        //     pcpn = parseFloat(d[1])
+                        // }
+
+                        return yScale(d[1]) - topBottomPadding;
+                    })
+                    .attr("fill", function (d) {
+                        // var pcpn = 0;
+                        // // We should handle missing better...
+                        // if (d[1] != "T" & d[1] != "M") {
+                        //     pcpn = parseFloat(d[1])
+                        // }
+                        // return (pcpn);
+                        return colorScale(d[1]);
+                    })
+                    .on("mouseover", function (event, d) {
+                        highlight(d)
+                    })
+                    .on("mouseout", function (event, d) {
+                        dehighlight(d)
+                    })
+                    .on("mousemove", moveLabel)
+                    .style("stroke", "#000");
+
+                // var chartFrame = chart.append("rect")
+                //     .attr("class", "chartFrame")
+                //     .attr("width", chartInnerWidth)
+                //     .attr("height", chartInnerHeight)
+                //     .attr("transform", translate);
+
+
+            };
+        }        
+    </script>
+</body>
+
+</html>
