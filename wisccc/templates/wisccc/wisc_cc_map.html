@@ -38,29 +38,29 @@
 
 </head>
 
-<body></body>
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
-<!--[if lte IE 8]><link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet-0.7.2/leaflet.ie.css" /><![endif]-->
+<body>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet-0.7.2/leaflet.ie.css" /><![endif]-->
 
-<link rel="stylesheet" href="{% static 'css/leaflet-sidebar.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/leaflet-sidebar.css' %}" />
 
-<!-- Map basic styling -->
-<style>
-    body {
-        padding: 0;
-        margin: 0;
-    }
+    <!-- Map basic styling -->
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
 
-    html,
-    body,
-    #map {
-        overflow: hidden;
-        height: 100%;
-        /* font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif; */
-    }
+        html,
+        body,
+        #map {
+            overflow: hidden;
+            height: 100%;
+            /* font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif; */
+        }
 
-    /* #map {
+        /* #map {
         position: absolute;
         top: 50px;
         right: 0;
@@ -68,271 +68,271 @@
         left: 0;
     } */
 
-    .lorem {
-        font-style: italic;
-        color: #AAA;
-    }
-</style>
-<!-- Legend and selectize styling -->
-<style>
-    .legend {
-        /*border: 120%;*/
-        /*margin: 70px;*/
-        padding: 5px;
-        text-align: left;
-        line-height: 18px;
-        color: #000;
-        background: #fff;
-    }
+        .lorem {
+            font-style: italic;
+            color: #AAA;
+        }
+    </style>
+    <!-- Legend and selectize styling -->
+    <style>
+        .legend {
+            /*border: 120%;*/
+            /*margin: 70px;*/
+            padding: 5px;
+            text-align: left;
+            line-height: 18px;
+            color: #000;
+            background: #fff;
+        }
 
-    .legend i {
-        width: 18px;
-        height: 18px;
-        float: left;
-        margin-right: 8px;
-        opacity: 1;
-    }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 1;
+        }
 
-    /*    .legend .circle {
+        /*    .legend .circle {
       border-radius: 50%;
       width: 10px;
       height: 10px;
       margin-top: 8px;
     }*/
-    /* Selectize dropdowns */
-    .selectize-dropdown,
-    .selectize-input {
-        width: 220px !important;
-    }
-</style>
-<!-- Helptip styling -->
-<style>
-    /* https://www.w3schools.com/css/tryit.asp?filename=trycss_tooltip_bottom */
-    .helptip {
-        position: relative;
-        display: inline-block;
-        border-bottom: 1px dotted #2f2f2f;
-    }
+        /* Selectize dropdowns */
+        .selectize-dropdown,
+        .selectize-input {
+            width: 220px !important;
+        }
+    </style>
+    <!-- Helptip styling -->
+    <style>
+        /* https://www.w3schools.com/css/tryit.asp?filename=trycss_tooltip_bottom */
+        .helptip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #2f2f2f;
+        }
 
-    .bottomtip {
-        top: 100%
-    }
+        .bottomtip {
+            top: 100%
+        }
 
-    .toptip {
-        bottom: 100%
-    }
+        .toptip {
+            bottom: 100%
+        }
 
-    .helptip .helptiptext {
-        visibility: hidden;
-        width: 200px;
-        background-color: #2f2f2f;
-        color: #fff;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px;
-        position: absolute;
-        z-index: 1;
-        left: 50%;
-        margin-left: -80px;
+        .helptip .helptiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #2f2f2f;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            left: 50%;
+            margin-left: -80px;
 
-        /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
-        opacity: 0;
-        transition: opacity 1s;
-    }
+            /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+            opacity: 0;
+            transition: opacity 1s;
+        }
 
-    .helptip:hover .helptiptext {
-        visibility: visible;
-        opacity: 1;
-    }
+        .helptip:hover .helptiptext {
+            visibility: visible;
+            opacity: 1;
+        }
 
-    .helptip .helptiptext::after {
-        content: " ";
-        position: absolute;
-        bottom: 100%;
-        /* At the bottom of the tooltip */
-        left: 30%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: transparent transparent#2f2f2f transparent;
-    }
-</style>
+        .helptip .helptiptext::after {
+            content: " ";
+            position: absolute;
+            bottom: 100%;
+            /* At the bottom of the tooltip */
+            left: 30%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent#2f2f2f transparent;
+        }
+    </style>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Citizen Science Data Network</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
-        aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item" id="nav-home">
-                <a class="nav-link" href="{% url 'wisc_cc_home' %}">Home</a>
-            </li>
-            <li class="nav-item" id="nav-graph">
-                <a class="nav-link" href="{% url 'wisc_cc_graph' %}">Graph</a>
-            </li>
-            <li class="nav-item" id="nav-map">
-                <a class="nav-link" href="{% url 'wisc_cc_map' %}">Map</a>
-            </li>
-            <li class="nav-item" id="nav-survey">
-                <a class="nav-link" href="{% url 'wisc_cc_survey' %}">Survey</a>
-            </li>
-            <li class="nav-item" id="nav-about">
-                <a class="nav-link" href="{% url 'wisc_cc_about' %}">About</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Citizen Science Data Network</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" id="nav-home">
+                    <a class="nav-link" href="{% url 'wisc_cc_home' %}">Home</a>
+                </li>
+                <li class="nav-item" id="nav-graph">
+                    <a class="nav-link" href="{% url 'wisc_cc_graph' %}">Graph</a>
+                </li>
+                <li class="nav-item" id="nav-map">
+                    <a class="nav-link" href="{% url 'wisc_cc_map' %}">Map</a>
+                </li>
+                <li class="nav-item" id="nav-survey">
+                    <a class="nav-link" href="{% url 'wisc_cc_survey' %}">Survey</a>
+                </li>
+                <li class="nav-item" id="nav-about">
+                    <a class="nav-link" href="{% url 'wisc_cc_about' %}">About</a>
+                </li>
+            </ul>
 
-        {% if user.is_authenticated %}
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                    {{ user.email }}
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                    <a class="dropdown-item" href="{% url 'my_account'  %}">My account</a>
-                    <a class="dropdown-item" href="{% url 'password_change' %}">Change password</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
-                </div>
-            </li>
-        </ul>
-        {% else %}
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'wisc_cc_signup' %}" class="btn btn-outline-secondary">Sign up</a>
-            </li>
-        </ul>
-        {% endif %}
-    </div>
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        {{ user.email }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+                        <a class="dropdown-item" href="{% url 'my_account'  %}">My account</a>
+                        <a class="dropdown-item" href="{% url 'password_change' %}">Change password</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                    </div>
+                </li>
+            </ul>
+            {% else %}
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'wisc_cc_signup' %}" class="btn btn-outline-secondary">Sign up</a>
+                </li>
+            </ul>
+            {% endif %}
+        </div>
 
-</nav>
+    </nav>
 
-<div id="sidebar" class="sidebar collapsed">
-    <!-- Nav tabs -->
-    <div class="sidebar-tabs">
-        <ul role="tablist">
-            <!-- <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li> -->
-            <li><a href="#home" role="tab"><i class="fa fa-rocket"></i></a></li>
-            <!-- <li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li> -->
-            <!-- <li><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li> -->
-            <!-- <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i
+    <div id="sidebar" class="sidebar collapsed">
+        <!-- Nav tabs -->
+        <div class="sidebar-tabs">
+            <ul role="tablist">
+                <!-- <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li> -->
+                <li><a href="#home" role="tab"><i class="fa fa-rocket"></i></a></li>
+                <!-- <li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li> -->
+                <!-- <li><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li> -->
+                <!-- <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i
                         class="fa fa-github"></i></a></li> -->
-        </ul>
+            </ul>
 
-        <!-- <ul role="tablist">
+            <!-- <ul role="tablist">
             <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
         </ul> -->
-    </div>
+        </div>
 
-    <!-- Tab panes -->
-    <div class="sidebar-content" style="font-size:12px">
-        <div class="sidebar-pane" id="home">
-            <h1 class="sidebar-header">
-                Display options
-                <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-            </h1>
-            <hr>
-            <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
-                <option value="cc_biomass">Fall cover crop biomass (tons DM/ac)</option>
-                <option value="spring_cc_biomass">Spring cover crop biomass (tons DM/ac)</option>
-                <option value="cc_species">Cover crop types</option>
-                <option value="acc_gdd">Growing degree units</option>
-                <option value="cc_planting_date_mo">Planting season</option>
-                <option value="previous_crop">Prior crop</option>
-                <option value="fq_rfq">Relative forage quality</option>
-            </select>
-            <div class="helptip"><sup>
-                    <img width="20"
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
-                </sup>
-                <span id="prop_select_helptip" class="helptiptext bottomtip">
-                    Use the filters below to show only certain data points.
-                    Note that our database is built from about 100 farms, and if you select many filters
-                    at once, you may end up with very few or no data points to display.
-                </span>
-            </div>
-            <div id="legend">
-                <svg width="350px" height="180px"></svg>
-                <p>
-                    Click on map locations for more info.
-                    <br>
-                    Actual locations have been<br>obscured to protect landowner's privacy.
-                </p>
-            </div>
-
-
-            <h4>Filters</h4>
-
-            <span>Year
-                <select id="YearFilter" class="YearSelector">
+        <!-- Tab panes -->
+        <div class="sidebar-content" style="font-size:12px">
+            <div class="sidebar-pane" id="home">
+                <h1 class="sidebar-header">
+                    Display options
+                    <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+                <hr>
+                <select id="PropertySelection" class="PropSelector selectize-control single selectize-input">
+                    <option value="cc_biomass">Fall cover crop biomass (tons DM/ac)</option>
+                    <option value="spring_cc_biomass">Spring cover crop biomass (tons DM/ac)</option>
+                    <option value="cc_species">Cover crop types</option>
+                    <option value="acc_gdd">Growing degree units</option>
+                    <option value="cc_planting_date_mo">Planting season</option>
+                    <option value="previous_crop">Prior crop</option>
+                    <option value="fq_rfq">Relative forage quality</option>
                 </select>
-            </span><br>
-            <span>Soil texture
-                <select id="SoilTextFilter" class="SoilSelector">
-                </select>
-            </span><br>
-            <span>Prior crop
-                <select id="PriorCropFilter" class="PriorCropSelector">
-                </select>
-            </span><br>
-            <span>Tillage type
-                <select id="TillageFilter" class="TillageSelector">
-                </select>
-            </span><br>
-            <span>Seeding method
-                <select id="SeedingFilter" class="SeedingSelector">
-                </select>
-            </span><br>
-            <span>Cover crop species
                 <div class="helptip"><sup>
                         <img width="20"
                             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
                     </sup>
-                    <span class="helptiptext toptip">
-                        When you check more than one species, all selected cover crops planted at that time
-                        will show on the graph.
-                        For example if you select 'barley' and 'red clover' then only fields where both
-                        barley and red clover are present are shown.
-                        Cases when barley was planted alone will be filtered out.
-                        Other species may be present but the field will contain both barley and red clover
-                        together.
-                        If no points are displayed on the graph then no participating farmer planted that
-                        combination of cover crops.
+                    <span id="prop_select_helptip" class="helptiptext bottomtip">
+                        Use the filters below to show only certain data points.
+                        Note that our database is built from about 100 farms, and if you select many filters
+                        at once, you may end up with very few or no data points to display.
                     </span>
                 </div>
-                <select id="SpeciesFilter" class="SpeciesSelector">
-                </select>
+                <div id="legend">
+                    <svg width="350px" height="180px"></svg>
+                    <p>
+                        Click on map locations for more info.
+                        <br>
+                        Actual locations have been<br>obscured to protect landowner's privacy.
+                    </p>
+                </div>
 
 
-            </span><br>
+                <h4>Filters</h4>
 
-            <span>Manure applied prior to cover crop
-                <input type="checkbox" id="PriorManFilter" class="PreManSelector">
-            </span><br>
+                <span>Year
+                    <select id="YearFilter" class="YearSelector">
+                    </select>
+                </span><br>
+                <span>Soil texture
+                    <select id="SoilTextFilter" class="SoilSelector">
+                    </select>
+                </span><br>
+                <span>Prior crop
+                    <select id="PriorCropFilter" class="PriorCropSelector">
+                    </select>
+                </span><br>
+                <span>Tillage type
+                    <select id="TillageFilter" class="TillageSelector">
+                    </select>
+                </span><br>
+                <span>Seeding method
+                    <select id="SeedingFilter" class="SeedingSelector">
+                    </select>
+                </span><br>
+                <span>Cover crop species
+                    <div class="helptip"><sup>
+                            <img width="20"
+                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
+                        </sup>
+                        <span class="helptiptext toptip">
+                            When you check more than one species, all selected cover crops planted at that time
+                            will show on the graph.
+                            For example if you select 'barley' and 'red clover' then only fields where both
+                            barley and red clover are present are shown.
+                            Cases when barley was planted alone will be filtered out.
+                            Other species may be present but the field will contain both barley and red clover
+                            together.
+                            If no points are displayed on the graph then no participating farmer planted that
+                            combination of cover crops.
+                        </span>
+                    </div>
+                    <select id="SpeciesFilter" class="SpeciesSelector">
+                    </select>
 
-            <span>Manure applied post cover crop establishment
-                <input type="checkbox" id="PostManFilter" class="PreManSelector">
-            </span>
-            <br>
 
-            <span>Filter for points with photos
-                <input type="checkbox" id="HasPhotoFilter" class="HasPhotoFilter">
-            </span>
-            <br>
-            <a href="{% url 'wisc_cc_graph' %}" class="btn btn-primary">Go to graph</a>
-        </div>
+                </span><br>
 
-        <!-- <div class="sidebar-pane" id="profile">
+                <span>Manure applied prior to cover crop
+                    <input type="checkbox" id="PriorManFilter" class="PreManSelector">
+                </span><br>
+
+                <span>Manure applied post cover crop establishment
+                    <input type="checkbox" id="PostManFilter" class="PreManSelector">
+                </span>
+                <br>
+
+                <span>Filter for points with photos
+                    <input type="checkbox" id="HasPhotoFilter" class="HasPhotoFilter">
+                </span>
+                <br>
+                <a href="{% url 'wisc_cc_graph' %}" class="btn btn-primary">Go to graph</a>
+            </div>
+
+            <!-- <div class="sidebar-pane" id="profile">
             <h1 class="sidebar-header">Profile<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
             </h1>
         </div> -->
 
-        <!-- <div class="sidebar-pane" id="messages">
+            <!-- <div class="sidebar-pane" id="messages">
             <h1 class="sidebar-header">Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
             </h1>
             Please let us know what you think of the map by emailing
@@ -341,46 +341,46 @@
             </a>.
         </div> -->
 
-        <div class="sidebar-pane" id="settings">
-            <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-            </h1>
+            <div class="sidebar-pane" id="settings">
+                <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="map" class="sidebar-map"></div>
+    <div id="map" class="sidebar-map"></div>
 
-<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
-<script src="{% static 'js/leaflet-sidebar.js' %}"></script>
-<script src="{% static 'js/popper.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/wisccc_map.js' %}"></script>
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <script src="{% static 'js/leaflet-sidebar.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/wisccc_map.js' %}"></script>
 
 
-<script>
-    updateActive = function () {
+    <script>
+        updateActive = function () {
 
-        var whichpage = window.location.href.split("/").pop()
-        if (whichpage.includes("graph")) {
-            $("#nav-graph").addClass("active");
+            var whichpage = window.location.href.split("/").pop()
+            if (whichpage.includes("graph")) {
+                $("#nav-graph").addClass("active");
+            }
+            if (whichpage.includes("survey")) {
+                $("#nav-survey").addClass("active");
+            }
+            if (whichpage.includes("home")) {
+                $("#nav-home").addClass("active");
+            }
+            if (whichpage.includes("map")) {
+                $("#nav-map").addClass("active");
+            }
+            if (whichpage.includes("about")) {
+                $("#nav-about").addClass("active");
+            }
+
         }
-        if (whichpage.includes("survey")) {
-            $("#nav-survey").addClass("active");
-        }
-        if (whichpage.includes("home")) {
-            $("#nav-home").addClass("active");
-        }
-        if (whichpage.includes("map")) {
-            $("#nav-map").addClass("active");
-        }
-        if (whichpage.includes("about")) {
-            $("#nav-about").addClass("active");
-        }
+        updateActive()
 
-    }
-    updateActive()
-
-</script>
+    </script>
 </body>
 
 </html>
