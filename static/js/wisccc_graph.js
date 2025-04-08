@@ -345,6 +345,15 @@ d3.json(dataurl, function (data) {
             svg.select('.y_axis_label')
                 .transition().duration(1000)
                 .text("Spring cover crop biomass (ton/acre)");
+        } else if (y_property == "total_nitrogen") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall total nitrogen (% of dry matter)");
+        }
+        else if (y_property == "spring_total_nitrogen") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall total nitrogen (% of dry matter)");
         }
         else if (y_property == "fq_milkton") {
             svg.select('.y_axis_label')
@@ -496,6 +505,9 @@ d3.json(dataurl, function (data) {
         }
         if (property.indexOf("cp") > -1) {
             text = 'Crude protein is an indicator of forage quality. The units are percent of dry matter.'
+        }
+        if (property.indexOf("total_nitrogen") > -1) {
+            text = 'Total nitrogen in sample, as percent of dry matter.'
         }
         if (property.indexOf("dry_matter") > -1) {
             text = 'Dry matter is the non-moisture portion of a feed ingredient or diet. It is given as a percent.'
@@ -865,7 +877,7 @@ d3.json(dataurl, function (data) {
             y_scale.domain(
                 [0, 4.5]
             ).nice();
-        } else if (y_property.indexOf("fq_milkton") > -1) {
+        } else if ((y_property.indexOf("fq_milkton") > -1) | y_property.indexOf("total_nitrogen") > -1) {
 
             y_scale = yScale
 
