@@ -1107,17 +1107,9 @@ def wisc_cc_survey_populate_fieldfarm(request, id):
 
 
 def wisc_cc_graph(request):
-    try:
-        farmer_instance = Farmer.objects.get(user_id=request.user.id)
-        survey_farms = SurveyFarm.objects.filter(farmer = farmer_instance)
-        ids = [survey_farm.id for survey_farm in survey_farms]
-        survey_fields = SurveyField.objects.filter(id__in = ids)
-        field_ids = [survey_field.id for survey_field in survey_fields]
-        print(field_ids)
-    except:
-        field_ids = None    
+
     
-    return render(request, "wisccc/wisc_cc_graph.html", {"field_ids": field_ids})
+    return render(request, "wisccc/wisc_cc_graph.html")
 
 
 def wisc_cc_map(request):

@@ -1,4 +1,4 @@
-console.log(tst)
+
 
 var margin = { top: 10, right: 5, bottom: 55, left: 60 },
     width = 700 - margin.left - margin.right,
@@ -246,14 +246,6 @@ d3.json(dataurl, function (data) {
             .attr("cy", function (d) { return y_scale(d.properties[y_property]); })
             .attr("r", 5)
             .style("fill", function (d) { return color_scale((d.properties[color_property])); })
-            .style("fill-opacity", function (d) {
-                if (tst.includes(d.properties.id)) {
-                    console.log("Found it:" + d.properties.id)
-                    return 1;
-                } else {
-                    return 0.1;
-                }
-            })
             .style("stroke", "#252525")
             .on("mouseover", function (d) {
                 div.transition()
@@ -310,20 +302,7 @@ d3.json(dataurl, function (data) {
                 return d.properties[color_property] ? color_scale((d.properties[color_property])) : "#ccc";
 
             })
-            .style("fill-opacity", function (d) {
-                if (tst.includes(d.id)) {
-                    return 1;
-                } else {
-                    return 0.3;
-                }
-            })
-            .attr("r", function (d) {
-                if (tst.includes(d.id)) {
-                    return 10;
-                } else {
-                    return 5;
-                }
-            })
+            .attr("r", 5);
 
 
         svg.select(".myYAxis")
@@ -372,10 +351,34 @@ d3.json(dataurl, function (data) {
                 .transition().duration(1000)
                 .text("Fall modeled milk production from 1 ton of forage");
         }
-        else if (y_property == "fq_rfq") {
+        else if (y_property == "spring_fq_milkton") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall modeled milk production from 1 ton of forage");
+        } else if (y_property == "fq_rfq") {
             svg.select('.y_axis_label')
                 .transition().duration(1000)
                 .text("Fall relative forage quality");
+        } else if (y_property == "spring_fq_rfq") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring relative forage quality");
+        } else if (y_property == "fq_dry_matter") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall dry matter (%)");
+        } else if (y_property == "spring_fq_dry_matter") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring dry matter (%)");
+        } else if (y_property == "fq_cp") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall crude protein (% dry matter)");
+        } else if (y_property == "spring_fq_cp") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring crude protein (% dry matter)");
         }
 
 
@@ -824,6 +827,16 @@ d3.json(dataurl, function (data) {
                 ]
             ).nice();
         } else if ((y_property == "fq_rfq") || (y_property == "spring_fq_rfq")) {
+
+            y_scale = yScale
+
+            y_scale.domain(
+                d3.extent(filtered_data.map(function (child) {
+                    return child.properties[y_property]
+                }))
+            ).nice();
+            // We are just take the extent of all these
+        } else if ((y_property == "fq_dry_matter") || (y_property == "spring_fq_dry_matter") || (y_property == "fq_cp") || (y_property == "spring_fq_cp")) {
 
             y_scale = yScale
 

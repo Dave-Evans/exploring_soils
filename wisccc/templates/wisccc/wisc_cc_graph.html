@@ -324,6 +324,10 @@
                                     <option value="spring_fq_milkton">Spring Milkton Value</option>
                                     <option value="fq_rfq">Fall RFQ</option>
                                     <option value="spring_fq_rfq">Spring RFQ</option>
+                                    <option value="fq_dry_matter">Fall dry matter</option>
+                                    <option value="spring_fq_dry_matter">Spring dry matter</option>
+                                    <option value="fq_cp">Fall crude protein</option>
+                                    <option value="spring_fq_cp">Spring crude protein</option>
                                 </select>
                             </p>
                         </div>
@@ -413,7 +417,7 @@
                         <p>This graph shares farmer data about how cover crops grow in Wisconsin.
                             Each colored data dot represents one field from a farmer who completed a survey and
                             collected
-                            crop samples in fall 2020, 2021, 2022, or 2023.
+                            crop samples in fall 2020, 2021, 2022, 2023, or 2024.
                         </p>
                         <p>You can change filters to explore relationships between cover crop biomass (how much the
                             cover
@@ -473,9 +477,7 @@
                 </div>
             </div>
         </div>
-        <script>
-            var tst = {{ field_ids }};
-        </script>
+
         <script src="{% static 'js/wisccc_graph.js' %}"></script>
 
 
