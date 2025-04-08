@@ -461,6 +461,12 @@ d3.json(dataurl, function (data) {
         if (property.indexOf("milkton") > -1) {
             text = 'A modeled value (using the "Milk model") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters.'
         }
+        if (property.indexOf("cp") > -1) {
+            text = 'Crude protein is an indicator of forage quality. The units are percent of dry matter.'
+        }
+        if (property.indexOf("dry_matter") > -1) {
+            text = 'Dry matter is the non-moisture portion of a feed ingredient or diet. It is given as a percent.'
+        }
 
         $("#yFactor_helptip").html(text);
     }
