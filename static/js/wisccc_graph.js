@@ -379,7 +379,40 @@ d3.json(dataurl, function (data) {
             svg.select('.y_axis_label')
                 .transition().duration(1000)
                 .text("Spring crude protein (% dry matter)");
+        } else if (y_property == "fq_undfom240") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall uNDFom240");
+        } else if (y_property == "spring_fq_undfom240") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring uNDFom240");
+        } else if (y_property == "fq_rfv") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall RFV");
+        } else if (y_property == "spring_fq_rfv") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring RFV");
+        } else if (y_property == "fq_tdn_adf") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall TDN ADF");
+        } else if (y_property == "spring_fq_tdn_adf") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring TDN ADF");
+        } else if (y_property == "fq_ndfd30") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall NDFD 30");
+        } else if (y_property == "spring_fq_ndfd30") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring NDFD 30");
         }
+
 
 
         updateLegendGraph(color_scale)
@@ -466,6 +499,18 @@ d3.json(dataurl, function (data) {
         }
         if (property.indexOf("dry_matter") > -1) {
             text = 'Dry matter is the non-moisture portion of a feed ingredient or diet. It is given as a percent.'
+        }
+        if (property.indexOf("fq_rfv") > -1) {
+            text = 'Relative feed value'
+        }
+        if (property.indexOf("fq_undfom240") > -1) {
+            text = 'Analysis by DairyLand Labs'
+        }
+        if (property.indexOf("fq_tdn_adf") > -1) {
+            text = 'Analysis by DairyLand Labs'
+        }
+        if (property.indexOf("fq_ndfd30") > -1) {
+            text = 'Analysis by DairyLand Labs'
         }
 
         $("#yFactor_helptip").html(text);
@@ -813,14 +858,14 @@ d3.json(dataurl, function (data) {
         }
 
         var y_scale;
-        if (y_property == "cc_biomass" | y_property == "spring_cc_biomass") {
+        if (y_property.indexOf("cc_biomass") > -1) {
 
             y_scale = yScale
 
             y_scale.domain(
                 [0, 4.5]
             ).nice();
-        } else if (y_property == "fq_milkton" | y_property == "spring_fq_milkton") {
+        } else if (y_property.indexOf("fq_milkton") > -1) {
 
             y_scale = yScale
 
@@ -832,7 +877,7 @@ d3.json(dataurl, function (data) {
                     }))
                 ]
             ).nice();
-        } else if ((y_property == "fq_rfq") || (y_property == "spring_fq_rfq")) {
+        } else if (y_property.indexOf("fq_rfq") > -1) {
 
             y_scale = yScale
 
@@ -842,7 +887,7 @@ d3.json(dataurl, function (data) {
                 }))
             ).nice();
             // We are just take the extent of all these
-        } else if ((y_property == "fq_dry_matter") || (y_property == "spring_fq_dry_matter") || (y_property == "fq_cp") || (y_property == "spring_fq_cp")) {
+        } else if ((y_property.indexOf("fq_dry_matter") > -1) | (y_property.indexOf("fq_cp") > -1) | (y_property.indexOf("fq_rfv") > -1) | (y_property.indexOf("fq_undfom240") > -1) | (y_property.indexOf("fq_tdn_adf") > -1) | (y_property.indexOf("fq_ndfd30") > -1)) {
 
             y_scale = yScale
 
