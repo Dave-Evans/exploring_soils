@@ -115,6 +115,7 @@ CSP_STYLE_SRC = [
     "http://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css",
     "https://unpkg.com/leaflet@1.7.1/dist/leaflet.css",
     "https://unpkg.com/leaflet@1.0.1/dist/leaflet.css",
+    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
 ]
 CSP_SCRIPT_SRC = [
     "'self'",
@@ -142,6 +143,7 @@ CSP_SCRIPT_SRC = [
     "https://unpkg.com/leaflet@1.3.4/dist/leaflet.js",    
     "https://unpkg.com/leaflet@1.7.1/dist/leaflet.js",
     "https://unpkg.com/leaflet@1.0.1/dist/leaflet.js",
+    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
     
 ]
 CSP_IMG_SRC = [
@@ -151,11 +153,14 @@ CSP_IMG_SRC = [
     "http://a.tile.osm.org/",
     "http://b.tile.osm.org/",
     "http://c.tile.osm.org/",
+    "http://a.tile.openstreetmap.org",    
+    "http://b.tile.openstreetmap.org",   
+    "http://c.tile.openstreetmap.org",
+    "https://tile.openstreetmap.org",    
     "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/",
     "https://unpkg.com/leaflet@1.3.4/dist/images/",
     "https://unpkg.com/leaflet@1.0.1/dist/images/",
     "https://unpkg.com/leaflet@1.7.1/dist/images/",
-    "https://tile.openstreetmap.org",
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/",
     "http://ows.mundialis.de/services/",
     "https://{}.s3.amazonaws.com/media/private/".format(
@@ -184,7 +189,7 @@ CSP_FRAME_SRC = [
     "'self'",
     "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/",
 ]
-CSP_CONNECT_SRC = ("'self'","https://data.rcc-acis.org/StnData")
+CSP_CONNECT_SRC = ["'self'","https://data.rcc-acis.org/StnData","https://data.rcc-acis.org/StnMeta"]
 
 ROOT_URLCONF = "exploring_soils.urls"
 
