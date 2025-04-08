@@ -58,239 +58,430 @@
         }
     </style>
     <script>
-        window.onload = setMap();
 
-        //set up choropleth map
-        function setMap() {
+        let data;
+        // window.onload = setGraph();
 
-            const precipData = [];
 
-            $("#getDataButton").on("click", function () {
-                // var sid = "US1MNHN0169 6" 2024-04-28 to 2025-03-28
-                //"US1MNHN0042 6" Eden Prairie station 2011-04-01 to 2023-10-25
-                // "US1MNRM0054 6" St. Paul; 2015-04-19 to 2025-03-28
-                // "14922 1" MSP; 1938-04-01 to 2025-03-28
-                var sid = $("#stnSelect").val()
-                console.log("Selected sid: " + sid)
-                if (sid == "US1MNHN0169 6") {
-                    getStnData(sid, "2024-04-28", "2025-03-28")
-                } else if (sid == "US1MNHN0042 6") {
-                    getStnData(sid, "2011-04-01", "2023-10-25")
-                } else if (sid == "US1MNRM0054 6") {
-                    getStnData(sid, "2015-04-19", "2025-03-28")
-                } else if (sid == "14922 1") {
-                    getStnData(sid, "1938-04-01", "2025-03-28")
+        // function setGraph() {
+
+        $("#getDataButton").on("click", function () {
+            // var sid = "US1MNHN0169 6" 2024-04-28 to 2025-03-28
+            //"US1MNHN0042 6" Eden Prairie station 2011-04-01 to 2023-10-25
+            // "US1MNRM0054 6" St. Paul; 2015-04-19 to 2025-03-28
+            // "14922 1" MSP; 1938-04-01 to 2025-03-28
+            var sid = $("#stnSelect").val()
+            console.log("Selected sid: " + sid)
+            if (sid == "US1MNHN0169 6") {
+                getStnData(sid, "2024-04-28", "2025-04-03")
+            } else if (sid == "US1MNHN0042 6") {
+                getStnData(sid, "2011-04-01", "2023-10-25")
+            } else if (sid == "US1MNRM0054 6") {
+                getStnData(sid, "2015-04-19", "2025-04-03")
+            } else if (sid == "14922 1") {
+                getStnData(sid, "1938-04-01", "2025-04-03")
+            }
+
+        });
+
+
+        var colorScale = d3.scaleLinear()
+            .range(["#9ecae1", "#08306b"])
+            // Replace with min and max precip
+            .domain([
+                0,
+                10
+            ]);
+
+        //graph frame dimensions
+        var margin = { top: 10, right: 30, bottom: 30, left: 50 }
+        var width = 600 - margin.left - margin.right,
+            height = 460 - margin.top - margin.bottom;
+
+        //create new svg container for the graph
+        var chart = d3.select("div.card")
+            .append("svg")
+            .attr("class", "chart")
+            .attr("id", "chart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            // To see where the graph lies
+            // .style("background-color", "dodgerblue")
+            // For centering graph
+            .style("margin", "0 auto");
+
+
+        var xScale = d3.scaleTime()
+            .range([margin.right, width + margin.right])
+            // Replace with min and max dates
+            .domain([new Date('2024/04/01'), new Date('2025/04/01')])
+            .nice();
+
+        var xAxis = d3.axisBottom(xScale);
+        var axisX = chart.append("g")
+            //create axis g element and add axis
+            .attr("class", "axisx")
+            // translate(0,0) puts this at the top
+            .attr("transform", "translate(" + 0 + "," + (height) + ")")
+            .call(xAxis);
+
+        var axisXText = axisX.selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-25)")
+            .style("text-anchor", "end");
+
+        // Range is high to low
+        // Range influences height of chart, how much space it takes up 
+        var yScale = d3.scaleLinear()
+            //.range([height - margin.bottom, 0 + margin.bottom])
+            .range([height, 0 + margin.bottom])
+            .domain([0, 9])            // Y Axis generator
+        var yAxis = d3.axisLeft(yScale);
+        //create axis g element and add axis
+        var axisY = chart.append("g")
+            .attr("class", "axisy")
+            // shifts the axis
+            .attr("transform", "translate(" + margin.right + "," + 0 + ")")
+            .call(yAxis);
+
+        //graph frame dimensions
+        var margin_mini = { top: 10, right: 30, bottom: 30, left: 50 }
+        var width_mini = 600 - margin_mini.left - margin_mini.right,
+            height_mini = 130 - margin_mini.top - margin_mini.bottom;
+
+        //create new svg container for the graph
+        var chart_mini = d3.select("div.card")
+            .append("svg")
+            .attr("class", "chart_mini")
+            .attr("id", "chart_mini")
+            .attr("width", width_mini + margin_mini.left + margin_mini.right)
+            .attr("height", height_mini + margin_mini.top + margin_mini.bottom)
+
+            // To see where the graph lies
+            // .style("background-color", "dodgerblue")
+            // For centering graph
+            .style("margin", "0 auto");
+
+
+        var xScale_mini = d3.scaleTime()
+            .range([0, width])
+            // Replace with min and max dates
+            .domain([new Date('2024/04/01'), new Date('2025/04/01')])
+            .nice();
+
+        var xAxis_mini = d3.axisBottom(xScale_mini);
+        var axisX_mini = chart_mini.append("g")
+            //create axis g element and add axis
+            .attr("class", "axisx_mini")
+            // translate(0,0) puts this at the top
+            .attr("transform", "translate(" + margin_mini.right + "," + (height_mini) + ")")
+            .call(xAxis_mini);
+
+        var axisXText_mini = axisX_mini.selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-25)")
+            .style("text-anchor", "end");
+
+        // Range is high to low
+        // Range influences height of chart, how much space it takes up 
+        var yScale_mini = d3.scaleLinear()
+            //.range([height - margin.bottom, 0 + margin.bottom])
+            .range([height_mini, 0 + margin_mini.bottom])
+            .domain([0, 9])            // Y Axis generator
+        var yAxis_mini = d3.axisLeft(yScale_mini);
+        //create axis g element and add axis
+        var axisY_mini = chart_mini.append("g")
+            .attr("class", "axisy_mini")
+            // shifts the axis
+            .attr("transform", "translate(" + margin_mini.right + "," + 0 + ")")
+            .call(yAxis_mini);
+
+
+
+        const brush = d3.brushX()
+            .extent([
+                [margin_mini.right, margin_mini.top],
+                [width_mini + margin_mini.right, height_mini]
+            ])
+            .on("brush", brushed)
+            .on("end", brushended);
+
+        const defaultSelection = [xScale_mini(d3.utcYear.offset(xScale_mini.domain()[1], -1)), xScale_mini.range()[1]];
+        // const gb = chart_mini.append("g")
+        //     .call(brush)
+        // .call(brush.move, defaultSelection);
+
+
+
+        function brushed({ selection }) {
+            if (selection) {
+                console.log("Brushed!")
+                var begin_date = xScale_mini.invert(selection[0])
+                var end_date = xScale_mini.invert(selection[1])
+                console.log("Begin date: " + begin_date)
+                console.log("End date: " + end_date)
+                var filtered_data = []
+                console.log(data[0])
+                for (d in data[0]) {
+                    if (data[0][d][0] > begin_date && data[0][d][0] < end_date) {
+                        filtered_data.push(data[0][d])
+                    }
                 }
+                updateGraph([filtered_data])
 
+
+            }
+        }
+
+        function brushended({ selection }) {
+            if (!selection) {
+                console.log("Brush ended!")
+                // gb.call(brush.move, defaultSelection);
+            }
+        }
+
+        function cleanData(raw_data) {
+            console.log("beginning cleanData...")
+
+
+            // Process our data
+            for (i in raw_data) {
+                d = raw_data[i]
+
+                // Converting all characters to 0
+                // "T" is a trace
+                // "M" is missing
+                // "A" is appended or something
+                var pcpn = parseFloat(d[1]);
+                if (isNaN(pcpn)) {
+                    pcpn = 0;
+                }
+                d[1] = pcpn;
+                // If Monthly, e.g. 2025-03
+                //  convert to 2025-03-01
+                if (d[0].length == 7) {
+                    d[0] += "-01"
+                }
+                // With a "/" we get js to take local timezone into account
+                d[0] = d[0].replaceAll("-", "/")
+                d[0] = new Date(d[0])
+                console.log(i, d)
+
+            }
+            console.log("End of cleanData...")
+            // console.log(raw_data)
+            return raw_data
+        }
+
+        // function getStnData(sid, sdate, edate) {
+        function getStnData(sid, sdate, edate) {
+
+            var url_station_collect = "https://data.rcc-acis.org/StnData"
+            // var sdate = '2024-04-01';
+            // var edate = '2025-03-01';
+            // var sid = "US1MNHN0169 6";
+            var monthly_level = [{ "name": "pcpn", "interval": [0, 1], "reduce": "sum" }];
+            var params = {
+                sid: sid,
+                sdate: sdate,
+                edate: edate,
+                elems: monthly_level //"pcpn"
+            }
+
+
+            Promise.all(
+                [fetch(url_station_collect, {
+                    method: "POST",
+                    body: JSON.stringify(
+                        params
+                    ),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                }).then(
+                    // Equivalent to
+                    // (response) => response.json()
+                    function (response) {
+                        return response.json()
+                    }
+                ).then(
+                    function (json) {
+                        var cleaned_data = cleanData(json.data);
+
+                        return cleaned_data
+                    }
+                )
+                    // .then(
+                    //     function (cleaned_data) {
+                    //         var data = updateGraph([cleaned_data])
+                    //         return data
+                    //     }
+                    // )
+                ]
+            ).then(
+                (freshdata) => data = freshdata
+            ).then(
+                function () {
+                    rslt = setContext(data)
+                }
+            ).then(
+                function () {
+                    rslt = updateGraph(data)
+                }
+            );
+        }
+
+        function setContext(context_data) {
+            var mini_chart = d3.select("#chart_mini");
+            // renaming our global data variable within the function to context data
+            // And naming the precip data.
+            precip_data = context_data[0]
+            console.log("setContext begin...")
+            console.log(precip_data)
+            var minDate = d3.min(precip_data, function (d) {
+                return d[0];
             });
-
-
-            var colorScale = d3.scaleLinear()
-                .range(["#9ecae1", "#08306b"])
-                // Replace with min and max precip
-                .domain([
-                    0,
-                    10
-                ]);
-
-            //map frame dimensions
-            var margin = { top: 10, right: 30, bottom: 30, left: 50 }
-            var width = 600 - margin.left - margin.right,
-                height = 460 - margin.top - margin.bottom;
-
-            //create new svg container for the map
-            var chart = d3.select("div.card")
-                .append("svg")
-                .attr("class", "chart")
-                // .attr("class", "justify-content-center chart")
-                .attr("id", "chart")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                // To see where the graph lies
-                //.style("background-color", "dodgerblue")
-                // For centering graph
-                .style("margin", "0 auto");
-
-            var xScale = d3.scaleTime()
-                .range([0, width])
-                // Replace with min and max dates
-                .domain([new Date('2024/04/01'), new Date('2025/04/01')])
-                .nice();
-
-            var xAxis = d3.axisBottom(xScale);
-            var axisX = chart.append("g")
-                //create axis g element and add axis
-                .attr("class", "axisx")
-                // translate(0,0) puts this at the top
-                .attr("transform", "translate(" + margin.right + "," + (height) + ")")
-                .call(xAxis);
-
-            var axisXText = axisX.selectAll("text")
+            var maxDate = d3.max(precip_data, function (d) {
+                return d[0];
+            });
+            var minPcpn = d3.min(precip_data, function (d) {
+                return (d[1]);
+            });
+            var maxPcpn = d3.max(precip_data, function (d) {
+                return (d[1]);
+            });
+            // update X scale
+            xScale_mini.domain([minDate, maxDate])
+            // Update X axis
+            axisX_mini.transition().duration(1000).call(d3.axisBottom(xScale_mini))
+            axisXText = axisX_mini.selectAll("text")
                 .attr("transform", "translate(-10,0)rotate(-25)")
                 .style("text-anchor", "end");
+            // update Y scale
+            yScale_mini.domain([0, maxPcpn]);
+            axisY_mini.transition().duration(1000).call(d3.axisLeft(yScale_mini));
+            // Update Y axis
 
-            // Range is high to low
-            // Range influences height of chart, how much space it takes up 
-            var yScale = d3.scaleLinear()
-                //.range([height - margin.bottom, 0 + margin.bottom])
-                .range([height, 0 + margin.bottom])
-                .domain([0, 9])            // Y Axis generator
-            var yAxis = d3.axisLeft(yScale);
-            //create axis g element and add axis
-            var axisY = chart.append("g")
-                .attr("class", "axisy")
-                // shifts the axis
-                .attr("transform", "translate(" + margin.right + "," + 0 + ")")
-                .call(yAxis);
+            // Update the bars
+            var rects_mini = chart_mini.selectAll("rect")
+                .data(precip_data);
+
+            rects_mini
+                .join("rect") //one of the great mysteries of the universe
+                .transition(1000)
+                .attr("class", function (d) {
+                    return "bars d" + d[0];
+                })
+                .attr("width", width_mini / precip_data.length)
+                .attr("x", function (d, i) {
+                    return xScale_mini(d[0]) + (margin_mini.right);
+                })
+                // drawing from the top, minus the scaled value
+                //  removing the height of the X axis
+                .attr("height", function (d) {
+                    return height_mini - yScale_mini(d[1]);
+                })
+                //the vertical coordinate of the rectangle bottom
+                .attr("y", function (d) {
+                    return yScale_mini(d[1]);
+                })
+                .attr("fill", function (d) {
+                    return colorScale(d[1]);
+                })
+                .style("stroke", "#000");
+            chart_mini.append("g")
+                .call(brush)
+
+        }
+        function updateGraph(focus_data) {
+            // because its in a list of promises
+            console.log(focus_data)
+            precip_data = focus_data[0]
+
+            // Get updated min and max for X and U variables
+            var minDate = d3.min(precip_data, function (d) {
+
+                return d[0];
+            });
+            var maxDate = d3.max(precip_data, function (d) {
+                return d[0];
+            });
+            var minPcpn = d3.min(precip_data, function (d) {
+                return (d[1]);
+            });
+            var maxPcpn = d3.max(precip_data, function (d) {
+                return (d[1]);
+            });
+
+            console.log("Min date: " + minDate)
+            console.log("Max date: " + maxDate)
+            // update X scale
+            xScale.domain([minDate, maxDate])
+            // Update X axis
+            axisX.transition().duration(1000).call(d3.axisBottom(xScale))
+            axisXText = axisX.selectAll("text")
+                .attr("transform", "translate(-10,0)rotate(-25)")
+                .style("text-anchor", "end");
+            // update Y scale
+            yScale.domain([0, maxPcpn]);
+            axisY.transition().duration(1000).call(d3.axisLeft(yScale));
+            // Update Y axis
+
+            // Update the bars
+            var rects = chart.selectAll("rect")
+                .data(precip_data);
+
+            rects
+                .join("rect") //one of the great mysteries of the universe
+                .transition(1000)
+                .attr("class", function (d) {
+                    return "bars d" + d[0];
+                })
+                .attr("width", width / precip_data.length)
+                .attr("x", function (d, i) {
+                    return xScale(d[0]);
+                })
+                // drawing from the top, minus the scaled value
+                //  removing the height of the X axis
+                .attr("height", function (d) {
+                    return height - yScale(d[1]);
+                })
+                //the vertical coordinate of the rectangle bottom
+                .attr("y", function (d) {
+                    return yScale(d[1]);
+                })
+                .attr("fill", function (d) {
+                    return colorScale(d[1]);
+                })
+                .style("stroke", "#000");
 
 
-
-
-            // function getStnData(sid, sdate, edate) {
-            function getStnData(sid, sdate, edate) {
-
-                var url_station_collect = "https://data.rcc-acis.org/StnData"
-                // var sdate = '2024-04-01';
-                // var edate = '2025-03-01';
-                // var sid = "US1MNHN0169 6";
-                var monthly_level = [{ "name": "pcpn", "interval": [0, 1], "reduce": "sum" }];
-                var params = {
-                    sid: sid,
-                    sdate: sdate,
-                    edate: edate,
-                    elems: monthly_level //"pcpn"
-                }
-                //use Promise.all to parallelize asynchronous data loading
-                // var promises = [
-                //     d3.json("/get_wi_counties"),
-                // ];
-
-                Promise.all(
-                    [fetch(url_station_collect, {
-                        method: "POST",
-                        body: JSON.stringify(
-                            params
-                        ),
-                        headers: {
-                            "Content-type": "application/json; charset=UTF-8"
-                        }
-                    }).then((response) => response.json())
-                        // .then((json) => precipData = json)
-                        .then((json) => json.data)
-                    ]
-                ).then(updateGraph);
-            }
-
-            function updateGraph(data) {
-
-                data = data[0]
-
-                // Process our data
-                for (i in data) {
-                    d = data[i]
-
-                    // Converting all characters to 0
-                    // "T" is a trace
-                    // "M" is missing
-                    // "A" is appended or something
-                    var pcpn = parseFloat(d[1]);
-                    if (isNaN(pcpn)) {
-                        pcpn = 0;
-                    }
-                    d[1] = pcpn;
-                    // If Monthly, e.g. 2025-03
-                    //  convert to 2025-03-01
-                    if (d[0].length == 7) {
-                        d[0] += "-01"
-                    }
-                    // With a "/" we get js to take local timezone into account
-                    d[0] = d[0].replaceAll("-", "/")
-                    // console.log(i, d)
-                }
-                // Get updated min and max for X and U variables
-                var minDate = d3.min(data, function (d) {
-                    return new Date(d[0]);
-                });
-                var maxDate = d3.max(data, function (d) {
-                    return new Date(d[0]);
-                });
-                var minPcpn = d3.min(data, function (d) {
-                    return (d[1]);
-                });
-                var maxPcpn = d3.max(data, function (d) {
-                    return (d[1]);
-                });
-                // console.log("Min date: " + minDate)
-                // console.log("Max date: " + maxDate)
-
-                // update X scale
-                xScale.domain([minDate, maxDate])
-                // Update X axis
-                axisX.transition().duration(1000).call(d3.axisBottom(xScale))
-                axisXText = axisX.selectAll("text")
-                    .attr("transform", "translate(-10,0)rotate(-25)")
-                    .style("text-anchor", "end");
-                // update Y scale
-                yScale.domain([minPcpn, maxPcpn]);
-                axisY.transition().duration(1000).call(d3.axisLeft(yScale));
-                // Update Y axis
-
-                // Update the bars
-                var rects = chart.selectAll("rect")
-                    .data(data);
-
-                rects
-                    .join("rect") //one of the great mysteries of the universe
-                    .transition(1000)
-                    .attr("class", function (d) {
-                        return "bars d" + d[0];
-                    })
-                    .attr("width", width / data.length)
-                    .attr("x", function (d, i) {
-                        return xScale(new Date(d[0])) + (margin.right);
-                    })
-                    // drawing from the top, minus the scaled value
-                    //  removing the height of the X axis
-                    .attr("height", function (d) {
-                        return height - yScale(d[1]);
-                    })
-                    //the vertical coordinate of the rectangle bottom
-                    .attr("y", function (d) {
-                        return yScale(d[1]);
-                    })
-                    .attr("fill", function (d) {
-                        return colorScale(d[1]);
-                    })
-                    .style("stroke", "#000");
-
-                // var bars = chart.selectAll(".bars")
-                //     .data(data) //here we feed in an array
-                //     .enter() //one of the great mysteries of the universe
-                //     .append("rect") //add a circle for each datum
-                //     .attr("class", function (d) {
-                //         return "bars d" + d[0];
-                //     })
-                //     .attr("width", width / data.length)
-                //     .attr("x", function (d, i) {
-                //         return xScale(new Date(d[0])) + (margin.right);
-                //     })
-                //     // drawing from the top, minus the scaled value
-                //     //  removing the height of the X axis
-                //     .attr("height", function (d) {
-                //         return height - yScale(d[1]);
-                //     })
-                //     //the vertical coordinate of the rectangle bottom
-                //     .attr("y", function (d) {
-                //         return yScale(d[1]);
-                //     })
-                //     .attr("fill", function (d) {
-                //         return colorScale(d[1]);
-                //     })
-                //     .style("stroke", "#000");
-
-            }
+            // return precip_data
         };
+        // };
+        // function handleBrush(e) {
+        //     console.log("Boom!")
+        // }
 
+        // let brush = d3.brushX([0 + margin_mini.bottom, width])
+        //     .on('brush', handleBrush);
+        // let brushExtent;
+
+        // function handleBrush(e) {
+        //     brushExtent = e.selection;
+        //     updateFocus();
+        // }
+
+        // function isInBrushExtent(d) {
+        //     return brushExtent &&
+        //         d.x >= brushExtent[0] &&
+        //         d.x <= brushExtent[1];
+        // }
+        // function updateFocus() {
+
+        //     var rects = select("#chart")
+        //         .selectAll("rect")
+        //         .data(data);
+        // }
 
     </script>
+
     {% endblock %}
