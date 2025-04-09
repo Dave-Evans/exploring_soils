@@ -163,6 +163,9 @@ def wisc_cc_manager_home(request):
 def wisc_cc_about(request):
     return render(request, "wisccc/wisc_cc_about.html")
 
+def wisc_cc_about_weather(request):
+    return render(request, "wisccc/wisc_cc_about_weather.html")
+
 
 def wisc_cc_acis(request):
     return render(request, "wisccc/wisc_cc_acis.html")
@@ -1223,6 +1226,8 @@ def wisc_cc_survey_populate_fieldfarm(request, id):
 
 
 def wisc_cc_graph(request):
+
+    
     return render(request, "wisccc/wisc_cc_graph.html")
 
 

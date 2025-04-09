@@ -24,6 +24,11 @@ urlpatterns = [
         name="wisc_cc_about",
     ),
     re_path(
+        r"^wisc_cc_about_weather$",
+        wisccc_views.wisc_cc_about_weather,
+        name="wisc_cc_about_weather",
+    ),    
+    re_path(
         r"^wisc_cc_acis$",
         wisccc_views.wisc_cc_acis,
         name="wisc_cc_acis",
