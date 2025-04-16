@@ -392,6 +392,7 @@ while [ -n "$1" ]; do
             ssh -i "~/.ssh/$key_name.pem" ubuntu@$ipaddress
             ;;      
         maintenance)
+            create_ansible_hostsfile
             ansible-playbook -i ./ansible/hosts ./ansible/update.yml
             ;;
         dumpdb)
