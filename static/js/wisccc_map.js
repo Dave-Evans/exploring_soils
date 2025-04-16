@@ -129,42 +129,131 @@ function onEachFeature(feature, layer) {
     var spring_sampling_notes = ""
     if (feature.properties.fall_notes != null) {
         console.log(feature.id)
-        fall_sampling_notes = "<dt>" + "Fall sampling notes" + "</dt> <dd>" + feature.properties.fall_notes + "</dd>"
+        fall_sampling_notes = "<tr><td>" + "Fall sampling notes" + "</td> <td>" + feature.properties.fall_notes + "</td></tr>"
     }
     if (feature.properties.spring_notes != null) {
-        spring_sampling_notes = "<dt>" + "Spring sampling notes" + "</dt> <dd>" + feature.properties.fall_notes + "</dd>"
+        spring_sampling_notes = "<tr><td>" + "Spring sampling notes" + "</td> <td>" + feature.properties.fall_notes + "</td></tr>"
     }
 
     var image_1 = ""
     var image_2 = ""
     if (feature.properties.image_1_url != null) {
-        image_1 = "<dt>" + feature.properties.caption_photo_1 + "</dt> <dd>" + '<img src="' + feature.properties.image_1_url + '" width="250" height="250">' + "</dd>"
+        image_1 = "<dt>" + feature.properties.caption_photo_1 + "</td> <td>" + '<img class="popupphoto" src="' + feature.properties.image_1_url + '" width="250" height="250">' + "</td>"
     }
     if (feature.properties.image_2_url != null) {
-        image_2 = "<dt>" + feature.properties.caption_photo_2 + "</dt> <dd>" + '<img src="' + feature.properties.image_2_url + '" width="250" height="250">' + "</dd>"
+        image_2 = "<dt>" + feature.properties.caption_photo_2 + "</td> <td>" + '<img src="' + feature.properties.image_2_url + '" width="250" height="250">' + "</td>"
     }
-    var popupContent = "<dl>" +
-        "<dt>ID</dt> <dd>" + feature.id + "</dd>" +
-        "<dt>Cover crops</dt> <dd>" + feature.properties.cc_species_raw + "</dd>" +
-        "<dt>Seeding rate</dt> <dd>" + planting_rate + "</dd>" +
-        "<dt>Seeding method</dt> <dd>" + feature.properties.cc_seeding_method + "</dd>" +
-        "<dt>Previous crop</dt> <dd>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</dd>" +
-        "<dt>Planting date</dt> <dd>" + planting_date + "</dd>" +
-        "<dt>Dominant soil texture</dt> <dd>" + feature.properties.dominant_soil_texture + "</dd>" +
+    var popupContent =
+        "<b><em>Farm info:</em></b>" +
+        "<table>" +
+        "<tr>" +
+        "<td>ID</td> <td>" + feature.id + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Cover crops</td> <td>" + feature.properties.cc_species_raw + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Seeding rate</td> <td>" + planting_rate + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Seeding method</td> <td>" + feature.properties.cc_seeding_method + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Previous crop</td> <td>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Planting date</td> <td>" + planting_date + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Dominant soil texture</td> <td>" + feature.properties.dominant_soil_texture + "</td>" +
+        "</tr>" +
 
-        "<dt>Fall Cumulative GDU </dt> <dd>" + feature.properties.acc_gdd + "</dd>" +
-        "<dt>Fall Precip (in) </dt> <dd>" + fall_precip + "</dd>" +
-        "<dt>Fall Biomass (ton DM/acre)</dt> <dd>" + biomass_val + "</dd>" +
+        "</table>" +
+
+        "<br>" +
+        "<b><em>Fall info:</em></b>" +
+        "<table>" +
+        "<tr>" +
+        "<td>N (% of dry matter)</td> <td>" + feature.properties.total_nitrogen + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>P (% of dry matter)</td> <td>" + feature.properties.percent_p + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>K (% of dry matter)</td> <td>" + feature.properties.percent_k + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Calcium (% of dry matter)</td> <td>" + feature.properties.percent_ca + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Magnesium (% of dry matter)</td> <td>" + feature.properties.percent_mg + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Sulfur (% of dry matter)</td> <td>" + feature.properties.percent_s + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>C to N ratio </td> <td>" + feature.properties.c_to_n_ratio + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Height of stand (in) </td> <td>" + feature.properties.height_of_stand + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Fall Cumulative GDU </td> <td>" + fall_gdu + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Fall Precip (in) </td> <td>" + fall_precip + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Fall Biomass (ton DM/acre)</td> <td>" + biomass_val + "</td>" +
+        "</tr>" +
+
         fall_sampling_notes +
+        "</table>" +
 
+        "<br>" +
+        "<b><em>Spring info:</em></b>" +
+        "<table>" +
+        "<tr>" +
+        "<td>N (% of dry matter)</td> <td>" + feature.properties.spring_total_nitrogen + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>P (% of dry matter)</td> <td>" + feature.properties.spring_percent_p + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>K (% of dry matter)</td> <td>" + feature.properties.spring_percent_k + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Calcium (% of dry matter)</td> <td>" + feature.properties.spring_percent_ca + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Magnesium (% of dry matter)</td> <td>" + feature.properties.spring_percent_mg + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Sulfur (% of dry matter)</td> <td>" + feature.properties.spring_percent_s + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>C to N ratio </td> <td>" + feature.properties.spring_c_to_n_ratio + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Height of stand (in) </td> <td>" + feature.properties.spring_height_of_stand + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Spring Cumulative GDU </td> <td>" + spring_gdu + "</td>" +
+        "</tr>" +
 
-        "<dt>Spring Cumulative GDU </dt> <dd>" + spring_gdu + "</dd>" +
-        "<dt>Spring Precip (in) </dt> <dd>" + spring_precip + "</dd>" +
-        "<dt>Spring Biomass (ton DM/acre)</dt> <dd>" + spring_biomass_val + "</dd>" +
+        "<tr>" +
+        "<td>Spring Precip (in) </td> <td>" + spring_precip + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Spring Biomass (ton DM/acre)</td> <td>" + spring_biomass_val + "</td>" +
+        "</tr>" +
+
         spring_sampling_notes +
+        "</table>" +
+        "<br>" +
         image_1 +
-        image_2 +
-        "</dl>"
+        image_2
 
 
     if (feature.properties && feature.properties.popupContent) {
