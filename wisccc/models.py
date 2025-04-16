@@ -1566,13 +1566,13 @@ class AncillaryData(models.Model):
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
     dry_matter = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="", null=True
+        decimal_places=2, max_digits=15, verbose_name="Dry matter, the proportion of the sample which is dry matter versus moisture; expressed as percent. From Dairyland.", null=True
     )
     ndf = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
     rfv = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="", null=True
+        decimal_places=2, max_digits=15, verbose_name="Relative feed value, Dairyland", null=True
     )
     cc_biomass = models.DecimalField(
         decimal_places=2,
@@ -1581,7 +1581,7 @@ class AncillaryData(models.Model):
         null=True,
     )
     total_nitrogen = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="Total nitrogen", null=True
+        decimal_places=2, max_digits=15, verbose_name="Total nitrogen as percent of dry matter, agsource", null=True
     )
     height_of_stand = models.DecimalField(
         decimal_places=2,
@@ -1589,6 +1589,87 @@ class AncillaryData(models.Model):
         verbose_name="Height of cover crop stand stand (in)",
         null=True,
     )
+    c_to_n_ratio = models.DecimalField(
+        decimal_places=2,
+        max_digits=5,
+        verbose_name="Fall C to N ratio, agsource",
+        null=True,
+    )
+    
+    percent_p = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Phosphorus content as percent of dry matter, agsource",
+        null=True,
+    )
+    percent_k = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Potassium content as percent of dry matter, agsource",
+        null=True,
+    )    
+    percent_ca = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Calcium content as percent of dry matter, agsource",
+        null=True,
+    )        
+    percent_mg = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Magnesium content as percent of dry matter, agsource",
+        null=True,
+    )         
+    percent_s = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Sulfur content as percent of dry matter, agsource",
+        null=True,
+    )               
+    p_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Phosphorus content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+    n_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Nitrogen content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
+    k_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Potassium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
+    ca_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Calcium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )        
+    mg_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Magnesium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )         
+    s_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Sulfur content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+    c_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Carbon content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+
+
     acc_gdd = models.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -1667,6 +1748,85 @@ class AncillaryData(models.Model):
         verbose_name="Spring height of cover crop stand stand (in)",
         null=True,
     )
+    spring_c_to_n_ratio = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring C to N ratio, agsource",
+        null=True,
+    )
+    
+    spring_percent_p = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Phosphorus content as percent of dry matter, agsource",
+        null=True,
+    )
+    spring_percent_k = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Potassium content as percent of dry matter, agsource",
+        null=True,
+    )    
+    spring_percent_ca = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Calcium content as percent of dry matter, agsource",
+        null=True,
+    )        
+    spring_percent_mg = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Magnesium content as percent of dry matter, agsource",
+        null=True,
+    )         
+    spring_percent_s = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Sulfur content as percent of dry matter, agsource",
+        null=True,
+    )               
+    spring_p_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Phosphorus content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+    spring_n_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Nitrogen content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
+    spring_k_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Potassium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
+    spring_ca_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Calcium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )        
+    spring_mg_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Magnesium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )         
+    spring_s_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Sulfur content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+    spring_c_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Carbon content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
     spring_notes = models.TextField(
         verbose_name="Notes about spring biomass sampling",
         null=True,

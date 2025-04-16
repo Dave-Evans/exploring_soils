@@ -590,10 +590,26 @@ def pull_all_years_together(f_output):
         , stat.fq_tdn_adf
         , stat.fq_milkton
         , stat.fq_rfq
-        , null as fq_undfom240
-        , null as fq_dry_matter
-        , null as fq_rfv        
-        , null as total_nitrogen
+        , stat.fq_undfom240
+        , stat.fq_dry_matter
+        , stat.fq_rfv        
+        , stat.fq_total_nitrogen as total_nitrogen
+
+        , stat.fq_total_phosphorus as percent_p
+        , stat.fq_total_potassium as percent_k
+        , stat.fq_total_calcium as percent_ca
+        , stat.fq_total_magnesium as percent_mg
+        , stat.fq_total_sulfur as percent_s
+        , stat.fq_c_to_n_ratio as c_to_n_ratio
+
+        , stat.fq_nitrogen_content as n_content
+        , stat.fq_phosphorus_content as p_content
+        , stat.fq_potassium_content as k_content
+        , stat.fq_calcium_content as ca_content
+        , stat.fq_magnesium_content as mg_content
+        , stat.fq_sulfur_content as s_content
+        , stat.fq_carbon_content as c_content
+
         , null as height_of_stand
         , null as fall_notes
         , null as spring_cc_biomass_collection_date
@@ -701,6 +717,22 @@ def pull_all_years_together(f_output):
         dry_matter as fq_dry_matter,
         rfv as fq_rfv,                
         total_nitrogen as total_nitrogen,
+
+        percent_p,
+        percent_k,
+        percent_ca,
+        percent_mg,
+        percent_s,
+        c_to_n_ratio,
+
+        n_content,
+        p_content,
+        k_content,
+        ca_content,
+        mg_content,
+        s_content,
+        c_content,
+
         height_of_stand,
         fall_notes,
         spring_biomass_collection_date as spring_cc_biomass_collection_date,
