@@ -15,6 +15,8 @@ dat_biomass = read_excel("~/Documents/small_projects/wisc_cc/data_from_mrill/Tab
                          skip = 1)
 dat_forage_q = read_excel("~/Documents/small_projects/wisc_cc/data_from_mrill/Table 1. DS draft 2.13.22 CCROP Citizen Science Data 2022 with termination.xlsx",
                           sheet = 2, range = "A1:I59")
+dat_forage_q_addl_agsource = read_csv("~/Documents/small_projects/wisc_cc/labdat_extract/2022/agsource_output.csv")
+dat_forage_q_addl_dairyland = read_csv("~/Documents/small_projects/wisc_cc/labdat_extract/2022/dairyland_output.csv")
 dat_species = read_excel("~/Documents/small_projects/wisc_cc/data_from_mrill/Table 2. for CCROP 2022 (w ID).xlsx",
                          sheet = 1)
 
@@ -23,7 +25,8 @@ dat_survey %>%
   left_join(dat_biomass, by = join_by("ID (zipcode-initials-signup year)" == `...1`)) %>%
   left_join(dat_forage_q, by = join_by("ID (zipcode-initials-signup year)" == `...1`)) %>%
   left_join(dat_species, by = join_by("ID (zipcode-initials-signup year)" == `ID#`)) %>% 
-  
+  left_join(dat_forage_q_addl_agsource, by = join_by("ID (zipcode-initials-signup year)" == "cleaned_id")) %>%
+  left_join(dat_forage_q_addl_dairyland, by = join_by("ID (zipcode-initials-signup year)" == "cleaned_id")) %>%
   rename(id = "ID (zipcode-initials-signup year)") %>%
   rename(old_id = "old version of our ID system (zipcode-initials-signup year)") %>%
   rename(county = "1. In what county do you farm? (If you farm in more than one, list them in order of number of acres.)") %>%
@@ -66,6 +69,29 @@ dat_survey %>%
   rename(fq_milkton = "Milk/Ton_Milk2013") %>%
   rename(fq_RFQ = "RFQ") %>%
   
+  # Forage quality for Dairyland
+  rename(fq_rfv = "rfv_perc_dm") %>%
+  rename(fq_undfom240 = "undfdom240_perc_dm") %>%
+  rename(fq_dry_matter = "dry_matter") %>%
+  
+  # Forage quality for Agsource
+  rename(fq_total_nitrogen = "percent_nitrogen") %>%
+  rename(fq_total_phosphorus = "percent_phosphorus") %>%
+  rename(fq_total_potassium = "percent_potassium") %>%
+  rename(fq_total_calcium = "percent_calcium") %>%
+  rename(fq_total_magnesium = "percent_magnesium") %>%
+  rename(fq_total_sulfur = "percent_sulfur") %>%
+  rename(fq_total_carbon = "percent_carbon") %>%
+  rename(fq_c_to_n_ratio = "c_n_ratio") %>%
+  
+  rename(fq_nitrogen_content = "nitrogen_lbs_acre") %>%
+  rename(fq_phosphorus_content = "phosphorus_lbs_acre") %>%
+  rename(fq_potassium_content = "potassium_lbs_acre") %>%
+  rename(fq_calcium_content = "calcium_lbs_acre") %>%
+  rename(fq_magnesium_content = "magnesium_lbs_acre") %>%
+  rename(fq_sulfur_content = "sulfur_lbs_acre") %>%
+  rename(fq_carbon_content = "carbon_lbs_acre") %>%  
+
   mutate(year = 2022) %>%
   # Table 2 sheet for species
   rename(cc_rate_and_species = 'lbs/acre, cover crop species') %>%
@@ -137,6 +163,29 @@ dat_survey %>%
     fq_TDN_ADF, 
     fq_milkton, 
     fq_RFQ,
+    
+    # Forage quality for Dairyland
+    fq_rfv,
+    fq_undfom240,
+    fq_dry_matter,
+      
+    # Forage quality for Agsource
+    fq_total_nitrogen,
+    fq_total_phosphorus,
+    fq_total_potassium,
+    fq_total_calcium,
+    fq_total_magnesium,
+    fq_total_sulfur,
+    fq_total_carbon,
+    fq_c_to_n_ratio,
+      
+    fq_nitrogen_content,
+    fq_phosphorus_content,
+    fq_potassium_content,
+    fq_calcium_content,
+    fq_magnesium_content,
+    fq_sulfur_content,
+    fq_carbon_content,
     
     cc_rate_and_species,
     cc_species,
@@ -255,6 +304,29 @@ dat_20_21 %>%
   mutate(fq_milkton = NA ) %>%
   mutate(fq_RFQ = NA ) %>%
   
+  # Forage quality for Dairyland
+  mutate(fq_rfv = NA ) %>%
+  mutate(fq_undfom240 = NA ) %>%
+  mutate(fq_dry_matter = NA ) %>%
+
+  # Forage quality for Agsource
+  mutate(fq_total_nitrogen = NA ) %>%
+  mutate(fq_total_phosphorus = NA ) %>%
+  mutate(fq_total_potassium = NA ) %>%
+  mutate(fq_total_calcium = NA ) %>%
+  mutate(fq_total_magnesium = NA ) %>%
+  mutate(fq_total_sulfur = NA ) %>%
+  mutate(fq_total_carbon = NA ) %>%
+  mutate(fq_c_to_n_ratio = NA ) %>%
+  # lbs/acre extrapolations
+  mutate(fq_nitrogen_content = NA ) %>%
+  mutate(fq_phosphorus_content = NA ) %>%
+  mutate(fq_potassium_content = NA ) %>%
+  mutate(fq_calcium_content = NA ) %>%
+  mutate(fq_magnesium_content = NA ) %>%
+  mutate(fq_sulfur_content = NA ) %>%
+  mutate(fq_carbon_content = NA ) %>%
+  
   mutate(cc_rate_and_species = cc_species) %>%
   mutate(cc_species = cc_functional_group_mod ) %>%
 
@@ -297,6 +369,29 @@ dat_20_21 %>%
     fq_TDN_ADF, 
     fq_milkton, 
     fq_RFQ,
+    
+    # Forage quality for Dairyland
+    fq_rfv,
+    fq_undfom240,
+    fq_dry_matter,
+    
+    # Forage quality for Agsource
+    fq_total_nitrogen,
+    fq_total_phosphorus,
+    fq_total_potassium,
+    fq_total_calcium,
+    fq_total_magnesium,
+    fq_total_sulfur,
+    fq_total_carbon,
+    fq_c_to_n_ratio,
+    
+    fq_nitrogen_content,
+    fq_phosphorus_content,
+    fq_potassium_content,
+    fq_calcium_content,
+    fq_magnesium_content,
+    fq_sulfur_content,
+    fq_carbon_content,    
     
     cc_rate_and_species,
     cc_species,
