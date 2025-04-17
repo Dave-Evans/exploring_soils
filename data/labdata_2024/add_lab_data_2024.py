@@ -26,6 +26,19 @@ def clean_nan(row):
         "Dry_Matter",
         "Total Nitrogen",
         "Biomass Dry",
+        "C-N Ratio",
+        "P",
+        "K",
+        "Ca",
+        "Mg"
+        "S",
+        # "nitrogen_lbs_acre"
+        "P2O5 Lbs/Acre",
+        "K2O Lbs/Acre",
+        "Ca Lbs/Acre",    
+        "Mg Lbs/Acre",     
+        "S Lbs/Acre",
+        "Carbon Lbs/Acre",
     ]
 
     for targ in target_vars:
@@ -126,10 +139,10 @@ def find_survey_field(farmer):
             survey_field = SurveyField.objects.get(id=168)
             return survey_field
 
-        if survey_farm[0] in (170, 182):
-            print("\tKirk Leach, return first field")
-            survey_field = SurveyField.objects.get(id=170)
-            return survey_field
+    if survey_farm[0].id in (170, 182):
+        print("\tKirk Leach, return first field")
+        survey_field = SurveyField.objects.get(id=170)
+        return survey_field
 
     survey_farm = survey_farm[0]
     survey_field = SurveyField.objects.filter(survey_farm=survey_farm)
@@ -244,22 +257,22 @@ for i, row in agsource.iterrows():
         sample_id = rslt.group()
         if descr == "Dan MarzuRock Co 00055-24-f 1":
             print("Josh Kamps 1st field")
-            # survey_field = SurveyField.objects.get(id=168)
-            # try:
-            #     ancillarydata = AncillaryData.objects.get(survey_field=survey_field)
-            # except:
-            #     ancillarydata = AncillaryData.objects.create(survey_field=survey_field)
-            # populate_ancil_record_as(row, ancillarydata)
+            survey_field = SurveyField.objects.get(id=168)
+            try:
+                ancillarydata = AncillaryData.objects.get(survey_field=survey_field)
+            except:
+                ancillarydata = AncillaryData.objects.create(survey_field=survey_field)
+            populate_ancil_record_as(row, ancillarydata)
             continue
         elif descr == "Dan MarzuRock Co 00055-24-f 2":
             print("Josh Kamps 2nd field")
 
-            # survey_field = SurveyField.objects.get(id=171)
-            # try:
-            #     ancillarydata = AncillaryData.objects.get(survey_field=survey_field)
-            # except:
-            #     ancillarydata = AncillaryData.objects.create(survey_field=survey_field)
-            # populate_ancil_record_as(row, ancillarydata)
+            survey_field = SurveyField.objects.get(id=171)
+            try:
+                ancillarydata = AncillaryData.objects.get(survey_field=survey_field)
+            except:
+                ancillarydata = AncillaryData.objects.create(survey_field=survey_field)
+            populate_ancil_record_as(row, ancillarydata)
             continue
     else:
 
