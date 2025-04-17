@@ -31,7 +31,7 @@ from wisccc.tables import (
     InterestedPartyTable,
     InterestedAgronomistTable,
 )
-from wisccc.filters import SurveyResponseFilter
+from wisccc.filters import SurveyResponseFilter, SurveyRegistrationFilter
 from django_filters.views import FilterView
 from wisccc.forms import (
     SurveyFieldFormFull,
@@ -1661,47 +1661,56 @@ def response_table_bkup(request):
     )
 
 
-@permission_required("wisccc.survery_manager", raise_exception=True)
-def registration_table(request):
+
+class RegistrationTableListView(SingleTableMixin, FilterView):
     """List wisc registration entries"""
 
-    # all_regs = SurveyRegistration.objects.prefetch_related("farmer__user")
-    def get_table_data():
-        """For getting registration data"""
-        query = """
-            select
-                ws.id
-                , signup_timestamp
-                , wf.farm_name
-                , wf.first_name 
-                , wf.last_name 
-                , wf.address_zipcode
-                , au.email
-                , ws.belong_to_groups
-                , ws.notes
-                , howd_you_hear	
-            from wisccc_surveyregistration ws 
-            inner join wisccc_farmer wf 
-            on ws.farmer_id = wf.id
-            inner join auth_user au 
-            on wf.user_id = au.id"""
-        dat = pd.read_sql(query, connection)
-        dat = dat.to_dict("records")
+    table_class = RegistrationTable
+    model = SurveyRegistration
+    template_name = "wisccc/registration_table.html"
 
-        return dat
+    filterset_class = SurveyRegistrationFilter
 
-    data = get_table_data()
-    # total_regs = data.count()
+    # def get_queryset(self):
+    #     return super().get_queryset().filter(survey_year__gt=2022)
+    # # all_regs = SurveyRegistration.objects.prefetch_related("farmer__user")
+    # def get_table_data():
+    #     """For getting registration data"""
+    #     query = """
+    #         select
+    #             ws.id
+    #             , signup_timestamp
+    #             , wf.farm_name
+    #             , wf.first_name 
+    #             , wf.last_name 
+    #             , wf.address_zipcode
+    #             , au.email
+    #             , ws.belong_to_groups
+    #             , ws.notes
+    #             , howd_you_hear	
+    #         from wisccc_surveyregistration ws 
+    #         inner join wisccc_farmer wf 
+    #         on ws.farmer_id = wf.id
+    #         inner join auth_user au 
+    #         on wf.user_id = au.id
+    #         order by signup_timestamp desc"""
+    #     dat = pd.read_sql(query, connection)
+    #     dat = dat.to_dict("records")
 
-    # table = ResponseTable(Survey.objects.all())
-    table = RegistrationTable(data)
-    RequestConfig(request, paginate={"per_page": 15}).configure(table)
+    #     return dat
 
-    return render(
-        request,
-        "wisccc/registration_table.html",
-        {"table": table, "total_regs": 3},
-    )
+    # data = get_table_data()
+    # # total_regs = data.count()
+
+    # # table = ResponseTable(Survey.objects.all())
+    # table = RegistrationTable(data)
+    # RequestConfig(request, paginate={"per_page": 15}).configure(table)
+
+    # return render(
+    #     request,
+    #     "wisccc/registration_table.html",
+    #     {"table": table, "total_regs": 3},
+    # )
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)

@@ -173,7 +173,10 @@ urlpatterns = [
     ),
     re_path(
         r"^registration_table$",
-        wisccc_views.registration_table,
+        permission_required("wisccc.survery_manager")(
+            wisccc_views.RegistrationTableListView.as_view()
+        ),        
+        # wisccc_views.registration_table,
         name="registration_table",
     ),
     path(
