@@ -93,24 +93,28 @@
                 aria-controls="collapseOne" class="list-group-item list-group-item-action list-group-item-success">
                 Field {{ forloop.counter }} click to see sections
               </a>
+              {% if perms.wisccc.survery_manager %}
               <br>
               <a href="{% url 'delete_survey_field' survey_field_id %}">
                 <button type=" button" class="warn btn btn-danger btn-sm">
                   Delete this field
                 </button>
               </a>
+              {% endif %}
               {% else %}
 
               <a data-target="#collapse-{{ forloop.counter }}" data-toggle="collapse" aria-expanded="true"
                 aria-controls="collapseOne" class="list-group-item list-group-item-action list-group-item-warning">
                 Field {{ forloop.counter }}
               </a>
+              {% if perms.wisccc.survery_manager %}
               <br>
               <a href="{% url 'delete_survey_field' survey_field_id %}">
                 <button type=" button" class="warn btn btn-danger btn-sm">
                   Delete this field
                 </button>
               </a>
+              {% endif %}
 
 
 

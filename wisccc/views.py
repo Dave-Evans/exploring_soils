@@ -308,7 +308,7 @@ def wisccc_download_data(request, opt):
 
 
 @login_required
-def wisc_cc_survey(request, survey_year=2024):
+def wisc_cc_survey(request, survey_year=2025):
     """
     Home page for Cover Crop survey. We check progress of different sections of the survey
     by querying one required question from each section (0 (the farmer section),1,2,3).
@@ -446,7 +446,7 @@ def wisc_cc_survey1(request, farmer_id):
 
 
 @login_required
-def wisc_cc_survey2(request, sfarmid, survey_year=2024):
+def wisc_cc_survey2(request, sfarmid):
     """II. Cover cropping goals and support
     only Survey Farm data"""
 
@@ -469,9 +469,10 @@ def wisc_cc_survey2(request, sfarmid, survey_year=2024):
 
     if form_surveyfarm_section_2.is_valid():
         new_form = form_surveyfarm_section_2.save(commit=False)
-        new_form.farmer = farmer
-        # Make sure to make a slot for this in the form.
-        new_form.survey_year = survey_year
+        # Should not need to add farmer or year to these sections as they are 
+        #   auto created with the registration
+        # new_form.farmer = farmer
+        # new_form.survey_year = survey_year
         new_form.save()
 
         if survey_fields.count() > 1:
@@ -503,9 +504,6 @@ def wisc_cc_survey3(request, sfieldid):
     """
     # field names as keys
     context = {}
-
-    # Don't forget to grab based on survey_year!!!
-    survey_year = 2024
 
     survey_field = SurveyField.objects.get(id=sfieldid)
 
@@ -593,8 +591,6 @@ def wisc_cc_survey3a(request, farmer_id, sfieldid):
 def wisc_cc_survey4(request, sfieldid):
     """IV. Research Field: Planting dates & timing
     Uses survey_field and one question, cash crop planting date, from surveyfarm"""
-    # Don't forget to grab based on survey_year!!!
-    survey_year = 2024
 
     survey_field = SurveyField.objects.get(id=sfieldid)
     # Grab survey farm objects
@@ -627,8 +623,6 @@ def wisc_cc_survey4(request, sfieldid):
     ):
 
         new_survey_farm_form = form_surveyfarm_section_4.save(commit=False)
-        new_survey_farm_form.farmer = farmer
-        new_survey_farm_form.survey_year = survey_year
         new_survey_farm_form.save()
         new_form_survey_field_part_1 = form_surveyfield_section_4_part_1.save(
             commit=False
@@ -662,8 +656,6 @@ def wisc_cc_survey5(request, sfieldid):
     Uses SurveyField"""
     # field names as keys
     context = {}
-    # Don't forget to grab based on survey_year!!!
-    survey_year = 2024
 
     survey_field = SurveyField.objects.get(id=sfieldid)
     # Grab survey farm objects
@@ -703,8 +695,6 @@ def wisc_cc_survey5(request, sfieldid):
 def wisc_cc_survey6(request, sfieldid):
     """VI. Research Field: Cover crop seeding & cost
     Uses survey_field and surveyfarm"""
-    # Don't forget to grab based on survey_year!!!
-    survey_year = 2024
 
     survey_field = SurveyField.objects.get(id=sfieldid)
     # Grab survey farm objects
@@ -730,8 +720,6 @@ def wisc_cc_survey6(request, sfieldid):
     if form_surveyfarm_section_6.is_valid() and form_surveyfield_section_6.is_valid():
 
         new_form_survey_farm = form_surveyfarm_section_6.save(commit=False)
-        new_form_survey_farm.farmer = farmer
-        new_form_survey_farm.survey_year = survey_year
         new_form_survey_farm.save()
 
         new_form_survey_field = form_surveyfield_section_6.save(commit=False)
@@ -757,7 +745,6 @@ def wisc_cc_survey7(request, sfarmid):
     """VII. Final thoughts
     Uses SurveyFarm"""
     context = {}
-    survey_year = 2024
 
     survey_farm = SurveyFarm.objects.get(id=sfarmid)
 
@@ -777,10 +764,11 @@ def wisc_cc_survey7(request, sfarmid):
 
     if form_surveyfarm_section_7.is_valid():
         new_form_surveyfarm_section_7 = form_surveyfarm_section_7.save(commit=False)
-        new_form_surveyfarm_section_7.farmer = farmer
-        new_form_surveyfarm_section_7.survey_year = survey_year
         new_form_surveyfarm_section_7.save()
 
+        if request.user.has_perm("wisccc.survery_manager"):
+            return redirect("response_table")
+        
         return redirect("wisc_cc_survey")
 
     template = "wisccc/survey_section_7_final_thoughts.html"
@@ -797,11 +785,9 @@ def wisc_cc_survey7(request, sfarmid):
 @login_required
 def create_addtl_surveyfield(request, sfarmid):
     """Takes survey farm id"""
-    survey_year = 2024
-    context = {}
 
     survey_farm = SurveyFarm.objects.get(id=sfarmid)
-
+    survey_year = survey_farm.survey_year
     farmer = Farmer.objects.get(id=survey_farm.farmer_id)
 
     # check if user is the logged in farmer
@@ -861,7 +847,7 @@ def update_labdata(request, id):
     Will navigate to this page via the survey table
     page so will use SurveyFarm id to grab ancillary data
     """
-    context = {}
+    
     survey_farm = get_object_or_404(SurveyFarm, id=id)
     first_and_last_name = (
         f"{survey_farm.farmer.first_name} {survey_farm.farmer.last_name}"
@@ -905,7 +891,7 @@ def update_labdata_fld(request, id):
     Will navigate to this page from new wisc survey page
     uses survey field id to grab ancillary data
     """
-    context = {}
+    
     survey_field = SurveyField.objects.get(id=id)
     first_and_last_name = f"{survey_field.survey_farm.farmer.first_name} {survey_field.survey_farm.farmer.last_name}"
     survey_year = f"{survey_field.survey_farm.survey_year}"
@@ -944,9 +930,6 @@ def update_labdata_fld(request, id):
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def update_response(request, id):
     """For updating survey"""
-    # dictionary for initial data with
-    # field names as keys
-    context = {}
 
     # fetch the survey object related to passed id
     survey_farm = get_object_or_404(SurveyFarm, id=id)
@@ -1028,7 +1011,8 @@ def update_response(request, id):
         form_context["form_surveyfarm_section_3"] = form_surveyfarm_section_3
         # 2023 template
         template = "wisccc/survey_review_2023.html"
-    elif survey_farm.survey_year == 2024:
+        # until 2025 survey is different enough...
+    elif survey_farm.survey_year in [2024, 2025]:
         # Section 2 - SurveyFarm
         form_surveyfarm_section_2 = SurveyFarmFormSection2(
             request.POST or None, instance=survey_farm
@@ -1892,7 +1876,7 @@ def wisc_cc_register_1(request):
 @login_required
 def wisc_cc_register_2(request):
     """For when a user already exists."""
-    survey_year = 2024
+    survey_year = 2025
     user = User.objects.get(id=request.user.id)
     # !!!!!!!!!!!!!!!!!!!!!!!!! #
     # CREATE necessary records here!
@@ -1954,7 +1938,6 @@ def wisc_cc_register_by_mgmt_exist_user_select(request):
     This is for when the user already exists in our system.
     This first page is for just selecting the user.
     """
-    survey_year = 2024
 
     select_user_form = SelectUserForm(request.POST or None)
 
@@ -1982,7 +1965,7 @@ def wisc_cc_register_by_mgmt_exist_user(request, pk):
     This is for when the user already exists in our system.
     This page is for when the user has been selected. The id here is the user id.
     """
-    survey_year = 2024
+    survey_year = 2025
 
     selected_user = get_object_or_404(User, id=pk)
 
@@ -2038,7 +2021,7 @@ def wisc_cc_register_by_mgmt(request):
     """For when a registrant is signed up by survey manager
     This is for when the user is new.
     """
-    survey_year = 2024
+    survey_year = 2025
     client_ip = request.META.get("REMOTE_ADDR")
 
     registration_form = SurveyRegistrationFullForm(request.POST or None)
