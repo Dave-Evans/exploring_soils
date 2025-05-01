@@ -30,6 +30,7 @@ from wisccc.tables import (
     ResearcherTable,
     InterestedPartyTable,
     InterestedAgronomistTable,
+    ScenarioTable
 )
 from wisccc.filters import SurveyResponseFilter, SurveyRegistrationFilter
 from django_filters.views import FilterView
@@ -165,6 +166,19 @@ def wisc_cc_about(request):
 
 def wisc_cc_about_weather(request):
     return render(request, "wisccc/wisc_cc_about_weather.html")
+
+class ScenarioTableListView(SingleTableMixin, FilterView):
+    """List wisc registration entries"""
+
+    table_class = ScenarioTable
+    model = AncillaryData
+    template_name = "wisccc/wisc_cc_scenario.html"
+
+    def get_queryset(self):
+        
+        return super().get_queryset().filter(survey_field__survey_farm__survey_year__gt=2022)[:25]
+    # filterset_class = SurveyRegistrationFilter
+    
 
 
 def wisc_cc_acis(request):

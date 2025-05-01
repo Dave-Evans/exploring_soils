@@ -9,6 +9,13 @@ urlpatterns = [
     re_path(r"^wisc-cc-home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
     re_path(r"^wisc_cc_home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
     re_path(
+        r"^wisc_cc_scenario$",
+        permission_required("wisccc.survery_manager")(
+            wisccc_views.ScenarioTableListView.as_view()
+        ),        
+        name="wisc_cc_scenario",
+    ),    
+    re_path(
         r"^wisc_cc_manager_home$",
         wisccc_views.wisc_cc_manager_home,
         name="wisc_cc_manager",

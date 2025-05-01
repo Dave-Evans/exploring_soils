@@ -1,9 +1,34 @@
 import django_tables2 as tables
 from django_tables2 import TemplateColumn
 from django.db import connection
+import itertools
 import pandas as pd
-from wisccc.models import Survey, Farmer, SurveyRegistration
+from wisccc.models import Survey, Farmer, SurveyRegistration, SurveyField
 
+class ScenarioTable(tables.Table):
+    row_number = tables.Column(empty_values=())
+    # survey_field__survey_farm__id = tables.Column()
+    survey_field__crop_rotation_2023_cash_crop_species = tables.Column()
+    survey_field__cash_crop_planting_date = tables.Column()
+    # survey_field__cover_crop_species_1 = tables.Column()
+    survey_field__cover_crop_seeding_method = tables.Column()
+    survey_field__cover_crop_planting_date = tables.Column()
+    survey_field__manure_prior = tables.Column(verbose_name="Manure added before cover?")
+    # survey_field__tillage_system_cash_crop = tables.Column()
+    cc_biomass = tables.Column()
+    total_nitrogen = tables.Column()
+    # def render_cover_crop_species(self, record):
+        # return ", ".join(record.cover_crop_species_1 + record.cover_crop_species_2, record.cover_crop_species_3 + record.cover_crop_species_4, record.cover_crop_species_5)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.counter = itertools.count()
+
+    def render_row_number(self):
+        return f"{next(self.counter) + 1}"
+    
+    class Meta:
+        orderable = False
 
 class ResponseTable(tables.Table):
     farmer__first_name = tables.Column()

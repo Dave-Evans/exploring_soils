@@ -1,0 +1,334 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+{% load render_table from django_tables2 %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+    integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+    integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    td,
+    th {
+        padding: 1px 4px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+
+    tr:hover {
+        fill: brown;
+        fill-opacity: .7;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <a class="btn btn-info btn-sm" data-toggle="modal" data-target="#fieldDetail" data-fieldid="15">More
+                    info</a>
+                <h5>Scenarios</h5>
+                <select id="ScenarioSelector" class="selectize-control single selectize-input">
+                    <option value="erosion_control">Erosion control</option>
+                    <option value="nutrient_scavenger">Nutrient scavenger</option>
+                    <option value="n_credits">N Credits</option>
+                </select>
+                <!-- <a href="#" id="update-btn-asc" class="btn btn-primary">Asc</a> -->
+                <!-- <a href="#" id="update-btn-desc" class="btn btn-primary">Desc</a> -->
+                <br>
+                <span>Columns
+                    <select id="ColSelector">
+                    </select>
+                </span>
+                <div>
+                    <div id="tbholder">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="fieldDetail" tabindex="-1" role="dialog" aria-labelledby="helpInformationLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Details
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p id="fq_milkton"></p>
+                <p id="total_nitrogen"></p>
+                <div>
+                    <p id="caption_photo_1"></p><img id="image_1_url" src="" width="250" height="250">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //['cc_termination', 'cc_seeding_method', 'cc_species', 'county']
+        $('#fieldDetail').on('show.bs.modal', function (event) {
+            console.log("Opened model!")
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var fieldid = button.data('fieldid') // Extract info from data-* attributes
+            console.log(fieldid)
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+
+            var dat = soilsLayer.find((element) => element.id == parseInt(fieldid))
+
+            $('#fq_milkton').text(dat.properties.fq_milkton);
+            $('#total_nitrogen').text(dat.properties.total_nitrogen);
+            if (dat.properties.caption_photo_1 == "" | dat.properties.caption_photo_1 == null) {
+                $('#caption_photo_1').text("");
+            } else {
+                $('#caption_photo_1').text(dat.properties.caption_photo_1);
+            }
+            if (dat.properties.image_1_url == "" | dat.properties.image_1_url == null) {
+                $("#image_1_url").attr("src", "#");
+            } else {
+                $("#image_1_url").attr("src", dat.properties.image_1_url);
+            }
+
+        })
+        var default_columns = ['year', 'previous_crop', 'cc_species', 'cc_biomass'];
+
+        d3.select("#ScenarioSelector")
+            .on("change", function () {
+                console.log("Changed");
+                updateTable()
+            });
+
+
+
+        function updateTable() {
+            var scenario = $('#ScenarioSelector').val();
+
+            if (scenario == "erosion_control") {
+                var sorted = soilsLayer
+                    .filter(function (d) { return d.properties.cc_biomass !== null })
+                    .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass)
+            } else if (scenario == "n_credits") {
+                var sorted = soilsLayer
+                    .filter(function (d) { return d.properties.cc_biomass !== null })
+                    .filter(function (d) {
+                        if (d.properties.cc_species == null) {
+                            return false
+                        }
+                        return d.properties.cc_species.indexOf("legume") > -1
+
+                    })
+                    .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass)
+            } else if (scenario == "nutrient_scavenger") {
+                var sorted = soilsLayer
+                    .filter(function (d) { return d.properties.cc_biomass !== null })
+                    .filter(function (d) { return d.properties.total_nitrogen !== null })
+                    .toSorted((a, b) => (a.total_nitrogen * a.properties.cc_biomass) - b.total_nitrogen * b.properties.cc_biomass)
+            }
+
+
+            tabulate(
+                sorted.slice(0, 25)
+
+            );
+        }
+
+        var table = d3.select('#tbholder').append('table');
+        var thead = table.append('thead');
+        var tbody = table.append('tbody');
+
+        var dataurl = '/get_wisc_cc_data';
+        var geojsonObject;
+        var soilsLayer;
+
+        $.getJSON(dataurl, function (data) {
+            soilsLayer = data;
+            // tabulate(data, default_columns);
+            updateTable()
+        })
+
+        function tabulate(data) {
+            var columns = colSelectize.getValue()
+            // console.log("Before Columns: " + columns)
+            // console.log("Before type: " + typeof (columns))
+
+            // if (columns.indexOf("more_info") == -1) {
+            //     columns.push("more_info")
+            // } else {
+            //     // columns = columns.slice(0, columns.indexOf("more_info")).concat(columns.slice(-columns.indexOf("more_info")));
+            // }
+            // console.log("After Columns: " + columns)
+
+            //columns.push("more_info")
+            // append the header row
+            thead.selectAll('th')
+                .data(columns)
+                .join('th')
+                // Prettify column names here
+                .text(function (column) { return column; });
+            // .attr("class", table table-hover);
+
+            // create a row for each object in the data
+            var rows = tbody.selectAll('tr')
+                .data(data)
+                .join('tr');
+
+            // create a cell in each row for each column
+            var cells = rows.selectAll('td')
+                .data(function (row) {
+                    return columns.map(function (column) {
+                        if (Object.keys(row.properties).indexOf(column) > 0) {
+                            return { column: column, value: row.properties[column] };
+                        } else {
+                            var butn = '<a class="btn btn-info btn-sm" data-toggle="modal" data-target="#fieldDetail" data-fieldid="' + row.id + '">More info</a>'
+                            return {
+                                column: column,
+                                value: butn
+                            };
+                        }
+
+                    });
+                })
+                .join('td')
+                .text(function (d) { return d.value; })
+                .attr("class", function (d, i) { return d.column + " " + i; });
+
+            // Because I'm insisting on D3 for making this table
+            //  and I can't figure out how to properly use D3 to make this button
+            // html rather than text
+            var infobtns = d3.selectAll("td.more_info")
+            infobtns.nodes().forEach(function (cur) { cur.innerHTML = cur.innerText })
+
+            return table;
+        }
+        var cols = [
+
+            "year",
+            "county",
+            "zipcode",
+            "fq_cp",
+            "fq_rfq",
+            "fq_rfv",
+            "fq_andf",
+            "fq_ndfd30",
+            "fq_milkton",
+            "fq_tdn_adf",
+            "fq_undfom30",
+            "fq_undfom240",
+
+            "farm_id",
+            "acc_gdd",
+            "total_precip",
+            "previous_crop",
+
+            "cc_biomass",
+            "cc_species",
+
+
+            "manure_post",
+            "manure_rate",
+
+            "manure_prior",
+            "manure_value",
+
+            "spring_fq_cp",
+            "spring_notes",
+
+            "county_single",
+            "fq_dry_matter",
+
+            "spring_fq_rfq",
+            "spring_fq_rfv",
+            "cc_species_raw",
+            "cc_termination",
+            "spring_acc_gdd",
+            "spring_fq_andf",
+            "tillage_system",
+            "total_nitrogen",
+            "height_of_stand",
+            "soil_conditions",
+            "survey_field_id",
+            "cc_planting_date",
+            "cc_planting_rate",
+            "manure_post_rate",
+            "spring_fq_ndfd30",
+            "years_experience",
+            "cc_seeding_method",
+            "manure_prior_rate",
+            "residue_remaining",
+            "spring_cc_biomass",
+            "spring_fq_milkton",
+            "spring_fq_tdn_adf",
+            "spring_fq_undfom30",
+            "survey_response_id",
+            "cc_rate_and_species",
+            "spring_fq_undfom240",
+            "spring_total_precip",
+            "spring_fq_dry_matter",
+            "dominant_soil_texture",
+            "spring_total_nitrogen",
+            "tillage_equip_primary",
+            "manure_post_rate_units",
+            "spring_height_of_stand",
+            "cash_crop_planting_date",
+            "manure_prior_rate_units",
+            "tillage_equip_secondary",
+            "cc_biomass_collection_date",
+
+            "spring_cc_biomass_collection_date",
+
+        ]
+        var option_array = []
+        cols.forEach(function (item) {
+            option_array.push({ label: item, value: item })
+            // controller.addOption({
+            //     label: item.toString(),
+            //     value: item.toString()
+            // });
+        })
+        var $colSelect = $("#ColSelector").selectize({
+            plugins: ["remove_button"],
+            delimiter: " - ",
+            placeholder: "All",
+            persist: false,
+            closeAfterSelect: true,
+            maxItems: 8,
+            valueField: "value",
+            labelField: "label",
+            searchField: ["value", "label"],
+            options: option_array,
+            onChange: function (value, isOnInitialize) {
+                // updateChart(false)
+                console.log("Change!")
+                updateTable()
+            }
+        })
+        // for setting default columns
+        var colSelectize = $colSelect[0].selectize;
+        colSelectize.setValue(default_columns, true)
+
+    </script>
+
+    {% endblock content %}
