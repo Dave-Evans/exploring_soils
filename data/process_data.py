@@ -297,7 +297,9 @@ def clean_nan(row):
         "Ca Lbs/Acre",     
         "Mg Lbs/Acre",
         "S Lbs/Acre",
-        "Carbon Lbs/Acre"
+        "Carbon Lbs/Acre",
+
+        "Ave Height"
     ]
 
     for targ in target_vars:
@@ -543,14 +545,14 @@ def process_height():
             
 
             for i, row in height_data[yr][season].iterrows():
-                
+                row = clean_nan(row)
                 if yr == "2023":
                     print(f"\t\t{i}: {row['ID']}")
                     if season == "spring":
                         
                         id_col = "description1_spring"
                         # chnage spaces and underscores to hyphens to match data
-                        lkup_match = lkup.loc[lkup[id_col].str.replace("_| ", "-") == row['ID']]
+                        lkup_match = lkup.loc[lkup[id_col].str.replace("_", "-").str.replace(" ", "-") == row['ID']]
                     else:
                         
                         id_col = "description1"
@@ -559,6 +561,7 @@ def process_height():
                     if len(lkup_match) == 0:
                         print("\t\t\tNo match found.")
                         no_match[f"{yr}-{season}"].append(row['ID'])
+                        break
                         continue
                     lkup_match = lkup_match.to_dict('records')[0]
                     first_name = lkup_match["first_name"]
@@ -575,7 +578,8 @@ def process_height():
                         )
                     
                     setattr(ancillary_data, height_field, row['Ave Height'])
-
+                    ancillary_data.save()
+                    
                 elif yr == "2024":
                     
 
@@ -597,3 +601,4 @@ def process_height():
                         print("\tNo Ancillary data record.")
                         continue
                     setattr(ancillary_data, height_field, row['Ave Height'])
+                    ancillary_data.save()
