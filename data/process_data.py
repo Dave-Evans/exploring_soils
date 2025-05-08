@@ -17,6 +17,12 @@ scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/spring_lab_data/SHC\ 2023-2024\ D
 scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/DAN_MARZU_2025-01-08\ Dairyland\ report.csv ubuntu@$ipaddress:~/.
 scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/SF07350-000\ CC.CSV ubuntu@$ipaddress:~/.
 scp -i ~/.ssh/wieff_1.pem ../data/calcs_from_dan_marzu/23\ to\ 24\ weights\ and\ heights.xlsx ubuntu@$ipaddress:~/.
+
+# on remote server
+sudo mv *.csv ./exploring_soils/data/.
+sudo mv *.CSV ./exploring_soils/data/.
+sudo mv *.tsv ./exploring_soils/data/.
+sudo mv *.xlsx ./exploring_soils/data/.
 '''
 # Cross walk between lab IDs and old survey_response_ids
 
@@ -513,6 +519,7 @@ def process_height():
     Fall 2024
     '''
     fl_height = './data/calcs_from_dan_marzu/23 to 24 weights and heights.xlsx'
+    fl_height = './data/23 to 24 weights and heights.xlsx'
     height_data = {
         "2023": {
             "fall": pd.read_excel(fl_height, sheet_name="2023"),
