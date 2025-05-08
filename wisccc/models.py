@@ -1568,7 +1568,7 @@ class AncillaryData(models.Model):
     dry_matter = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="Dry matter, the proportion of the sample which is dry matter versus moisture; expressed as percent. From Dairyland.", null=True
     )
-    ndf = models.DecimalField(
+    adf = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
     rfv = models.DecimalField(
@@ -1715,7 +1715,7 @@ class AncillaryData(models.Model):
     spring_dry_matter = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
-    spring_ndf = models.DecimalField(
+    spring_adf = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
     spring_rfv = models.DecimalField(
