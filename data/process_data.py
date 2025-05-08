@@ -11,11 +11,11 @@ pullip () {
 ipaddress=$( pullip )
 scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/all_lab_data_2023.tsv ubuntu@$ipaddress:~/.
 scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/bn05905_p_cover_crop2023_biomass.csv ubuntu@$ipaddress:~/.
-scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/spring_lab_data/BN5905 UW COVER_CROP.CSV ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/spring_lab_data/BN5905\ UW\ COVER_CROP.CSV ubuntu@$ipaddress:~/.
 scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/dairyland_labs_forage_analysis_data_2023.csv ubuntu@$ipaddress:~/.
-scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/spring_lab_data/SHC 2023-2024 Dairyland Labs data.csv ubuntu@$ipaddress:~/.
-scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/DAN_MARZU_2025-01-08 Dairyland report.csv ubuntu@$ipaddress:~/.
-scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/SF07350-000 CC.CSV ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/spring_lab_data/SHC\ 2023-2024\ Dairyland\ Labs\ data.csv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/DAN_MARZU_2025-01-08\ Dairyland\ report.csv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/SF07350-000\ CC.CSV ubuntu@$ipaddress:~/.
 scp -i ~/.ssh/wieff_1.pem ../data/calcs_from_dan_marzu/23\ to\ 24\ weights\ and\ heights.xlsx ubuntu@$ipaddress:~/.
 '''
 # Cross walk between lab IDs and old survey_response_ids
@@ -44,7 +44,10 @@ def populate_ancil_record_as_fall(row, ancillarydata):
     ancillarydata.percent_ca = row["Ca"]
     ancillarydata.percent_mg = row["Mg"]
     ancillarydata.percent_s = row["S"]
-    ancillarydata.n_content = row["Carbon Lbs/Acre"] / row["C-N Ratio"]
+    if row["Carbon Lbs/Acre"] is None or row["C-N Ratio"] is None:
+        ancillarydata.n_content = None
+    else:
+        ancillarydata.n_content = row["Carbon Lbs/Acre"] / row["C-N Ratio"]
     ancillarydata.p_content = row["P2O5 Lbs/Acre"]
     ancillarydata.k_content = row["K2O Lbs/Acre"]
     ancillarydata.ca_content = row["Ca Lbs/Acre"]     
@@ -226,7 +229,7 @@ def process_dairyland_fall_2023():
         farmer_first_name = ancillary_data.survey_field.survey_farm.farmer.first_name
         print(f"Data for {farmer_first_name} {farmer_last_name}")
         print(f"{first_name} {last_name}")
-
+        row = clean_nan(row)
         populate_ancil_record_dl_fall(row, ancillary_data)
 
 def process_dairyland_spring_2023():
@@ -421,7 +424,7 @@ def find_farmer(lab_id):
 
 
 
-
+# No survey field found for kirk leach
 def process_dairyland_fall_2024():
     fl_dairyland = "./data/labdata_2024/DAN_MARZU_2025-01-08 Dairyland report.csv"
     fl_dairyland = "./data/DAN_MARZU_2025-01-08 Dairyland report.csv"
@@ -472,7 +475,11 @@ def process_agsource_fall_2024():
         descr = row["Grower Name"] + row["Client Sample ID"]
         id_farmer = find_farmer(descr)
 
-        if id_farmer == 85:
+        if id_farmer is None:
+            print("\tSkipping:")
+            print(f"\t{descr}")
+            continue
+        elif id_farmer == 85:
             # JKs second field was given a different ID
             farmer = Farmer.objects.get(id=55)
         else:
