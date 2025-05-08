@@ -4,9 +4,25 @@ from django.contrib.auth.models import User
 from wisccc.models import AncillaryData, SurveyFarm, SurveyField, Farmer
 import datetime
 
-
+'''For push data to server, from ./infra
+pullip () {
+    sed -e 's/^"//' -e 's/"$//' <<< $(terraform output ip)
+}
+ipaddress=$( pullip )
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/all_lab_data_2023.tsv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/bn05905_p_cover_crop2023_biomass.csv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/spring_lab_data/BN5905 UW COVER_CROP.CSV ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/dairyland_labs_forage_analysis_data_2023.csv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2023/spring_lab_data/SHC 2023-2024 Dairyland Labs data.csv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/DAN_MARZU_2025-01-08 Dairyland report.csv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/SF07350-000 CC.CSV ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/calcs_from_dan_marzu/23\ to\ 24\ weights\ and\ heights.xlsx ubuntu@$ipaddress:~/.
+'''
 # Cross walk between lab IDs and old survey_response_ids
+
+
 fl_lkup = "./data/labdata_2023/all_lab_data_2023.tsv"
+fl_lkup = "./data/all_lab_data_2023.tsv"
 
 lkup = pd.read_csv(fl_lkup, sep="\t")
 
@@ -119,6 +135,7 @@ def populate_ancil_record_dl_spring(row, ancillarydata):
 
 def process_agsource_fall_2023():
     fl_agsource_fall_23 = "./data/labdata_2023/bn05905_p_cover_crop2023_biomass.csv"
+    fl_agsource_fall_23 = "./data/bn05905_p_cover_crop2023_biomass.csv"
     agsource_fall_23 = pd.read_csv(fl_agsource_fall_23)
     for i, row in agsource_fall_23.iterrows():
         
@@ -148,6 +165,7 @@ def process_agsource_fall_2023():
 
 def process_agsource_spring_2023():
     fl_agsource_spring_23 = "./data/labdata_2023/spring_lab_data/BN5905 UW COVER_CROP.CSV"
+    fl_agsource_spring_23 = "./data/BN5905 UW COVER_CROP.CSV"
     agsource_spring_23 = pd.read_csv(fl_agsource_spring_23)
     for i, row in agsource_spring_23.iterrows():
         # print(f"{i}: {row['Grower Name']}")
@@ -184,6 +202,7 @@ def process_dairyland_fall_2023():
     fl_dairyland_fall_23 = (
         "./data/labdata_2023/dairyland_labs_forage_analysis_data_2023.csv"
     )
+    fl_dairyland_fall_23 = "./data/dairyland_labs_forage_analysis_data_2023.csv"
     dairyland_fall_23 = pd.read_csv(fl_dairyland_fall_23)
     for i, row in dairyland_fall_23.iterrows():
         # print(f"{i}: {row['Grower Name']}")
@@ -208,11 +227,11 @@ def process_dairyland_fall_2023():
         print(f"Data for {farmer_first_name} {farmer_last_name}")
         print(f"{first_name} {last_name}")
 
-        populate_ancil_record_dl_fall(row, ancillarydata)
+        populate_ancil_record_dl_fall(row, ancillary_data)
 
 def process_dairyland_spring_2023():
     fl_dairyland_spring_23 = (
-    "./data/labdata_2023/spring_lab_data/SHC 2023-2024 Dairyland Labs data.csv"
+    "./data/SHC 2023-2024 Dairyland Labs data.csv"
     )
     dairyland_spring_23 = pd.read_csv(fl_dairyland_spring_23)
     for i, row in dairyland_spring_23.iterrows():
@@ -238,7 +257,7 @@ def process_dairyland_spring_2023():
         print(f"Data for {farmer_first_name} {farmer_last_name}")
         print(f"{first_name} {last_name}")
 
-        populate_ancil_record_dl_spring(row, ancillarydata)        
+        populate_ancil_record_dl_spring(row, ancillary_data)        
 
 
 
@@ -405,6 +424,7 @@ def find_farmer(lab_id):
 
 def process_dairyland_fall_2024():
     fl_dairyland = "./data/labdata_2024/DAN_MARZU_2025-01-08 Dairyland report.csv"
+    fl_dairyland = "./data/DAN_MARZU_2025-01-08 Dairyland report.csv"
     dairyland = pd.read_csv(fl_dairyland)
     for i, row in dairyland.iterrows():
         
@@ -444,6 +464,7 @@ def process_dairyland_fall_2024():
 
 def process_agsource_fall_2024():
     fl_agsource = "./data/labdata_2024/SF07350-000 CC.CSV"
+    fl_agsource = "./data/SF07350-000 CC.CSV"
     agsource = pd.read_csv(fl_agsource)
 
     for i, row in agsource.iterrows():
