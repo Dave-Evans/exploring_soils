@@ -39,9 +39,9 @@ class ResponseTable(tables.Table):
 
 class RegistrationTable(tables.Table):
     signup_timestamp = tables.Column()
-    first_name = tables.Column()
-    last_name = tables.Column()
-    email = tables.Column()
+    farmer__first_name = tables.Column()
+    farmer__last_name = tables.Column()
+    farmer__user__email = tables.Column()
     belong_to_groups = tables.Column()
     notes = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column_registration.html")

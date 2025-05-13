@@ -95,16 +95,8 @@ urlpatterns = [
     ),
     re_path(
         r"^wisc_cc_register_1$",
-        # wisccc_views.wisc_cc_interested,
         wisccc_views.wisc_cc_register_1,
         name="wisc_cc_register_1",
-    ),
-    re_path(
-        r"^wisc_cc_register_1$",
-        wisccc_views.wisc_cc_interested,
-        name="wiscc_cc_interested",
-        # wisccc_views.wisc_cc_register_1,
-        # name="wisc_cc_register_1",
     ),
     re_path(
         r"^wisc_cc_register_2$",
@@ -181,7 +173,10 @@ urlpatterns = [
     ),
     re_path(
         r"^registration_table$",
-        wisccc_views.registration_table,
+        permission_required("wisccc.survery_manager")(
+            wisccc_views.RegistrationTableListView.as_view()
+        ),        
+        # wisccc_views.registration_table,
         name="registration_table",
     ),
     path(
