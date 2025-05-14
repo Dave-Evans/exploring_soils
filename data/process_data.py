@@ -330,11 +330,14 @@ def find_survey_field(farmer, id_farmer=None):
         return None
 
     if len(survey_field) > 1:
-        # Josh kamps second field
+        # JK second field
         if id_farmer == 85:
             survey_field = SurveyField.objects.get(id = 171)
         elif id_farmer == 55:
             survey_field = SurveyField.objects.get(id = 168)
+        # KL first field, no lab data for number 2
+        elif id_farmer == 32:
+            survey_field = SurveyField.objects.get(id = 170)
         else:
             return None
         
@@ -343,12 +346,12 @@ def find_survey_field(farmer, id_farmer=None):
     survey_field = survey_field[0]
     return survey_field
         # if survey_farm[1].id == 168:
-        #     print("\tJosh Kamps, returning first field")
+        #     print("\tJK, returning first field")
         #     survey_field = SurveyField.objects.get(id=168)
         #     return survey_field
 
         # if survey_farm[0] in (170, 182):
-        #     print("\tKirk Leach, return first field")
+        #     print("\tKL, return first field")
         #     survey_field = SurveyField.objects.get(id=170)
         #     return survey_field
 
@@ -432,7 +435,7 @@ def find_farmer(lab_id):
 
 
 
-# No survey field found for kirk leach
+
 def process_dairyland_fall_2024():
     fl_dairyland = "./data/labdata_2024/DAN_MARZU_2025-01-08 Dairyland report.csv"
     fl_dairyland = "./data/DAN_MARZU_2025-01-08 Dairyland report.csv"
@@ -602,3 +605,6 @@ def process_height():
                         continue
                     setattr(ancillary_data, height_field, row['Ave Height'])
                     ancillary_data.save()
+
+
+                    
