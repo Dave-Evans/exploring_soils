@@ -71,6 +71,7 @@ dat_survey %>%
   
   # Forage quality for Dairyland
   rename(fq_rfv = "rfv_perc_dm") %>%
+  rename(fq_adf = "adf_perc_dm") %>%
   rename(fq_undfom240 = "undfdom240_perc_dm") %>%
   rename(fq_dry_matter = "dry_matter") %>%
   
