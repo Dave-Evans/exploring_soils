@@ -144,7 +144,11 @@
         let cardContainer;
         // fieldRecord is one instance of a field from our data
         let createFieldCard = (fieldRecord) => {
-
+            let planting_date = new Date(fieldRecord.properties.cc_planting_date);
+            let str_planting_date = planting_date.toLocaleDateString(
+                "en-US",
+                { year: 'numeric', month: 'long', day: 'numeric' }
+            )
             let card = document.createElement('div');
             card.className = 'card field';
             card.id = "field-" + fieldRecord.id
