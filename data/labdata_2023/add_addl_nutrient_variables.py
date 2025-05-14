@@ -46,8 +46,8 @@ dct_cols = {
 
 
 def populate_2023_spring_and_fall():
-    dairyland_fall23 = pd.read_csv(fl_dairyland_fall_23)
-    dairyland_spring23 = pd.read_csv(fl_dairyland_spring_23)
+    # dairyland_fall23 = pd.read_csv(fl_dairyland_fall_23)
+    # dairyland_spring23 = pd.read_csv(fl_dairyland_spring_23)
 
     agsource_fall23 = pd.read_csv(fl_nutrient_fall_23)
     agsource_spring23 = pd.read_csv(fl_nutrient_spring_23)
