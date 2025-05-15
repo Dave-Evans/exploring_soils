@@ -9,6 +9,7 @@
         <div class="card">
             <div class="card-body">
                 <h5>Scenarios</h5>
+
                 <select id="ScenarioSelector" class="selectize-control single selectize-input">
                     <option value="erosion_control">Erosion control</option>
                     <option value="nutrient_scavenger">Nutrient scavenger</option>
@@ -97,6 +98,9 @@
             $("#fieldcard-container").find(".field").remove()
             // Filter our fields
             var filtered_data = filterData(soilsLayer);
+            for (fieldRecord of filtered_data) {
+                console.log(fieldRecord.id, fieldRecord.properties.n_by_bio);
+            }
             // Make cards
             initListOfFieldCards(filtered_data);
 
@@ -107,20 +111,80 @@
             var scenario = $('#ScenarioSelector').val();
             // Each scenario will have a different function for 
             //  filtering and sorting
-            let filtered_data;
+            let filtered_data = soilsLayer;
             switch (scenario) {
                 case "erosion_control":
-                    filtered_data = soilsLayer.slice(0, 10)
+                    filtered_data = erosionControlProcessor(filtered_data);
                     break;
                 case "nutrient_scavenger":
-                    filtered_data = soilsLayer.slice(11, 20)
+                    filtered_data = nutrientScavengerProcessor(filtered_data);
                     break;
                 case "n_credits":
-                    filtered_data = soilsLayer.slice(21, 30)
+                    filtered_data = nutrientScavengerProcessor(filtered_data);
                     break;
             }
             return filtered_data;
         }
+
+        function erosionControlProcessor(filtered_data) {
+            // erosion control sorter
+            //  remove cases where fall biomass is null
+            //  sort by most to least biomass
+
+            filtered_data = filtered_data
+                .filter(function (d) { return d.properties.cc_biomass !== null })
+                .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass)
+                ;
+
+            return filtered_data;
+        }
+
+        function nutrientScavengerProcessor(filtered_data) {
+            // Nutrient scavenger sorter
+            //  remove cases where fall biomass is null
+            //  remove cases where fall total nitrogen is null
+            //  remove cases where a legume was planted
+            //  sort by most to least total total nitrogen * biomass
+            for (fieldRecord of filtered_data) {
+                fieldRecord.properties.n_by_bio = fieldRecord.properties.total_nitrogen * fieldRecord.properties.cc_biomass;
+            }
+
+            filtered_data = filtered_data
+                .filter(function (d) { return d.properties.cc_biomass !== null })
+                .filter(function (d) { return d.properties.total_nitrogen !== null })
+                .filter(function (d) {
+                    if (d.properties.cc_species == null) {
+                        return false
+                    }
+                    return d.properties.cc_species.indexOf("legume") == -1
+
+                });
+            // Why the fuck I have to sort this twice, I don't know.
+            filtered_data = filtered_data
+                .toSorted((a, b) => +a.properties.n_by_bio - +b.properties.n_by_bio)
+                .toSorted((a, b) => +a.properties.n_by_bio + +b.properties.n_by_bio);
+
+
+            return filtered_data;
+        }
+
+        function nCreditsProcessor(filtered_data) {
+            // N credits
+            // remove cases where no biomass
+            // remove cases where there is no legume
+            filtered_data = filtered_data
+                .filter(function (d) { return d.properties.cc_biomass !== null })
+                .filter(function (d) {
+                    if (d.properties.cc_species == null) {
+                        return false
+                    }
+                    return d.properties.cc_species.indexOf("legume") > -1
+
+                })
+                .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass);
+
+            return filtered_data;
+        };
 
         function prettyTextPlantingDetails(fieldRecord) {
             let planting_date = new Date(fieldRecord.properties.cc_planting_date);
@@ -177,6 +241,24 @@
                 str_planting_date;
             text.className = 'card-text';
 
+
+            if (fieldRecord.properties.cc_biomass == null) {
+                biomass_text = ' '
+            } else {
+                biomass_text = "Fall sampled biomass was " +
+                    fieldRecord.properties.cc_biomass.toFixed(1) +
+                    " tons per acre. ";
+            }
+            if (fieldRecord.properties.total_nitrogen == null) {
+                totN_text = ''
+            } else {
+                totN_text = "Fall sampled N concentration was " +
+                    fieldRecord.properties.total_nitrogen.toFixed(1) +
+                    "%.";
+            }
+            let text_addl = document.createElement('p');
+            text_addl.innerText = biomass_text + totN_text;
+
             let btn = document.createElement('a');
             btn.className = "btn btn-primary"
             btn.innerText = "More info"
@@ -188,6 +270,7 @@
             cardBody.appendChild(img);
             cardBody.appendChild(title);
             cardBody.appendChild(text);
+            cardBody.appendChild(text_addl);
             cardBody.appendChild(btn);
 
             card.appendChild(cardBody);
@@ -195,16 +278,16 @@
 
         }
         let initListOfFieldCards = (data) => {
-            // if (cardContainer) {
-            //     document.getElementById('fieldcard-container').replaceWith(cardContainer);
-            //     return;
-            // }
-
+            // Returning only top 15 here
+            //  later if we want to show different "pages" of results
+            //  this can be use to slice the filtered data at different points.
             cardContainer = document.getElementById('fieldcard-container');
-            // var tasks = soilsLayer.slice(slice_start, slice_end);
-            data.forEach((fieldRecord) => {
-                createFieldCard(fieldRecord);
-            });
+
+            data
+                .slice(0, 15)
+                .forEach((fieldRecord) => {
+                    createFieldCard(fieldRecord);
+                });
         };
 
         // Populate Modal
