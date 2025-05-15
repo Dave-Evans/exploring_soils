@@ -3,7 +3,15 @@
 
 
 {% block content %}
-
+<style>
+    .popupphoto {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+        border: 1px solid #555;
+    }
+</style>
 <div class="row justify-content-center">
     <div class="col-lg-12 col-md-12 col-sm-12">
         <div class="card">
@@ -62,11 +70,15 @@
                     </h3>
                 </div>
                 <div class="modal-body">
-                    <p id="fq_milkton"></p>
-                    <p id="total_nitrogen"></p>
                     <div>
-                        <p id="caption_photo_1"></p><img id="image_1_url" src="" width="250" height="250">
+                        <p id="caption_photo_1"></p><img id="image_1_url" class='popupphoto' src="" width="250"
+                            height="250">
                     </div>
+                    <p id="text_description_1"></p>
+                    <p id="text_description_2"></p>
+                    <!-- <p id="fq_milkton"></p>
+                    <p id="total_nitrogen"></p> -->
+
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -78,6 +90,38 @@
 
 
     <script>
+
+
+        // Populate Modal
+        $('#fieldDetail').on('show.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var fieldid = button.data('fieldid') // Extract info from data-* attributes
+
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+
+            var fieldRecord = soilsLayer.find((element) => element.id == parseInt(fieldid))
+            $('.modal-title').text("Field " + fieldRecord.id);
+            $('#text_description_1').text(
+                prettyTextPlantingDetails(fieldRecord)
+            );
+
+            if (fieldRecord.properties.caption_photo_1 == "" | fieldRecord.properties.caption_photo_1 == null) {
+                $('#caption_photo_1').text("");
+            } else {
+                $('#caption_photo_1').text(fieldRecord.properties.caption_photo_1);
+            }
+            if (fieldRecord.properties.image_1_url == "" | fieldRecord.properties.image_1_url == null) {
+                $("#image_1_url").attr("src", "#");
+            } else {
+                $("#image_1_url").attr("src", fieldRecord.properties.image_1_url);
+            }
+
+        })
+
+
         var dataurl = '/get_wisc_cc_data';
         var soilsLayer;
 
@@ -186,33 +230,75 @@
             return filtered_data;
         };
 
+        function prettifySeedingMethod(cc_seeding_method) {
+            // For adding the seeding method into a sentance
+            // "The cover crop was [pretty seeding method] on [planting date]"
+            let pretty_seeding_method;
+            switch (cc_seeding_method) {
+
+                case "frost seeded":
+                    pretty_seeding_method = "frost seeded"
+                    break;
+                case "broadcast, no incorporation":
+                    pretty_seeding_method = "broadcast without incorporating"
+                    break;
+                case "drilled":
+                    pretty_seeding_method = "drilled"
+                    break;
+                case "broadcast + incorporation":
+                    pretty_seeding_method = "broadcast with incorporation"
+                    break;
+                case "early interseeded-- broadcast":
+                    pretty_seeding_method = "interseeded early by broadcast"
+                    break;
+                case "late interseeded-- broadcast":
+                    pretty_seeding_method = "interseeded late by broadcast"
+                    break;
+                case "late interseeded-- aerial":
+                    pretty_seeding_method = "interseeded late by aerial planting"
+                    break;
+                case "aerial":
+                    pretty_seeding_method = "aerially broadcast"
+                    break;
+                case "interseed(early)":
+                    pretty_seeding_method = "interseeded early"
+                    break;
+                case "interseed(late)":
+                    pretty_seeding_method = "interseeded late"
+                    break;
+                case "other":
+                    pretty_seeding_method = "was planted on"
+                    break;
+
+            }
+            return pretty_seeding_method;
+        }
+
         function prettyTextPlantingDetails(fieldRecord) {
             let planting_date = new Date(fieldRecord.properties.cc_planting_date);
             let str_planting_date = planting_date.toLocaleDateString(
                 "en-US",
                 { year: 'numeric', month: 'long', day: 'numeric' }
             )
-            fieldRecord.properties.cc_seeding_method
-            let cc_seeding_method
+
+            // Clean up seeding method
+            let cc_seeding_method = prettifySeedingMethod(fieldRecord.properties.cc_seeding_method);
 
             let textDetails = "This farm planted " +
                 fieldRecord.properties.cc_species +
                 " following " + fieldRecord.properties.previous_crop + ".";
-            // Clean up seeding method
 
-            text.innerText += "The cover crop was " +
-                fieldRecord.properties.cc_seeding_method + " on " +
-                str_planting_date;
 
+            textDetails += " The cover crop was " +
+                cc_seeding_method + " on " +
+                str_planting_date + ".";
+
+            return textDetails;
         }
         let cardContainer;
         // fieldRecord is one instance of a field from our data
         let createFieldCard = (fieldRecord) => {
-            let planting_date = new Date(fieldRecord.properties.cc_planting_date);
-            let str_planting_date = planting_date.toLocaleDateString(
-                "en-US",
-                { year: 'numeric', month: 'long', day: 'numeric' }
-            )
+
             let card = document.createElement('div');
             card.className = 'card field';
             card.id = "field-" + fieldRecord.id
@@ -231,14 +317,7 @@
 
             let text = document.createElement('p');
             // If it was a mix we need an article: "a mix of..."
-            text.innerText = "This farm planted " +
-                fieldRecord.properties.cc_species +
-                " following " + fieldRecord.properties.previous_crop + ".";
-            // Clean up seeding method
-            // Format time.
-            text.innerText += "The cover crop was " +
-                fieldRecord.properties.cc_seeding_method + " on " +
-                str_planting_date;
+            text.innerText = prettyTextPlantingDetails(fieldRecord);
             text.className = 'card-text';
 
 
@@ -289,33 +368,6 @@
                     createFieldCard(fieldRecord);
                 });
         };
-
-        // Populate Modal
-        $('#fieldDetail').on('show.bs.modal', function (event) {
-
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var fieldid = button.data('fieldid') // Extract info from data-* attributes
-
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-            var modal = $(this)
-
-            var dat = soilsLayer.find((element) => element.id == parseInt(fieldid))
-            $('.modal-title').text("Field " + dat.id);
-            $('#fq_milkton').text(dat.properties.fq_milkton);
-            $('#total_nitrogen').text(dat.properties.total_nitrogen);
-            if (dat.properties.caption_photo_1 == "" | dat.properties.caption_photo_1 == null) {
-                $('#caption_photo_1').text("");
-            } else {
-                $('#caption_photo_1').text(dat.properties.caption_photo_1);
-            }
-            if (dat.properties.image_1_url == "" | dat.properties.image_1_url == null) {
-                $("#image_1_url").attr("src", "#");
-            } else {
-                $("#image_1_url").attr("src", dat.properties.image_1_url);
-            }
-
-        })
 
     </script>
 
