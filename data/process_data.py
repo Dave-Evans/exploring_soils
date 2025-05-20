@@ -28,7 +28,7 @@ sudo mv *.xlsx ./exploring_soils/data/.
 
 
 fl_lkup = "./data/labdata_2023/all_lab_data_2023.tsv"
-fl_lkup = "./data/all_lab_data_2023.tsv"
+# fl_lkup = "./data/all_lab_data_2023.tsv"
 
 lkup = pd.read_csv(fl_lkup, sep="\t")
 
@@ -144,7 +144,7 @@ def populate_ancil_record_dl_spring(row, ancillarydata):
 
 def process_agsource_fall_2023():
     fl_agsource_fall_23 = "./data/labdata_2023/bn05905_p_cover_crop2023_biomass.csv"
-    fl_agsource_fall_23 = "./data/bn05905_p_cover_crop2023_biomass.csv"
+    # fl_agsource_fall_23 = "./data/bn05905_p_cover_crop2023_biomass.csv"
     agsource_fall_23 = pd.read_csv(fl_agsource_fall_23)
     for i, row in agsource_fall_23.iterrows():
         
@@ -174,7 +174,7 @@ def process_agsource_fall_2023():
 
 def process_agsource_spring_2023():
     fl_agsource_spring_23 = "./data/labdata_2023/spring_lab_data/BN5905 UW COVER_CROP.CSV"
-    fl_agsource_spring_23 = "./data/BN5905 UW COVER_CROP.CSV"
+    # fl_agsource_spring_23 = "./data/BN5905 UW COVER_CROP.CSV"
     agsource_spring_23 = pd.read_csv(fl_agsource_spring_23)
     for i, row in agsource_spring_23.iterrows():
         # print(f"{i}: {row['Grower Name']}")
@@ -211,7 +211,7 @@ def process_dairyland_fall_2023():
     fl_dairyland_fall_23 = (
         "./data/labdata_2023/dairyland_labs_forage_analysis_data_2023.csv"
     )
-    fl_dairyland_fall_23 = "./data/dairyland_labs_forage_analysis_data_2023.csv"
+    # fl_dairyland_fall_23 = "./data/dairyland_labs_forage_analysis_data_2023.csv"
     dairyland_fall_23 = pd.read_csv(fl_dairyland_fall_23)
     for i, row in dairyland_fall_23.iterrows():
         # print(f"{i}: {row['Grower Name']}")
@@ -239,9 +239,10 @@ def process_dairyland_fall_2023():
         populate_ancil_record_dl_fall(row, ancillary_data)
 
 def process_dairyland_spring_2023():
-    fl_dairyland_spring_23 = (
-    "./data/SHC 2023-2024 Dairyland Labs data.csv"
-    )
+    fl_dairyland_spring_23 = "./data/labdata_2023/spring_lab_data/SHC 2023-2024 Dairyland Labs data.csv"
+    # fl_dairyland_spring_23 = (
+    # "./data/SHC 2023-2024 Dairyland Labs data.csv"
+    # )
     dairyland_spring_23 = pd.read_csv(fl_dairyland_spring_23)
     for i, row in dairyland_spring_23.iterrows():
         # print(f"{i}: {row['Grower Name']}")
@@ -438,7 +439,7 @@ def find_farmer(lab_id):
 
 def process_dairyland_fall_2024():
     fl_dairyland = "./data/labdata_2024/DAN_MARZU_2025-01-08 Dairyland report.csv"
-    fl_dairyland = "./data/DAN_MARZU_2025-01-08 Dairyland report.csv"
+    # fl_dairyland = "./data/DAN_MARZU_2025-01-08 Dairyland report.csv"
     dairyland = pd.read_csv(fl_dairyland)
     for i, row in dairyland.iterrows():
         
@@ -478,7 +479,7 @@ def process_dairyland_fall_2024():
 
 def process_agsource_fall_2024():
     fl_agsource = "./data/labdata_2024/SF07350-000 CC.CSV"
-    fl_agsource = "./data/SF07350-000 CC.CSV"
+    # fl_agsource = "./data/SF07350-000 CC.CSV"
     agsource = pd.read_csv(fl_agsource)
 
     for i, row in agsource.iterrows():
