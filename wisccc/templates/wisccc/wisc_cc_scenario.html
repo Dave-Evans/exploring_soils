@@ -3,6 +3,12 @@
 
 
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+    integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+    integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
     .popupphoto {
         display: block;
@@ -11,13 +17,22 @@
         width: 50%;
         border: 1px solid #555;
     }
+
+    .selectize-dropdown,
+    .selectize-input {
+        width: 200px !important;
+    }
+
+    .selectize-short {
+        width: 175px !important
+    }
 </style>
 <div class="row justify-content-center">
     <div class="col-lg-12 col-md-12 col-sm-12">
         <div class="card">
             <div class="card-body">
-                <h5>Scenarios</h5>
-                <div>
+
+                <!-- <div>
                     <p>Todos</p>
                     <ul>
                         <s>
@@ -32,368 +47,520 @@
                         <s>
                             <li>Build n credits sorter and filterer</li>
                         </s>
-                        <li>Tidy cards - brief description and county</li>
+                        <s>
+                            <li>Tidy cards - brief description and county</li>
+                        </s>
                         <li>Make pretty modal of field details</li>
-                        <li>Build soil type filter</li>
-                        <li>Build geography filter</li>
+                        <ul>
+                            <li>planting rate and intial soil conditions</li>
+                            <li>manuring info</li>
+                            <li>field acreage</li>
+                            <li>tillage</li>
+                            <li>termination</li>
+                            <li>forage quality info</li>
+                            <li>nutrient info</li>
+                            <li>growing conditions: gdd and precip</li>
+                            <li>soil texture</li>
+                        </ul>
+                        <s><li>Build soil type filter</li></s>
+                        <s><li>Build geography filter</li></s>
                         <li>Build weed suppression sorter and filterer</li>
                         <li>Build erosion control sorter and filterer</li>
                         <li>Build grazing fall sorter and filterer</li>
                         <li>Build grazing spring sorter and filterer</li>
+                        <li>Pretty cards? More description?</li>
 
                     </ul>
-                </div>
-                <select id="ScenarioSelector" class="selectize-control single selectize-input">
-                    <option value="erosion_control">Erosion control</option>
-                    <option value="nutrient_scavenger">Nutrient scavenger</option>
-                    <option value="n_credits">N Credits</option>
-                </select>
-                <div id="fieldcard-container" class="card-columns">
-                    <!-- <div class="card">
-                        <img class="card-img-top" src="..." alt="Card image cap">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in
-                                to additional content. This content is a little bit longer.</p>
-                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                </div> -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Scenarios</h5>
+                                <p class="card-text">
+                                    <select id="ScenarioSelector" class="selectize-control single selectize-input">
+                                        <option value="erosion_control">Erosion control</option>
+                                        <option value="nutrient_scavenger">Nutrient scavenger</option>
+                                        <option value="n_credits">N Credits</option>
+                                    </select>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <img class="card-img-top" src="..." alt="Card image cap">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This card has supporting text below as a natural lead-in to additional
-                                content.</p>
-                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Filters</h5>
+                                <p class="card-text">
+                                    <select id="filterSoilType">
+                                    </select>
+                                    <select id="filterCounty">
+                                    </select>
+                                </p>
+
+                            </div>
+
                         </div>
                     </div>
-                    <div class="card">
-                        <img class="card-img-top" src="..." alt="Card image cap">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
-                                additional content. This card has even longer content than the first to show that equal
-                                height action.</p>
-                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                        </div>
-                    </div> -->
                 </div>
 
             </div>
+            <div id="fieldcard-container" class="card-columns"></div>
         </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="fieldDetail" tabindex="-1" role="dialog" aria-labelledby="helpInformationLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">Details
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </h3>
-                </div>
-                <div class="modal-body">
-                    <div>
-                        <p id="caption_photo_1"></p><img id="image_1_url" class='popupphoto' src="" width="250"
-                            height="250">
+
+        <!-- Modal -->
+        <div class="modal fade" id="fieldDetail" tabindex="-1" role="dialog" aria-labelledby="helpInformationLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="exampleModalLabel">Details
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </h3>
                     </div>
-                    <p id="text_description_1"></p>
-                    <p id="text_description_2"></p>
-                    <!-- <p id="fq_milkton"></p>
-                    <p id="total_nitrogen"></p> -->
+                    <div class="modal-body">
+                        <div>
+                            <p id="caption_photo_1"></p><img id="image_1_url" class='popupphoto' src="" width="250"
+                                height="250">
+                        </div>
+                        <p id="text_description_1"></p>
+                        <p id="text_description_2"></p>
+                        <p id="text_description_3"></p>
+                        <p id="text_manure"></p>
 
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
-    <script>
+        <script>
+
+            // Populate Modal
+            $('#fieldDetail').on('show.bs.modal', function (event) {
+
+                var button = $(event.relatedTarget) // Button that triggered the modal
+                var fieldid = button.data('fieldid') // Extract info from data-* attributes
+
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                var modal = $(this)
+
+                var fieldRecord = soilsLayer.find((element) => element.id == parseInt(fieldid))
+                $('.modal-title').text("Field " + fieldRecord.id);
+                $('#text_description_1').text(
+                    prettyTextPlantingDetails(fieldRecord)
+                );
+
+                if (fieldRecord.properties.caption_photo_1 == "" | fieldRecord.properties.caption_photo_1 == null) {
+                    $('#caption_photo_1').text("");
+                } else {
+                    $('#caption_photo_1').text(fieldRecord.properties.caption_photo_1);
+                }
+                if (fieldRecord.properties.image_1_url == "" | fieldRecord.properties.image_1_url == null) {
+                    $("#image_1_url").attr("src", "#");
+                } else {
+                    $("#image_1_url").attr("src", fieldRecord.properties.image_1_url);
+                }
+
+            })
 
 
-        // Populate Modal
-        $('#fieldDetail').on('show.bs.modal', function (event) {
+            var dataurl = '/get_wisc_cc_data';
+            var soilsLayer;
 
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var fieldid = button.data('fieldid') // Extract info from data-* attributes
+            $.getJSON(dataurl, function (data) {
+                soilsLayer = data;
 
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-            var modal = $(this)
+                console.log("ready!")
+                // Populate selectize boxes
+                for (k in Object.keys(boxes_select)) {
 
-            var fieldRecord = soilsLayer.find((element) => element.id == parseInt(fieldid))
-            $('.modal-title').text("Field " + fieldRecord.id);
-            $('#text_description_1').text(
-                prettyTextPlantingDetails(fieldRecord)
-            );
+                    id_selector = Object.keys(boxes_select)[k];
+                    target_field = boxes_select[id_selector]
+                    $("#" + id_selector).selectize({
+                        plugins: ["remove_button"],
+                        delimiter: " - ",
+                        placeholder: "All",
+                        persist: false,
+                        closeAfterSelect: true,
+                        maxItems: null,
+                        valueField: "value",
+                        labelField: "label",
+                        searchField: ["value", "label"],
+                        options: pop_selectize_box(soilsLayer, id_selector, target_field),
+                        onChange: function (value, isOnInitialize) {
 
-            if (fieldRecord.properties.caption_photo_1 == "" | fieldRecord.properties.caption_photo_1 == null) {
-                $('#caption_photo_1').text("");
-            } else {
-                $('#caption_photo_1').text(fieldRecord.properties.caption_photo_1);
+                            updateFieldCards()
+
+                        }
+                    })
+                };
+
+                updateFieldCards()
+            });
+
+            var scenario_selector = document.getElementById('ScenarioSelector');
+            scenario_selector.addEventListener('change', function (ev) {
+                updateFieldCards();
+            });
+
+
+            function updateFieldCards() {
+                //Remove existing cards
+                $("#fieldcard-container").find(".field").remove()
+                // Filter our fields
+                var filtered_data = soilsLayer;
+                console.log("starting length: " + filtered_data.length)
+                filtered_data = scenarioSortData(filtered_data);
+                console.log("After scenario: " + filtered_data.length)
+                filtered_data = applyFilters(filtered_data);
+                console.log("after filtering: " + filtered_data.length)
+                // for (fieldRecord of filtered_data) {
+                // console.log(fieldRecord.id, fieldRecord.properties.n_by_bio);
+                // }
+                // Make cards
+                initListOfFieldCards(filtered_data);
+
+            };
+
+            function applyFilters(filtered_data) {
+                // Applies county and soil type filters
+                for (k in Object.keys(boxes_select)) {
+
+                    id_selector = Object.keys(boxes_select)[k];
+                    target_field = boxes_select[id_selector]
+
+                    filtered_data = filterDataSelectize(filtered_data, id_selector, target_field)
+
+                }
+                return filtered_data;
+
             }
-            if (fieldRecord.properties.image_1_url == "" | fieldRecord.properties.image_1_url == null) {
-                $("#image_1_url").attr("src", "#");
-            } else {
-                $("#image_1_url").attr("src", fieldRecord.properties.image_1_url);
-            }
-
-        })
+            function filterDataSelectize(filtered_data, id_selector, target_field) {
 
 
-        var dataurl = '/get_wisc_cc_data';
-        var soilsLayer;
+                var array = $('#' + id_selector).selectize()[0].selectize.getValue()
 
-        $.getJSON(dataurl, function (data) {
-            soilsLayer = data;
-            updateFieldCards()
-            console.log("ready!")
-        });
+                if (array == null | array.length == 0) {
+                    return filtered_data
+                }
 
-        var scenario_selector = document.getElementById('ScenarioSelector');
-        scenario_selector.addEventListener('change', function (ev) {
-            updateFieldCards();
-        });
-
-
-        function updateFieldCards() {
-            //Remove existing cards
-            $("#fieldcard-container").find(".field").remove()
-            // Filter our fields
-            var filtered_data = filterData(soilsLayer);
-            for (fieldRecord of filtered_data) {
-                console.log(fieldRecord.id, fieldRecord.properties.n_by_bio);
-            }
-            // Make cards
-            initListOfFieldCards(filtered_data);
-
-        };
-
-        function filterData(soilsLayer) {
-            // What scenario?
-            var scenario = $('#ScenarioSelector').val();
-            // Each scenario will have a different function for 
-            //  filtering and sorting
-            let filtered_data = soilsLayer;
-            switch (scenario) {
-                case "erosion_control":
-                    filtered_data = erosionControlProcessor(filtered_data);
-                    break;
-                case "nutrient_scavenger":
-                    filtered_data = nutrientScavengerProcessor(filtered_data);
-                    break;
-                case "n_credits":
-                    filtered_data = nutrientScavengerProcessor(filtered_data);
-                    break;
-            }
-            return filtered_data;
-        }
-
-        function erosionControlProcessor(filtered_data) {
-            // erosion control sorter
-            //  remove cases where fall biomass is null
-            //  sort by most to least biomass
-
-            filtered_data = filtered_data
-                .filter(function (d) { return d.properties.cc_biomass !== null })
-                .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass)
-                ;
-
-            return filtered_data;
-        }
-
-        function nutrientScavengerProcessor(filtered_data) {
-            // Nutrient scavenger sorter
-            //  remove cases where fall biomass is null
-            //  remove cases where fall total nitrogen is null
-            //  remove cases where a legume was planted
-            //  sort by most to least total total nitrogen * biomass
-            for (fieldRecord of filtered_data) {
-                fieldRecord.properties.n_by_bio = fieldRecord.properties.total_nitrogen * fieldRecord.properties.cc_biomass;
-            }
-
-            filtered_data = filtered_data
-                .filter(function (d) { return d.properties.cc_biomass !== null })
-                .filter(function (d) { return d.properties.total_nitrogen !== null })
-                .filter(function (d) {
-                    if (d.properties.cc_species == null) {
-                        return false
-                    }
-                    return d.properties.cc_species.indexOf("legume") == -1
-
+                return filtered_data.filter(function (d) {
+                    if (d.properties[target_field] == null) { return false }
+                    return array.includes(d.properties[target_field].toString())
                 });
-            // Why the fuck I have to sort this twice, I don't know.
-            filtered_data = filtered_data
-                .toSorted((a, b) => +a.properties.n_by_bio - +b.properties.n_by_bio)
-                .toSorted((a, b) => +a.properties.n_by_bio + +b.properties.n_by_bio);
+            }
+            function scenarioSortData(soilsLayer) {
+                // What scenario?
+                var scenario = $('#ScenarioSelector').val();
+                // Each scenario will have a different function for 
+                //  filtering and sorting
+                let filtered_data = soilsLayer;
+                switch (scenario) {
+                    case "erosion_control":
+                        filtered_data = erosionControlProcessor(filtered_data);
+                        break;
+                    case "nutrient_scavenger":
+                        filtered_data = nutrientScavengerProcessor(filtered_data);
+                        break;
+                    case "n_credits":
+                        filtered_data = nutrientScavengerProcessor(filtered_data);
+                        break;
+                }
+                return filtered_data;
+            }
+
+            function erosionControlProcessor(filtered_data) {
+                // erosion control sorter
+                //  remove cases where fall biomass is null
+                //  sort by most to least biomass
+
+                filtered_data = filtered_data
+                    .filter(function (d) { return d.properties.cc_biomass !== null })
+                    .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass)
+                    ;
+
+                return filtered_data;
+            }
+
+            function nutrientScavengerProcessor(filtered_data) {
+                // Nutrient scavenger sorter
+                //  remove cases where fall biomass is null
+                //  remove cases where fall total nitrogen is null
+                //  remove cases where a legume was planted
+                //  sort by most to least total total nitrogen * biomass
+                for (fieldRecord of filtered_data) {
+                    fieldRecord.properties.n_by_bio = fieldRecord.properties.total_nitrogen * fieldRecord.properties.cc_biomass;
+                }
+
+                filtered_data = filtered_data
+                    .filter(function (d) { return d.properties.cc_biomass !== null })
+                    .filter(function (d) { return d.properties.total_nitrogen !== null })
+                    .filter(function (d) {
+                        if (d.properties.cc_species == null) {
+                            return false
+                        }
+                        return d.properties.cc_species.indexOf("legume") == -1
+
+                    });
+                // Why the fuck I have to sort this twice, I don't know.
+                filtered_data = filtered_data
+                    .toSorted((a, b) => +a.properties.n_by_bio - +b.properties.n_by_bio)
+                    .toSorted((a, b) => +a.properties.n_by_bio + +b.properties.n_by_bio);
 
 
-            return filtered_data;
-        }
+                return filtered_data;
+            }
 
-        function nCreditsProcessor(filtered_data) {
-            // N credits
-            // remove cases where no biomass
-            // remove cases where there is no legume
-            filtered_data = filtered_data
-                .filter(function (d) { return d.properties.cc_biomass !== null })
-                .filter(function (d) {
-                    if (d.properties.cc_species == null) {
-                        return false
-                    }
-                    return d.properties.cc_species.indexOf("legume") > -1
+            function nCreditsProcessor(filtered_data) {
+                // N credits
+                // remove cases where no biomass
+                // remove cases where there is no legume
+                filtered_data = filtered_data
+                    .filter(function (d) { return d.properties.cc_biomass !== null })
+                    .filter(function (d) {
+                        if (d.properties.cc_species == null) {
+                            return false
+                        }
+                        return d.properties.cc_species.indexOf("legume") > -1
 
+                    })
+                    .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass);
+
+                return filtered_data;
+            };
+
+            function prettifySeedingMethod(cc_seeding_method) {
+                // For adding the seeding method into a sentance
+                // "The cover crop was [pretty seeding method] on [planting date]"
+                let pretty_seeding_method;
+                switch (cc_seeding_method) {
+
+                    case "frost seeded":
+                        pretty_seeding_method = "frost seeded"
+                        break;
+                    case "broadcast, no incorporation":
+                        pretty_seeding_method = "broadcast without incorporating"
+                        break;
+                    case "drilled":
+                        pretty_seeding_method = "drilled"
+                        break;
+                    case "broadcast + incorporation":
+                        pretty_seeding_method = "broadcast with incorporation"
+                        break;
+                    case "early interseeded-- broadcast":
+                        pretty_seeding_method = "interseeded early by broadcast"
+                        break;
+                    case "late interseeded-- broadcast":
+                        pretty_seeding_method = "interseeded late by broadcast"
+                        break;
+                    case "late interseeded-- aerial":
+                        pretty_seeding_method = "interseeded late by aerial planting"
+                        break;
+                    case "aerial":
+                        pretty_seeding_method = "aerially broadcast"
+                        break;
+                    case "interseed(early)":
+                        pretty_seeding_method = "interseeded early"
+                        break;
+                    case "interseed(late)":
+                        pretty_seeding_method = "interseeded late"
+                        break;
+                    case "other":
+                        pretty_seeding_method = "was planted on"
+                        break;
+
+                }
+                return pretty_seeding_method;
+            }
+
+            function prettifyPreviousCrop(previous_crop) {
+                // formats the previous crop so it slots into a sentence
+                //  like "this cover crop was planting following [pretty_previous_crop]"
+                let pretty_previous_crop;
+                switch (previous_crop) {
+                    case "alfalfa":
+                        pretty_previous_crop = "alfalfa"
+                        break;
+                    case "corn for grain":
+                        pretty_previous_crop = "corn grown for grain"
+                        break;
+                    case "corn silage":
+                        pretty_previous_crop = "corn silage"
+                        break;
+                    case "livestock feeding/grazing":
+                        pretty_previous_crop = "livestock grazing"
+                        break;
+                    case "corn silage":
+                        pretty_previous_crop = "corn silage"
+                        break;
+                    case "oats":
+                        pretty_previous_crop = "oats"
+                        break;
+                    case "other forage":
+                        pretty_previous_crop = "a forage crop"
+                        break;
+                    case "other grain":
+                        pretty_previous_crop = "a grain crop"
+                        break;
+                    case "other small grains":
+                        pretty_previous_crop = "a small grains crop"
+                        break;
+                    case "soybeans":
+                        pretty_previous_crop = "soybeans"
+                        break;
+                    case "vegetable crop":
+                        pretty_previous_crop = "a vegetable crop"
+                        break;
+                    case "wheat":
+                        pretty_previous_crop = "wheat"
+                        break;
+                    case "winter wheat":
+                        pretty_previous_crop = "winter wheat"
+                        break;
+                }
+                return pretty_previous_crop
+            }
+
+            function prettyTextPlantingDetails(fieldRecord) {
+                let planting_date = new Date(fieldRecord.properties.cc_planting_date);
+                let str_planting_date = planting_date.toLocaleDateString(
+                    "en-US",
+                    { year: 'numeric', month: 'long', day: 'numeric' }
+                )
+
+                // Clean up seeding method
+                let cc_seeding_method = prettifySeedingMethod(fieldRecord.properties.cc_seeding_method);
+                let previous_crop = prettifyPreviousCrop(fieldRecord.properties.previous_crop)
+                let textDetails = "This farm planted " +
+                    fieldRecord.properties.cc_species_raw +
+                    " following " + previous_crop + ".";
+
+
+                textDetails += " The cover crop was " +
+                    cc_seeding_method + " on " +
+                    str_planting_date + ".";
+
+                return textDetails;
+            }
+            let cardContainer;
+            // fieldRecord is one instance of a field from our data
+            let createFieldCard = (fieldRecord) => {
+
+                let card = document.createElement('div');
+                card.className = 'card field';
+                card.id = "field-" + fieldRecord.id
+
+                let cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+
+
+                let img = document.createElement('img');
+                if (fieldRecord.properties.image_1_url != null) {
+                    img.src = fieldRecord.properties.image_1_url;
+                } else if (fieldRecord.properties.image_2_url != null) {
+                    img.src = fieldRecord.properties.image_2_url;
+                }
+
+                img.className = "card-img-top";
+
+                let title = document.createElement('h5');
+                title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
+                title.className = 'card-title';
+
+                let text = document.createElement('p');
+                // If it was a mix we need an article: "a mix of..."
+                text.innerText = prettyTextPlantingDetails(fieldRecord);
+                text.className = 'card-text';
+
+
+                if (fieldRecord.properties.cc_biomass == null) {
+                    biomass_text = ' '
+                } else {
+                    biomass_text = "Fall sampled biomass was " +
+                        fieldRecord.properties.cc_biomass.toFixed(1) +
+                        " tons per acre. ";
+                }
+                if (fieldRecord.properties.total_nitrogen == null) {
+                    totN_text = ''
+                } else {
+                    totN_text = "Fall sampled N concentration was " +
+                        fieldRecord.properties.total_nitrogen.toFixed(1) +
+                        "%.";
+                }
+                let text_addl = document.createElement('p');
+                text_addl.innerText = biomass_text + totN_text;
+
+                let btn = document.createElement('a');
+                btn.className = "btn btn-primary"
+                btn.innerText = "More info"
+                // btn.href = "/wisc_cc_graph"
+                btn.setAttribute("data-toggle", "modal");
+                btn.setAttribute("data-target", "#fieldDetail");
+                btn.setAttribute("data-fieldid", fieldRecord.id);
+
+                cardBody.appendChild(img);
+                cardBody.appendChild(title);
+                cardBody.appendChild(text);
+                cardBody.appendChild(text_addl);
+                cardBody.appendChild(btn);
+
+                card.appendChild(cardBody);
+                cardContainer.appendChild(card);
+
+            }
+            let initListOfFieldCards = (data) => {
+                // Returning only top 15 here
+                //  later if we want to show different "pages" of results
+                //  this can be use to slice the filtered data at different points.
+                cardContainer = document.getElementById('fieldcard-container');
+
+                data
+                    .slice(0, 15)
+                    .forEach((fieldRecord) => {
+                        createFieldCard(fieldRecord);
+                    });
+            };
+
+            var boxes_select = {
+
+                "filterCounty": "county_single",
+                "filterSoilType": "dominant_soil_texture",
+            }
+            // $('#select_model_type').selectize();
+            // $('#xFactor').selectize();
+            // $('#select_color').selectize();
+
+            // for populating select boxes
+            var pop_selectize_box = function (geojson_data, id_selector, field_name) {
+                var all_instances = [];
+                for (item in geojson_data) {
+
+                    all_instances.push(geojson_data[item]['properties'][field_name])
+
+                }
+                // Deduplicating
+                const uniq_instances = [...new Set(all_instances)];
+                uniq_instances.sort()
+                var filt = document.getElementById(id_selector);
+                var option_array = []
+                uniq_instances.forEach(function (item) {
+                    option_array.push({ label: item, value: item })
                 })
-                .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass);
-
-            return filtered_data;
-        };
-
-        function prettifySeedingMethod(cc_seeding_method) {
-            // For adding the seeding method into a sentance
-            // "The cover crop was [pretty seeding method] on [planting date]"
-            let pretty_seeding_method;
-            switch (cc_seeding_method) {
-
-                case "frost seeded":
-                    pretty_seeding_method = "frost seeded"
-                    break;
-                case "broadcast, no incorporation":
-                    pretty_seeding_method = "broadcast without incorporating"
-                    break;
-                case "drilled":
-                    pretty_seeding_method = "drilled"
-                    break;
-                case "broadcast + incorporation":
-                    pretty_seeding_method = "broadcast with incorporation"
-                    break;
-                case "early interseeded-- broadcast":
-                    pretty_seeding_method = "interseeded early by broadcast"
-                    break;
-                case "late interseeded-- broadcast":
-                    pretty_seeding_method = "interseeded late by broadcast"
-                    break;
-                case "late interseeded-- aerial":
-                    pretty_seeding_method = "interseeded late by aerial planting"
-                    break;
-                case "aerial":
-                    pretty_seeding_method = "aerially broadcast"
-                    break;
-                case "interseed(early)":
-                    pretty_seeding_method = "interseeded early"
-                    break;
-                case "interseed(late)":
-                    pretty_seeding_method = "interseeded late"
-                    break;
-                case "other":
-                    pretty_seeding_method = "was planted on"
-                    break;
-
+                return option_array;
             }
-            return pretty_seeding_method;
-        }
-
-        function prettyTextPlantingDetails(fieldRecord) {
-            let planting_date = new Date(fieldRecord.properties.cc_planting_date);
-            let str_planting_date = planting_date.toLocaleDateString(
-                "en-US",
-                { year: 'numeric', month: 'long', day: 'numeric' }
-            )
-
-            // Clean up seeding method
-            let cc_seeding_method = prettifySeedingMethod(fieldRecord.properties.cc_seeding_method);
-
-            let textDetails = "This farm planted " +
-                fieldRecord.properties.cc_species +
-                " following " + fieldRecord.properties.previous_crop + ".";
 
 
-            textDetails += " The cover crop was " +
-                cc_seeding_method + " on " +
-                str_planting_date + ".";
 
-            return textDetails;
-        }
-        let cardContainer;
-        // fieldRecord is one instance of a field from our data
-        let createFieldCard = (fieldRecord) => {
+        </script>
 
-            let card = document.createElement('div');
-            card.className = 'card field';
-            card.id = "field-" + fieldRecord.id
-
-            let cardBody = document.createElement('div');
-            cardBody.className = 'card-body';
-
-
-            let img = document.createElement('img');
-            img.src = fieldRecord.properties.image_1_url;
-            img.className = "card-img-top";
-
-            let title = document.createElement('h5');
-            title.innerText = fieldRecord.id;
-            title.className = 'card-title';
-
-            let text = document.createElement('p');
-            // If it was a mix we need an article: "a mix of..."
-            text.innerText = prettyTextPlantingDetails(fieldRecord);
-            text.className = 'card-text';
-
-
-            if (fieldRecord.properties.cc_biomass == null) {
-                biomass_text = ' '
-            } else {
-                biomass_text = "Fall sampled biomass was " +
-                    fieldRecord.properties.cc_biomass.toFixed(1) +
-                    " tons per acre. ";
-            }
-            if (fieldRecord.properties.total_nitrogen == null) {
-                totN_text = ''
-            } else {
-                totN_text = "Fall sampled N concentration was " +
-                    fieldRecord.properties.total_nitrogen.toFixed(1) +
-                    "%.";
-            }
-            let text_addl = document.createElement('p');
-            text_addl.innerText = biomass_text + totN_text;
-
-            let btn = document.createElement('a');
-            btn.className = "btn btn-primary"
-            btn.innerText = "More info"
-            // btn.href = "/wisc_cc_graph"
-            btn.setAttribute("data-toggle", "modal");
-            btn.setAttribute("data-target", "#fieldDetail");
-            btn.setAttribute("data-fieldid", fieldRecord.id);
-
-            cardBody.appendChild(img);
-            cardBody.appendChild(title);
-            cardBody.appendChild(text);
-            cardBody.appendChild(text_addl);
-            cardBody.appendChild(btn);
-
-            card.appendChild(cardBody);
-            cardContainer.appendChild(card);
-
-        }
-        let initListOfFieldCards = (data) => {
-            // Returning only top 15 here
-            //  later if we want to show different "pages" of results
-            //  this can be use to slice the filtered data at different points.
-            cardContainer = document.getElementById('fieldcard-container');
-
-            data
-                .slice(0, 15)
-                .forEach((fieldRecord) => {
-                    createFieldCard(fieldRecord);
-                });
-        };
-
-    </script>
-
-    {% endblock %}
+        {% endblock %}
