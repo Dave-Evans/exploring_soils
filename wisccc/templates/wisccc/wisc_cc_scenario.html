@@ -32,7 +32,7 @@
         <div class="card">
             <div class="card-body">
 
-                <!-- <div>
+                <div>
                     <p>Todos</p>
                     <ul>
                         <s>
@@ -52,18 +52,28 @@
                         </s>
                         <li>Make pretty modal of field details</li>
                         <ul>
-                            <li>planting rate and intial soil conditions</li>
+                            <li>planting rate and <s>intial soil conditions</s></li>
                             <li>manuring info</li>
                             <li>field acreage</li>
-                            <li>tillage</li>
-                            <li>termination</li>
+                            <s>
+                                <li>tillage</li>
+                                <li>termination</li>
+                            </s>
                             <li>forage quality info</li>
                             <li>nutrient info</li>
-                            <li>growing conditions: gdd and precip</li>
-                            <li>soil texture</li>
+                            <s>
+                                <li>growing conditions: gdd and precip</li>
+                            </s>
+                            <s>
+                                <li>soil texture</li>
+                            </s>
                         </ul>
-                        <s><li>Build soil type filter</li></s>
-                        <s><li>Build geography filter</li></s>
+                        <s>
+                            <li>Build soil type filter</li>
+                        </s>
+                        <s>
+                            <li>Build geography filter</li>
+                        </s>
                         <li>Build weed suppression sorter and filterer</li>
                         <li>Build erosion control sorter and filterer</li>
                         <li>Build grazing fall sorter and filterer</li>
@@ -71,7 +81,7 @@
                         <li>Pretty cards? More description?</li>
 
                     </ul>
-                </div> -->
+                </div>
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="card">
@@ -160,6 +170,14 @@
                     prettyTextPlantingDetails(fieldRecord)
                 );
 
+                $('#text_description_2').text(
+                    prettyTextFallAddlDetails(fieldRecord)
+                );
+
+                $('#text_description_3').text(
+                    prettyTextTillTermAddlDetails(fieldRecord)
+                );
+
                 if (fieldRecord.properties.caption_photo_1 == "" | fieldRecord.properties.caption_photo_1 == null) {
                     $('#caption_photo_1').text("");
                 } else {
@@ -245,6 +263,7 @@
                 return filtered_data;
 
             }
+
             function filterDataSelectize(filtered_data, id_selector, target_field) {
 
 
@@ -259,6 +278,7 @@
                     return array.includes(d.properties[target_field].toString())
                 });
             }
+
             function scenarioSortData(soilsLayer) {
                 // What scenario?
                 var scenario = $('#ScenarioSelector').val();
@@ -273,7 +293,7 @@
                         filtered_data = nutrientScavengerProcessor(filtered_data);
                         break;
                     case "n_credits":
-                        filtered_data = nutrientScavengerProcessor(filtered_data);
+                        filtered_data = nCreditsProcessor(filtered_data);
                         break;
                 }
                 return filtered_data;
@@ -383,6 +403,42 @@
                 return pretty_seeding_method;
             }
 
+            function prettifyInitialSoilConditions(soil_conditions) {
+                // Formats the initial soil conditions so it nicely slots into
+                //  a sentence like "The soil [had adequate moisture|was dry|was wet] at planting."
+                let pretty_soil_conditions;
+                switch (soil_conditions) {
+
+                    case null:
+                        pretty_soil_conditions = null;
+                        break;
+
+                    case "adequate":
+                        pretty_soil_conditions = "had adequate moisture"
+                        break;
+
+                    case "adequate moisture":
+                        pretty_soil_conditions = "had adequate moisture"
+                        break;
+
+                    case "dry":
+                        pretty_soil_conditions = "was dry"
+                        break;
+
+                    case "Rained 1/2 inch that night dry before":
+                        pretty_soil_conditions = "was wet"
+                        break;
+
+                    case "wet":
+                        pretty_soil_conditions = "was wet"
+                        break;
+
+                }
+                return pretty_soil_conditions;
+
+
+            }
+
             function prettifyPreviousCrop(previous_crop) {
                 // formats the previous crop so it slots into a sentence
                 //  like "this cover crop was planting following [pretty_previous_crop]"
@@ -432,6 +488,8 @@
             }
 
             function prettyTextPlantingDetails(fieldRecord) {
+                // Add planting rate, initial soil conditions,
+
                 let planting_date = new Date(fieldRecord.properties.cc_planting_date);
                 let str_planting_date = planting_date.toLocaleDateString(
                     "en-US",
@@ -443,15 +501,209 @@
                 let previous_crop = prettifyPreviousCrop(fieldRecord.properties.previous_crop)
                 let textDetails = "This farm planted " +
                     fieldRecord.properties.cc_species_raw +
-                    " following " + previous_crop + ".";
+                    " following " + previous_crop + ". ";
 
 
-                textDetails += " The cover crop was " +
+                textDetails += "The cover crop was " +
                     cc_seeding_method + " on " +
-                    str_planting_date + ".";
+                    str_planting_date + ". ";
+                let pretty_soil_conditions = prettifyInitialSoilConditions(fieldRecord.properties.soil_conditions);
+                if (pretty_soil_conditions != null) {
+                    textDetails += "The soil " + pretty_soil_conditions + " at planting."
+                }
+
 
                 return textDetails;
             }
+
+            function prettifyDate(str_date) {
+                // str_date of the format "2022-10-01T00:00:00+00:00"
+                if (str_date == null) { return null };
+                let date_obj = new Date(str_date);
+                let str_format_date = date_obj.toLocaleDateString(
+                    "en-US",
+                    { year: 'numeric', month: 'long', day: 'numeric' }
+                )
+                return str_format_date;
+            }
+
+            function prettyTextFallAddlDetails(fieldRecord) {
+                // Add a statement about the field's
+                // field acreage, soil texture
+                // biomass and height
+                // growing conditions GDU and precip
+                // "The field is dominanted by a [silt loam] soil texture{ and is [100] acres}.
+                // When measured in the fall, the cover crop averaged [25] inches in height, with an average
+                // of [1.6] tons of biomass per acre. From when it was planted 
+                // on [August 6, 2024] to when it was sampled on [November 19, 2024] the field received an estimated
+                // [1.5] inches of rain and [1500] growing degree units."
+                let str_planting_date = prettifyDate(fieldRecord.properties.cc_planting_date);
+                let str_fall_sampling_date = prettifyDate(fieldRecord.properties.cc_biomass_collection_date);
+
+                var text_soil_texture;
+                var text_fall_biomass;
+                var text_fall_avg_height;
+                var text_fall_growing_conditions;
+
+                var dominant_soil_texture = fieldRecord.properties.dominant_soil_texture;
+                if (dominant_soil_texture == "not sure") {
+                    text_soil_texture = "The soil texture of the field is unknown. "
+                } else {
+                    text_soil_texture = "The field is dominated by a " + dominant_soil_texture + " soil texture. "
+                }
+
+                // fall biomass
+                if (fieldRecord.properties.cc_biomass == null) {
+                    text_fall_biomass = "Biomass was not sampled in the fall. "
+                } else {
+                    text_fall_biomass = "The cover crop had an estimated " + fieldRecord.properties.cc_biomass +
+                        " tons of biomass per acre. "
+                }
+
+                // Fall average height
+                if (fieldRecord.properties.height_of_stand == null) {
+                    text_fall_avg_height = "There is no average cover crop stand height measured for this field. "
+                } else {
+                    text_fall_avg_height = "The average cover crop stand height was " + fieldRecord.properties.height_of_stand +
+                        " inches tall. "
+                }
+
+                // Fall growing conditions
+                if (str_fall_sampling_date == null) {
+                    text_fall_growing_conditions = ""
+                } else {
+                    text_fall_growing_conditions = "From when it was planted on " + str_planting_date +
+                        " to when it was sampled on " +
+                        str_fall_sampling_date +
+                        " the field received an estimated " +
+                        fieldRecord.properties.total_precip +
+                        " inches of rain and " +
+                        fieldRecord.properties.acc_gdd + " growing degree units. "
+                }
+
+                return text_soil_texture + text_fall_biomass + text_fall_avg_height + text_fall_growing_conditions;
+
+            }
+
+            function prettifyTermination(cc_termination) {
+                // for making pretty cover crop termination sentence. Returns full sentence.
+                let pretty_termination;
+                switch (cc_termination) {
+                    case "early spring, herbicide application (14 plus days prior to crop establishment)":
+                        pretty_termination = "The cover crop was terminated with herbicide in the spring at least 14 days before cash crop establishment. "
+                        break;
+                    case "early spring, roller-crimper termination":
+                        pretty_termination = "The cover crop was terminated with a roller-crimper in the spring. "
+                        break;
+
+                    case "fall frost":
+                        pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                        break;
+                    case "frost/winterkill - little to no cover crop growth in spring":
+                        pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                        break;
+                    case "frost/winterkill - little to no cover crop growth in spring, early spring, herbicide application (14 plus days prior to crop establishment)":
+                        pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                        break;
+                    case "frost/winterkill - little to no cover crop growth in spring, harvest for forage":
+                        pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                        break;
+                    case "frost/winterkill - little to no cover crop growth in spring, harvest for forage, plant green, herbicide termination":
+                        pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                        break;
+                    case "killing frost (fall)":
+                        pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                        break;
+                    case "little to no cover crop growth in spring":
+                        pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                        break;
+
+                    case "graze fall":
+                        pretty_termination = "The cover crop was terminated by fall grazing. "
+                        break;
+                    case "graze fall, frost/winterkill - little to no cover crop growth in spring, plant green, herbicide termination":
+                        pretty_termination = "The cover crop was terminated by fall grazing. "
+                        break;
+                    case "graze spring":
+                        pretty_termination = "The cover crop was terminated by spring grazing. "
+                        break;
+                    case "graze spring, plant green, herbicide termination":
+                        pretty_termination = "The cover crop was terminated by spring grazing, with any remaining cover terminated with herbicide. "
+                        break;
+
+                    case "harvest for forage":
+                        pretty_termination = "The cover crop was harvested for forage. "
+                        break;
+                    case "harvest for forage, plant green, herbicide termination":
+                        pretty_termination = "The cover crop was harvested for forage, with any remaining cover crop terminated with herbicide. "
+                        break;
+
+                    case "plant green":
+                        pretty_termination = "The cash crop was planted green into the living cover crop. "
+                        break;
+
+                    case "plant green, herbicide termination":
+                        pretty_termination = "The cash crop was planted green into the living cover crop and later terminated with herbicide. "
+                        break;
+                    case "plant green, herbicide termination, graze fall":
+                        pretty_termination = "The cash crop was planted green into the living cover crop and later terminated with herbicide. "
+                        break;
+
+                    case "plant green, roller-crimper termination":
+                        pretty_termination = "The cash crop was planted green into the living cover crop and later terminated with a roller-crimper. "
+                        break;
+
+                    case "early":
+                        pretty_termination = "The cover crop was terminated in the spring with a roller-crimper or herbicide. "
+                        break;
+
+                    case ".":
+                        pretty_termination = "";
+                        break;
+                    case null:
+                        pretty_termination = "";
+                }
+
+                return pretty_termination;
+
+            }
+
+            function prettifyResidue(residue_remaining, primary_tillage, secondary_tillage) {
+                // for making pretty residue remaining. Returns full sentence.
+                let pretty_residue;
+                if (residue_remaining == "Conservation, >30% residue remaining") {
+                    if (primary_tillage == "NONE" & secondary_tillage == "NONE") {
+                        pretty_residue = "This farm used no-till. ";
+                    } else {
+                        pretty_residue = "This farm used conservation tillage, with greater than 30% of the residue remaining. ";
+                    }
+                } else if (residue_remaining == "Reduced, 15-30% residue remaining") {
+                    pretty_residue = "This farm used reduced tillage, with between 15 and 30% of residue remaining. "
+                } else if (residue_remaining == "Conventional, <15% residue remaining") {
+                    pretty_residue = "This farm used conventional tillage, with less than 15% of residue remaining. "
+                }
+
+                return pretty_residue;
+            }
+
+            function prettyTextTillTermAddlDetails(fieldRecord) {
+                // For creating a paragraph about the farm's tillage,
+                // termination of the cover crop.
+
+
+
+                let text_termination = prettifyTermination(fieldRecord.properties.cc_termination);
+
+                let text_residue_remaining = prettifyResidue(
+                    fieldRecord.properties.residue_remaining,
+                    fieldRecord.properties.tillage_equip_primary,
+                    fieldRecord.properties.tillage_equip_secondary
+                );
+
+                return text_residue_remaining + text_termination;
+
+            }
+
             let cardContainer;
             // fieldRecord is one instance of a field from our data
             let createFieldCard = (fieldRecord) => {
@@ -508,8 +760,9 @@
                 btn.setAttribute("data-target", "#fieldDetail");
                 btn.setAttribute("data-fieldid", fieldRecord.id);
 
-                cardBody.appendChild(img);
                 cardBody.appendChild(title);
+                cardBody.appendChild(img);
+
                 cardBody.appendChild(text);
                 cardBody.appendChild(text_addl);
                 cardBody.appendChild(btn);
@@ -518,6 +771,7 @@
                 cardContainer.appendChild(card);
 
             }
+
             let initListOfFieldCards = (data) => {
                 // Returning only top 15 here
                 //  later if we want to show different "pages" of results
