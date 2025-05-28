@@ -2069,16 +2069,16 @@ class AncillaryDataForm(forms.ModelForm):
         label="Fall dry_matter (%)",
         required=False,
     )
-    ndf = forms.DecimalField(
+    adf = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
-        label="Fall NDF (units?)",
+        label="Fall acid detergent fiber",
         required=False,
     )
     rfv = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
-        label="Fall Relative forage value (?) (RFV)",
+        label="Fall Relative forage value (RFV)",
         required=False,
     )
     cc_biomass = forms.DecimalField(
@@ -2087,8 +2087,90 @@ class AncillaryDataForm(forms.ModelForm):
         label="Fall Cover crop biomass, english tons dry matter per acre",
         required=False,
     )
+
+    c_to_n_ratio = forms.DecimalField(
+        decimal_places=2,
+        max_digits=5,
+        label="Fall C to N ratio, agsource",
+        required=False,
+    )
+    
+    percent_p = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Phosphorus content as percent of dry matter, agsource",
+        required=False,
+    )
+    percent_k = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Potassium content as percent of dry matter, agsource",
+        required=False,
+    )    
+    percent_ca = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Calcium content as percent of dry matter, agsource",
+        required=False,
+    )        
+    percent_mg = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Magnesium content as percent of dry matter, agsource",
+        required=False,
+    )         
+    percent_s = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Sulfur content as percent of dry matter, agsource",
+        required=False,
+    )               
+    p_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Phosphorus content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )
+    n_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Nitrogen content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )    
+    k_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Potassium content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )    
+    ca_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Calcium content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )        
+    mg_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Magnesium content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )         
+    s_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Sulfur content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )
+    c_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Carbon content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )
+
+
     total_nitrogen = forms.DecimalField(
-        decimal_places=2, max_digits=15, label="Fall Total nitrogen", required=False
+        decimal_places=2, max_digits=15, label="Fall, nitrogen content as percent of dry matter, agsource", required=False
     )
 
     acc_gdd = forms.DecimalField(
@@ -2119,6 +2201,87 @@ class AncillaryDataForm(forms.ModelForm):
         required=False,
     )
 
+    spring_c_to_n_ratio = forms.DecimalField(
+        decimal_places=2,
+        max_digits=5,
+        label="Spring C to N ratio, agsource",
+        required=False,
+    )
+    
+    spring_percent_p = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Phosphorus content as percent of dry matter, agsource",
+        required=False,
+    )
+    spring_percent_k = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Potassium content as percent of dry matter, agsource",
+        required=False,
+    )    
+    spring_percent_ca = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Calcium content as percent of dry matter, agsource",
+        required=False,
+    )        
+    spring_percent_mg = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Magnesium content as percent of dry matter, agsource",
+        required=False,
+    )         
+    spring_percent_s = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Sulfur content as percent of dry matter, agsource",
+        required=False,
+    )               
+    spring_p_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Phosphorus content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )
+    spring_n_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Nitrogen content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )    
+    spring_k_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Potassium content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )    
+    spring_ca_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Calcium content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )        
+    spring_mg_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Magnesium content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )         
+    spring_s_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Sulfur content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )
+    spring_c_content = forms.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        label="Spring Carbon content of forage if 100% dry matter, lbs/acre; agsource",
+        required=False,
+    )
+
+
     spring_acc_gdd = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -2147,19 +2310,19 @@ class AncillaryDataForm(forms.ModelForm):
     spring_dry_matter = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
-        label="Spring dry_matter (%)",
+        label="Spring dry matter (%)",
         required=False,
     )
-    spring_ndf = forms.DecimalField(
+    spring_adf = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
-        label="Spring NDF (units?)",
+        label="Spring ADF (units?)",
         required=False,
     )
     spring_rfv = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
-        label="Spring Relative forage value (?) (RFV)",
+        label="Spring Relative forage value (RFV)",
         required=False,
     )
     spring_cp = forms.DecimalField(
@@ -2180,7 +2343,7 @@ class AncillaryDataForm(forms.ModelForm):
     spring_milk_ton_milk2013 = forms.DecimalField(
         decimal_places=2,
         max_digits=15,
-        label="Spring Milk_ton_milk2013",
+        label="Spring milk per ton of feed",
         required=False,
     )
     spring_total_nitrogen = forms.DecimalField(
@@ -2203,8 +2366,11 @@ class AncillaryDataForm(forms.ModelForm):
         model = AncillaryData
         fields = (
             "biomass_collection_date",
-            "height_of_stand",
-            "spring_height_of_stand",
+            "acc_gdd",
+            "total_precip",
+
+            "fall_notes",
+
             "cp",
             "andf",
             "undfom30",
@@ -2214,19 +2380,36 @@ class AncillaryDataForm(forms.ModelForm):
             "rfq",
             "undfom240",
             "dry_matter",
-            "ndf",
+            "adf",
             "rfv",
+
             "cc_biomass",
             "total_nitrogen",
-            "acc_gdd",
-            "total_precip",
-            "fall_notes",
+            "height_of_stand",
+            "c_to_n_ratio",
+            "percent_p",
+            "percent_k",
+            "percent_ca",
+            "percent_mg",
+            "percent_s",
+            "p_content",
+            "n_content",
+            "k_content",
+            "ca_content",
+            "mg_content",
+            "c_content",
+    
+
+
             "spring_biomass_collection_date",
+            
             "spring_cc_biomass",
+            "spring_height_of_stand",
+
             "spring_rfq",
             "spring_undfom240",
             "spring_dry_matter",
-            "spring_ndf",
+            "spring_adf",
             "spring_rfv",
             "spring_acc_gdd",
             "spring_total_precip",
@@ -2237,6 +2420,20 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_tdn_adf",
             "spring_milk_ton_milk2013",
             "spring_total_nitrogen",
+
+            "spring_c_to_n_ratio",
+            "spring_percent_p",
+            "spring_percent_k",
+            "spring_percent_ca",
+            "spring_percent_mg",
+            "spring_percent_s",
+            "spring_p_content",
+            "spring_n_content",
+            "spring_k_content",
+            "spring_ca_content",
+            "spring_mg_content",
+            "spring_c_content",
+
             "spring_notes",
             "notes_admin",
         )

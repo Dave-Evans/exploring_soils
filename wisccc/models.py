@@ -1569,7 +1569,7 @@ class AncillaryData(models.Model):
         decimal_places=2, max_digits=15, verbose_name="Dry matter, the proportion of the sample which is dry matter versus moisture; expressed as percent. From Dairyland.", null=True
     )
     adf = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="", null=True
+        decimal_places=2, max_digits=15, verbose_name="Fall acid detergent fiber", null=True
     )
     rfv = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="Relative feed value, Dairyland", null=True

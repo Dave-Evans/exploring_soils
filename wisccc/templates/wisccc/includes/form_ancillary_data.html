@@ -1,0 +1,281 @@
+{% load crispy_forms_tags %}
+
+
+<hr>
+<div>
+
+    <div class="form-row">
+        <div class="form-group col-md-8 mb-0">
+            {{ form.notes_admin|as_crispy_field }}
+        </div>
+    </div>
+    <div>
+        <h3>Fall Data</h3>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.biomass_collection_date|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.acc_gdd|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.total_precip|as_crispy_field}}
+        </div>
+    </div>
+    <div>
+        <h4>Fall Nutrient data</h4>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.cc_biomass|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.height_of_stand|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.c_to_n_ratio|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.total_nitrogen|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.percent_p|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.percent_k|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.percent_ca|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.percent_mg|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.percent_s|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.n_content|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.p_content|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.k_content|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.ca_content|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.mg_content|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.c_content|as_crispy_field}}
+        </div>
+    </div>
+    <div>
+        <h4>Fall Forage quality data</h4>
+    </div>
+
+    <div class="form-row">
+        <div class="col">
+            {{ form.cp|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.andf|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.undfom30|as_crispy_field}}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col">
+            {{ form.ndfd30|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.tdn_adf|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.milk_ton_milk2013|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.rfq|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.undfom240|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.dry_matter|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.rfv|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.adf|as_crispy_field}}
+        </div>
+
+    </div>
+
+    <div class="col">
+        {{ form.fall_notes|as_crispy_field}}
+    </div>
+
+
+    <hr>
+
+    <div>
+        <h3>Spring Data</h3>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_biomass_collection_date|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_acc_gdd|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_total_precip|as_crispy_field}}
+        </div>
+    </div>
+    <div>
+        <h4>Spring Nutrient data</h4>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_cc_biomass|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_height_of_stand|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_c_to_n_ratio|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_total_nitrogen|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_percent_p|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_percent_k|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_percent_ca|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_percent_mg|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_percent_s|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_n_content|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_p_content|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_k_content|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_ca_content|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_mg_content|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_c_content|as_crispy_field}}
+        </div>
+    </div>
+    <div>
+        <h4>Spring Forage quality data</h4>
+    </div>
+
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_cp|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_andf|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_undfom30|as_crispy_field}}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_ndfd30|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_tdn_adf|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_milk_ton_milk2013|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_rfq|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_undfom240|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_dry_matter|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_rfv|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_adf|as_crispy_field}}
+        </div>
+
+    </div>
+
+    <div class="col">
+        {{ form.spring_notes|as_crispy_field}}
+    </div>
+
+
+
+
+    <script>
+        $(function () {
+            $("#id_spring_biomass_collection_date").datepicker({
+                format: 'yyyy-mm-dd',
+            });
+        });
+
+
+        $(function () {
+            $("#id_biomass_collection_date").datepicker({
+                format: 'yyyy-mm-dd',
+            });
+        });
+    </script>
+
+</div>

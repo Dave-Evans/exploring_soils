@@ -92,6 +92,7 @@
                                         <option value="erosion_control">Erosion control</option>
                                         <option value="nutrient_scavenger">Nutrient scavenger</option>
                                         <option value="n_credits">N Credits</option>
+                                        <option value="weed_suppression">Weed supression</option>
                                     </select>
                                 </p>
                             </div>
@@ -105,6 +106,8 @@
                                 <p class="card-text">
                                     <select id="filterSoilType">
                                     </select>
+                                </p>
+                                <p class="card-text">
                                     <select id="filterCounty">
                                     </select>
                                 </p>
@@ -171,11 +174,11 @@
                 );
 
                 $('#text_description_2').text(
-                    prettyTextFallAddlDetails(fieldRecord)
+                    prettyTextTillTermAddlDetails(fieldRecord)
                 );
 
                 $('#text_description_3').text(
-                    prettyTextTillTermAddlDetails(fieldRecord)
+                    prettyTextFallAddlDetails(fieldRecord)
                 );
 
                 if (fieldRecord.properties.caption_photo_1 == "" | fieldRecord.properties.caption_photo_1 == null) {
@@ -202,12 +205,19 @@
                 // Populate selectize boxes
                 for (k in Object.keys(boxes_select)) {
 
-                    id_selector = Object.keys(boxes_select)[k];
-                    target_field = boxes_select[id_selector]
+                    var id_selector = Object.keys(boxes_select)[k];
+                    var target_field = boxes_select[id_selector]
+
+                    var placeholder = "All";
+                    if (target_field == "dominant_soil_texture") {
+                        placeholder = "Soil texture"
+                    } else if (target_field == "county_single") {
+                        placeholder = "County"
+                    }
                     $("#" + id_selector).selectize({
                         plugins: ["remove_button"],
                         delimiter: " - ",
-                        placeholder: "All",
+                        placeholder: placeholder,
                         persist: false,
                         closeAfterSelect: true,
                         maxItems: null,
@@ -295,6 +305,9 @@
                     case "n_credits":
                         filtered_data = nCreditsProcessor(filtered_data);
                         break;
+                    case "weed_suppression":
+                        filtered_data = weedSuppressionProcessor(filtered_data);
+                        break;
                 }
                 return filtered_data;
             }
@@ -359,6 +372,17 @@
                 return filtered_data;
             };
 
+            function weedSuppressionProcessor(filtered_data) {
+                // spring Biomass and plant height
+                filtered_data = filtered_data
+                    .filter(function (d) { return d.properties.spring_cc_biomass != null })
+                    .filter(function (d) { return d.properties.spring_height_of_stand != null })
+                    .toSorted((a, b) => b.properties.spring_height_of_stand - a.properties.spring_height_of_stand)
+                    .toSorted((a, b) => b.properties.spring_cc_biomass - a.properties.spring_cc_biomass);
+
+                return filtered_data;
+
+            }
             function prettifySeedingMethod(cc_seeding_method) {
                 // For adding the seeding method into a sentance
                 // "The cover crop was [pretty seeding method] on [planting date]"
@@ -556,7 +580,7 @@
                 if (fieldRecord.properties.cc_biomass == null) {
                     text_fall_biomass = "Biomass was not sampled in the fall. "
                 } else {
-                    text_fall_biomass = "The cover crop had an estimated " + fieldRecord.properties.cc_biomass +
+                    text_fall_biomass = "In the fall, the cover crop had an estimated " + fieldRecord.properties.cc_biomass +
                         " tons of biomass per acre. "
                 }
 
