@@ -74,10 +74,12 @@
                         <s>
                             <li>Build geography filter</li>
                         </s>
-                        <li>Build weed suppression sorter and filterer</li>
-                        <li>Build erosion control sorter and filterer</li>
-                        <li>Build grazing fall sorter and filterer</li>
-                        <li>Build grazing spring sorter and filterer</li>
+                        <s>
+
+                            <li>Build weed suppression sorter and filterer</li>
+                            <li>Build grazing fall sorter and filterer</li>
+                            <li>Build grazing spring sorter and filterer</li>
+                        </s>
                         <li>Pretty cards? More description?</li>
 
                     </ul>
@@ -92,7 +94,9 @@
                                         <option value="erosion_control">Erosion control</option>
                                         <option value="nutrient_scavenger">Nutrient scavenger</option>
                                         <option value="n_credits">N Credits</option>
-                                        <option value="weed_suppression">Weed supression</option>
+                                        <option value="weed_suppression">Weed suppression</option>
+                                        <option value="graze_fall">Fall grazing</option>
+                                        <option value="graze_spring">Spring grazing</option>
                                     </select>
                                 </p>
                             </div>
@@ -308,6 +312,12 @@
                     case "weed_suppression":
                         filtered_data = weedSuppressionProcessor(filtered_data);
                         break;
+                    case "graze_spring":
+                        filtered_data = grazeSpringProcessor(filtered_data);
+                        break;
+                    case "graze_fall":
+                        filtered_data = grazeFallProcessor(filtered_data);
+                        break;
                 }
                 return filtered_data;
             }
@@ -377,12 +387,37 @@
                 filtered_data = filtered_data
                     .filter(function (d) { return d.properties.spring_cc_biomass != null })
                     .filter(function (d) { return d.properties.spring_height_of_stand != null })
-                    .toSorted((a, b) => b.properties.spring_height_of_stand - a.properties.spring_height_of_stand)
-                    .toSorted((a, b) => b.properties.spring_cc_biomass - a.properties.spring_cc_biomass);
+                    .toSorted((a, b) => b.properties.spring_cc_biomass - a.properties.spring_cc_biomass || b.properties.spring_height_of_stand - a.properties.spring_height_of_stand)
+
 
                 return filtered_data;
 
             }
+
+            function grazeFallProcessor(filtered_data) {
+                // Fall grazing, sort by biomass and then RFQ
+                filtered_data = filtered_data
+                    .filter(function (d) { return d.properties.cc_biomass !== null })
+                    .filter(function (d) { return d.properties.fq_rfq !== null })
+                    .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass || b.properties.fq_rfq - a.properties.fq_rfq);
+
+                return filtered_data;
+
+            }
+
+            function grazeSpringProcessor(filtered_data) {
+                // Spring grazing: sort by 
+                // spring biomass and then spring rfq
+                filtered_data = filtered_data
+                    .filter(function (d) { return d.properties.spring_cc_biomass !== null })
+                    .filter(function (d) { return d.properties.spring_fq_rfq !== null })
+                    .toSorted((a, b) => b.properties.spring_cc_biomass - a.properties.spring_cc_biomass || b.properties.spring_fq_rfq - a.properties.spring_fq_rfq);
+
+                return filtered_data;
+
+            }
+
+
             function prettifySeedingMethod(cc_seeding_method) {
                 // For adding the seeding method into a sentance
                 // "The cover crop was [pretty seeding method] on [planting date]"
