@@ -80,6 +80,7 @@
                             <li>Build grazing fall sorter and filterer</li>
                             <li>Build grazing spring sorter and filterer</li>
                         </s>
+                        <li>Make "I" hovers to describe scenarios</li>
                         <li>Pretty cards? More description?</li>
 
                     </ul>
@@ -256,9 +257,6 @@
                 console.log("After scenario: " + filtered_data.length)
                 filtered_data = applyFilters(filtered_data);
                 console.log("after filtering: " + filtered_data.length)
-                // for (fieldRecord of filtered_data) {
-                // console.log(fieldRecord.id, fieldRecord.properties.n_by_bio);
-                // }
                 // Make cards
                 initListOfFieldCards(filtered_data);
 
@@ -329,8 +327,7 @@
 
                 filtered_data = filtered_data
                     .filter(function (d) { return d.properties.cc_biomass !== null })
-                    .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass)
-                    ;
+                    .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass);
 
                 return filtered_data;
             }
@@ -773,7 +770,6 @@
 
                 let cardBody = document.createElement('div');
                 cardBody.className = 'card-body';
-
 
                 let img = document.createElement('img');
                 if (fieldRecord.properties.image_1_url != null) {

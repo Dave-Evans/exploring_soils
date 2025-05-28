@@ -525,7 +525,7 @@ def process_height():
     Fall 2024
     '''
     fl_height = './data/calcs_from_dan_marzu/23 to 24 weights and heights.xlsx'
-    fl_height = './data/23 to 24 weights and heights.xlsx'
+    # fl_height = './data/23 to 24 weights and heights.xlsx'
     height_data = {
         "2023": {
             "fall": pd.read_excel(fl_height, sheet_name="2023"),
@@ -603,6 +603,8 @@ def process_height():
                         )
                     except AttributeError as e:
                         print("\tNo Ancillary data record.")
+                        continue
+                    except:
                         continue
                     setattr(ancillary_data, height_field, row['Ave Height'])
                     ancillary_data.save()
