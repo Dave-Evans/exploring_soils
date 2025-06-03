@@ -26,7 +26,62 @@
     .selectize-short {
         width: 175px !important
     }
+
+    /* https://www.w3schools.com/css/tryit.asp?filename=trycss_tooltip_bottom */
+    .helptip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted #2f2f2f;
+    }
+
+    .bottomtip {
+        top: 100%
+    }
+
+    .toptip {
+        bottom: 100%
+    }
+
+    .helptip .helptiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #2f2f2f;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        left: 50%;
+        margin-left: -80px;
+
+        /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+        opacity: 0;
+        transition: opacity 1s;
+    }
+
+    .helptip:hover .helptiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .helptip .helptiptext::after {
+        content: " ";
+        position: absolute;
+        bottom: 100%;
+        /* At the bottom of the tooltip */
+        left: 30%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent#2f2f2f transparent;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
 </style>
+
 <div class="row justify-content-center">
     <div class="col-lg-12 col-md-12 col-sm-12">
         <div class="card">
@@ -144,6 +199,11 @@
                             <p id="caption_photo_1"></p><img id="image_1_url" class='popupphoto' src="" width="250"
                                 height="250">
                         </div>
+                        <p id="table_farm_info" style="font-size: smaller;"></p>
+                        <p id="table_growing_info" style="font-size: smaller;"></p>
+
+                        <p id="table_forage_quality" style="font-size: smaller;"></p>
+                        <p id="table_nutrient_analysis" style="font-size: smaller;"></p>
                         <p id="text_description_1"></p>
                         <p id="text_description_2"></p>
                         <p id="text_description_3"></p>
@@ -174,17 +234,34 @@
 
                 var fieldRecord = soilsLayer.find((element) => element.id == parseInt(fieldid))
                 $('.modal-title').text("Field " + fieldRecord.id);
-                $('#text_description_1').text(
-                    prettyTextPlantingDetails(fieldRecord)
-                );
 
-                $('#text_description_2').text(
-                    prettyTextTillTermAddlDetails(fieldRecord)
-                );
+                $('#table_farm_info').html(
+                    makeTableFarmInfo(fieldRecord)
+                )
 
-                $('#text_description_3').text(
-                    prettyTextFallAddlDetails(fieldRecord)
-                );
+                $('#table_growing_info').html(
+                    makeTableGrowingSampling(fieldRecord)
+                )
+
+                $('#table_forage_quality').html(
+                    makeTableForageQuality(fieldRecord)
+                )
+                $('#table_nutrient_analysis').html(
+                    makeTableNutrientAnalysis(fieldRecord)
+                )
+
+
+                // $('#text_description_1').text(
+                //     prettyTextPlantingDetails(fieldRecord)
+                // );
+
+                // $('#text_description_2').text(
+                //     prettyTextTillTermAddlDetails(fieldRecord)
+                // );
+
+                // $('#text_description_3').text(
+                //     prettyTextFallAddlDetails(fieldRecord)
+                // );
 
                 if (fieldRecord.properties.caption_photo_1 == "" | fieldRecord.properties.caption_photo_1 == null) {
                     $('#caption_photo_1').text("");
@@ -414,6 +491,191 @@
 
             }
 
+            function makeTableNutrientAnalysis(fieldRecord) {
+                let nute_propnames = {
+                    "CC Biomass (tons/acre)": "cc_biomass",
+                    "N %": "total_nitrogen",
+                    "P %": "percent_p",
+                    "C %": "percent_p",
+                    "K %": "percent_k",
+                    "Ca %": "percent_ca",
+                    "Mg %": "percent_mg",
+                    "S %": "percent_s",
+
+                    "C to N Ratio": "c_to_n_ratio",
+                    "N lbs/acre": "n_lbs_acre",
+                    "P lbs/acre": "p_lbs_acre",
+                    "C lbs/acre": "c_lbs_acre",
+                    "K lbs/acre": "k_lbs_acre",
+                    "Ca lbs/acre": "ca_lbs_acre",
+                    "Mg lbs/acre": "mg_lbs_acre",
+                    "S lbs/acre": "s_lbs_acre",
+
+                    "Height of stand (in)": "height_of_stand"
+                }
+
+                let nute_trtd = "";
+
+                for (cleanname in nute_propnames) {
+
+                    var prop = nute_propnames[cleanname]
+
+                    var fallprop = fieldRecord.properties[prop];
+                    if (fallprop == null) { fallprop = "Not sampled"; }
+                    var springprop = fieldRecord.properties["spring_" + prop];
+                    if (springprop == null) { springprop = "Not sampled"; }
+
+                    nute_trtd += "<tr><td>" + cleanname + "</td><td>" + fallprop + "</td><td>" + springprop + "</td></tr>"
+
+                }
+
+
+
+                let table_nute_info = "<table>" +
+                    "<thead><tr><th>Nutrient</th><th>Fall</th><th>Spring</th></tr></thead>" +
+                    nute_trtd +
+                    "</table>";
+
+                return table_nute_info;
+            }
+
+            function makeTableForageQuality(fieldRecord) {
+                let fq_propnames = [
+                    "fq_cp",
+                    "fq_andf",
+                    "fq_undfom30",
+                    "fq_ndfd30",
+                    "fq_tdn_adf",
+                    "fq_milkton",
+                    "fq_rfq",
+                    "fq_undfom240",
+                    "fq_dry_matter",
+                    "fq_adf",
+                    "fq_rfv"]
+
+                let fq_trtd = "";
+
+                for (prop of fq_propnames) {
+                    var cleanname = prop.replace("fq_", "");
+                    var fallprop = fieldRecord.properties[prop];
+                    if (fallprop == null) { fallprop = "Not sampled"; }
+                    var springprop = fieldRecord.properties["spring_" + prop];
+                    if (springprop == null) { springprop = "Not sampled"; }
+
+                    fq_trtd += "<tr><td>" + cleanname + "</td><td>" + fallprop + "</td><td>" + springprop + "</td></tr>"
+
+                }
+
+
+
+                let table_fq_info = "<table>" +
+                    "<thead><tr><th>Forage quality</th><th>Fall</th><th>Spring</th></tr></thead>" +
+                    fq_trtd +
+                    "</table>"
+
+                return table_fq_info;
+            }
+
+            function makeTableGrowingSampling(fieldRecord) {
+                let propnames = {
+                    "Sampling date": "cc_biomass_collection_date",
+                    "Precipitation (in)": "total_precip",
+                    "Cumulative growing degree days": "acc_gdd"
+                }
+
+                let trtd = "";
+
+                for (cleanname in propnames) {
+
+                    var prop = propnames[cleanname]
+
+                    var fallprop = fieldRecord.properties[prop];
+
+                    var springprop = fieldRecord.properties["spring_" + prop];
+                    if (cleanname == "Sampling date") {
+                        fallprop = prettifyDate(fallprop)
+                        springprop = prettifyDate(springprop)
+                    }
+                    if (fallprop == null) { fallprop = "Not sampled"; }
+                    if (springprop == null) { springprop = "Not sampled"; }
+
+
+
+                    trtd += "<tr><td>" + cleanname + "</td><td>" + fallprop + "</td><td>" + springprop + "</td></tr>"
+
+                }
+
+
+
+
+                let table_info = "<table>" +
+                    "<thead><tr><th></th><th>Fall</th><th>Spring</th></tr></thead>" +
+                    trtd +
+                    "</table>"
+
+                return table_info;
+            }
+
+            function makeTableFarmInfo(fieldRecord) {
+
+
+                var planting_rate = fieldRecord.properties.cc_planting_rate;
+                if (planting_rate === null | planting_rate == ".") {
+                    planting_rate = "Not reported";
+                }
+
+                let table_farm_info = "<b><em>General info:</em></b>" +
+                    "<table>" +
+                    "<tr>" +
+                    "<td>ID</td> <td>" + fieldRecord.id + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Farmer yrs of experience</td> <td>" + fieldRecord.properties.years_experience + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Previous case crop</td> <td>" + prettifyPreviousCrop(fieldRecord.properties.previous_crop) + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Previous crop planting date</td> <td>" + prettifyDate(fieldRecord.properties.cash_crop_planting_date) + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Cover crops</td> <td>" + fieldRecord.properties.cc_species_raw + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Cover crop seeding rate</td> <td>" + planting_rate + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Cover crop seeding method</td> <td>" + prettifySeedingMethod(fieldRecord.properties.cc_seeding_method) + "</td>" +
+                    "</tr>" +
+
+                    "<tr>" +
+                    "<td>Cover crop planting date</td> <td>" + prettifyDate(fieldRecord.properties.cc_planting_date) + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Soil conditions at planting</td> <td>" + prettifyInitialSoilConditions(fieldRecord.properties.soil_conditions) + "</td>" +
+                    "</tr>" +
+
+                    "<tr>" +
+                    "<td>Dominant soil texture</td> <td>" + fieldRecord.properties.dominant_soil_texture + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Tillage intensity</td> <td>" + fieldRecord.properties.residue_remaining + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Primary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_primary + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Secondary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_secondary + "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Termination</td> <td>" + fieldRecord.properties.cc_termination + "</td>" +
+                    "</tr>" +
+                    "</table>";
+
+
+
+                return table_farm_info;
+            }
 
             function prettifySeedingMethod(cc_seeding_method) {
                 // For adding the seeding method into a sentance
@@ -452,7 +714,7 @@
                         pretty_seeding_method = "interseeded late"
                         break;
                     case "other":
-                        pretty_seeding_method = "was planted on"
+                        pretty_seeding_method = "other"
                         break;
 
                 }
@@ -470,23 +732,23 @@
                         break;
 
                     case "adequate":
-                        pretty_soil_conditions = "had adequate moisture"
+                        pretty_soil_conditions = "adequate moisture"
                         break;
 
                     case "adequate moisture":
-                        pretty_soil_conditions = "had adequate moisture"
+                        pretty_soil_conditions = "adequate moisture"
                         break;
 
                     case "dry":
-                        pretty_soil_conditions = "was dry"
+                        pretty_soil_conditions = "dry"
                         break;
 
                     case "Rained 1/2 inch that night dry before":
-                        pretty_soil_conditions = "was wet"
+                        pretty_soil_conditions = "wet"
                         break;
 
                     case "wet":
-                        pretty_soil_conditions = "was wet"
+                        pretty_soil_conditions = "wet"
                         break;
 
                 }
@@ -519,19 +781,19 @@
                         pretty_previous_crop = "oats"
                         break;
                     case "other forage":
-                        pretty_previous_crop = "a forage crop"
+                        pretty_previous_crop = "forage crop"
                         break;
                     case "other grain":
-                        pretty_previous_crop = "a grain crop"
+                        pretty_previous_crop = "grain crop"
                         break;
                     case "other small grains":
-                        pretty_previous_crop = "a small grains crop"
+                        pretty_previous_crop = "small grains crop"
                         break;
                     case "soybeans":
                         pretty_previous_crop = "soybeans"
                         break;
                     case "vegetable crop":
-                        pretty_previous_crop = "a vegetable crop"
+                        pretty_previous_crop = "vegetable crop"
                         break;
                     case "wheat":
                         pretty_previous_crop = "wheat"
