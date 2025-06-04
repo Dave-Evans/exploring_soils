@@ -35,10 +35,15 @@ acc_gdd_fall	Fall – growing degree days/units that have accumulated from when 
 cc_biomass_fall	Fall – dried biomass in (English) tons per acre. Analyzed by AgSource labs.
 fq_cp_fall	Fall – measured: crude protein (%). Analyzed by Dairyland Labs.
 fq_andf_fall	Fall – estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om). Analyzed by Dairyland Labs.
+fq_undfom30	Fall – Analyzed by Dairyland labs
 fq_ndfd30_fall	Fall – Neutral detergent fiber digestibility after 30 hours. Analyzed by Dairyland Labs.
 fq_tdn_adf_fall	Fall – total digestible nutrients - acid detergent fiber. Analyzed by Dairyland Labs.
 fq_milkton_fall	"Fall – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters. Analyzed by Dairyland Labs."
 fq_rfq_fall	Fall – measured: relative forage quality. Analyzed by Dairyland Labs.
+fq_undfom240_fall	Fall –  Analyzed by Dairyland Labs.
+fq_dry_matter_fall	Fall – Dry matter. Analyzed by Dairyland Labs.
+fq_adf_fall	Fall – Acid digestible fiber. Analyzed by Dairyland Labs.
+fq_rfv_fall	Fall – measured: relative forage value. Analyzed by Dairyland Labs.
 percent_nitrogen_fall	Fall – Nitrogen content in biomass, as percent. Analyzed by AgSource labs.
 percent_p_fall	Fall – Phosphorus content in biomass, as percent. Analyzed by AgSource labs.
 percent_k_fall	Fall – Potassium content in biomass, as percent. Analyzed by AgSource labs.
@@ -60,10 +65,15 @@ acc_gdd_spring	Spring – growing degree days/units that have accumulated from w
 cc_biomass_spring	Spring – dried biomass in (English) tons per acre.  Analyzed by AgSource Labs.
 fq_cp_spring	Spring – measured: crude protein (%). Analyzed by Dairyland Labs.
 fq_andf_spring	Spring – estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om). Analyzed by Dairyland Labs.
+fq_undfom30_spring	Spring – Analyzed by Dairyland labs
 fq_ndfd30_spring	Spring – Neutral detergent fiber digestibility after 30 hours. Analyzed by Dairyland Labs.
 fq_tdn_adf_spring	Spring – total digestible nutrients - acid detergent fiber. Analyzed by Dairyland Labs.
 fq_milkton_spring	"Spring – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters. Analyzed by Dairyland Labs."
 fq_rfq_spring	Spring – measured: relative forage quality. Analyzed by Dairyland Labs.
+fq_undfom240_spring	Spring –  Analyzed by Dairyland Labs.
+fq_dry_matter_spring	Spring – Dry matter. Analyzed by Dairyland Labs.
+fq_adf_spring	Spring – Acid digestible fiber. Analyzed by Dairyland Labs.
+fq_rfv_spring	Spring – measured: relative forage value. Analyzed by Dairyland Labs.
 percent_nitrogen_spring	Spring – Nitrogen content in biomass, as percent. Analyzed by AgSource labs.
 percent_p_spring	Spring – Phosphorus content in biomass, as percent. Analyzed by AgSource labs.
 percent_k_spring	Spring – Potassium content in biomass, as percent. Analyzed by AgSource labs.
