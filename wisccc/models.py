@@ -1581,7 +1581,7 @@ class AncillaryData(models.Model):
         null=True,
     )
     total_nitrogen = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="Total nitrogen as percent of dry matter, agsource", null=True
+        decimal_places=2, max_digits=15, verbose_name="Nitrogen content as percent of dry matter, agsource", null=True
     )
     height_of_stand = models.DecimalField(
         decimal_places=2,
