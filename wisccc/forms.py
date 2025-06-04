@@ -2347,7 +2347,7 @@ class AncillaryDataForm(forms.ModelForm):
         required=False,
     )
     spring_total_nitrogen = forms.DecimalField(
-        decimal_places=2, max_digits=15, label="Spring Total nitrogen", required=False
+        decimal_places=2, max_digits=15, label="Spring Nitrogen content as percent of dry matter, agsource", required=False
     )
     spring_notes = forms.CharField(
         label="Text to be displayed regarding spring biomass sampling or lab processing.",
