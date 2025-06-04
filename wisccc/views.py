@@ -900,7 +900,7 @@ def update_labdata_fld(request, id):
     
     survey_field = SurveyField.objects.get(id=id)
     first_and_last_name = f"{survey_field.survey_farm.farmer.first_name} {survey_field.survey_farm.farmer.last_name}"
-    survey_year = f"{survey_field.survey_farm.survey_year}"
+    survey_year = survey_field.survey_farm.survey_year
 
     # Get any lab data for this survey response
     ancillary_data = AncillaryData.objects.get(survey_field_id=survey_field.id)
@@ -911,6 +911,15 @@ def update_labdata_fld(request, id):
     if form_ancillary_data.is_valid():
 
         new_ancillary_data = form_ancillary_data.save()
+        
+        if "cc_biomass" in form_ancillary_data.changed_data:
+            print("Recalculating because new fall biomass value")
+            new_ancillary_data.recalculate_fall_lbs_acre()
+        
+        if "spring_cc_biomass" in form_ancillary_data.changed_data:
+            print("Recalculating because new spring biomass value")
+            new_ancillary_data.recalculate_spring_lbs_acre()            
+
         new_ancillary_data.survey_field_id = survey_field.id
 
         new_ancillary_data.save()
@@ -929,8 +938,33 @@ def update_labdata_fld(request, id):
             "first_and_last_name": first_and_last_name,
             "survey_year": survey_year,
             "farmer_id": survey_field.survey_farm.farmer.id,
+            "survey_field": survey_field
         },
     )
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def recalculate_lbs_acre(request, sfieldid, season="fall"):
+    '''For running the model method to recalculate the 
+    lbs per acre when the biomass has been changed.
+    Uses survey field ID
+    '''
+
+    survey_field = SurveyField.objects.get(id=sfieldid)
+
+    ancillary_data = AncillaryData.objects.get(survey_field_id=survey_field.id)
+
+    if season == "fall":
+        ancillary_data.recalculate_fall_lbs_acre()
+        ancillary_data.save()    
+
+    if season == "spring":
+        ancillary_data.recalculate_spring_lbs_acre()
+        ancillary_data.save()            
+
+
+    return redirect("update_labdata_fld", sfieldid)
+
+
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)

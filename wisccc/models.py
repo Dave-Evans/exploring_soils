@@ -1629,7 +1629,7 @@ class AncillaryData(models.Model):
     p_content = models.DecimalField(
         decimal_places=2,
         max_digits=7,
-        verbose_name="Phosphorus content of forage if 100% dry matter, lbs/acre; agsource",
+        verbose_name="Phosphate content of forage if 100% dry matter, lbs/acre; agsource",
         null=True,
     )
     n_content = models.DecimalField(
@@ -1641,7 +1641,7 @@ class AncillaryData(models.Model):
     k_content = models.DecimalField(
         decimal_places=2,
         max_digits=7,
-        verbose_name="Potassium content of forage if 100% dry matter, lbs/acre; agsource",
+        verbose_name="Potassium Oxide content of forage if 100% dry matter, lbs/acre; agsource",
         null=True,
     )    
     ca_content = models.DecimalField(
@@ -1788,7 +1788,7 @@ class AncillaryData(models.Model):
     spring_p_content = models.DecimalField(
         decimal_places=2,
         max_digits=7,
-        verbose_name="Spring Phosphorus content of forage if 100% dry matter, lbs/acre; agsource",
+        verbose_name="Spring Phosphate content of forage if 100% dry matter, lbs/acre; agsource",
         null=True,
     )
     spring_n_content = models.DecimalField(
@@ -1800,7 +1800,7 @@ class AncillaryData(models.Model):
     spring_k_content = models.DecimalField(
         decimal_places=2,
         max_digits=7,
-        verbose_name="Spring Potassium content of forage if 100% dry matter, lbs/acre; agsource",
+        verbose_name="Spring Potassium Oxide content of forage if 100% dry matter, lbs/acre; agsource",
         null=True,
     )    
     spring_ca_content = models.DecimalField(
@@ -1835,6 +1835,90 @@ class AncillaryData(models.Model):
         verbose_name="Notes about lab data or sampling or about edits. These notes will not be displayed.",
         null=True,
     )
+
+    def recalculate_fall_lbs_acre(self):
+        """For recalculating the 'content' fields when the biomass value is updated"""
+        if self.cc_biomass is None:
+            return None
+        
+        try:
+            self.n_content = (self.cc_biomass * 2000) * (self.total_nitrogen/100)
+        except TypeError as e:
+            print("N content", str(e))
+
+        # To convert from P to P2O5 multiply by 2.29
+        try:
+            self.p_content = float(self.cc_biomass * 2000) * float(self.percent_p/100) * 2.29
+        except TypeError as e:
+            print("P content", str(e))
+
+        # To convert from K to K2O multiply by 1.2
+        try:
+            self.k_content = float(self.cc_biomass * 2000) * float(self.percent_k/100) * 1.2
+        except TypeError as e:
+            print("K content", str(e))
+
+        try:
+            self.ca_content = (self.cc_biomass * 2000) * (self.percent_ca/100)
+        except TypeError as e:
+            print("Ca content", str(e))            
+        
+        try:
+            self.mg_content = (self.cc_biomass * 2000) * (self.percent_mg/100)
+        except TypeError as e:
+            print("Mg content", str(e))
+        
+        try:            
+            self.s_content = (self.cc_biomass * 2000) * (self.percent_s/100)
+        except TypeError as e:
+            print("S content", str(e))
+        
+        try:
+            self.c_content = (self.n_content * self.c_to_n_ratio)
+        except TypeError as e:
+            print("C content", str(e))
+
+    def recalculate_spring_lbs_acre(self):
+        """For recalculating the spring 'content' fields when the biomass value is updated"""
+        if self.spring_cc_biomass is None:
+            return None
+        
+        try:
+            self.spring_n_content = (self.spring_cc_biomass * 2000) * (self.spring_total_nitrogen/100)
+        except TypeError as e:
+            print("N content", str(e))
+
+        # To convert from P to P2O5 multiply by 2.29
+        try:
+            self.spring_p_content = float(self.spring_cc_biomass * 2000) * float(self.spring_percent_p/100) * 2.29
+        except TypeError as e:
+            print("P content", str(e))
+
+        # To convert from K to K2O multiply by 1.2
+        try:
+            self.spring_k_content = float(self.spring_cc_biomass * 2000) * float(self.spring_percent_k/100) * 1.2
+        except TypeError as e:
+            print("K content", str(e))
+
+        try:
+            self.spring_ca_content = (self.spring_cc_biomass * 2000) * (self.spring_percent_ca/100)
+        except TypeError as e:
+            print("Ca content", str(e))            
+        
+        try:
+            self.spring_mg_content = (self.spring_cc_biomass * 2000) * (self.spring_percent_mg/100)
+        except TypeError as e:
+            print("Mg content", str(e))
+        
+        try:            
+            self.spring_s_content = (self.spring_cc_biomass * 2000) * (self.spring_percent_s/100)
+        except TypeError as e:
+            print("S content", str(e))
+        
+        try:
+            self.spring_c_content = (self.spring_cc_biomass * self.spring_c_to_n_ratio)
+        except TypeError as e:
+            print("C content", str(e))
 
 
 class SurveyPhoto(models.Model):

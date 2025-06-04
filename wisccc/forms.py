@@ -2128,7 +2128,7 @@ class AncillaryDataForm(forms.ModelForm):
     p_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
-        label="Phosphorus content of forage if 100% dry matter, lbs/acre; agsource",
+        label="Phosphate (P2O5) content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
     )
     n_content = forms.DecimalField(
@@ -2140,7 +2140,7 @@ class AncillaryDataForm(forms.ModelForm):
     k_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
-        label="Potassium content of forage if 100% dry matter, lbs/acre; agsource",
+        label="Potash (K2O) content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
     )    
     ca_content = forms.DecimalField(
@@ -2241,7 +2241,7 @@ class AncillaryDataForm(forms.ModelForm):
     spring_p_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
-        label="Spring Phosphorus content of forage if 100% dry matter, lbs/acre; agsource",
+        label="Spring Phosphate (P2O5) content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
     )
     spring_n_content = forms.DecimalField(
@@ -2253,7 +2253,7 @@ class AncillaryDataForm(forms.ModelForm):
     spring_k_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
-        label="Spring Potassium content of forage if 100% dry matter, lbs/acre; agsource",
+        label="Spring Potash (K2O) content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
     )    
     spring_ca_content = forms.DecimalField(

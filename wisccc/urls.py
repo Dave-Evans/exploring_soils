@@ -163,6 +163,7 @@ urlpatterns = [
     path(
         "upload_photo_fld/<id>", wisccc_views.upload_photo_fld, name="upload_photo_fld"
     ),
+    path("recalculate_lbs_acre/<sfieldid>/<season>", wisccc_views.recalculate_lbs_acre, name="recalculate_lbs_acre"),
     path(
         "update_labdata_fld/<id>",
         wisccc_views.update_labdata_fld,
