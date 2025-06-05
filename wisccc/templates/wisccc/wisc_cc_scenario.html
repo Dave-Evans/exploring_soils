@@ -86,63 +86,25 @@
     <div class="col-lg-12 col-md-12 col-sm-12">
         <div class="card">
             <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">On-farm cover crop data by farmers, for farmers</h3>
+                                <p class="card-text">
+                                    Select your cover crop goal under the Scenario dropdown. Then select the county or
+                                    counties and soil texture(s) that represent the conditions you are most interested
+                                    in. View participating farms with operations which meet the goals and conditions
+                                    you have selected. Click on the farm card to see additional data about that
+                                    operation, including agronomic information as well as biomass, forage, and
+                                    nutrient analysis of the cover crop.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- <div>
-                    <p>Todos</p>
-                    <ul>
-                        <s>
-                            <li>Set up modal</li>
-                        </s>
-                        <s>
-                            <li>Build erosion control sorter and filterer</li>
-                        </s>
-                        <s>
-                            <li>Build nutrient scavenger sorter and filterer</li>
-                        </s>
-                        <s>
-                            <li>Build n credits sorter and filterer</li>
-                        </s>
-                        <s>
-                            <li>Tidy cards - brief description and county</li>
-                        </s>
-                        <li>Make pretty modal of field details</li>
-                        <ul>
-                            <s>
-                                <li>planting rate and intial soil conditions</li>
-                            </s>
-                            <li>manuring info</li>
-                            <li>field acreage</li>
-                            <s>
-                                <li>tillage</li>
-                                <li>termination</li>
-                                <li>forage quality info</li>
-                                <li>nutrient info</li>
-                            </s>
 
-                            <s>
-                                <li>growing conditions: gdd and precip</li>
-                            </s>
-                            <s>
-                                <li>soil texture</li>
-                            </s>
-                        </ul>
-                        <s>
-                            <li>Build soil type filter</li>
-                        </s>
-                        <s>
-                            <li>Build geography filter</li>
-                        </s>
-                        <s>
-
-                            <li>Build weed suppression sorter and filterer</li>
-                            <li>Build grazing fall sorter and filterer</li>
-                            <li>Build grazing spring sorter and filterer</li>
-                        </s>
-                        <li>Make "I" hovers to describe scenarios</li>
-                        <li>Pretty cards? More description?</li>
-
-                    </ul>
-                </div> -->
+                </div>
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="card">
@@ -730,7 +692,7 @@
                     "<td>Farmer yrs of experience</td> <td>" + fieldRecord.properties.years_experience + "</td>" +
                     "</tr>" +
                     "<tr>" +
-                    "<td>Previous case crop</td> <td>" + prettifyPreviousCrop(fieldRecord.properties.previous_crop) + "</td>" +
+                    "<td>Previous cash crop</td> <td>" + prettifyPreviousCrop(fieldRecord.properties.previous_crop) + "</td>" +
                     "</tr>" +
                     "<tr>" +
                     "<td>Previous crop planting date</td> <td>" + prettifyDate(fieldRecord.properties.cash_crop_planting_date) + "</td>" +
@@ -1141,7 +1103,7 @@
 
                 let title = document.createElement('h5');
                 // title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
-                title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.id;
+                title.innerText = fieldRecord.properties.county_single + " County, WI"
                 title.className = 'card-title';
 
                 let text = document.createElement('p');
