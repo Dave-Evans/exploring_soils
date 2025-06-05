@@ -1140,7 +1140,8 @@
                 img.className = "card-img-top";
 
                 let title = document.createElement('h5');
-                title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
+                // title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
+                title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.id;
                 title.className = 'card-title';
 
                 let text = document.createElement('p');
@@ -1163,8 +1164,15 @@
                         fieldRecord.properties.total_nitrogen.toFixed(1) +
                         "%.";
                 }
+                if (fieldRecord.properties.height_of_stand == null) {
+                    var height_text = ''
+                } else {
+                    var height_text = "The height of the cover crop stand in the fall was " +
+                        fieldRecord.properties.height_of_stand.toFixed(1) +
+                        " inches.";
+                }
                 let text_addl = document.createElement('p');
-                text_addl.innerText = biomass_text + totN_text;
+                text_addl.innerText = biomass_text + totN_text + height_text;
 
                 let btn = document.createElement('a');
                 btn.className = "btn btn-primary"
