@@ -53,6 +53,20 @@
 
         </div>
         <div class="card-group">
+          <a href="{% url 'wisc_cc_scenario' %}">
+            <div class="card">
+              <img class="card-img-top" src="{% static 'img/kewaunee_covers.jpeg' %}"
+                alt="Map of participating farmers">
+              <div class="card-body">
+                <h5 class="card-title">Cover crop scenarios</h5>
+                <p class="card-text">
+                  On-farm data by farmers, for farmers.
+                  Explore how cover crops are being used by farmers around Wisconsin.
+                </p>
+                <a href="{% url 'wisc_cc_scenario' %}" class="btn btn-primary">Go to the scenarios</a>
+              </div>
+            </div>
+          </a>
           <!-- <a href="{% url 'wisc_cc_interested' %}"> -->
           <div class="card">
             <img class="card-img-top" src="{% static 'img/checking_corn.jpg' %}"
