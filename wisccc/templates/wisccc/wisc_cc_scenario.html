@@ -80,6 +80,15 @@
     tr:nth-child(even) {
         background-color: #dddddd;
     }
+
+    tr td:first-child {
+        padding-left: 0px;
+    }
+
+    td {
+        /* top | right | bottom | left */
+        padding: 0px 0px 0px 10px;
+    }
 </style>
 
 <div class="row justify-content-center">
@@ -119,39 +128,28 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Scenarios
-                                    <label style="font-size: medium;">
-                                        <div class="helptip"><sup>
-                                                <img width="20"
-                                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
-                                            </sup>
-                                            <span style="font-size: smaller;" class="helptiptext">
-                                                Select a scenario from the dropdown to show a list of participating
-                                                farmers
-                                                who have operations with results which meet the goal of the scenario.
-                                            </span>
-                                        </div>
+                                    <label style="font-size: small;">
+
+                                        Select a scenario from the dropdown to show a list of participating
+                                        farmers who have operations with results
+                                        which meet the goal of the scenario.
+                                        Note the farmers may not be planting covers for the selected scenario,
+                                        but their results would meet the goals of the scenario.
+
                                     </label>
                                 </h5>
                                 <p class="card-text">
 
-
-                                <div class="helptip"><sup>
-                                        <img width="20"
-                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
-                                    </sup>
-                                    <span style="font-size: smaller;" id="scenario_helptip" class="helptiptext">
-
-                                    </span>
-                                </div>
-
-                                <select id="ScenarioSelector" class="selectize-control single selectize-input">
-                                    <option value="erosion_control">Erosion control</option>
-                                    <option value="nutrient_scavenger">Nutrient scavenger</option>
-                                    <option value="n_credits">N Credits</option>
-                                    <option value="weed_suppression">Weed suppression</option>
-                                    <option value="graze_fall">Fall grazing</option>
-                                    <option value="graze_spring">Spring grazing</option>
-                                </select>
+                                    <select id="ScenarioSelector" class="selectize-control single selectize-input">
+                                        <option value="erosion_control">Erosion control</option>
+                                        <option value="nutrient_scavenger">Nutrient scavenger</option>
+                                        <option value="n_credits">N Credits</option>
+                                        <option value="weed_suppression">Weed suppression</option>
+                                        <option value="graze_fall">Fall grazing</option>
+                                        <option value="graze_spring">Spring grazing</option>
+                                    </select>
+                                <p style="font-size: smaller;" id="scenario_helptip" class="helptiptext">
+                                </p>
                                 </p>
                             </div>
                         </div>
@@ -209,8 +207,8 @@
                     </div>
                     <div class="modal-body">
                         <div>
-                            <p id="caption_photo_1"></p><img id="image_1_url" class='popupphoto' src="" width="250"
-                                height="250">
+                            <p id="caption_photo_1"></p>
+                            <img id="image_1_url" class='popupphoto' src="" width="250" height="250">
                         </div>
                         <p id="table_farm_info" style="font-size: smaller;"></p>
                         <p id="table_growing_info" style="font-size: smaller;"></p>
@@ -253,14 +251,15 @@
                         break;
                     case "nutrient_scavenger":
                         text = "Nutrient scavenging refers to planting cover crops to take up excess nutrients, especially nitrogen. ";
-                        text += "The farms shown for this scenario have the highest estimated amount of N in the cover crop. ";
-                        text += "The covers planted do not include legumes in order highlight cases where all the N in the cover crop ";
-                        text += "tissue is already present in the soil."
+                        text += "The farms shown for this scenario have the highest estimated lbs/acre N in the fall cover crop. ";
+                        text += "These results exclude systems where a legume was planted in the mix. ";
+
                         break;
                     case "n_credits":
                         text = "This scenario is for farmers who are interested in planting a cover crop to add more nitrogen to their system ";
                         text += "and perhaps reduce the amount of synthetic nitrogen required for their cash crop. "
-                        text += "This scenario returns farms who have planted legumes in their mix which have helped produce a high amount of nitrogen in the fall cover crop biomass. ";
+                        text += "The scenario returns farms with the highest estimated amount of N lbs/acre in the fall sampling and have a legume in the cover mix."
+                        // text += "This scenario returns farms who have planted legumes in their mix which have helped produce a high amount of nitrogen in the fall cover crop biomass. ";
                         break;
                     case "weed_suppression":
                         text = "Planting cover crops can improve a cash crop by out-competing weeds. ";
@@ -305,28 +304,22 @@
                     makeTableNutrientAnalysis(fieldRecord)
                 )
 
-
-                // $('#text_description_1').text(
-                //     prettyTextPlantingDetails(fieldRecord)
-                // );
-
-                // $('#text_description_2').text(
-                //     prettyTextTillTermAddlDetails(fieldRecord)
-                // );
-
-                // $('#text_description_3').text(
-                //     prettyTextFallAddlDetails(fieldRecord)
-                // );
-
                 if (fieldRecord.properties.caption_photo_1 == "" | fieldRecord.properties.caption_photo_1 == null) {
                     $('#caption_photo_1').text("");
                 } else {
                     $('#caption_photo_1').text(fieldRecord.properties.caption_photo_1);
                 }
-                if (fieldRecord.properties.image_1_url == "" | fieldRecord.properties.image_1_url == null) {
-                    $("#image_1_url").attr("src", "#");
-                } else {
+
+                if (fieldRecord.properties.image_1_url) {
+                    console.log("Url 1: " + fieldRecord.properties.image_1_url)
+                    $("#image_1_url").show();
                     $("#image_1_url").attr("src", fieldRecord.properties.image_1_url);
+                } else if (fieldRecord.properties.image_2_url) {
+                    console.log("Url 2: " + fieldRecord.properties.image_2_url)
+                    $("#image_1_url").show();
+                    $("#image_1_url").attr("src", fieldRecord.properties.image_2_url);
+                } else {
+                    $("#image_1_url").hide();
                 }
 
             })
@@ -469,27 +462,9 @@
 
             function nutrientScavengerProcessor(filtered_data) {
                 // Nutrient scavenger sorter
-                //  remove cases where fall biomass is null
-                //  remove cases where fall total nitrogen is null
+                //  remove cases where fall n lbs/acre is null
                 //  remove cases where a legume was planted
-                //  sort by most to least total total nitrogen * biomass
-                // for (fieldRecord of filtered_data) {
-                //     fieldRecord.properties.n_by_bio = fieldRecord.properties.total_nitrogen * fieldRecord.properties.cc_biomass;
-                // }
-
-                // .filter(function (d) { return d.properties.cc_biomass !== null })
-                // .filter(function (d) { return d.properties.total_nitrogen !== null })
-                // .filter(function (d) {
-                //     if (d.properties.cc_species == null) {
-                //         return false
-                //     }
-                //     return d.properties.cc_species.indexOf("legume") == -1
-
-                // });
-                // Why the fuck I have to sort this twice, I don't know.
-                // filtered_data = filtered_data
-                //     .toSorted((a, b) => +a.properties.n_by_bio - +b.properties.n_by_bio)
-                //     .toSorted((a, b) => +a.properties.n_by_bio + +b.properties.n_by_bio);
+                //  sort by most to least total nitrogen mass per acre
 
                 filtered_data = filtered_data
                     .filter(function (d) { return d.properties.n_content !== null })
@@ -507,9 +482,9 @@
 
             function nCreditsProcessor(filtered_data) {
                 // N credits
-                // remove cases where no n_content
+                // remove cases where no n lbs/acre
                 // remove cases where there is no legume
-                // Sort by n_content
+                // Sort by n lbs/acre
                 filtered_data = filtered_data
                     .filter(function (d) { return d.properties.n_content !== null })
                     .filter(function (d) {
@@ -618,7 +593,7 @@
                     "fq_rfq",
                     "fq_undfom240",
                     "fq_dry_matter",
-                    "fq_adf",
+                    // "fq_adf",
                     "fq_rfv"]
 
                 let fq_trtd = "";
@@ -800,23 +775,23 @@
                         break;
 
                     case "adequate":
-                        pretty_soil_conditions = "adequate moisture"
+                        pretty_soil_conditions = "had adequate moisture"
                         break;
 
                     case "adequate moisture":
-                        pretty_soil_conditions = "adequate moisture"
+                        pretty_soil_conditions = "had adequate moisture"
                         break;
 
                     case "dry":
-                        pretty_soil_conditions = "dry"
+                        pretty_soil_conditions = "was dry"
                         break;
 
                     case "Rained 1/2 inch that night dry before":
-                        pretty_soil_conditions = "wet"
+                        pretty_soil_conditions = "was wet"
                         break;
 
                     case "wet":
-                        pretty_soil_conditions = "wet"
+                        pretty_soil_conditions = "was wet"
                         break;
 
                 }
@@ -1090,6 +1065,74 @@
 
             }
 
+            function prettyTextScenarioInfo(fieldRecord) {
+                var text_scenario_details;
+
+                var scenario = $('#ScenarioSelector').val();
+                // Each scenario will have a different function for 
+                //  filtering and sorting
+
+                switch (scenario) {
+                    case "erosion_control":
+                        text_scenario_details = "Fall sampled biomass was " +
+                            fieldRecord.properties.cc_biomass.toFixed(1) +
+                            " tons per acre. ";
+                        break;
+                    case "nutrient_scavenger":
+                        text_scenario_details = "There was an estimated " +
+                            fieldRecord.properties.n_content.toFixed(0) +
+                            " tons per acre " +
+                            "of nitrogen at fall sampling. " +
+                            "See full nutrient analysis by clicking 'More Info'. ";
+                        break;
+                    case "n_credits":
+                        // https://www.dtnpf.com/agriculture/web/ag/crops/article/2025/06/18/retail-fertilizers-see-slight-price
+                        text_scenario_details = "There was an estimated " +
+                            fieldRecord.properties.n_content.toFixed(1) +
+                            " tons per acre " +
+                            "of nitrogen at fall sampling. ";
+                        text_scenario_details += "This equates to about $" +
+                            (fieldRecord.properties.n_content * 0.47).toFixed(1) +
+                            " per acre of anhydrous N fertilizer. " +
+                            "See full nutrient analysis by clicking 'More Info'. ";
+                        break;
+                    case "weed_suppression":
+                        text_scenario_details = "There was an estimated " +
+                            fieldRecord.properties.spring_cc_biomass.toFixed(0) +
+                            "tons of biomass per acre during the spring sampling " +
+                            "with an average crop height of " +
+                            fieldRecord.properties.spring_height_of_stand +
+                            "inches.";
+                        break;
+                    case "graze_spring":
+                        text_scenario_details = "The RFQ of the spring cover crop sample was " +
+                            fieldRecord.properties.spring_fq_rfq.toFixed(1) +
+                            // ", placing it in the " +
+                            // Forage quality category +
+                            // " category for forage. "
+                            ", with an estimated " +
+                            fieldRecord.properties.spring_cc_biomass.toFixed(0) +
+                            " tons per acre of biomass. " +
+                            "See full forage analysis by clicking 'More Info'. ";
+
+                        break;
+                    case "graze_fall":
+                        text_scenario_details = "The RFQ of the fall cover crop sample was " +
+                            fieldRecord.properties.fq_rfq.toFixed(1) +
+                            // ", placing it in the " +
+                            // Forage quality category +
+                            // " category for forage. "
+                            ", with an estimated " +
+                            fieldRecord.properties.cc_biomass.toFixed(0) +
+                            " tons per acre of biomass. " +
+                            "See full forage analysis by clicking 'More Info'. ";
+                        break;
+                }
+
+
+
+                return text_scenario_details;
+            }
             let cardContainer;
             // fieldRecord is one instance of a field from our data
             let createFieldCard = (fieldRecord) => {
@@ -1121,29 +1164,9 @@
                 text.className = 'card-text';
 
 
-                if (fieldRecord.properties.cc_biomass == null) {
-                    biomass_text = ' '
-                } else {
-                    biomass_text = "Fall sampled biomass was " +
-                        fieldRecord.properties.cc_biomass.toFixed(1) +
-                        " tons per acre. ";
-                }
-                if (fieldRecord.properties.total_nitrogen == null) {
-                    totN_text = ''
-                } else {
-                    totN_text = "Fall sampled N concentration was " +
-                        fieldRecord.properties.total_nitrogen.toFixed(1) +
-                        "%.";
-                }
-                if (fieldRecord.properties.height_of_stand == null) {
-                    var height_text = ''
-                } else {
-                    var height_text = "The height of the cover crop stand in the fall was " +
-                        fieldRecord.properties.height_of_stand.toFixed(1) +
-                        " inches.";
-                }
                 let text_addl = document.createElement('p');
-                text_addl.innerText = biomass_text + totN_text + height_text;
+                text_addl.innerText = prettyTextScenarioInfo(fieldRecord);
+
 
                 let btn = document.createElement('a');
                 btn.className = "btn btn-primary"
