@@ -198,8 +198,8 @@
                     </div>
                     <div class="modal-body">
                         <div>
-                            <p id="caption_photo_1"></p><img id="image_1_url" class='popupphoto' src="" width="250"
-                                height="250">
+                            <p id="caption_photo_1"></p>
+                            <img id="image_1_url" class='popupphoto' src="" width="250" height="250">
                         </div>
                         <p id="table_farm_info" style="font-size: smaller;"></p>
                         <p id="table_growing_info" style="font-size: smaller;"></p>
@@ -295,28 +295,22 @@
                     makeTableNutrientAnalysis(fieldRecord)
                 )
 
-
-                // $('#text_description_1').text(
-                //     prettyTextPlantingDetails(fieldRecord)
-                // );
-
-                // $('#text_description_2').text(
-                //     prettyTextTillTermAddlDetails(fieldRecord)
-                // );
-
-                // $('#text_description_3').text(
-                //     prettyTextFallAddlDetails(fieldRecord)
-                // );
-
                 if (fieldRecord.properties.caption_photo_1 == "" | fieldRecord.properties.caption_photo_1 == null) {
                     $('#caption_photo_1').text("");
                 } else {
                     $('#caption_photo_1').text(fieldRecord.properties.caption_photo_1);
                 }
-                if (fieldRecord.properties.image_1_url == "" | fieldRecord.properties.image_1_url == null) {
-                    $("#image_1_url").attr("src", "#");
-                } else {
+
+                if (fieldRecord.properties.image_1_url) {
+                    console.log("Url 1: " + fieldRecord.properties.image_1_url)
+                    $("#image_1_url").show();
                     $("#image_1_url").attr("src", fieldRecord.properties.image_1_url);
+                } else if (fieldRecord.properties.image_2_url) {
+                    console.log("Url 2: " + fieldRecord.properties.image_2_url)
+                    $("#image_1_url").show();
+                    $("#image_1_url").attr("src", fieldRecord.properties.image_2_url);
+                } else {
+                    $("#image_1_url").hide();
                 }
 
             })
