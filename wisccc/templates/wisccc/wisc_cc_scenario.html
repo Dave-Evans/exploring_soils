@@ -1171,11 +1171,30 @@
                 //  this can be use to slice the filtered data at different points.
                 cardContainer = document.getElementById('fieldcard-container');
 
-                data
-                    .slice(0, 15)
-                    .forEach((fieldRecord) => {
-                        createFieldCard(fieldRecord);
-                    });
+                var tmpdata = data
+                    .slice(0, 15);
+                tmpdata = [
+                    tmpdata[0],
+                    tmpdata[3],
+                    tmpdata[6],
+                    tmpdata[9],
+                    tmpdata[12],
+
+                    tmpdata[1],
+                    tmpdata[4],
+                    tmpdata[7],
+                    tmpdata[10],
+                    tmpdata[13],
+
+                    tmpdata[2],
+                    tmpdata[5],
+                    tmpdata[8],
+                    tmpdata[11],
+                    tmpdata[14],
+                ]
+                tmpdata.forEach((fieldRecord) => {
+                    createFieldCard(fieldRecord);
+                });
             };
 
             var boxes_select = {
