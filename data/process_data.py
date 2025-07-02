@@ -18,6 +18,9 @@ scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/DAN_MARZU_2025-01-08\ Dairyland\ 
 scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/SF07350-000\ CC.CSV ubuntu@$ipaddress:~/.
 scp -i ~/.ssh/wieff_1.pem ../data/calcs_from_dan_marzu/23\ to\ 24\ weights\ and\ heights.xlsx ubuntu@$ipaddress:~/.
 
+scp -i ~/.ssh/wieff_1.pem ./data/labdata_2024/spring_lab_data/Spring\ 2025\ AgSource\ reports.csv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ./data/labdata_2024/spring_lab_data/Spring\ 2025\ Dairyland\ Report.csv ubuntu@$ipaddress:~/.
+
 # on remote server
 sudo mv *.csv ./exploring_soils/data/.
 sudo mv *.CSV ./exploring_soils/data/.
@@ -29,8 +32,12 @@ sudo mv *.xlsx ./exploring_soils/data/.
 
 fl_lkup = "./data/labdata_2023/all_lab_data_2023.tsv"
 # fl_lkup = "./data/all_lab_data_2023.tsv"
+try:
 
-lkup = pd.read_csv(fl_lkup, sep="\t")
+    lkup = pd.read_csv(fl_lkup, sep="\t")
+except:
+    # For remote
+    lkup = pd.read_csv("./data/all_lab_data_2023.tsv", sep="\t")
 
 def populate_ancil_record_as_fall(row, ancillarydata):
     # If none then add the date for collection    
@@ -270,7 +277,6 @@ def process_dairyland_spring_2023():
         populate_ancil_record_dl_spring(row, ancillary_data)        
 
 
-
 def clean_nan(row):
     target_vars = [
         "CP",
@@ -390,7 +396,9 @@ def lookup_id_exceptions(clean_lab_id):
 
 def find_farmer(lab_id):
     '''For taking the description from Dairyland or Agsource,
-    and returning the wisccc_farmer object'''
+    and returning the wisccc_farmer object
+    For 2024 and later, when the evansgeospatial farmer id is incorporated
+    in the ID'''
     # regex pattern for pulling out farmer id from lab id
     # Farmer id zero padded to five digits, hypen, 2 digit year, 
     # "F" for fall or "S" for spring
@@ -425,12 +433,15 @@ def find_farmer(lab_id):
         return None
 
     clean_lab_id = rslt.group()
+    # Standardizing to F for Fall
+    clean_lab_id = clean_lab_id.replace("S", "F")
     # Check to see if this is one of the id goof ups,
     #   and correct it
     clean_lab_id = lookup_id_exceptions(clean_lab_id)
 
     id_farmer = int(clean_lab_id.split("-")[0])
-    print(f"{lab_id}\n{clean_lab_id}")
+    # print(f"{lab_id}\n{clean_lab_id}")
+    print(f"{lab_id}")
 
     return id_farmer
 
@@ -477,6 +488,54 @@ def process_dairyland_fall_2024():
         print("-----------")    
 
 
+def process_dairyland_spring_2024():
+    fl_dairyland_spring_24 = "./data/labdata_2024/spring_lab_data/Spring 2025 Dairyland Report.csv"
+    # fl_dairyland_spring_24 = (
+    # "./data/spring_lab_data/Spring 2025 Dairyland Report.csv"
+    # )
+    try:
+
+        dairyland_spring_24 = pd.read_csv(fl_dairyland_spring_24)
+    except:
+        # For remote
+        dairyland_spring_24 = pd.read_csv("./data/Spring 2025 Dairyland Report.csv")
+
+
+    for i, row in dairyland_spring_24.iterrows():
+        # print(f"{i}: {row['Grower Name']}")
+        descr = row["Description 1"] + str(row["Description 2"])+ str(row["Description 3"])
+        # print(descr)
+        id_farmer = find_farmer(descr)
+        if id_farmer is None:
+            continue
+
+        if id_farmer == 787:
+            print("Passing 787 for now. Is this Dudkwieczw or Conley?")
+            continue
+        farmer = Farmer.objects.get(id=id_farmer)
+        
+        print(f"Survey for {farmer.first_name} {farmer.last_name}")
+        
+        survey_field = find_survey_field(farmer, id_farmer=id_farmer)
+        if survey_field is None:
+            print("\tError no survey field found.")
+            rslt = input("Continue - Y, or Break - B\n")
+            if rslt == "B":
+                break
+            else:
+                continue
+
+        print("")
+        row = clean_nan(row)
+        ancillary_data = AncillaryData.objects.get(
+                survey_field_id=survey_field.id
+            )
+        populate_ancil_record_dl_spring(row, ancillary_data)
+
+        print("-----------")    
+
+        
+
 def process_agsource_fall_2024():
     fl_agsource = "./data/labdata_2024/SF07350-000 CC.CSV"
     # fl_agsource = "./data/SF07350-000 CC.CSV"
@@ -517,6 +576,45 @@ def process_agsource_fall_2024():
         row = clean_nan(row)
         populate_ancil_record_as_fall(row, ancillary_data)
 
+def process_agsource_spring_2024():
+
+    fl_agsource = "./data/labdata_2024/spring_lab_data/Spring 2025 AgSource reports.csv"
+    # fl_agsource = "./data/Spring 2025 Agsource reports.csv"
+    try:
+        agsource = pd.read_csv(fl_agsource)
+    except:
+        # For remote
+        agsource = pd.read_csv("./data/Spring 2025 AgSource reports.csv")
+
+    for i, row in agsource.iterrows():
+        
+        descr = row["Grower Name"]
+        id_farmer = find_farmer(descr)
+
+        if id_farmer is None:
+            continue
+
+        farmer = Farmer.objects.get(id=id_farmer)
+
+        print(f"Survey for {farmer.first_name} {farmer.last_name}")
+        
+        survey_field = find_survey_field(farmer, id_farmer=id_farmer)
+
+        if survey_field is None:
+            print("\tError no survey field found.")
+            rslt = input("Continue - Y, or Break - B\n")
+            if rslt == "B":
+                break
+            else:
+                continue
+
+        print("")
+        
+        ancillary_data = AncillaryData.objects.get(
+                survey_field_id=survey_field.id
+            )
+        row = clean_nan(row)
+        populate_ancil_record_as_spring(row, ancillary_data)
 
 def process_height():
     '''For adding height data for
