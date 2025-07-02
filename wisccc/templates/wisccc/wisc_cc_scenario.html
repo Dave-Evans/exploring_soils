@@ -1157,30 +1157,9 @@
                 text.className = 'card-text';
 
 
-                // if (fieldRecord.properties.cc_biomass == null) {
-                //     var biomass_text = ' '
-                // } else {
-                //     var biomass_text = "Fall sampled biomass was " +
-                //         fieldRecord.properties.cc_biomass.toFixed(1) +
-                //         " tons per acre. ";
-                // }
-                // if (fieldRecord.properties.total_nitrogen == null) {
-                //     var totN_text = ''
-                // } else {
-                //     var totN_text = "Fall sampled N concentration was " +
-                //         fieldRecord.properties.total_nitrogen.toFixed(1) +
-                //         "%.";
-                // }
-                // if (fieldRecord.properties.height_of_stand == null) {
-                //     var height_text = ''
-                // } else {
-                //     var height_text = "The height of the cover crop stand in the fall was " +
-                //         fieldRecord.properties.height_of_stand.toFixed(1) +
-                //         " inches.";
-                // }
                 let text_addl = document.createElement('p');
                 text_addl.innerText = prettyTextScenarioInfo(fieldRecord);
-                // biomass_text + totN_text + height_text;
+
 
                 let btn = document.createElement('a');
                 btn.className = "btn btn-primary"
