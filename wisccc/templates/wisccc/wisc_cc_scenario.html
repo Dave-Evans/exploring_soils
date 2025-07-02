@@ -80,6 +80,15 @@
     tr:nth-child(even) {
         background-color: #dddddd;
     }
+
+    tr td:first-child {
+        padding-left: 0px;
+    }
+
+    td {
+        /* top | right | bottom | left */
+        padding: 0px 0px 0px 10px;
+    }
 </style>
 
 <div class="row justify-content-center">
@@ -584,7 +593,7 @@
                     "fq_rfq",
                     "fq_undfom240",
                     "fq_dry_matter",
-                    "fq_adf",
+                    // "fq_adf",
                     "fq_rfv"]
 
                 let fq_trtd = "";
@@ -1073,7 +1082,8 @@
                         text_scenario_details = "There was an estimated " +
                             fieldRecord.properties.n_content.toFixed(0) +
                             " tons per acre " +
-                            "of nitrogen at fall sampling. ";
+                            "of nitrogen at fall sampling. " +
+                            "See full nutrient analysis by clicking 'More Info'. ";
                         break;
                     case "n_credits":
                         // https://www.dtnpf.com/agriculture/web/ag/crops/article/2025/06/18/retail-fertilizers-see-slight-price
@@ -1083,7 +1093,8 @@
                             "of nitrogen at fall sampling. ";
                         text_scenario_details += "This equates to about $" +
                             (fieldRecord.properties.n_content * 0.47).toFixed(1) +
-                            " per acre of anhydrous N fertilizer."
+                            " per acre of anhydrous N fertilizer. " +
+                            "See full nutrient analysis by clicking 'More Info'. ";
                         break;
                     case "weed_suppression":
                         text_scenario_details = "There was an estimated " +
@@ -1101,7 +1112,8 @@
                             // " category for forage. "
                             ", with an estimated " +
                             fieldRecord.properties.spring_cc_biomass.toFixed(0) +
-                            " tons per acre of biomass. "
+                            " tons per acre of biomass. " +
+                            "See full forage analysis by clicking 'More Info'. ";
 
                         break;
                     case "graze_fall":
@@ -1112,7 +1124,8 @@
                             // " category for forage. "
                             ", with an estimated " +
                             fieldRecord.properties.cc_biomass.toFixed(0) +
-                            " tons per acre of biomass. "
+                            " tons per acre of biomass. " +
+                            "See full forage analysis by clicking 'More Info'. ";
                         break;
                 }
 
