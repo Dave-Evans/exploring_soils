@@ -1171,8 +1171,11 @@
                 //  this can be use to slice the filtered data at different points.
                 cardContainer = document.getElementById('fieldcard-container');
 
+                // Taking just first fifteen
                 var tmpdata = data
                     .slice(0, 15);
+
+                // Reordering because the bootstrap .card-columns fills from top to bottom then left to right.
                 tmpdata = [
                     tmpdata[0],
                     tmpdata[3],
