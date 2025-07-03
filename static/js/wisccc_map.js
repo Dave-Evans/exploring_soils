@@ -102,6 +102,332 @@ function classifySeason(planting_date) {
     }
 };
 
+function makeTableNutrientAnalysis(fieldRecord) {
+    let nute_propnames = {
+        "CC Biomass (tons/acre)": "cc_biomass",
+        "N %": "total_nitrogen",
+        "P %": "percent_p",
+        "C %": "percent_p",
+        "K %": "percent_k",
+        "Ca %": "percent_ca",
+        "Mg %": "percent_mg",
+        "S %": "percent_s",
+
+        "C to N Ratio": "c_to_n_ratio",
+        "N lbs/acre": "n_content",
+        "P lbs/acre": "p_content",
+        "C lbs/acre": "c_content",
+        "K lbs/acre": "k_content",
+        "Ca lbs/acre": "ca_content",
+        "Mg lbs/acre": "mg_content",
+        "S lbs/acre": "s_content",
+
+        "Height of stand (in)": "height_of_stand"
+    }
+
+    let nute_trtd = "";
+
+    for (cleanname in nute_propnames) {
+
+        var prop = nute_propnames[cleanname]
+
+        var fallprop = fieldRecord.properties[prop];
+        if (fallprop == null) { fallprop = "Not sampled"; }
+        var springprop = fieldRecord.properties["spring_" + prop];
+        if (springprop == null) { springprop = "Not sampled"; }
+
+        nute_trtd += "<tr><td>" + cleanname + "</td><td>" + fallprop + "</td><td>" + springprop + "</td></tr>"
+
+    }
+
+
+
+    let table_nute_info = "<table>" +
+        "<thead><tr><th>Nutrient</th><th>Fall</th><th>Spring</th></tr></thead>" +
+        nute_trtd +
+        "</table>";
+
+    return table_nute_info;
+}
+
+function makeTableForageQuality(fieldRecord) {
+    let fq_propnames = [
+        "fq_cp",
+        "fq_andf",
+        "fq_undfom30",
+        "fq_ndfd30",
+        "fq_tdn_adf",
+        "fq_milkton",
+        "fq_rfq",
+        "fq_undfom240",
+        "fq_dry_matter",
+        // "fq_adf",
+        "fq_rfv"]
+
+    let fq_trtd = "";
+
+    for (prop of fq_propnames) {
+        var cleanname = prop.replace("fq_", "");
+        var fallprop = fieldRecord.properties[prop];
+        if (fallprop == null) { fallprop = "Not sampled"; }
+        var springprop = fieldRecord.properties["spring_" + prop];
+        if (springprop == null) { springprop = "Not sampled"; }
+
+        fq_trtd += "<tr><td>" + cleanname + "</td><td>" + fallprop + "</td><td>" + springprop + "</td></tr>"
+
+    }
+
+
+
+    let table_fq_info = "<table>" +
+        "<thead><tr><th>Forage quality</th><th>Fall</th><th>Spring</th></tr></thead>" +
+        fq_trtd +
+        "</table>"
+
+    return table_fq_info;
+}
+
+function makeTableGrowingSampling(fieldRecord) {
+    let propnames = {
+        "Sampling date": "cc_biomass_collection_date",
+        "Precipitation (in)": "total_precip",
+        "Cumulative growing degree days": "acc_gdd"
+    }
+
+    let trtd = "";
+
+    for (cleanname in propnames) {
+
+        var prop = propnames[cleanname]
+
+        var fallprop = fieldRecord.properties[prop];
+
+        var springprop = fieldRecord.properties["spring_" + prop];
+        if (cleanname == "Sampling date") {
+            fallprop = prettifyDate(fallprop)
+            springprop = prettifyDate(springprop)
+        }
+        if (fallprop == null) { fallprop = "Not sampled"; }
+        if (springprop == null) { springprop = "Not sampled"; }
+
+
+
+        trtd += "<tr><td>" + cleanname + "</td><td>" + fallprop + "</td><td>" + springprop + "</td></tr>"
+
+    }
+
+
+
+
+    let table_info = "<table>" +
+        "<thead><tr><th></th><th>Fall</th><th>Spring</th></tr></thead>" +
+        trtd +
+        "</table>"
+
+    return table_info;
+}
+
+function makeTableFarmInfo(fieldRecord) {
+
+
+    var planting_rate = fieldRecord.properties.cc_planting_rate;
+    if (planting_rate === null | planting_rate == ".") {
+        planting_rate = "Not reported";
+    }
+
+    let table_farm_info = "<b><em>General info:</em></b>" +
+        "<table>" +
+        "<tr>" +
+        "<td>ID</td> <td>" + fieldRecord.id + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Farmer yrs of experience</td> <td>" + fieldRecord.properties.years_experience + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Previous cash crop</td> <td>" + prettifyPreviousCrop(fieldRecord.properties.previous_crop) + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Previous crop planting date</td> <td>" + prettifyDate(fieldRecord.properties.cash_crop_planting_date) + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Cover crops</td> <td>" + fieldRecord.properties.cc_species_raw + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Cover crop seeding rate</td> <td>" + planting_rate + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Cover crop seeding method</td> <td>" + prettifySeedingMethod(fieldRecord.properties.cc_seeding_method) + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Cover crop planting date</td> <td>" + prettifyDate(fieldRecord.properties.cc_planting_date) + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Soil conditions at planting</td> <td>" + prettifyInitialSoilConditions(fieldRecord.properties.soil_conditions) + "</td>" +
+        "</tr>" +
+
+        "<tr>" +
+        "<td>Dominant soil texture</td> <td>" + fieldRecord.properties.dominant_soil_texture + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Tillage intensity</td> <td>" + fieldRecord.properties.residue_remaining + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Primary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_primary + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Secondary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_secondary + "</td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>Termination</td> <td>" + fieldRecord.properties.cc_termination + "</td>" +
+        "</tr>" +
+        "</table>";
+
+
+
+    return table_farm_info;
+}
+
+function prettifySeedingMethod(cc_seeding_method) {
+    // For adding the seeding method into a sentance
+    // "The cover crop was [pretty seeding method] on [planting date]"
+    let pretty_seeding_method;
+    switch (cc_seeding_method) {
+
+        case "frost seeded":
+            pretty_seeding_method = "frost seeded"
+            break;
+        case "broadcast, no incorporation":
+            pretty_seeding_method = "broadcast without incorporating"
+            break;
+        case "drilled":
+            pretty_seeding_method = "drilled"
+            break;
+        case "broadcast + incorporation":
+            pretty_seeding_method = "broadcast with incorporation"
+            break;
+        case "early interseeded-- broadcast":
+            pretty_seeding_method = "interseeded early by broadcast"
+            break;
+        case "late interseeded-- broadcast":
+            pretty_seeding_method = "interseeded late by broadcast"
+            break;
+        case "late interseeded-- aerial":
+            pretty_seeding_method = "interseeded late by aerial planting"
+            break;
+        case "aerial":
+            pretty_seeding_method = "aerially broadcast"
+            break;
+        case "interseed(early)":
+            pretty_seeding_method = "interseeded early"
+            break;
+        case "interseed(late)":
+            pretty_seeding_method = "interseeded late"
+            break;
+        case "other":
+            pretty_seeding_method = "other"
+            break;
+
+    }
+    return pretty_seeding_method;
+}
+
+
+function prettifyInitialSoilConditions(soil_conditions) {
+    // Formats the initial soil conditions so it nicely slots into
+    //  a sentence like "The soil [had adequate moisture|was dry|was wet] at planting."
+    let pretty_soil_conditions;
+    switch (soil_conditions) {
+
+        case null:
+            pretty_soil_conditions = null;
+            break;
+
+        case "adequate":
+            pretty_soil_conditions = "had adequate moisture"
+            break;
+
+        case "adequate moisture":
+            pretty_soil_conditions = "had adequate moisture"
+            break;
+
+        case "dry":
+            pretty_soil_conditions = "was dry"
+            break;
+
+        case "Rained 1/2 inch that night dry before":
+            pretty_soil_conditions = "was wet"
+            break;
+
+        case "wet":
+            pretty_soil_conditions = "was wet"
+            break;
+
+    }
+    return pretty_soil_conditions;
+
+
+}
+
+
+function prettifyPreviousCrop(previous_crop) {
+    // formats the previous crop so it slots into a sentence
+    //  like "this cover crop was planting following [pretty_previous_crop]"
+    let pretty_previous_crop;
+    switch (previous_crop) {
+        case "alfalfa":
+            pretty_previous_crop = "alfalfa"
+            break;
+        case "corn for grain":
+            pretty_previous_crop = "corn grown for grain"
+            break;
+        case "corn silage":
+            pretty_previous_crop = "corn silage"
+            break;
+        case "livestock feeding/grazing":
+            pretty_previous_crop = "livestock grazing"
+            break;
+        case "corn silage":
+            pretty_previous_crop = "corn silage"
+            break;
+        case "oats":
+            pretty_previous_crop = "oats"
+            break;
+        case "other forage":
+            pretty_previous_crop = "forage crop"
+            break;
+        case "other grain":
+            pretty_previous_crop = "grain crop"
+            break;
+        case "other small grains":
+            pretty_previous_crop = "small grains crop"
+            break;
+        case "soybeans":
+            pretty_previous_crop = "soybeans"
+            break;
+        case "vegetable crop":
+            pretty_previous_crop = "vegetable crop"
+            break;
+        case "wheat":
+            pretty_previous_crop = "wheat"
+            break;
+        case "winter wheat":
+            pretty_previous_crop = "winter wheat"
+            break;
+    }
+    return pretty_previous_crop
+}
+function prettifyDate(str_date) {
+    // str_date of the format "2022-10-01T00:00:00+00:00"
+    if (str_date == null) { return null };
+    let date_obj = new Date(str_date);
+    let str_format_date = date_obj.toLocaleDateString(
+        "en-US",
+        { year: 'numeric', month: 'long', day: 'numeric' }
+    )
+    return str_format_date;
+}
+
 function onEachFeature(feature, layer) {
     if (feature.properties.cc_planting_date === null) {
         var planting_date = null;
@@ -143,115 +469,15 @@ function onEachFeature(feature, layer) {
     if (feature.properties.image_2_url != null) {
         image_2 = "<dt>" + feature.properties.caption_photo_2 + "</td> <td>" + '<img src="' + feature.properties.image_2_url + '" width="250" height="250">' + "</td>"
     }
-    var popupContent =
-        "<b><em>Farm info:</em></b>" +
-        "<table>" +
-        "<tr>" +
-        "<td>ID</td> <td>" + feature.id + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Cover crops</td> <td>" + feature.properties.cc_species_raw + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Seeding rate</td> <td>" + planting_rate + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Seeding method</td> <td>" + feature.properties.cc_seeding_method + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Previous crop</td> <td>" + feature.properties.previous_crop.toLowerCase().replace("_", " ") + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Planting date</td> <td>" + planting_date + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Dominant soil texture</td> <td>" + feature.properties.dominant_soil_texture + "</td>" +
-        "</tr>" +
 
-        "</table>" +
-
-        "<br>" +
-        "<b><em>Fall info:</em></b>" +
-        "<table>" +
-        "<tr>" +
-        "<td>N (% of dry matter)</td> <td>" + feature.properties.total_nitrogen + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>P (% of dry matter)</td> <td>" + feature.properties.percent_p + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>K (% of dry matter)</td> <td>" + feature.properties.percent_k + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Calcium (% of dry matter)</td> <td>" + feature.properties.percent_ca + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Magnesium (% of dry matter)</td> <td>" + feature.properties.percent_mg + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Sulfur (% of dry matter)</td> <td>" + feature.properties.percent_s + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>C to N ratio </td> <td>" + feature.properties.c_to_n_ratio + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Height of stand (in) </td> <td>" + feature.properties.height_of_stand + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Fall Cumulative GDU </td> <td>" + fall_gdu + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Fall Precip (in) </td> <td>" + fall_precip + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Fall Biomass (ton DM/acre)</td> <td>" + biomass_val + "</td>" +
-        "</tr>" +
-
-        fall_sampling_notes +
-        "</table>" +
-
-        "<br>" +
-        "<b><em>Spring info:</em></b>" +
-        "<table>" +
-        "<tr>" +
-        "<td>N (% of dry matter)</td> <td>" + feature.properties.spring_total_nitrogen + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>P (% of dry matter)</td> <td>" + feature.properties.spring_percent_p + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>K (% of dry matter)</td> <td>" + feature.properties.spring_percent_k + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Calcium (% of dry matter)</td> <td>" + feature.properties.spring_percent_ca + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Magnesium (% of dry matter)</td> <td>" + feature.properties.spring_percent_mg + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Sulfur (% of dry matter)</td> <td>" + feature.properties.spring_percent_s + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>C to N ratio </td> <td>" + feature.properties.spring_c_to_n_ratio + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Height of stand (in) </td> <td>" + feature.properties.spring_height_of_stand + "</td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td>Spring Cumulative GDU </td> <td>" + spring_gdu + "</td>" +
-        "</tr>" +
-
-        "<tr>" +
-        "<td>Spring Precip (in) </td> <td>" + spring_precip + "</td>" +
-        "</tr>" +
-
-        "<tr>" +
-        "<td>Spring Biomass (ton DM/acre)</td> <td>" + spring_biomass_val + "</td>" +
-        "</tr>" +
-
-        spring_sampling_notes +
-        "</table>" +
-        "<br>" +
+    var table_farming_info = makeTableFarmInfo(feature)
+    var table_growing_sampling = makeTableGrowingSampling(feature)
+    var table_nutrient = makeTableNutrientAnalysis(feature)
+    var table_forage = makeTableForageQuality(feature)
+    var popupContent = table_farming_info +
+        table_growing_sampling +
+        table_nutrient +
+        table_forage +
         image_1 +
         image_2
 
