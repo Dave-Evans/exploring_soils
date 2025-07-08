@@ -18,8 +18,8 @@ scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/DAN_MARZU_2025-01-08\ Dairyland\ 
 scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/SF07350-000\ CC.CSV ubuntu@$ipaddress:~/.
 scp -i ~/.ssh/wieff_1.pem ../data/calcs_from_dan_marzu/23\ to\ 24\ weights\ and\ heights.xlsx ubuntu@$ipaddress:~/.
 
-scp -i ~/.ssh/wieff_1.pem ./data/labdata_2024/spring_lab_data/Spring\ 2025\ AgSource\ reports.csv ubuntu@$ipaddress:~/.
-scp -i ~/.ssh/wieff_1.pem ./data/labdata_2024/spring_lab_data/Spring\ 2025\ Dairyland\ Report.csv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/spring_lab_data/Spring\ 2025\ AgSource\ reports.csv ubuntu@$ipaddress:~/.
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2024/spring_lab_data/Spring\ 2025\ Dairyland\ Report.csv ubuntu@$ipaddress:~/.
 
 # on remote server
 sudo mv *.csv ./exploring_soils/data/.
@@ -321,6 +321,11 @@ def clean_nan(row):
 def find_survey_field(farmer, id_farmer=None):
 
     survey_farm = SurveyFarm.objects.filter(farmer=farmer, survey_year=2024)
+    # For KL second field, under farmer id 90
+    # if id_farmer == 90:
+    #     survey_field = SurveyField.objects.get(id = 181)
+    #     return survey_field
+    
     if len(survey_farm) == 0:
         print(f"\tNo survey found...")
         return None
@@ -336,10 +341,7 @@ def find_survey_field(farmer, id_farmer=None):
         print("\tNo fields found")
         return None
 
-    # For KL second field, under farmer id 90
-    if id_farmer == 90:
-        survey_field = SurveyField.objects.get(id = 181)
-        return survey_field
+
 
     if len(survey_field) > 1:
         # JK second field
@@ -518,6 +520,7 @@ def process_dairyland_spring_2024():
         farmer = Farmer.objects.get(id=id_farmer)
         
         print(f"Survey for {farmer.first_name} {farmer.last_name}")
+        # if farmer.last_name == "Leach2": break
         
         survey_field = find_survey_field(farmer, id_farmer=id_farmer)
         if survey_field is None:
