@@ -195,7 +195,13 @@
                 </div>
 
             </div>
-            <div id="fieldcard-container" class="card-columns"></div>
+            <div id="fieldcard-container">
+                <div id="fieldcard-container-1" class="card-deck"></div><br>
+                <div id="fieldcard-container-2" class="card-deck"></div><br>
+                <div id="fieldcard-container-3" class="card-deck"></div><br>
+                <div id="fieldcard-container-4" class="card-deck"></div><br>
+                <div id="fieldcard-container-5" class="card-deck"></div>
+            </div>
         </div>
 
         <!-- Modal -->
@@ -264,7 +270,10 @@
                         text = "This scenario is for farmers who are interested in planting a cover crop to add more nitrogen to their system ";
                         text += "and perhaps reduce the amount of synthetic nitrogen required for their cash crop. "
                         text += "The scenario returns farms with the highest estimated amount of N lbs/acre in the fall sampling and have a legume in the cover mix."
-                        // text += "This scenario returns farms who have planted legumes in their mix which have helped produce a high amount of nitrogen in the fall cover crop biomass. ";
+                        text += "<br>"
+                        text += "<b>NOTE:</b> we supply a $/acre of anhydrous ammonia replaced with cover crop N, "
+                        text += "this is based on a $0.47/lb of anydrous amonia. ";
+                        text += "<em>Not all of the nitrogen in the cover crop will be available to growing plants in the following season.</em> "
                         break;
                     case "weed_suppression":
                         text = "Planting cover crops can improve a cash crop by out-competing weeds. ";
@@ -865,9 +874,18 @@
                 // Clean up seeding method
                 let cc_seeding_method = prettifySeedingMethod(fieldRecord.properties.cc_seeding_method);
                 let previous_crop = prettifyPreviousCrop(fieldRecord.properties.previous_crop)
-                let textDetails = "This farm planted " +
-                    fieldRecord.properties.cc_species_raw +
-                    " following " + previous_crop + ". ";
+                let textDetails;
+                if (fieldRecord.properties.cc_species_raw) {
+                    textDetails = "This farm planted "
+                    if (fieldRecord.properties.cc_species_raw.includes("mix")) {
+                        textDetails += " a "
+                    }
+                    textDetails += fieldRecord.properties.cc_species_raw +
+                        " following " + previous_crop + ". ";
+                } else {
+                    textDetails = "The farms planted a cover crop mix following " + previous_crop + ". ";
+                }
+
 
 
                 textDetails += "The cover crop was " +
@@ -1140,7 +1158,7 @@
             }
             let cardContainer;
             // fieldRecord is one instance of a field from our data
-            let createFieldCard = (fieldRecord) => {
+            let createFieldCard = (fieldRecord, container) => {
 
                 let card = document.createElement('div');
                 card.className = 'card field';
@@ -1189,7 +1207,8 @@
                 cardBody.appendChild(btn);
 
                 card.appendChild(cardBody);
-                cardContainer.appendChild(card);
+                // cardContainer.appendChild(card);
+                container.appendChild(card);
 
             }
 
@@ -1198,34 +1217,58 @@
                 //  later if we want to show different "pages" of results
                 //  this can be use to slice the filtered data at different points.
                 cardContainer = document.getElementById('fieldcard-container');
+                var cardContainer1 = document.getElementById('fieldcard-container-1');
+                var cardContainer2 = document.getElementById('fieldcard-container-2');
+                var cardContainer3 = document.getElementById('fieldcard-container-3');
+                var cardContainer4 = document.getElementById('fieldcard-container-4');
+                var cardContainer5 = document.getElementById('fieldcard-container-5');
 
                 // Taking just first fifteen
                 var tmpdata = data
                     .slice(0, 15);
 
+                createFieldCard(tmpdata[0], cardContainer1);
+                createFieldCard(tmpdata[1], cardContainer1);
+                createFieldCard(tmpdata[2], cardContainer1);
+
+                createFieldCard(tmpdata[3], cardContainer2);
+                createFieldCard(tmpdata[4], cardContainer2);
+                createFieldCard(tmpdata[5], cardContainer2);
+
+                createFieldCard(tmpdata[6], cardContainer3);
+                createFieldCard(tmpdata[7], cardContainer3);
+                createFieldCard(tmpdata[8], cardContainer3);
+
+                createFieldCard(tmpdata[9], cardContainer4);
+                createFieldCard(tmpdata[10], cardContainer4);
+                createFieldCard(tmpdata[11], cardContainer4);
+
+                createFieldCard(tmpdata[12], cardContainer5);
+                createFieldCard(tmpdata[13], cardContainer5);
+                createFieldCard(tmpdata[14], cardContainer5);
                 // Reordering because the bootstrap .card-columns fills from top to bottom then left to right.
-                tmpdata = [
-                    tmpdata[0],
-                    tmpdata[3],
-                    tmpdata[6],
-                    tmpdata[9],
-                    tmpdata[12],
+                // tmpdata = [
+                //     tmpdata[0],
+                //     tmpdata[3],
+                //     tmpdata[6],
+                //     tmpdata[9],
+                //     tmpdata[12],
 
-                    tmpdata[1],
-                    tmpdata[4],
-                    tmpdata[7],
-                    tmpdata[10],
-                    tmpdata[13],
+                //     tmpdata[1],
+                //     tmpdata[4],
+                //     tmpdata[7],
+                //     tmpdata[10],
+                //     tmpdata[13],
 
-                    tmpdata[2],
-                    tmpdata[5],
-                    tmpdata[8],
-                    tmpdata[11],
-                    tmpdata[14],
-                ]
-                tmpdata.forEach((fieldRecord) => {
-                    createFieldCard(fieldRecord);
-                });
+                //     tmpdata[2],
+                //     tmpdata[5],
+                //     tmpdata[8],
+                //     tmpdata[11],
+                //     tmpdata[14],
+                // ]
+                // tmpdata.forEach((fieldRecord) => {
+                //     createFieldCard(fieldRecord);
+                // });
             };
 
             var boxes_select = {
