@@ -264,7 +264,10 @@
                         text = "This scenario is for farmers who are interested in planting a cover crop to add more nitrogen to their system ";
                         text += "and perhaps reduce the amount of synthetic nitrogen required for their cash crop. "
                         text += "The scenario returns farms with the highest estimated amount of N lbs/acre in the fall sampling and have a legume in the cover mix."
-                        // text += "This scenario returns farms who have planted legumes in their mix which have helped produce a high amount of nitrogen in the fall cover crop biomass. ";
+                        text += "<br>"
+                        text += "<b>NOTE:</b> we supply a $/acre of anhydrous ammonia replaced with cover crop N, "
+                        text += "this is based on a $0.47/lb of anydrous amonia. ";
+                        text += "<em>Not all of the nitrogen in the cover crop will be available to growing plants in the following season.</em> "
                         break;
                     case "weed_suppression":
                         text = "Planting cover crops can improve a cash crop by out-competing weeds. ";
@@ -865,8 +868,11 @@
                 // Clean up seeding method
                 let cc_seeding_method = prettifySeedingMethod(fieldRecord.properties.cc_seeding_method);
                 let previous_crop = prettifyPreviousCrop(fieldRecord.properties.previous_crop)
-                let textDetails = "This farm planted " +
-                    fieldRecord.properties.cc_species_raw +
+                let textDetails = "This farm planted ";
+                if (fieldRecord.properties.cc_species_raw.includes("mix")) {
+                    textDetails += " a "
+                }
+                textDetails += fieldRecord.properties.cc_species_raw +
                     " following " + previous_crop + ". ";
 
 
