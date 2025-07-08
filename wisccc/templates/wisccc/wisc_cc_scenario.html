@@ -85,7 +85,12 @@
         padding-left: 0px;
     }
 
-    td {
+    th:first-child {
+        padding-left: 0px;
+    }
+
+    td,
+    th {
         /* top | right | bottom | left */
         padding: 0px 0px 0px 10px;
     }
@@ -705,10 +710,10 @@
                     "<td>Tillage intensity</td> <td>" + fieldRecord.properties.residue_remaining + "</td>" +
                     "</tr>" +
                     "<tr>" +
-                    "<td>Primary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_primary + "</td>" +
+                    "<td>Primary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_primary.toLowerCase() + "</td>" +
                     "</tr>" +
                     "<tr>" +
-                    "<td>Secondary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_secondary + "</td>" +
+                    "<td>Secondary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_secondary.toLowerCase() + "</td>" +
                     "</tr>" +
                     "<tr>" +
                     "<td>Termination</td> <td>" + fieldRecord.properties.cc_termination + "</td>" +
@@ -1099,10 +1104,10 @@
                     case "weed_suppression":
                         text_scenario_details = "There was an estimated " +
                             fieldRecord.properties.spring_cc_biomass.toFixed(0) +
-                            "tons of biomass per acre during the spring sampling " +
+                            " tons of biomass per acre during the spring sampling " +
                             "with an average crop height of " +
                             fieldRecord.properties.spring_height_of_stand +
-                            "inches.";
+                            " inches.";
                         break;
                     case "graze_spring":
                         text_scenario_details = "The RFQ of the spring cover crop sample was " +
