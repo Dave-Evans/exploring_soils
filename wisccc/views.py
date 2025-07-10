@@ -1662,13 +1662,13 @@ class ResponseTableListView(SingleTableMixin, FilterView):
     """List survey responses, with filters"""
 
     table_class = ResponseTable
-    model = SurveyFarm
+    model = SurveyField
     template_name = "wisccc/response_table.html"
 
     filterset_class = SurveyResponseFilter
 
     def get_queryset(self):
-        return super().get_queryset().filter(survey_year__gt=2022)
+        return super().get_queryset().filter(survey_farm__survey_year__gt=2022)
 
     # def get_table_kwargs(self):
     #     return {"template_name": "django_tables2/bootstrap.html"}
