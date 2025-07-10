@@ -3,7 +3,7 @@ from django_tables2 import TemplateColumn
 from django.db import connection
 import itertools
 import pandas as pd
-from wisccc.models import Survey, Farmer, SurveyRegistration, SurveyField
+from wisccc.models import SurveyFarm, Farmer, SurveyRegistration, SurveyField
 
 class ScenarioTable(tables.Table):
     row_number = tables.Column(empty_values=())
@@ -31,11 +31,11 @@ class ScenarioTable(tables.Table):
         orderable = False
 
 class ResponseTable(tables.Table):
-    farmer__first_name = tables.Column()
-    farmer__last_name = tables.Column()
+    survey_farm__farmer__first_name = tables.Column()
+    survey_farm__farmer__last_name = tables.Column()
     # username = tables.Column()
-    farmer__user__email = tables.Column()
-    survey_created = tables.Column()
+    survey_farm__farmer__user__email = tables.Column()
+    survey_farm__survey_created = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column_response.html")
     upload_photo = TemplateColumn(template_name="wisccc/upload_photo_column.html")
     update_labdata = TemplateColumn(
@@ -52,10 +52,10 @@ class ResponseTable(tables.Table):
             # For highlighting rows according to if confirmed good
             "class": lambda record: (
                 "table-success"
-                if record.confirmed_accurate == True
+                if record.survey_farm.confirmed_accurate == True
                 else (
                     "table-danger"
-                    if record.confirmed_accurate == False
+                    if record.survey_farm.confirmed_accurate == False
                     else "table-warning"
                 )
             )

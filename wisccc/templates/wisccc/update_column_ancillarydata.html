@@ -1,3 +1,1 @@
-{% if record.survey_year > 2020 %}
-<a class="btn btn-info btn-sm" href="{% url 'update_labdata' record.id %}">Open</a>
-{% endif %}
+<a class="btn btn-info btn-sm" href="{% url 'update_labdata_fld' record.id %}">Open</a>
