@@ -691,13 +691,22 @@
             planting_rate = "Not reported";
         }
 
+        var tillage_equip_primary = fieldRecord.properties.tillage_equip_primary;
+        if (tillage_equip_primary) {
+            tillage_equip_primary = tillage_equip_primary.toLowerCase()
+        }
+        var tillage_equip_secondary = fieldRecord.properties.tillage_equip_secondary;
+        if (tillage_equip_secondary) {
+            tillage_equip_secondary = tillage_equip_secondary.toLowerCase()
+        }
+
         let table_farm_info = "<b><em>General info:</em></b>" +
             "<table>" +
             "<tr>" +
             "<td>ID</td> <td>" + fieldRecord.id + "</td>" +
             "</tr>" +
             "<tr>" +
-            "<td>Farmer yrs of experience</td> <td>" + fieldRecord.properties.years_experience + "</td>" +
+            "<td>Farmer yrs of cc experience</td> <td>" + fieldRecord.properties.years_experience + "</td>" +
             "</tr>" +
             "<tr>" +
             "<td>Yrs of covers in field</td> <td>" + fieldRecord.properties.years_with_cover_crops + "</td>" +
@@ -742,10 +751,10 @@
             "<td>Tillage intensity</td> <td>" + fieldRecord.properties.residue_remaining + "</td>" +
             "</tr>" +
             "<tr>" +
-            "<td>Primary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_primary.toLowerCase() + "</td>" +
+            "<td>Primary tillage equipment</td> <td>" + tillage_equip_primary + "</td>" +
             "</tr>" +
             "<tr>" +
-            "<td>Secondary tillage equipment</td> <td>" + fieldRecord.properties.tillage_equip_secondary.toLowerCase() + "</td>" +
+            "<td>Secondary tillage equipment</td> <td>" + tillage_equip_secondary + "</td>" +
             "</tr>" +
             "<tr>" +
             "<td>Termination</td> <td>" + fieldRecord.properties.cc_termination + "</td>" +
