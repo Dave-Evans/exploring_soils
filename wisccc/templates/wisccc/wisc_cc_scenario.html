@@ -1147,9 +1147,10 @@
                     " lbs per acre " +
                     "of nitrogen at fall sampling. ";
                 text_scenario_details += "This equates to about $" +
-                    (fieldRecord.properties.n_content * 0.47).toFixed(2) +
+                    (fieldRecord.properties.n_content * 0.47).toFixed(0) +
                     " per acre of anhydrous N fertilizer. " +
-                    "See full nutrient analysis by clicking 'More Info'. ";
+                    "See full nutrient analysis by clicking 'More Info'. " +
+                    "<em><b>Note</b> that not all of the nitrogen in the cover crop will be available to growing plants in the following season.<em>";
                 break;
             case "weed_suppression":
                 text_scenario_details = "There was an estimated " +
@@ -1220,7 +1221,7 @@
 
 
         let text_addl = document.createElement('p');
-        text_addl.innerText = prettyTextScenarioInfo(fieldRecord);
+        text_addl.innerHTML = prettyTextScenarioInfo(fieldRecord);
 
 
         let btn = document.createElement('a');
