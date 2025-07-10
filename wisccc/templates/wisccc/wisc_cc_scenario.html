@@ -1127,7 +1127,7 @@
             case "nutrient_scavenger":
                 text_scenario_details = "There was an estimated " +
                     fieldRecord.properties.n_content.toFixed(0) +
-                    " tons per acre " +
+                    " lbs per acre " +
                     "of nitrogen at fall sampling. " +
                     "See full nutrient analysis by clicking 'More Info'. ";
                 break;
@@ -1135,10 +1135,10 @@
                 // https://www.dtnpf.com/agriculture/web/ag/crops/article/2025/06/18/retail-fertilizers-see-slight-price
                 text_scenario_details = "There was an estimated " +
                     fieldRecord.properties.n_content.toFixed(1) +
-                    " tons per acre " +
+                    " lbs per acre " +
                     "of nitrogen at fall sampling. ";
                 text_scenario_details += "This equates to about $" +
-                    (fieldRecord.properties.n_content * 0.47).toFixed(1) +
+                    (fieldRecord.properties.n_content * 0.47).toFixed(2) +
                     " per acre of anhydrous N fertilizer. " +
                     "See full nutrient analysis by clicking 'More Info'. ";
                 break;
