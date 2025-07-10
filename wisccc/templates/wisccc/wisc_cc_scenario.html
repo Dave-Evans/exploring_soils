@@ -700,6 +700,12 @@
             "<td>Farmer yrs of experience</td> <td>" + fieldRecord.properties.years_experience + "</td>" +
             "</tr>" +
             "<tr>" +
+            "<td>Yrs of covers in field</td> <td>" + fieldRecord.properties.years_with_cover_crops + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Field acreage</td> <td>" + fieldRecord.properties.field_acreage + "</td>" +
+            "</tr>" +
+            "<tr>" +
             "<td>Previous cash crop</td> <td>" + prettifyPreviousCrop(fieldRecord.properties.previous_crop) + "</td>" +
             "</tr>" +
             "<tr>" +
@@ -713,6 +719,13 @@
             "</tr>" +
             "<tr>" +
             "<td>Cover crop seeding method</td> <td>" + prettifySeedingMethod(fieldRecord.properties.cc_seeding_method) + "</td>" +
+            "</tr>" +
+
+            "<tr>" +
+            "<td>Cover crop seed cost</td> <td>$" + fieldRecord.properties.cover_crop_seed_cost + " per acre</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Cover crop planting cost</td> <td>$" + fieldRecord.properties.cover_crop_planting_cost + " per acre</td>" +
             "</tr>" +
 
             "<tr>" +
