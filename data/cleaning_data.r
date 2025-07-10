@@ -52,6 +52,12 @@ dat_survey %>%
   # Growing degree days
   rename(cc_planting_date = "cc_plant") %>%
   rename(days_from_plant_to_bio_hrvst = "dayCount") %>%
+
+  rename(field_acreage = '16. What is the acreage of this field?') %>%
+  rename(years_with_cover_crops = '21. How many years have you been planting cover crops *in this field*?') %>%
+  rename(cover_crop_planting_cost = '31. Estimated cover crop planting cost per acre in this field. Please use UW Extension Custom Rate Guide.(https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf)') %>%
+  rename(cover_crop_seed_cost = '30. Estimated cover crop seed cost for this field ($/acre)') %>%
+
   rename(acc_gdd = accGDD) %>%
   rename(total_precip = totalPrecip) %>%
   
@@ -156,6 +162,11 @@ dat_survey %>%
     acc_gdd, 
     days_from_plant_to_bio_hrvst,
     
+    field_acreage,
+    years_with_cover_crops,
+    cover_crop_planting_cost,
+    cover_crop_seed_cost,
+
     cc_biomass,
     fq_CP, 
     fq_aNDF, 
@@ -167,6 +178,7 @@ dat_survey %>%
     
     # Forage quality for Dairyland
     fq_rfv,
+    fq_adf,
     fq_undfom240,
     fq_dry_matter,
       
@@ -284,6 +296,12 @@ dat_20_21 %>%
   mutate(cc_termination = cc_termination_timing ) %>%
   # What is cc_planting lag? Is this correct?
   mutate(days_between_crop_hvst_and_cc_estd = cc_planting_lag ) %>%
+
+  mutate(field_acreage = ac_in_field) %>%
+  mutate(years_with_cover_crops = consecutive_cc_years_field) %>%
+  mutate(cover_crop_planting_cost = `cc_plant_$_ac`) %>%
+  mutate(cover_crop_seed_cost = `cc_seed_$_ac`) %>%
+
   mutate(site_lat = lat ) %>%
   mutate(site_lon = lon ) %>%
   mutate(cc_planting_date = cc_plant_date_mod ) %>%
@@ -307,6 +325,7 @@ dat_20_21 %>%
   
   # Forage quality for Dairyland
   mutate(fq_rfv = NA ) %>%
+  mutate(fq_adf = NA ) %>%
   mutate(fq_undfom240 = NA ) %>%
   mutate(fq_dry_matter = NA ) %>%
 
@@ -361,6 +380,11 @@ dat_20_21 %>%
     total_precip, 
     acc_gdd, 
     days_from_plant_to_bio_hrvst,
+
+    field_acreage,
+    years_with_cover_crops,
+    cover_crop_planting_cost,
+    cover_crop_seed_cost,
     
     cc_biomass,
     fq_CP, 
@@ -373,6 +397,7 @@ dat_20_21 %>%
     
     # Forage quality for Dairyland
     fq_rfv,
+    fq_adf,
     fq_undfom240,
     fq_dry_matter,
     
@@ -407,6 +432,11 @@ dat_all <- dat_all %>%
     total_precip = as.numeric(ifelse( total_precip == ".", NA, total_precip)),
     acc_gdd = as.numeric(ifelse( acc_gdd == ".", NA, acc_gdd)),
     days_between_crop_hvst_and_cc_estd = as.numeric(ifelse( days_between_crop_hvst_and_cc_estd == ".", NA, days_between_crop_hvst_and_cc_estd)),
+    field_acreage = as.numeric(ifelse( field_acreage == ".", NA, field_acreage)),
+    years_with_cover_crops = as.numeric(ifelse( years_with_cover_crops == ".", NA, years_with_cover_crops)),
+    cover_crop_planting_cost = as.numeric(ifelse( cover_crop_planting_cost == ".", NA, cover_crop_planting_cost)),
+    cover_crop_seed_cost = as.numeric(ifelse( cover_crop_seed_cost == ".", NA, cover_crop_seed_cost)),
+
     
     dominant_soil_texture = tolower(ifelse( dominant_soil_texture == ".", NA, dominant_soil_texture))
   ) %>%
@@ -543,7 +573,24 @@ dat_all <- dat_all %>%
   mutate(county_single = gsub(" croix", " Croix", county_single)) %>%
   mutate(county_single = gsub("St ", "St. ", county_single)) %>% 
   mutate(county_single = trimws(county_single) )
-                    
+  
+  # Misentries, for when someone has entered *total* cost
+  # rather than the cost per acre.
+dat_all %>% 
+  mutate(
+    cover_crop_seed_cost = case_when(
+      cover_crop_seed_cost > 100 ~ cover_crop_seed_cost/field_acreage,
+      .default = cover_crop_seed_cost
+    ),
+  
+    cover_crop_planting_cost = case_when(
+      cover_crop_planting_cost > 150 ~ cover_crop_planting_cost/field_acreage,
+      .default = cover_crop_planting_cost
+    )
+  ) -> dat_all
+
+
+
   # select(county_single) %>% unique(.) %>% print(., n=50)
     
     

@@ -607,6 +607,7 @@ def pull_all_years_together(f_output):
 
     query = """
  
+
 	SELECT 
 		prevsurv.survey_farm_id as farm_id
         , prevsurv.survey_field_id as survey_field_id
@@ -646,6 +647,11 @@ def pull_all_years_together(f_output):
         , stat.acc_gdd
         , stat.days_from_plant_to_bio_hrvst
 
+        , stat.field_acreage as field_acreage
+        , stat.years_with_cover_crops as years_with_cover_crops
+        , stat.cover_crop_planting_cost as cover_crop_planting_cost
+        , stat.cover_crop_seed_cost as cover_crop_seed_cost
+        
         , stat.cc_biomass
         , stat.fq_cp
         , stat.fq_andf
@@ -656,8 +662,7 @@ def pull_all_years_together(f_output):
         , stat.fq_rfq
         , stat.fq_undfom240
         , stat.fq_dry_matter
-        -- , stat.fq_adf
-        , null as fq_adf
+        , stat.fq_adf
         , stat.fq_rfv        
         , stat.fq_total_nitrogen as total_nitrogen
 
@@ -788,6 +793,11 @@ def pull_all_years_together(f_output):
         acc_gdd as acc_gdd,
         null as days_from_plant_to_bio_hrvst,
 
+        field_acreage as field_acreage, 
+        years_with_cover_crops as years_with_cover_crops, 
+        cover_crop_planting_cost as cover_crop_planting_cost, 
+        cover_crop_seed_cost as cover_crop_seed_cost, 
+        
         cc_biomass,
         cp as fq_cp,
         andf as fq_andf,
@@ -1218,7 +1228,7 @@ def pull_all_years_together(f_output):
 			where surveyfarm.survey_year >= 2023
                 and surveyfarm.confirmed_accurate = TRUE
 	) as a
- 
+	
     """
 
     if f_output == "sql":
