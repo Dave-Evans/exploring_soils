@@ -29,6 +29,11 @@ urlpatterns = [
         name="wisc_cc_acis",
     ),
     re_path(
+        r"^wisc_cc_acis_wmap$",
+        wisccc_views.wisc_cc_acis_wmap,
+        name="wisc_cc_acis_wmap",
+    ),    
+    re_path(
         r"^wisc_cc_clireg$",
         wisccc_views.wisc_cc_clireg,
         name="wisc_cc_clireg",

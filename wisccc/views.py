@@ -167,6 +167,9 @@ def wisc_cc_about(request):
 def wisc_cc_acis(request):
     return render(request, "wisccc/wisc_cc_acis.html")
 
+def wisc_cc_acis_wmap(request):
+    return render(request, "wisccc/wisc_cc_acis_with_map.html")
+
 
 def wisc_cc_clireg(request):
     return render(request, "wisccc/wisc_cc_clireg.html")
