@@ -9,7 +9,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
     integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 <style>
+    .flex {
+        display: flex
+    }
+
     .popupphoto {
         display: block;
         margin-left: auto;
@@ -115,6 +120,7 @@
                             <div class="card-body">
                                 <h3 class="card-title">On-farm cover crop data by farmers, for farmers</h3>
                                 <p class="card-text">
+
                                     Select your cover crop goal under the Scenario dropdown. Then select the county or
                                     counties and soil texture(s) that represent the conditions you are most interested
                                     in. View participating farms with operations which meet the goals and conditions
@@ -148,7 +154,7 @@
                                     <select id="ScenarioSelector" class="selectize-control single selectize-input">
                                         <option value="erosion_control">Erosion control</option>
                                         <option value="nutrient_scavenger">Nutrient scavenger</option>
-                                        <option value="n_credits">N Credits</option>
+                                        <option value="n_credits">Above ground Nitrogen</option>
                                         <option value="weed_suppression">Weed suppression</option>
                                         <option value="graze_fall">Fall grazing</option>
                                         <option value="graze_spring">Spring grazing</option>
@@ -279,10 +285,12 @@
             case "n_credits":
                 text = "This scenario is for farmers who are interested in planting a cover crop to add more nitrogen to their system ";
                 text += "and perhaps reduce the amount of synthetic nitrogen required for their cash crop. "
-                text += "The scenario returns farms with the highest estimated amount of N lbs/acre in the fall sampling and have a legume in the cover mix."
+                text += "The scenario returns farms with the highest total Nitrogen from plant tissue analysis "
+                text += "and extrapolated to the highest estimated amount of N lbs/acre at the fall sampling. "
+                text += "The farms shown always include a legume in the cover mix."
                 text += "<br>"
-                text += "<b>NOTE:</b> we supply a $/acre of anhydrous ammonia replaced with cover crop N, "
-                text += "this is based on a $0.47/lb of anydrous amonia. ";
+                text += "<b>NOTE:</b> we supply a $/acre of urea ammonia replaced with cover crop N, "
+                text += "this is based on a $0.52/lb of urea amonia. ";
                 text += "<em>Not all of the nitrogen in the cover crop will be available to growing plants in the following season.</em> "
                 break;
             case "weed_suppression":
@@ -1147,9 +1155,16 @@
                     " lbs per acre " +
                     "of nitrogen at fall sampling. ";
                 text_scenario_details += "This equates to about $" +
-                    (fieldRecord.properties.n_content * 0.47).toFixed(0) +
+                    (fieldRecord.properties.n_content * 0.52).toFixed(0) +
                     " per acre of anhydrous N fertilizer. " +
                     "See full nutrient analysis by clicking 'More Info'. " +
+                    "<br>" +
+                    "<br>" +
+                    "The ROI for planting covers for nitrogen works out to " +
+                    ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
+                        fieldRecord.properties.cover_crop_planting_cost)).toFixed(1) + ". " +
+                    "This was calculated by taking the N in the cover crop, in lbs/acre, and dividing by the seed cost plus the planting costs of the cover crop. " +
+                    "<br>" +
                     "<em><b>Note</b> that not all of the nitrogen in the cover crop will be available to growing plants in the following season.<em>";
                 break;
             case "weed_suppression":
@@ -1191,6 +1206,37 @@
     }
     let cardContainer;
     // fieldRecord is one instance of a field from our data
+
+    function createROISpan(fieldRecord) {
+        // <i class="fa fa-solid fa-thumbs-up" style="color: #4e9a06;"></i>
+
+        let roi_span = document.createElement('div');
+        if ($('#ScenarioSelector').val() == "n_credits") {
+
+            var roi_val = ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
+                fieldRecord.properties.cover_crop_planting_cost));
+            if (roi_val <= 1) {
+                return roi_span;
+            }
+
+            roi_span.className = "flex"
+            // roi_span.style.float = "left"
+            // roi_span.style.display = "inline-block"
+            // roi_span.style.padding = "0.5em"
+            let roi_text = document.createElement('p')
+            roi_text.innerText = "  Positive ROI"
+            roi_text.style.paddingLeft = '10px'
+            let roi_icon = document.createElement('i')
+            roi_icon.className = 'fa fa-solid fa-thumbs-up'
+            roi_icon.style.color = '#308348'
+
+            roi_span.appendChild(roi_icon)
+            roi_span.appendChild(roi_text)
+        }
+        return roi_span;
+
+    }
+
     let createFieldCard = (fieldRecord, container) => {
 
         let card = document.createElement('div');
@@ -1199,6 +1245,8 @@
 
         let cardBody = document.createElement('div');
         cardBody.className = 'card-body';
+        let roi_span = createROISpan(fieldRecord)
+
 
         let img = document.createElement('img');
         if (fieldRecord.properties.image_1_url != null) {
@@ -1233,6 +1281,7 @@
         btn.setAttribute("data-fieldid", fieldRecord.id);
 
         cardBody.appendChild(title);
+        cardBody.appendChild(roi_span)
         cardBody.appendChild(img);
 
         cardBody.appendChild(text);
