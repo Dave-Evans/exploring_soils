@@ -1157,6 +1157,7 @@
                 text_scenario_details += "This equates to about $" +
                     (fieldRecord.properties.n_content * 0.52).toFixed(0) +
                     " per acre of anhydrous N fertilizer. " +
+                    "This does not consider below ground Nitrogen in the cover crop. " +
                     "See full nutrient analysis by clicking 'More Info'. " +
                     "<br>" +
                     "<br>" +
@@ -1204,8 +1205,82 @@
 
         return text_scenario_details;
     }
-    let cardContainer;
-    // fieldRecord is one instance of a field from our data
+
+    function calcPricePerTon(rfq, year) {
+        // We assume the price for an average round bale
+        // https://cropsandsoils.extension.wisc.edu/hay-market-report/
+        var price_per_ton;
+
+        if (year == 2024) {
+            // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-october-31st-2024/
+            if (rfq >= 151) {
+                price_per_ton = 100;
+            } else if (rfq < 151 & rfq >= 125) {
+                price_per_ton = 88;
+            }
+            else if (rfq < 125 & rfq >= 103) {
+                price_per_ton = 79;
+            }
+        } else if (year == 2023) {
+            // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-10-2023/
+            if (rfq >= 151) {
+                price_per_ton = 250;
+            } else if (rfq < 151 & rfq >= 125) {
+                price_per_ton = 176;
+            }
+            else if (rfq < 125 & rfq >= 103) {
+                price_per_ton = 151;
+            }
+            else if (rfq < 103 & rfq >= 87) {
+                price_per_ton = 93;
+            }
+        }
+        // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-24-2022/
+        else if (year == 2022) {
+            if (rfq >= 151) {
+                price_per_ton = 235;
+            } else if (rfq < 151 & rfq >= 125) {
+                price_per_ton = 179;
+            }
+            else if (rfq < 125 & rfq >= 103) {
+                price_per_ton = 185;
+            }
+            else if (rfq < 103 & rfq >= 87) {
+                price_per_ton = 89;
+            }
+        }
+        else if (year == 2021) {
+            if (rfq >= 151) {
+                price_per_ton = 209;
+            } else if (rfq < 151 & rfq >= 125) {
+                price_per_ton = 154;
+            }
+            else if (rfq < 125 & rfq >= 103) {
+                price_per_ton = 143;
+            }
+            else if (rfq < 103 & rfq >= 87) {
+                price_per_ton = 83;
+            }
+        }
+        return price_per_ton;
+    }
+
+    function calcGrazingROI(season = 'fall', fieldRecord) {
+        // helper for calcing Grazing roi
+        var year = fieldRecord.properties.year;
+
+        var biomass = fieldRecord.properties.cc_biomass;
+        var rfq = fieldRecord.properties.fq_rfq;
+
+        var price_per_ton = calcPricePerTon(rfq, year);
+
+        var total_forage_income = biomass * price_per_ton;
+
+        var planting_cost = fieldRecord.properties.cover_crop_planting_cost;
+        var seed_cost = fieldRecord.properties.cover_crop_seed_cost;
+
+    }
+
 
     function createROISpan(fieldRecord) {
         // <i class="fa fa-solid fa-thumbs-up" style="color: #4e9a06;"></i>
@@ -1236,6 +1311,8 @@
         return roi_span;
 
     }
+    let cardContainer;
+    // fieldRecord is one instance of a field from our data
 
     let createFieldCard = (fieldRecord, container) => {
 
