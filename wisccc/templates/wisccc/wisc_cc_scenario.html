@@ -154,7 +154,7 @@
                                     <select id="ScenarioSelector" class="selectize-control single selectize-input">
                                         <option value="erosion_control">Erosion control</option>
                                         <option value="nutrient_scavenger">Nutrient scavenger</option>
-                                        <option value="n_credits">Above ground Nitrogen</option>
+                                        <option value="n_credits">Above ground nitrogen</option>
                                         <option value="weed_suppression">Weed suppression</option>
                                         <option value="graze_fall">Fall grazing</option>
                                         <option value="graze_spring">Spring grazing</option>
@@ -285,7 +285,7 @@
             case "n_credits":
                 text = "This scenario is for farmers who are interested in planting a cover crop to add more nitrogen to their system ";
                 text += "and perhaps reduce the amount of synthetic nitrogen required for their cash crop. "
-                text += "The scenario returns farms with the highest total Nitrogen from plant tissue analysis "
+                text += "The scenario returns farms with the highest total nitrogen from plant tissue analysis "
                 text += "and extrapolated to the highest estimated amount of N lbs/acre at the fall sampling. "
                 text += "The farms shown always include a legume in the cover mix."
                 text += "<br>"
@@ -1157,14 +1157,15 @@
                 text_scenario_details += "This equates to about $" +
                     (fieldRecord.properties.n_content * 0.52).toFixed(0) +
                     " per acre of anhydrous N fertilizer. " +
-                    "This does not consider below ground Nitrogen in the cover crop. " +
+                    "This does not consider below ground N in the cover crop. " +
                     "See full nutrient analysis by clicking 'More Info'. " +
                     "<br>" +
                     "<br>" +
-                    "The ROI for planting covers for nitrogen works out to " +
+
+                    "The ROI for above ground N for this cover crop was " +
                     ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
-                        fieldRecord.properties.cover_crop_planting_cost)).toFixed(1) + ". " +
-                    "This was calculated by taking the N in the cover crop, in lbs/acre, and dividing by the seed cost plus the planting costs of the cover crop. " +
+                        fieldRecord.properties.cover_crop_planting_cost)).toFixed(1) +
+                    ", based on lbs/acre of N in the cover crop divided by seed and planting costs. " +
                     "<br>" +
                     "<em><b>Note</b> that not all of the nitrogen in the cover crop will be available to growing plants in the following season.<em>";
                 break;
@@ -1299,13 +1300,17 @@
             // roi_span.style.display = "inline-block"
             // roi_span.style.padding = "0.5em"
             let roi_text = document.createElement('p')
-            roi_text.innerText = "  Positive ROI"
+            roi_text.innerText = "Positive ROI"
             roi_text.style.paddingLeft = '10px'
+            roi_text.style.paddingRight = '10px'
+            roi_text.style.backgroundColor = '#308348'
+            roi_text.style.borderRadius = "10px 100px / 120px"
+            roi_text.style.color = "white"
             let roi_icon = document.createElement('i')
             roi_icon.className = 'fa fa-solid fa-thumbs-up'
             roi_icon.style.color = '#308348'
 
-            roi_span.appendChild(roi_icon)
+            // roi_span.appendChild(roi_icon)
             roi_span.appendChild(roi_text)
         }
         return roi_span;
