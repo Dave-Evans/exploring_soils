@@ -23,37 +23,6 @@
         <!-- Begin other experiment -->
         <div class="card-group">
 
-
-          <a href="{% url 'wisc_cc_map' %}">
-            <div class="card">
-              <img class="card-img-top" src="{% static 'img/display_wisc_cc_map3_smaller.jpg' %}"
-                alt="Map of participating farmers">
-              <div class="card-body">
-                <h5 class="card-title">Map of participating citizen science farmers</h5>
-                <p class="card-text">Do you see your dot? Click each location for more information on cover cropping
-                  practices.</p>
-                <a href="{% url 'wisc_cc_map' %}" class="btn btn-primary">Go to the map</a>
-              </div>
-            </div>
-          </a>
-          <a href="{% url 'wisc_cc_graph' %}">
-            <div class="card">
-              <img class="card-img-top" src="{% static 'img/graph_covercrop.png' %}" alt="Graph photo">
-
-
-              <div class="card-body">
-                <h5 class="card-title">Cover crop graphs</h5>
-                <p class="card-text">Change variables to explore locations, species, tillage and
-                  more.</p>
-                <a href="{% url 'wisc_cc_graph' %}" class="btn btn-primary">Go to graph</a>
-              </div>
-            </div>
-          </a>
-
-
-        </div>
-        <div class="card-group">
-
           <a href="{% url 'wisc_cc_scenario' %}">
             <div class="card">
               <img class="card-img-top" src="{% static 'img/kewaunee_covers.jpeg' %}"
@@ -68,6 +37,25 @@
               </div>
             </div>
           </a>
+          <a href="{% url 'wisc_cc_map' %}">
+            <div class="card">
+              <img class="card-img-top" src="{% static 'img/display_wisc_cc_map3_smaller.jpg' %}"
+                alt="Map of participating farmers">
+              <div class="card-body">
+                <h5 class="card-title">Map of participating citizen science farmers</h5>
+                <p class="card-text">Do you see your dot? Click each location for more information on cover cropping
+                  practices.</p>
+                <a href="{% url 'wisc_cc_map' %}" class="btn btn-primary">Go to the map</a>
+              </div>
+            </div>
+          </a>
+
+
+
+        </div>
+        <div class="card-group">
+
+
           <!-- <a href="{% url 'wisc_cc_interested' %}"> -->
           <div class="card">
             <img class="card-img-top" src="{% static 'img/checking_corn.jpg' %}"
@@ -97,7 +85,19 @@
               </div>
             </div>
           </a>
+          <a href="{% url 'wisc_cc_graph' %}">
+            <div class="card">
+              <img class="card-img-top" src="{% static 'img/graph_covercrop.png' %}" alt="Graph photo">
 
+
+              <div class="card-body">
+                <h5 class="card-title">Cover crop graphs</h5>
+                <p class="card-text">Change variables to explore locations, species, tillage and
+                  more.</p>
+                <a href="{% url 'wisc_cc_graph' %}" class="btn btn-primary">Go to graph</a>
+              </div>
+            </div>
+          </a>
 
         </div>
         <br>
