@@ -874,7 +874,7 @@ function updateHelpTipText(property) {
     }
     if (property == "fq_rfq") {
         text = "Relative forage quality is a measure of how good the harvested cover crop was for use as forage for livestock."
-        text += 'The grades are based on a scale from <a href="https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-10-2023/">UW Extension</a>.'
+        text += 'The grades are based on a scale from <a href="https://cropsandsoils.extension.wisc.edu/hay-market-report/">UW Extension</a>.'
         text += "<br>   Prime (> 151 RFV/RFQ)<br>"
         text += "Grade 1 (125 to 150 RFV/RFQ)<br>"
         text += "Grade 2 (103 to 124 RFV/RFQ)<br>"

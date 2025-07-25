@@ -18,6 +18,9 @@
       <li class="nav-item" id="nav-home">
         <a class="nav-link" href="{% url 'wisc_cc_home' %}">Home</a>
       </li>
+      <li class="nav-item" id="nav-scenario">
+        <a class="nav-link" href="{% url 'wisc_cc_scenario' %}">Cover Crop Scenario Tool</a>
+      </li>
       <li class="nav-item" id="nav-graph">
         <a class="nav-link" href="{% url 'wisc_cc_graph' %}">Graph</a>
       </li>
@@ -96,6 +99,9 @@
     }
     if (whichpage.includes("survey")) {
       $("#nav-survey").addClass("active");
+    }
+    if (whichpage.includes("scenario")) {
+      $("#nav-scenario").addClass("active");
     }
     if (whichpage.includes("home")) {
       $("#nav-home").addClass("active");
