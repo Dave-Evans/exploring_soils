@@ -59,7 +59,7 @@
         z-index: 100;
         left: 50%;
         margin-left: -80px;
-
+        margin-bottom: 10px;
         /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
         opacity: 0;
         transition: opacity 1s;
@@ -73,13 +73,13 @@
     .helptip .helptiptext::after {
         content: " ";
         position: absolute;
-        bottom: 100%;
+        /* bottom: 100%; */
         /* At the bottom of the tooltip */
-        left: 30%;
+        /* left: 50%;
         margin-left: -5px;
         border-width: 5px;
         border-style: solid;
-        border-color: transparent transparent#2f2f2f transparent;
+        border-color: transparent transparent#2f2f2f transparent; */
     }
 
     tr:nth-child(even) {
@@ -1197,14 +1197,14 @@
                     ", based on the estimated tons of biomass produced and the forage quality as measured by RFQ. " +
                     "We use the Hay Market Report to estimated the price of this forage by assuming the average price for a large round bale of hay. " +
                     "The estimated income from the hay is then divided by seed and planting costs. " +
-                    "These estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
-                // Debug
-                // "<br>" +
-                // "RFQ: " + fieldRecord.properties.fq_rfq + "<br>" +
-                // "Tons biomass: " + fieldRecord.properties.cc_biomass + "<br>" +
-                // "Price per ton: " + calcPricePerTon(fieldRecord.properties.fq_rfq, fieldRecord.properties.year) + "<br>" +
-                // "Seed cost: " + fieldRecord.properties.cover_crop_seed_cost + "<br>" +
-                // "Planting cost: " + fieldRecord.properties.cover_crop_planting_cost;
+                    "These estimates are based on a sample of the cover crop from a 2ft by 2ft square." +
+                    // Debug
+                    "<br>" +
+                    "RFQ: " + fieldRecord.properties.spring_fq_rfq + "<br>" +
+                    "Tons biomass: " + fieldRecord.properties.spring_cc_biomass + "<br>" +
+                    "Price per ton: " + calcPricePerTon(fieldRecord.properties.spring_fq_rfq, fieldRecord.properties.year, season = "spring") + "<br>" +
+                    "Seed cost: " + fieldRecord.properties.cover_crop_seed_cost + "<br>" +
+                    "Planting cost: " + fieldRecord.properties.cover_crop_planting_cost;
 
                 break;
             case "graze_fall":
@@ -1403,14 +1403,20 @@
             return roi_span;
         }
 
-        "n_credits"
-        "graze_fall"
-        "graze_spring"
+
         var roi_val = 0;
+        var helptiptext = ''
+        helptiptext = "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
+        helptiptext += "such as increased water storage, flood mitigation, or increased organic matter."
         if (selected_scenario == "n_credits") {
 
             roi_val = ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
                 fieldRecord.properties.cover_crop_planting_cost));
+
+
+
+
+
 
         } else if (selected_scenario == "graze_fall") {
 
@@ -1424,7 +1430,7 @@
         if (roi_val <= 1) {
             return roi_span;
         }
-        roi_span.className = "flex"
+        roi_span.className = "flex helptip"
         // roi_span.style.float = "left"
         // roi_span.style.display = "inline-block"
         // roi_span.style.padding = "0.5em"
@@ -1435,11 +1441,18 @@
         roi_text.style.backgroundColor = '#308348'
         roi_text.style.borderRadius = "10px 100px / 120px"
         roi_text.style.color = "white"
-        let roi_icon = document.createElement('i')
-        roi_icon.className = 'fa fa-solid fa-thumbs-up'
-        roi_icon.style.color = '#308348'
+        // let roi_icon = document.createElement('i')
+        // roi_icon.className = 'fa fa-solid fa-thumbs-up'
+        // roi_icon.style.color = '#308348'
+
+
+        let helptext = document.createElement("span")
+        helptext.className = "helptiptext toptip";
+        helptext.innerText = helptiptext;
+        helptext.style.fontSize = "smaller";
 
         // roi_span.appendChild(roi_icon)
+        roi_span.appendChild(helptext)
         roi_span.appendChild(roi_text)
 
         return roi_span;
