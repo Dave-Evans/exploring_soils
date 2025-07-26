@@ -1178,6 +1178,7 @@
                     " inches.";
                 break;
             case "graze_spring":
+                var roi = calcGrazingROI(fieldRecord, season = 'spring');
                 text_scenario_details = "The RFQ of the spring cover crop sample was " +
                     fieldRecord.properties.spring_fq_rfq.toFixed(1) +
                     // ", placing it in the " +
@@ -1186,10 +1187,28 @@
                     ", with an estimated " +
                     fieldRecord.properties.spring_cc_biomass.toFixed(0) +
                     " tons per acre of biomass. " +
-                    "See full forage analysis by clicking 'More Info'. ";
+                    "See full forage analysis by clicking 'More Info'. " +
+
+
+                    "<br>" +
+                    "<br>" +
+                    "The ROI for grazing this cover crop in the spring was " +
+                    roi.toFixed(1) +
+                    ", based on the estimated tons of biomass produced and the forage quality as measured by RFQ. " +
+                    "We use the Hay Market Report to estimated the price of this forage by assuming the average price for a large round bale of hay. " +
+                    "The estimated income from the hay is then divided by seed and planting costs. " +
+                    "These estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
+                // Debug
+                // "<br>" +
+                // "RFQ: " + fieldRecord.properties.fq_rfq + "<br>" +
+                // "Tons biomass: " + fieldRecord.properties.cc_biomass + "<br>" +
+                // "Price per ton: " + calcPricePerTon(fieldRecord.properties.fq_rfq, fieldRecord.properties.year) + "<br>" +
+                // "Seed cost: " + fieldRecord.properties.cover_crop_seed_cost + "<br>" +
+                // "Planting cost: " + fieldRecord.properties.cover_crop_planting_cost;
 
                 break;
             case "graze_fall":
+                var roi = calcGrazingROI(fieldRecord, season = 'fall');
                 text_scenario_details = "The RFQ of the fall cover crop sample was " +
                     fieldRecord.properties.fq_rfq.toFixed(1) +
                     // ", placing it in the " +
@@ -1198,7 +1217,23 @@
                     ", with an estimated " +
                     fieldRecord.properties.cc_biomass.toFixed(0) +
                     " tons per acre of biomass. " +
-                    "See full forage analysis by clicking 'More Info'. ";
+                    "See full forage analysis by clicking 'More Info'. " +
+
+                    "<br>" +
+                    "<br>" +
+                    "The ROI for grazing this cover crop in the fall was " +
+                    roi.toFixed(1) +
+                    ", based on the estimated tons of biomass produced and the forage quality as measured by RFQ. " +
+                    "We use the Hay Market Report to estimated the price of this forage by assuming the average price for a large round bale of hay. " +
+                    "The estimated income from the hay is then divided by seed and planting costs. " +
+                    "These estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
+                // Debug
+                // "<br>" +
+                // "RFQ: " + fieldRecord.properties.fq_rfq + "<br>" +
+                // "Tons biomass: " + fieldRecord.properties.cc_biomass + "<br>" +
+                // "Price per ton: " + calcPricePerTon(fieldRecord.properties.fq_rfq, fieldRecord.properties.year) + "<br>" +
+                // "Seed cost: " + fieldRecord.properties.cover_crop_seed_cost + "<br>" +
+                // "Planting cost: " + fieldRecord.properties.cover_crop_planting_cost;
                 break;
         }
 
@@ -1207,78 +1242,153 @@
         return text_scenario_details;
     }
 
-    function calcPricePerTon(rfq, year) {
+    function calcPricePerTon(rfq, year, season) {
         // We assume the price for an average round bale
         // https://cropsandsoils.extension.wisc.edu/hay-market-report/
         var price_per_ton;
 
         if (year == 2024) {
-            // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-october-31st-2024/
-            if (rfq >= 151) {
-                price_per_ton = 100;
-            } else if (rfq < 151 & rfq >= 125) {
-                price_per_ton = 88;
+            if (season == "fall") {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-october-31st-2024/
+
+                if (rfq >= 151) {
+                    price_per_ton = 100;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 88;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 79;
+                }
+            } else {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-may-27-2025/
+                if (rfq >= 151) {
+                    price_per_ton = 116;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 86;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 74;
+                }
             }
-            else if (rfq < 125 & rfq >= 103) {
-                price_per_ton = 79;
-            }
+
         } else if (year == 2023) {
-            // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-10-2023/
-            if (rfq >= 151) {
-                price_per_ton = 250;
-            } else if (rfq < 151 & rfq >= 125) {
-                price_per_ton = 176;
-            }
-            else if (rfq < 125 & rfq >= 103) {
-                price_per_ton = 151;
-            }
-            else if (rfq < 103 & rfq >= 87) {
-                price_per_ton = 93;
+            if (season == "fall") {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-10-2023/
+                if (rfq >= 151) {
+                    price_per_ton = 250;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 176;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 151;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 93;
+                }
+            } else {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-may-28th-2024/
+                if (rfq >= 151) {
+                    price_per_ton = 156;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 127;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 95;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 93;
+                }
             }
         }
-        // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-24-2022/
+
         else if (year == 2022) {
-            if (rfq >= 151) {
-                price_per_ton = 235;
-            } else if (rfq < 151 & rfq >= 125) {
-                price_per_ton = 179;
+            // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-24-2022/
+            if (season == "fall") {
+                if (rfq >= 151) {
+                    price_per_ton = 235;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 179;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 185;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 89;
+                }
+            } else {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-may-22-2023/
+                if (rfq >= 151) {
+                    price_per_ton = 269;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 189;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 149;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 133;
+                }
             }
-            else if (rfq < 125 & rfq >= 103) {
-                price_per_ton = 185;
-            }
-            else if (rfq < 103 & rfq >= 87) {
-                price_per_ton = 89;
-            }
+
         }
         else if (year == 2021) {
-            if (rfq >= 151) {
-                price_per_ton = 209;
-            } else if (rfq < 151 & rfq >= 125) {
-                price_per_ton = 154;
+            if (season == "fall") {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-25-2021/
+                if (rfq >= 151) {
+                    price_per_ton = 209;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 154;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 143;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 83;
+                }
+            } else {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-may-23-2022/
+                if (rfq >= 151) {
+                    price_per_ton = 208;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 170;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 154;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 130;
+                }
             }
-            else if (rfq < 125 & rfq >= 103) {
-                price_per_ton = 143;
-            }
-            else if (rfq < 103 & rfq >= 87) {
-                price_per_ton = 83;
-            }
+
         }
         return price_per_ton;
     }
 
-    function calcGrazingROI(season = 'fall', fieldRecord) {
+    function calcGrazingROI(fieldRecord, season = 'fall') {
         // helper for calcing Grazing roi
         var year = fieldRecord.properties.year;
 
-        var biomass = fieldRecord.properties.cc_biomass;
-        var rfq = fieldRecord.properties.fq_rfq;
+        if (season == "fall") {
+            var biomass = fieldRecord.properties.cc_biomass;
+            var rfq = fieldRecord.properties.fq_rfq;
+        } else {
+            var biomass = fieldRecord.properties.spring_cc_biomass;
+            var rfq = fieldRecord.properties.spring_fq_rfq;
+        }
 
-        var price_per_ton = calcPricePerTon(rfq, year);
+
+        var price_per_ton = calcPricePerTon(rfq, year, season);
 
         var total_forage_income = biomass * price_per_ton;
 
         var planting_cost = fieldRecord.properties.cover_crop_planting_cost;
         var seed_cost = fieldRecord.properties.cover_crop_seed_cost;
+        // FIX THIS!!
+        var operator_costs = 0
+
+        var roi = total_forage_income / (planting_cost + seed_cost + operator_costs);
+
+        return roi;
 
     }
 
@@ -1287,32 +1397,51 @@
         // <i class="fa fa-solid fa-thumbs-up" style="color: #4e9a06;"></i>
 
         let roi_span = document.createElement('div');
-        if ($('#ScenarioSelector').val() == "n_credits") {
-
-            var roi_val = ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
-                fieldRecord.properties.cover_crop_planting_cost));
-            if (roi_val <= 1) {
-                return roi_span;
-            }
-
-            roi_span.className = "flex"
-            // roi_span.style.float = "left"
-            // roi_span.style.display = "inline-block"
-            // roi_span.style.padding = "0.5em"
-            let roi_text = document.createElement('p')
-            roi_text.innerText = "Positive ROI"
-            roi_text.style.paddingLeft = '10px'
-            roi_text.style.paddingRight = '10px'
-            roi_text.style.backgroundColor = '#308348'
-            roi_text.style.borderRadius = "10px 100px / 120px"
-            roi_text.style.color = "white"
-            let roi_icon = document.createElement('i')
-            roi_icon.className = 'fa fa-solid fa-thumbs-up'
-            roi_icon.style.color = '#308348'
-
-            // roi_span.appendChild(roi_icon)
-            roi_span.appendChild(roi_text)
+        let selected_scenario = $('#ScenarioSelector').val();
+        // If selected scenario doesn't require ROI, then return empty roi span
+        if (["erosion_control", "nutrient_scavenger", "weed_suppression"].includes(selected_scenario)) {
+            return roi_span;
         }
+
+        "n_credits"
+        "graze_fall"
+        "graze_spring"
+        var roi_val = 0;
+        if (selected_scenario == "n_credits") {
+
+            roi_val = ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
+                fieldRecord.properties.cover_crop_planting_cost));
+
+        } else if (selected_scenario == "graze_fall") {
+
+            roi_val = calcGrazingROI(fieldRecord, season = 'fall');
+
+        } else if (selected_scenario == "graze_spring") {
+
+            roi_val = calcGrazingROI(fieldRecord, season = 'spring');
+        }
+
+        if (roi_val <= 1) {
+            return roi_span;
+        }
+        roi_span.className = "flex"
+        // roi_span.style.float = "left"
+        // roi_span.style.display = "inline-block"
+        // roi_span.style.padding = "0.5em"
+        let roi_text = document.createElement('p')
+        roi_text.innerText = "Positive ROI"
+        roi_text.style.paddingLeft = '10px'
+        roi_text.style.paddingRight = '10px'
+        roi_text.style.backgroundColor = '#308348'
+        roi_text.style.borderRadius = "10px 100px / 120px"
+        roi_text.style.color = "white"
+        let roi_icon = document.createElement('i')
+        roi_icon.className = 'fa fa-solid fa-thumbs-up'
+        roi_icon.style.color = '#308348'
+
+        // roi_span.appendChild(roi_icon)
+        roi_span.appendChild(roi_text)
+
         return roi_span;
 
     }
