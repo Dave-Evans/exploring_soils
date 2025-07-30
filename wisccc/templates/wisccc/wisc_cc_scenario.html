@@ -1161,8 +1161,8 @@
                     "<b>" + fieldRecord.properties.n_content.toFixed(1) + "</b>" +
                     " lbs per acre " +
                     "of nitrogen at fall sampling. ";
-                text_scenario_details += "This equates to about $" +
-                    "<b>" + (fieldRecord.properties.n_content * 0.52).toFixed(0) + "</b>" +
+                text_scenario_details += "This equates to about " +
+                    "<b>$" + (fieldRecord.properties.n_content * 0.52).toFixed(0) + "</b>" +
                     " per acre of anhydrous N fertilizer. " +
                     "See full nutrient analysis by clicking 'Farm details'. " +
                     "<br>" +
@@ -1209,6 +1209,7 @@
                     ", based on the estimated tons of biomass produced and the forage quality as measured by RFQ. " +
                     "We use the Hay Market Report to estimated the price of this forage by assuming the average price for a large round bale of hay. " +
                     "The estimated income from the hay is then divided by seed and planting costs. " +
+                    "This ROI does not include costs for mechanical harvest (mowing, raking, baling, etc.). Those costs can be estimated using the Wisconsin Custom Rate Guide. " +
                     "These estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
                 // Debug
                 // "<br>" +
@@ -1242,10 +1243,13 @@
                     "The ROI for grazing this cover crop in the fall was " +
                     "<b>" + roi.toFixed(1) + "</b>" +
                     ", based on the estimated tons of biomass produced and the forage quality as measured by RFQ. " +
-                    "We use the Hay Market Report to estimated the price of this forage by assuming the average price for a large round bale of hay. " +
+                    "We used the " +
+                    '<a href="https://cropsandsoils.extension.wisc.edu/hay-market-report/" target="_blank" rel = "noopener noreferrer"> Hay Market Report</a>. ' +
+                    " to estimate the price of this forage by assuming the average price for a large round bale of hay. " +
                     "The estimated income from the hay is then divided by seed and planting costs. " +
                     'This ROI does not include costs for mechanical harvest (mowing, raking, baling, etc.). ' +
-                    'Those costs can be estimated using  <a href="https://farms.extension.wisc.edu/articles/custom-rates-for-2024-wisconsin-farm-operations/#forage" target="_blank" rel = "noopener noreferrer"> the Wisconsin Custom Rate Guide</a>. ' +
+                    'Those costs can be estimated using  ' +
+                    '<a href="https://farms.extension.wisc.edu/articles/custom-rates-for-2024-wisconsin-farm-operations/#forage" target="_blank" rel = "noopener noreferrer"> the Wisconsin Custom Rate Guide</a>. ' +
                     "These estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
                 // Debug
                 // "<br>" +
