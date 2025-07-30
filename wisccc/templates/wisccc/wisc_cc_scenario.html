@@ -287,11 +287,14 @@
                 text += "and perhaps reduce the amount of synthetic nitrogen required for their cash crop. "
                 text += "The scenario returns farms with the highest total nitrogen from plant tissue analysis "
                 text += "and extrapolated to the highest estimated amount of N lbs/acre at the fall sampling. "
+                text += "This does not consider below ground N in the cover crop. "
                 text += "The farms shown always include a legume in the cover mix."
                 text += "<br>"
                 text += "<b>NOTE:</b> we supply a $/acre of urea ammonia replaced with cover crop N, "
                 text += "this is based on a $0.52/lb of urea amonia. ";
                 text += "<em>Not all of the nitrogen in the cover crop will be available to growing plants in the following season.</em> "
+                text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
+                text += "such as increased water storage, flood mitigation, or increased organic matter. "
                 break;
             case "weed_suppression":
                 text = "Planting cover crops can improve a cash crop by out-competing weeds. ";
@@ -300,9 +303,13 @@
                 break;
             case "graze_spring":
                 text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, spring sampled values are used.";
+                text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
+                text += "such as increased water storage, flood mitigation, or increased organic matter. "
                 break;
             case "graze_fall":
                 text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, fall sampled values are used.";
+                text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
+                text += "such as increased water storage, flood mitigation, or increased organic matter. "
                 break;
         }
         $("#scenario_helptip").html(text);
@@ -1146,25 +1153,24 @@
                     fieldRecord.properties.n_content.toFixed(0) +
                     " lbs per acre " +
                     "of nitrogen at fall sampling. " +
-                    "See full nutrient analysis by clicking 'More Info'. ";
+                    "See full nutrient analysis by clicking 'Farm details'. ";
                 break;
             case "n_credits":
                 // https://www.dtnpf.com/agriculture/web/ag/crops/article/2025/06/18/retail-fertilizers-see-slight-price
                 text_scenario_details = "There was an estimated " +
-                    fieldRecord.properties.n_content.toFixed(1) +
+                    "<b>" + fieldRecord.properties.n_content.toFixed(1) + "</b>" +
                     " lbs per acre " +
                     "of nitrogen at fall sampling. ";
                 text_scenario_details += "This equates to about $" +
-                    (fieldRecord.properties.n_content * 0.52).toFixed(0) +
+                    "<b>" + (fieldRecord.properties.n_content * 0.52).toFixed(0) + "</b>" +
                     " per acre of anhydrous N fertilizer. " +
-                    "This does not consider below ground N in the cover crop. " +
-                    "See full nutrient analysis by clicking 'More Info'. " +
+                    "See full nutrient analysis by clicking 'Farm details'. " +
                     "<br>" +
                     "<br>" +
 
                     "The ROI for above ground N for this cover crop was " +
-                    ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
-                        fieldRecord.properties.cover_crop_planting_cost)).toFixed(1) +
+                    "<b>" + ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
+                        fieldRecord.properties.cover_crop_planting_cost)).toFixed(1) + "</b>" +
                     ", based on lbs/acre of N in the cover crop divided by seed and planting costs. " +
                     "<br>" +
                     "<em><b>Note</b> that not all of the nitrogen in the cover crop will be available to growing plants in the following season.<em>";
@@ -1179,21 +1185,27 @@
                 break;
             case "graze_spring":
                 var roi = calcGrazingROI(fieldRecord, season = 'spring');
+                if (roi == -1) {
+                    text_scenario_details = "The RFQ of the fall cover crop sample was too low to be sold for forage. " +
+                        "No ROI could be calculated since the hay could not be sold. " +
+                        "These forage quality estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
+                    return text_scenario_details;
+                }
                 text_scenario_details = "The RFQ of the spring cover crop sample was " +
-                    fieldRecord.properties.spring_fq_rfq.toFixed(1) +
+                    "<b>" + fieldRecord.properties.spring_fq_rfq.toFixed(1) + "</b>" +
                     // ", placing it in the " +
                     // Forage quality category +
                     // " category for forage. "
                     ", with an estimated " +
-                    fieldRecord.properties.spring_cc_biomass.toFixed(0) +
-                    " tons per acre of biomass. " +
-                    "See full forage analysis by clicking 'More Info'. " +
+                    "<b>" + fieldRecord.properties.spring_cc_biomass.toFixed(0) + "</b> " +
+                    "tons per acre of biomass. " +
+                    "See full forage analysis by clicking 'Farm details'. " +
 
 
                     "<br>" +
                     "<br>" +
                     "The ROI for grazing this cover crop in the spring was " +
-                    roi.toFixed(1) +
+                    "<b>" + roi.toFixed(1) + "</b>" +
                     ", based on the estimated tons of biomass produced and the forage quality as measured by RFQ. " +
                     "We use the Hay Market Report to estimated the price of this forage by assuming the average price for a large round bale of hay. " +
                     "The estimated income from the hay is then divided by seed and planting costs. " +
@@ -1209,29 +1221,37 @@
                 break;
             case "graze_fall":
                 var roi = calcGrazingROI(fieldRecord, season = 'fall');
+                if (roi == -1) {
+                    text_scenario_details = "The RFQ of the fall cover crop sample was too low to be sold for forage. " +
+                        "No ROI could be calculated since the hay could not be sold. " +
+                        "These forage quality estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
+                    return text_scenario_details;
+                }
                 text_scenario_details = "The RFQ of the fall cover crop sample was " +
-                    fieldRecord.properties.fq_rfq.toFixed(1) +
+                    "<b>" + fieldRecord.properties.fq_rfq.toFixed(1) + "</b>" +
                     // ", placing it in the " +
                     // Forage quality category +
                     // " category for forage. "
                     ", with an estimated " +
-                    fieldRecord.properties.cc_biomass.toFixed(0) +
+                    "<b>" + fieldRecord.properties.cc_biomass.toFixed(0) + "</b>" +
                     " tons per acre of biomass. " +
-                    "See full forage analysis by clicking 'More Info'. " +
+                    "See full forage analysis by clicking 'Farm details'. " +
 
                     "<br>" +
                     "<br>" +
                     "The ROI for grazing this cover crop in the fall was " +
-                    roi.toFixed(1) +
+                    "<b>" + roi.toFixed(1) + "</b>" +
                     ", based on the estimated tons of biomass produced and the forage quality as measured by RFQ. " +
                     "We use the Hay Market Report to estimated the price of this forage by assuming the average price for a large round bale of hay. " +
                     "The estimated income from the hay is then divided by seed and planting costs. " +
+                    'This ROI does not include costs for mechanical harvest (mowing, raking, baling, etc.). ' +
+                    'Those costs can be estimated using  <a href="https://farms.extension.wisc.edu/articles/custom-rates-for-2024-wisconsin-farm-operations/#forage" target="_blank" rel = "noopener noreferrer"> the Wisconsin Custom Rate Guide</a>. ' +
                     "These estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
                 // Debug
                 // "<br>" +
                 // "RFQ: " + fieldRecord.properties.fq_rfq + "<br>" +
                 // "Tons biomass: " + fieldRecord.properties.cc_biomass + "<br>" +
-                // "Price per ton: " + calcPricePerTon(fieldRecord.properties.fq_rfq, fieldRecord.properties.year) + "<br>" +
+                // "Price per ton: " + calcPricePerTon(fieldRecord.properties.fq_rfq, fieldRecord.properties.year, 'fall') + "<br>" +
                 // "Seed cost: " + fieldRecord.properties.cover_crop_seed_cost + "<br>" +
                 // "Planting cost: " + fieldRecord.properties.cover_crop_planting_cost;
                 break;
@@ -1258,6 +1278,8 @@
                 }
                 else if (rfq < 125 & rfq >= 103) {
                     price_per_ton = 79;
+                } else if (rfq < 103) {
+                    price_per_ton = 0
                 }
             } else {
                 // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-may-27-2025/
@@ -1284,6 +1306,8 @@
                 }
                 else if (rfq < 103 & rfq >= 87) {
                     price_per_ton = 93;
+                } else if (rfq < 87) {
+                    price_per_ton = 0;
                 }
             } else {
                 // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-may-28th-2024/
@@ -1295,8 +1319,8 @@
                 else if (rfq < 125 & rfq >= 103) {
                     price_per_ton = 95;
                 }
-                else if (rfq < 103 & rfq >= 87) {
-                    price_per_ton = 93;
+                else if (rfq < 103) {
+                    price_per_ton = 0;
                 }
             }
         }
@@ -1315,6 +1339,9 @@
                 else if (rfq < 103 & rfq >= 87) {
                     price_per_ton = 89;
                 }
+                else if (rfq < 87) {
+                    price_per_ton = 0
+                }
             } else {
                 // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-may-22-2023/
                 if (rfq >= 151) {
@@ -1327,6 +1354,8 @@
                 }
                 else if (rfq < 103 & rfq >= 87) {
                     price_per_ton = 133;
+                } else if (rfq < 87) {
+                    price_per_ton = 0
                 }
             }
 
@@ -1378,13 +1407,30 @@
 
 
         var price_per_ton = calcPricePerTon(rfq, year, season);
-
+        // RFQ so bad, can't sell for forage
+        if (price_per_ton == 0) {
+            return -1
+        }
         var total_forage_income = biomass * price_per_ton;
 
         var planting_cost = fieldRecord.properties.cover_crop_planting_cost;
         var seed_cost = fieldRecord.properties.cover_crop_seed_cost;
-        // FIX THIS!!
-        var operator_costs = 0
+        // Operator costs - we are currently going to assume grazing,
+        //  so no operator costs.
+        var mowing_cost = 16.2
+        var raking_cost = 9.46
+        var tedding_cost = 10.57
+        var windrowing_cost = 12.58
+        var baling_cost = 11.29
+
+        var operator_costs = 0;
+        // (
+        //     mowing_cost +
+        //     raking_cost +
+        //     tedding_cost +
+        //     windrowing_cost +
+        //     baling_cost
+        // )
 
         var roi = total_forage_income / (planting_cost + seed_cost + operator_costs);
 
@@ -1413,11 +1459,6 @@
             roi_val = ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
                 fieldRecord.properties.cover_crop_planting_cost));
 
-
-
-
-
-
         } else if (selected_scenario == "graze_fall") {
 
             roi_val = calcGrazingROI(fieldRecord, season = 'fall');
@@ -1430,7 +1471,7 @@
         if (roi_val <= 1) {
             return roi_span;
         }
-        roi_span.className = "flex helptip"
+        roi_span.className = "flex" // Add helptip for tooltip
         // roi_span.style.float = "left"
         // roi_span.style.display = "inline-block"
         // roi_span.style.padding = "0.5em"
@@ -1446,13 +1487,14 @@
         // roi_icon.style.color = '#308348'
 
 
-        let helptext = document.createElement("span")
-        helptext.className = "helptiptext toptip";
-        helptext.innerText = helptiptext;
-        helptext.style.fontSize = "smaller";
+        // let helptext = document.createElement("span")
+        // helptext.className = "helptiptext toptip";
+        // helptext.innerText = helptiptext;
+        // helptext.style.fontSize = "smaller";
+        // roi_span.appendChild(helptext)
 
         // roi_span.appendChild(roi_icon)
-        roi_span.appendChild(helptext)
+
         roi_span.appendChild(roi_text)
 
         return roi_span;
@@ -1498,7 +1540,7 @@
 
         let btn = document.createElement('a');
         btn.className = "btn btn-primary"
-        btn.innerText = "More info"
+        btn.innerText = "Farm details"
         // btn.href = "/wisc_cc_graph"
         btn.setAttribute("data-toggle", "modal");
         btn.setAttribute("data-target", "#fieldDetail");
