@@ -1145,12 +1145,12 @@
         switch (scenario) {
             case "erosion_control":
                 text_scenario_details = "Fall sampled biomass was " +
-                    fieldRecord.properties.cc_biomass.toFixed(1) +
+                    "<b>" + fieldRecord.properties.cc_biomass.toFixed(1) + "</b>" +
                     " tons per acre. ";
                 break;
             case "nutrient_scavenger":
                 text_scenario_details = "There was an estimated " +
-                    fieldRecord.properties.n_content.toFixed(0) +
+                    "<b>" + fieldRecord.properties.n_content.toFixed(0) + "</b>" +
                     " lbs per acre " +
                     "of nitrogen at fall sampling. " +
                     "See full nutrient analysis by clicking 'Farm details'. ";
@@ -1177,10 +1177,10 @@
                 break;
             case "weed_suppression":
                 text_scenario_details = "There was an estimated " +
-                    fieldRecord.properties.spring_cc_biomass.toFixed(0) +
+                    "<b>" + fieldRecord.properties.spring_cc_biomass.toFixed(0) + "</b>" +
                     " tons of biomass per acre during the spring sampling " +
                     "with an average crop height of " +
-                    fieldRecord.properties.spring_height_of_stand +
+                    "<b>" + fieldRecord.properties.spring_height_of_stand + "</b>" +
                     " inches.";
                 break;
             case "graze_spring":
