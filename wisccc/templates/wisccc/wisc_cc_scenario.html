@@ -1564,6 +1564,46 @@
 
     }
 
+    let createFieldCardEmptyResult = (container) => {
+
+        let card = document.createElement('div');
+        card.className = 'card field';
+        card.id = "field-" + 0
+
+        let cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+
+        // let img = document.createElement('img');
+        // if (fieldRecord.properties.image_1_url != null) {
+        //     img.src = fieldRecord.properties.image_1_url;
+        // } else if (fieldRecord.properties.image_2_url != null) {
+        //     img.src = fieldRecord.properties.image_2_url;
+        // }
+
+        // img.className = "card-img-top";
+
+        let title = document.createElement('h5');
+        // title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
+        title.innerText = "No results"
+        title.className = 'card-title';
+
+        let text = document.createElement('p');
+        // If it was a mix we need an article: "a mix of..."
+        text.innerText = "There are no farms with in this scenario with the filters you have select. "
+        text.innerText += "Please try reducing the number of filters or trying a different combination of them. "
+        text.className = 'card-text';
+
+        cardBody.appendChild(title);
+
+        cardBody.appendChild(text);
+
+        card.appendChild(cardBody);
+
+        container.appendChild(card);
+
+    }
+
+
     let initListOfFieldCards = (data) => {
         // Returning only top 15 here
         //  later if we want to show different "pages" of results
@@ -1575,29 +1615,39 @@
         var cardContainer4 = document.getElementById('fieldcard-container-4');
         var cardContainer5 = document.getElementById('fieldcard-container-5');
 
+        if (data.length == 0) {
+            createFieldCardEmptyResult(cardContainer1)
+            return null;
+
+        }
+
         // Taking just first fifteen
         var tmpdata = data
             .slice(0, 15);
+        for (i in tmpdata) {
+            console.log(i, "modulo: ", Math.floor(i / 3) + 1);
+            createFieldCard(tmpdata[i], document.getElementById('fieldcard-container-' + (Math.floor(i / 3) + 1)))
+        }
 
-        createFieldCard(tmpdata[0], cardContainer1);
-        createFieldCard(tmpdata[1], cardContainer1);
-        createFieldCard(tmpdata[2], cardContainer1);
+        // createFieldCard(tmpdata[0], cardContainer1);
+        // createFieldCard(tmpdata[1], cardContainer1);
+        // createFieldCard(tmpdata[2], cardContainer1);
 
-        createFieldCard(tmpdata[3], cardContainer2);
-        createFieldCard(tmpdata[4], cardContainer2);
-        createFieldCard(tmpdata[5], cardContainer2);
+        // createFieldCard(tmpdata[3], cardContainer2);
+        // createFieldCard(tmpdata[4], cardContainer2);
+        // createFieldCard(tmpdata[5], cardContainer2);
 
-        createFieldCard(tmpdata[6], cardContainer3);
-        createFieldCard(tmpdata[7], cardContainer3);
-        createFieldCard(tmpdata[8], cardContainer3);
+        // createFieldCard(tmpdata[6], cardContainer3);
+        // createFieldCard(tmpdata[7], cardContainer3);
+        // createFieldCard(tmpdata[8], cardContainer3);
 
-        createFieldCard(tmpdata[9], cardContainer4);
-        createFieldCard(tmpdata[10], cardContainer4);
-        createFieldCard(tmpdata[11], cardContainer4);
+        // createFieldCard(tmpdata[9], cardContainer4);
+        // createFieldCard(tmpdata[10], cardContainer4);
+        // createFieldCard(tmpdata[11], cardContainer4);
 
-        createFieldCard(tmpdata[12], cardContainer5);
-        createFieldCard(tmpdata[13], cardContainer5);
-        createFieldCard(tmpdata[14], cardContainer5);
+        // createFieldCard(tmpdata[12], cardContainer5);
+        // createFieldCard(tmpdata[13], cardContainer5);
+        // createFieldCard(tmpdata[14], cardContainer5);
         // Reordering because the bootstrap .card-columns fills from top to bottom then left to right.
         // tmpdata = [
         //     tmpdata[0],
