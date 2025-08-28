@@ -2135,11 +2135,11 @@ class SurveyRegistration(models.Model):
     class HaveAKit(models.TextChoices):
         HAVE_A_KIT = (
             "HAVE_A_KIT",
-            "I have a biomass sampling kit from previous years’ participation. You will send me reminder instructions & prepaid addressed envelopes for my 2024-5 samples.",
+            "I have a biomass sampling kit from previous years’ participation. You will send me reminder instructions & prepaid addressed envelopes for my 2025-6 samples.",
         )
         NEED_A_KIT = (
             "NEED_A_KIT",
-            "I need a biomass sampling kit sent to the address above along with instructions & prepaid addressed envelopes for my 2024-5 samples.",
+            "I need a biomass sampling kit sent to the address above along with instructions & prepaid addressed envelopes for my 2025-6 samples.",
         )
 
     survey_year = models.IntegerField(null=True)
