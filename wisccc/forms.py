@@ -31,6 +31,8 @@ from wisccc.models import (
     ExpandAcresChoices,
     HowSatisfiedChoices,
     ManureApplicateUnitsChoices,
+    ManureSourceChoices,
+    ManureConsistencyChoices,
     NutrientMgmtSourcesChoices,
     PrimaryTillageEquipmentChoices,
     SecondaryTillageEquipmentChoices,
@@ -1234,6 +1236,18 @@ class SurveyFieldFormSection5(forms.ModelForm):
         required=False,
     )
 
+    manure_prior_source = forms.ChoiceField(
+        label="21d. Please select the source of the manure.",
+        choices=ManureSourceChoices.choices,
+        required=False,
+    )
+
+    manure_prior_consistency = forms.ChoiceField(
+        label="21e. Please select the consistency of the manure.",
+        choices=ManureConsistencyChoices.choices,
+        required=False,
+    )
+    
     
     manure_post = forms.ChoiceField(
         label="22a. Will manure be applied to the field after the cover crop is established?",
@@ -1250,6 +1264,18 @@ class SurveyFieldFormSection5(forms.ModelForm):
     manure_post_rate_units = forms.ChoiceField(
         label="22c. The units for the manure application rate",
         choices=ManureApplicateUnitsChoices.choices,
+        required=False,
+    )
+
+    manure_post_source = forms.ChoiceField(
+        label="22d. Please select the source of the manure.",
+        choices=ManureSourceChoices.choices,
+        required=False,
+    )
+
+    manure_post_consistency = forms.ChoiceField(
+        label="22e. Please select the consistency of the manure.",
+        choices=ManureConsistencyChoices.choices,
         required=False,
     )
 
@@ -1380,9 +1406,13 @@ class SurveyFieldFormSection5(forms.ModelForm):
             "manure_prior",
             "manure_prior_rate",
             "manure_prior_rate_units",
+            "manure_prior_source",
+            "manure_prior_consistency",            
             "manure_post",
             "manure_post_rate",
             "manure_post_rate_units",
+            "manure_post_source",
+            "manure_post_consistency",
             "synth_fert_for_covers",
             "synth_fert_for_covers_application_date",
             "tillage_system_cash_crop",

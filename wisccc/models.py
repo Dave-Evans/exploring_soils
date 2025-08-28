@@ -316,6 +316,25 @@ class ManureApplicateUnitsChoices(models.TextChoices):
     GALLONS = "GALLONS", "gallons/acre"
 
 
+class ManureSourceChoices(models.TextChoices):
+    """Manure source options"""
+    BLANK = "", ""
+    DAIRY = "DAIRY", "Dairy"
+    BEEF = "BEEF", "Beef"
+    POULTRY = "POULTRY", "Poultry"
+    SWINE = "SWINE", "Swine"
+    OTHER = "OTHER", "Other"
+
+class ManureConsistencyChoices(models.TextChoices):
+    """Manure consistency options"""
+    BLANK = "", ""
+    LIQUID_LT4 = "LIQUID_LT4", "liquid (<4% dm)"
+    LIQUID_4_11 = "LIQUID_4_11", "liquid (4-11% dm)"
+    SOLID_11_20 = "SOLID_11_20", "solid (11-20% dm)"
+    SOLID_GT20 = "SOLID_GT20", "solid (>20% dm)"
+    BEDPACK = "BEDPACK", "bedpack"
+    COMPOSTED_MANURE = "COMPOSTED_MANURE", "composted manure"
+
 class TillageSystemChoices(models.TextChoices):
     """Tillage system options"""
 
@@ -1510,13 +1529,13 @@ class SurveyField(models.Model):
         null=True,
     )
 
-    # 24	Will you apply manure prior to seeding cover crops on this field, and at what rate?
+    
     manure_prior = models.CharField(
         verbose_name="Will you apply manure prior to seeding cover crops on this field?",
         max_length=120,
         null=True,
     )
-    # 24a
+    
     manure_prior_rate = models.IntegerField(
         verbose_name="At what rate will the manure be applied?", null=True
     )
@@ -1527,7 +1546,23 @@ class SurveyField(models.Model):
         null=True,
     )
 
-    # 25	Will manure be applied to the field after the cover crop is established?
+    # New 2025
+    manure_prior_source = models.CharField(
+        verbose_name="The source of the manure, animal",
+        # choices=ManureSourceChoices.choices,
+        max_length=15,
+        null=True,
+    )
+
+    # New 2025
+    manure_prior_consistency = models.CharField(
+        verbose_name="Manure consistency",
+        # choices=ManureConsistencyChoices.choices,
+        max_length=100,
+        null=True
+    )
+
+    # Will manure be applied to the field after the cover crop is established?
     manure_post = models.CharField(
         verbose_name="Will manure be applied to the field after the cover crop is established?",
         max_length=120,
@@ -1543,6 +1578,22 @@ class SurveyField(models.Model):
         max_length=15,
         null=True,
     )
+
+    # New 2025
+    manure_post_source = models.CharField(
+        verbose_name="The source of the manure, animal",
+        # choices=ManureSourceChoices.choices,
+        max_length=15,
+        null=True,
+    )
+
+    # new 2025
+    manure_post_consistency = models.CharField(
+        verbose_name="Manure consistency",
+        # choices=ManureConsistencyChoices.choices,
+        max_length=100,
+        null=True
+    )    
 
     # New for 2025
     synth_fert_for_covers = models.CharField(
