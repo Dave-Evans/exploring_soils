@@ -53,6 +53,27 @@ class ExpandAcresChoices(models.TextChoices):
     ALREADY_MAX = "ALREADY_MAX", "Already all cover cropped"
     OTHER = "OTHER", "Other"
 
+class TopGoalChoices(models.TextChoices):
+    """Top goals for planting cover crops"""
+    
+    BLANK = "", ""
+    EROSION = "EROSION_CONTROL", "Erosion control"
+    NUTRIENT_SCAVENGER = "NUTRIENT_SCAVENGER", "Nutrient scavenging"
+    N_CREDITS = "N_CREDITS", "Nitrogen input"
+    WEED_SUPPRESSION = "WEED_SUPPRESSION", "Weed suppression"
+    FALL_GRAZING = "FALL_GRAZING", "Fall grazing"
+    SPRING_GRAZING = "SPRING_GRAZING", "Spring grazing"
+    OTHER = "OTHER", "Other"
+
+
+class HowSatisfiedChoices(models.TextChoices):
+    """How satisfied are you?"""
+    BLANK = "", ""
+    VERY_SATISFIED = "VERY_SATISFIED", "Very satisfied"
+    SOMEWHAT_SATISFIED = "SOMEWHAT_SATISFIED", "Somewhat satisfied"
+    NEUTRAL = "NEUTRAL", "Neutral" 
+    SOMEWHAT_DISSATISFIED = "SOMEWHAT_DISSATISFIED", "Somewhat disatisfied"
+    VERY_DISSATISFIED = "VERY_DISSATISFIED", "Very disatisfied"
 
 class NutrientMgmtSourcesChoices(models.TextChoices):
     """Different Nutrient management information sources"""
@@ -263,6 +284,7 @@ class SeedingMethodChoices(models.TextChoices):
         "FERT_BROADCAST_INCORP",
         "cover crop seed mixed with fertilizer + broadcast + incorporation",
     )
+    DRONE = "DRONE", "Drone"
     OTHER = "OTHER", "other"
 
 
@@ -947,15 +969,27 @@ class SurveyFarm(models.Model):
         null=True,
     )
 
-    # New in 2024
+    # New in 2024, modified with TopGoalChoices in 2024
     main_cc_goal_this_year = models.TextField(
-        verbose_name="What is your main goal for cover cropping this year?",
+        verbose_name="Select your top goal.",
         null=True,
     )
 
-    # New in 2024
+    # New in 2025
+    main_cc_goal_this_year_write_in = models.TextField(
+        verbose_name="Write-in for other option for top goal",
+        null=True,
+    )
+
+    # New in 2024, modified to ChoiceField in forms
     satisfied_with_cc_results = models.TextField(
         verbose_name="How satisfied are you with results you get from cover cropping? ",
+        null=True,
+    )
+
+    # New in 2025
+    satisfied_with_cc_results_write_in = models.TextField(
+        verbose_name="Write-in for satisfaction level",
         null=True,
     )
 
@@ -1015,7 +1049,7 @@ class SurveyFarm(models.Model):
 
     # 6. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
     info_source_cover_crops_1 = models.TextField(
-        verbose_name="Top information source for cover crops",
+        verbose_name="DEPRECATED Top information source for cover crops",
         # choices=CoverCropInfoSourcesChoices.choices,
         max_length=1000,
         null=True,
@@ -1045,14 +1079,31 @@ class SurveyFarm(models.Model):
         null=True,
     )
 
+    # New 2025
+    biggest_challenge_cc_changed_over_time = models.TextField(
+        verbose_name="Have these challenges changed with time?",
+        null=True,
+    )
+
     learning_history_cc = models.TextField(
-        verbose_name="How would you describe your learning history for cover cropping (including personal experience)?",
+        verbose_name="DEPRECATED in 2025 How would you describe your learning history for cover cropping (including personal experience)?",
         null=True,
     )
 
     conservation_programs = models.TextField(
         verbose_name="Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices?",
         null=True,
+    )
+
+    # New 2025
+    conservation_programs_which_ones = models.TextField(
+        verbose_name="If you are enrolled in cons programs, which ones?",
+        null = True
+    )
+    # New in 2025
+    conservation_programs_if_helped_how = models.TextField(
+        verbose_name="If government/agency conservation programs have helped you use cover crops, please explain.",
+        null=True
     )
 
     # 7. In terms of support for cover cropping, select and rank the top 1 to 3 factors you’d like to see more of:
@@ -1112,7 +1163,7 @@ class SurveyFarm(models.Model):
 
     # 11. If so, does it influence your cover cropping decisions, and how?
     if_use_crop_insurance = models.TextField(
-        verbose_name="If so, does it influence your cover cropping decisions, and how?",
+        verbose_name="DEPRECATED IN 2025 If so, does it influence your cover cropping decisions, and how?",
         null=True,
     )
     # 12. Why do you cover crop? From the list below select and rank your top 3 - 5 motivations
@@ -1123,46 +1174,105 @@ class SurveyFarm(models.Model):
     )
     # 14. Does planting a cover crop delay when you would otherwise plant your cash crop?
     cover_crops_delay_cash_crop = models.CharField(
-        verbose_name="Does planting a cover crop delay when you would otherwise plant your cash crop?",
+        verbose_name="DEPRECATED 2025, Does planting a cover crop delay when you would otherwise plant your cash crop?",
         null=True,
         max_length=260,
     )
 
-    # 15a. Do you save cover crop seed?
+    
     save_cover_crop_seed = models.BooleanField(
         verbose_name="Do you save cover crop seed?", null=True
     )
-    # 15b. What is your source for cover crop seed?
+    
     source_cover_crop_seed = models.TextField(
         verbose_name="What is your cover crop seed source?", null=True
     )
 
-    # 37	Please share any interesting experiments, failures, equipment challenges with cover crops.
+    # New 2025
+    learn_about_other_farmers_cc = models.TextField(
+        verbose_name="Are you interested in learning what other farmers are doing with cover crops?",
+        null=True
+    )
+    
+    # New 2025
+    learn_about_cc_preferred_way = models.TextField(
+        verbose_name="""What is your preferred ways to learn about using cover crops? Please be
+            specific, for example, if there are particular Youtube channels, podcasts,
+            consultants, or leaders in your county that have helped you.""",
+        null=True
+    )
+
+    # New 2025
+    what_info_other_farmers_most_useful = models.TextField(
+        verbose_name="What information from other farms using cover crops would be most useful to you?",
+        null=True
+    )
+    # New 2025
+    scenario_tool_feedback = models.TextField(
+        verbose_name="""We created an online Cover Crop Scenario Tool 
+            to share the cover crop practices gathered by this project for the last 5 years. Please provide us with any 
+            feedback as we are in the testing phase: LINK""",
+        null=True
+    )
+
+    # New 2025
+    scenario_tool_easy_to_use = models.TextField(
+        verbose_name="""Did you find the scenario tool easy to use or not and why?""",
+        null=True
+    )
+
+    # New 2025
+    scenario_tool_return_to_tool = models.TextField(
+        verbose_name="""Do you imagine returning to use this in the future? Please explain why or
+            why not.""",
+        null=True
+    )
+
+    # New 2025
+    scenario_tool_lacking_info = models.TextField(
+        verbose_name="""Is there information on cover cropping you are most interested in that you don't find in the scenario tool?""",
+        null=True
+    )
+
+    # New 2025
+    testimonial = models.TextField(
+        verbose_name="""Please share an observation we might use as a testimonial about your
+            participation in this project""",
+        null=True
+    )
+
+    # New 2025
+    # Make choice field in forms
+    willing_to_share_more = models.TextField(
+        verbose_name="""Would you be willing share further thoughts via a phone call or follow up
+email on our effort to strengthen cover cropping in Wisconsin?""",
+        null=True
+    )
+    
     interesting_tales = models.TextField(
         verbose_name="DEPRECATED What has been your cover crop “learning curve”? Please share any interesting experiments including failures that have helped you adapt cover cropping to your farm.",
         null=True,
     )
-    # 38	If another grower asked you where to start with cover cropping what would you recommend and why?
+    
     where_to_start = models.TextField(
         verbose_name="DEPRECATED Where would you tell another grower to start with cover crops? Why?",
         null=True,
     )
-    # 39	Do you have any additional thoughts or questions about this data gathering process? Any important survey questions we should ask next time?
-    # 2023 Any additional thoughts or questions? Any important survey questions we should ask next time?Any additional thoughts or questions? Any important survey questions we should ask next time?
+    
     additional_thoughts = models.TextField(
-        verbose_name="Please share anything else we should know, including any feedback on the survey.",
+        verbose_name="DEPRECATED in 2025 Please share anything else we should know, including any feedback on the survey.",
         null=True,
     )
 
     encourage_cc = models.CharField(
-        verbose_name="Which of the following would do the most to encourage more farmers to cover crop?",
+        verbose_name="DEPRECATED in 2025 Which of the following would do the most to encourage more farmers to cover crop?",
         choices=CoverCropSupportChoices.choices,
         null=True,
         max_length=100,
     )
 
     encourage_cc_write_in = models.TextField(
-        verbose_name="Please share any details",
+        verbose_name="DEPRECATED in 2025 Please share any details",
         null=True,
     )
 
@@ -1433,6 +1543,21 @@ class SurveyField(models.Model):
         max_length=15,
         null=True,
     )
+
+    # New for 2025
+    synth_fert_for_covers = models.CharField(
+        verbose_name="Did you apply synthetic fertilizer for growing a cover crop?",
+        max_length=500,
+        null=True,
+    )
+
+    # New for 2025
+    synth_fert_for_covers_application_date = models.DateField(
+        verbose_name="If yes, what is the estimated date of application?",
+        null=True,
+    )
+
+
     # 26	"What is your tillage system for the cash crop preceding the cover crop?
     tillage_system_cash_crop = models.CharField(
         verbose_name="Tillage system for cash crop preceding",
@@ -1481,7 +1606,13 @@ class SurveyField(models.Model):
     )
 
     cover_crop_seeding_method_write_in = models.TextField(
-        verbose_name="Cover crop seeding method, write in", null=True
+        verbose_name="Cover crop seeding method, write in", 
+        null=True
+    )
+
+    cover_crop_seeding_method_drone = models.TextField(
+        verbose_name="If you selected drone, have you used drones for seeding covers in the past and for what years?", 
+        null=True
     )
 
     # 32
