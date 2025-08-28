@@ -727,7 +727,7 @@ def wisc_cc_survey5(request, sfieldid):
     context["form_surveyfield_section_5"] = form_surveyfield_section_5
     context["farmer_id"] = farmer.id
     context["survey_year"] = survey_farm.survey_year
-    context["form_file_name_surveyfield"] = f'wisccc/includes/survey_{survey_field.survey_year}/form_section_5_tillage_manure_soil_surveyfield.html'
+    context["form_file_name_surveyfield"] = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_5_tillage_manure_soil_surveyfield.html'
 
 
     template = "wisccc/survey_section_5_field_tillage_manure_soil.html"
@@ -829,7 +829,8 @@ def wisc_cc_survey7(request, sfarmid):
         {
             "form_surveyfarm_section_7": form_surveyfarm_section_7,
             "farmer_id": farmer.id,
-            "form_file_name_surveyfarm": form_file_name_surveyfarm
+            "form_file_name_surveyfarm": form_file_name_surveyfarm,
+            "survey_year": survey_farm.survey_year
         },
     )
 

@@ -1574,7 +1574,7 @@ feedback as we are in the testing phase. The tool can be found
     testimonial = forms.CharField(
         label="""As part of our outreach to potential new cover crop users, 
             we are looking for farmer testimonials on cover cropping on this project
-            35a. Please share an observation we might use as a testimonial about your
+            <br>35a. Please share an observation we might use as a testimonial about your
             participation in this project, and if we might attribute this to you or if you prefer
             anonymous sharing.""",
         widget=forms.Textarea(attrs={"rows": 5}),
