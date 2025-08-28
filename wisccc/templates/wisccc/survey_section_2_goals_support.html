@@ -16,14 +16,15 @@
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
-  {% include 'wisccc/includes/survey_2024/form_section_2_goals_support_surveyfarm.html' %}
+  {% include form_file_name_surveyfarm %}
 
 
   <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
-  <a href="{% url 'wisc_cc_survey' %}?farmer_id=  {{ farmer_id }}"><button type="button" class="btn btn-secondary">Back
-      to
-      survey home
-      page</button></a>
+  <a href="{% url 'wisc_cc_survey' survey_year %}?farmer_id={{ farmer_id }}">
+    <button type="button" class="btn btn-secondary">
+      Back to survey home page
+    </button>
+  </a>
 
 
 </form>

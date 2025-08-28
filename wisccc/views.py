@@ -465,7 +465,7 @@ def wisc_cc_survey2(request, sfarmid):
     only Survey Farm data"""
 
     survey_farm = SurveyFarm.objects.get(id=sfarmid)
-
+    print("survey year: ", survey_farm.survey_year)
     farmer = Farmer.objects.get(id=survey_farm.farmer_id)
 
     # check if user is the logged in farmer
@@ -489,18 +489,23 @@ def wisc_cc_survey2(request, sfarmid):
         # new_form.survey_year = survey_year
         new_form.save()
 
+        # If there is more than one field then we make them go back to survey page
+        # otherwise we have them select a field from previous year or choose new field
         if survey_fields.count() > 1:
             return redirect(reverse("wisc_cc_survey") + f"?farmer_id={farmer.id}")
         else:
             return redirect("wisc_cc_survey3", survey_fields[0].id)
 
     template = "wisccc/survey_section_2_goals_support.html"
+    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_2_goals_support_surveyfarm.html'
     return render(
         request,
         template,
         {
             "form_surveyfarm_section_2": form_surveyfarm_section_2,
             "farmer_id": farmer.id,
+            "survey_year": survey_farm.survey_year,
+            "form_file_name_surveyfarm": form_file_name_surveyfarm,
         },
     )
 
@@ -555,6 +560,9 @@ def wisc_cc_survey3(request, sfieldid):
         request.POST or None, instance=field_farm
     )
 
+    form_file_name_fieldfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_3_rotation_rates_fieldfarm.html'
+    form_file_name_surveyfield = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_3_rotation_rates_surveyfield.html'
+
     if form_surveyfield_section_3.is_valid() and form_fieldfarm_section_3.is_valid():
 
         new_field_farm_form = form_fieldfarm_section_3.save(commit=False)
@@ -569,12 +577,21 @@ def wisc_cc_survey3(request, sfieldid):
         return redirect("wisc_cc_survey4", sfieldid)
     # add form dictionary to context
 
-    context["form_surveyfield_section_3"] = form_surveyfield_section_3
-    context["form_fieldfarm_section_3"] = form_fieldfarm_section_3
-    context["sfieldid"] = sfieldid
-    context["farmer_id"] = survey_farm.farmer.id
+    
     template = "wisccc/survey_section_3_field_rotation_rates.html"
-    return render(request, template, context)
+    return render(
+        request,
+        template,
+        {
+            "form_surveyfield_section_3" : form_surveyfield_section_3,
+            "form_fieldfarm_section_3" : form_fieldfarm_section_3,
+            "sfieldid" : sfieldid,
+            "farmer_id" : survey_farm.farmer.id,
+            "survey_year" : survey_farm.survey_year,
+            "form_file_name_fieldfarm": form_file_name_fieldfarm,
+            "form_file_name_surveyfield": form_file_name_surveyfield,
+        }
+    )
 
 
 @login_required
@@ -652,6 +669,10 @@ def wisc_cc_survey4(request, sfieldid):
         return redirect("wisc_cc_survey5", sfieldid)
 
     template = "wisccc/survey_section_4_field_planting_dates_timing.html"
+    form_file_name_surveyfield_part_1 = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfield_part_1.html'
+    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfarm.html'
+    form_file_name_surveyfield_part_2 = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfield_part_2.html'
+
     return render(
         request,
         template,
@@ -660,6 +681,10 @@ def wisc_cc_survey4(request, sfieldid):
             "form_surveyfield_section_4_part_1": form_surveyfield_section_4_part_1,
             "form_surveyfield_section_4_part_2": form_surveyfield_section_4_part_2,
             "farmer_id": survey_farm.farmer.id,
+            "survey_year": survey_farm.survey_year,
+            "form_file_name_surveyfield_part_1": form_file_name_surveyfield_part_1,
+            "form_file_name_surveyfarm": form_file_name_surveyfarm,
+            "form_file_name_surveyfield_part_2": form_file_name_surveyfield_part_2
         },
     )
 
@@ -701,7 +726,12 @@ def wisc_cc_survey5(request, sfieldid):
 
     context["form_surveyfield_section_5"] = form_surveyfield_section_5
     context["farmer_id"] = farmer.id
+    context["survey_year"] = survey_farm.survey_year
+    context["form_file_name_surveyfield"] = f'wisccc/includes/survey_{survey_field.survey_year}/form_section_5_tillage_manure_soil_surveyfield.html'
+
+
     template = "wisccc/survey_section_5_field_tillage_manure_soil.html"
+    
     return render(request, template, context)
 
 
@@ -743,6 +773,9 @@ def wisc_cc_survey6(request, sfieldid):
         return redirect("wisc_cc_survey7", survey_farm.id)
 
     template = "wisccc/survey_section_6_field_seeding_cost.html"
+    form_file_name_surveyfield = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfield.html'
+    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfarm.html'
+
     return render(
         request,
         template,
@@ -750,6 +783,9 @@ def wisc_cc_survey6(request, sfieldid):
             "form_surveyfarm_section_6": form_surveyfarm_section_6,
             "form_surveyfield_section_6": form_surveyfield_section_6,
             "farmer_id": farmer.id,
+            "survey_year": survey_farm.survey_year,
+            "form_file_name_surveyfield": form_file_name_surveyfield,
+            "form_file_name_surveyfarm": form_file_name_surveyfarm
         },
     )
 
@@ -786,12 +822,14 @@ def wisc_cc_survey7(request, sfarmid):
         return redirect("wisc_cc_survey")
 
     template = "wisccc/survey_section_7_final_thoughts.html"
+    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_7_final_thoughts_surveyfarm.html'
     return render(
         request,
         template,
         {
             "form_surveyfarm_section_7": form_surveyfarm_section_7,
             "farmer_id": farmer.id,
+            "form_file_name_surveyfarm": form_file_name_surveyfarm
         },
     )
 
