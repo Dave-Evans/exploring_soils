@@ -33,12 +33,18 @@
         {{ form_surveyfield_section_3.crop_rotation_2023_cover_crop_species|as_crispy_field }}
     </div>
 </div>
-<h4>Planting Rate 2025</h4>
+<h4>Cover Crop Planting Rate {{ survey_year }}</h4>
 <p>
-    18. What was your cover crop planting rate for this field?
-    If you planted a multispecies mix of two or more types please tell us the rate for each type of cover crop in the
+    {% if survey_year == 2025 %}
+    15.
+    {% else %}
+    18.
+    {% endif %} What was your cover crop planting rate for this field?
+    Please tell us the planting rates of up to five types of cover crops you planted in this field,
+    beginning with the crop planted at the highest rate.
+    <!-- If you planted a multispecies mix of two or more types please tell us the rate for each type of cover crop in the
     mix (up to 5 species) to the best of your ability.
-    You can add more details in the text box below.
+    You can add more details in the text box below. -->
 </p>
 <h5>Cover crop 1</h5>
 <div class="form-row">
@@ -52,6 +58,7 @@
         {{ form_surveyfield_section_3.cover_crop_planting_rate_1_units|as_crispy_field }}
     </div>
 </div>
+<h5>If you planted more than one cover crop species please continue:</h5>
 <h5>Cover crop 2</h5>
 <div class="form-row">
     <div class="form-group col-md-4 mb-0">
