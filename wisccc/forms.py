@@ -47,6 +47,11 @@ from wisccc.models import (
 )
 
 TRUE_FALSE_CHOICES = (("", ""), (True, "Yes"), (False, "No"))
+TRUE_FALSE_CHOICES_SHARE_OR_ANON = (
+    ("", ""),
+    (True, "Yes, you can attribute the above quote to me."),
+    (False, "No, I prefer to remain anonymous.")
+    )
 
 
 class UserLoginForm(AuthenticationForm):
@@ -1518,87 +1523,88 @@ class SurveyFarmFormSection7(forms.ModelForm):
     #     required=False,
     # )
 
-    learn_about_other_farmers_cc = forms.CharField(
-        label="33a. Are you interested in learning what other farmers are doing with cover crops?",
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=1000,
-        required=False,
-    )
+    # learn_about_other_farmers_cc = forms.CharField(
+    #     label="33a. Are you interested in learning what other farmers are doing with cover crops?",
+    #     widget=forms.Textarea(attrs={"rows": 5}),
+    #     max_length=1000,
+    #     required=False,
+    # )
 
     learn_about_cc_preferred_way = forms.CharField(
-            label="""33b. What is your preferred ways to learn about using cover crops? Please be
+            label="""33. What are your preferred ways to learn about using cover crops? Please be
                 specific, for example, if there are particular Youtube channels, podcasts,
                 consultants, or leaders in your county that have helped you.""",
             widget=forms.Textarea(attrs={"rows": 5}),
             max_length=1000,
             required=False,
     )
-    what_info_other_farmers_most_useful = forms.CharField(
-        label="33c. What information from other farms using cover crops would be most useful to you?",
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=1000,
-        required=False,
-    )
+    # what_info_other_farmers_most_useful = forms.CharField(
+    #     label="33c. What information from other farms using cover crops would be most useful to you?",
+    #     widget=forms.Textarea(attrs={"rows": 5}),
+    #     max_length=1000,
+    #     required=False,
+    # )
 
     scenario_tool_feedback = forms.CharField(
         label="""34. We created an online "Cover Crop Scenario Tool" to share the cover crop
-practices gathered by this project for the last 5 years. Please provide us with any
-feedback as we are in the testing phase. The tool can be found 
-<a href="https://evansgeospatial.com/wisc_cc_scenario" target="_blank" rel="noopener noreferrer">here</a>. """,
+practices gathered by this project for the last 5 years. The tool can be found 
+<a href="https://evansgeospatial.com/wisc_cc_scenario" target="_blank" rel="noopener noreferrer">here</a>.
+Please provide us with any
+feedback as we are in the testing phase. Your opinion is important. """,
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=1000,
         required=False,
     )
 
-    scenario_tool_easy_to_use = forms.CharField(
-        label="34a. Did you find the scenario tool easy to use or not and why?",
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=1000,
-        required=False,
-    )
+    # scenario_tool_easy_to_use = forms.CharField(
+    #     label="34a. Did you find the scenario tool easy to use or not and why?",
+    #     widget=forms.Textarea(attrs={"rows": 5}),
+    #     max_length=1000,
+    #     required=False,
+    # )
 
-    scenario_tool_return_to_tool = forms.CharField(
-        label="34b. Do you imagine returning to use this in the future? Please explain why or why not.",
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=1000,
-        required=False,
-    )
+    # scenario_tool_return_to_tool = forms.CharField(
+    #     label="34b. Do you imagine returning to use this in the future? Please explain why or why not.",
+    #     widget=forms.Textarea(attrs={"rows": 5}),
+    #     max_length=1000,
+    #     required=False,
+    # )
 
-    scenario_tool_lacking_info = forms.CharField(
-        label="34c. Is there information on cover cropping you are most interested in that you don't find in the scenario tool?",
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=1000,
-        required=False,
-    )
+    # scenario_tool_lacking_info = forms.CharField(
+    #     label="34c. Is there information on cover cropping you are most interested in that you don't find in the scenario tool?",
+    #     widget=forms.Textarea(attrs={"rows": 5}),
+    #     max_length=1000,
+    #     required=False,
+    # )
 
     testimonial = forms.CharField(
-        label="""As part of our outreach to potential new cover crop users, 
-            we are looking for farmer testimonials on cover cropping on this project
-            <br>35a. Please share an observation we might use as a testimonial about your
-            participation in this project, and if we might attribute this to you or if you prefer
-            anonymous sharing.""",
+        label="""35a. For outreach efforts around this project, 
+please share anything regarding your experience with the project or
+ with cover cropping we might use. 
+ <br>How would you describe why you joined this project,
+   and what your experience has been? Why is cover cropping important? 
+   Has this project changed what you know about cover cropping?""",
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=1000,
         required=False,
     )
 
     willing_to_share_more = forms.ChoiceField(
-        label="""35b. Would you be willing share further thoughts via a phone call or follow up
-email on our effort to strengthen cover cropping in Wisconsin?""",
+        label="""35b. Can we attribute this to you or do you prefer to remain anonymous?""",
         required=True,
-        choices=TRUE_FALSE_CHOICES
+        choices=TRUE_FALSE_CHOICES_SHARE_OR_ANON
     )
 
     class Meta:
         model = SurveyFarm
         fields = (
-            "learn_about_other_farmers_cc",
+            # "learn_about_other_farmers_cc",
             "learn_about_cc_preferred_way",
-            "what_info_other_farmers_most_useful",
+            # "what_info_other_farmers_most_useful",
             "scenario_tool_feedback",
-            "scenario_tool_easy_to_use",
-            "scenario_tool_return_to_tool",
-            "scenario_tool_lacking_info",
+            # "scenario_tool_easy_to_use",
+            # "scenario_tool_return_to_tool",
+            # "scenario_tool_lacking_info",
             "testimonial",
             "willing_to_share_more",
         )
