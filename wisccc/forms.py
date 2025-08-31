@@ -1383,7 +1383,7 @@ class SurveyFieldFormSection5(forms.ModelForm):
                 msg = "If you are not applying manure, please leave blank."
                 self.add_error("manure_prior_consistency", msg)                                
 
-        # If manure is *NOT* applied after to cc, ensure rate and units are *NOT* populated
+        # If manure is *NOT* applied after to cc, ensure rate and units, source, consistency are *NOT* populated
         if manure_post == "False" and (
             manure_post_rate is not None or manure_post_rate_units != "" or manure_post_source != "" or manure_post_consistency != ""
         ):
@@ -1407,7 +1407,7 @@ class SurveyFieldFormSection5(forms.ModelForm):
                 msg = "If you are not applying manure, please leave blank."
                 self.add_error("manure_prior_consistency", msg)             
 
-        # If manure is applied prior to cc, ensure rate and units are populated
+        # If manure is applied prior to cc, ensure rate and units, source, consistency are populated
         if manure_prior == "True":
             if manure_prior_rate is None:
                 msg = "Please enter a manure rate"
@@ -1425,7 +1425,7 @@ class SurveyFieldFormSection5(forms.ModelForm):
                 msg = "Please select the approximate moisture level of the manure"
                 self.add_error("manure_prior_consistency", msg)                
 
-        # If manure is applied after to cc, ensure rate and units are populated
+        # If manure is applied after to cc, ensure rate and units, source, consistency are populated
         if manure_post == "True":
             if manure_post_rate is None:
                 msg = "Please enter a manure rate"
@@ -1442,6 +1442,21 @@ class SurveyFieldFormSection5(forms.ModelForm):
             if manure_post_consistency == "":
                 msg = "Please select the approximate moisture level of the manure"
                 self.add_error("manure_post_consistency", msg)    
+
+        synth_fert_for_covers = self.cleaned_data.get("synth_fert_for_covers")
+        synth_fert_for_covers_application_date = self.cleaned_data.get("synth_fert_for_covers_application_date")
+
+        
+        # If synth fert applied, then make sure to select a date
+        if synth_fert_for_covers == "True":
+            if synth_fert_for_covers_application_date is None:
+                msg = "Please select the approximate date of the synthetic fertilizer application."
+                self.add_error("synth_fert_for_covers_application_date", msg)    
+
+        if synth_fert_for_covers == "False":
+            if synth_fert_for_covers_application_date is not None:
+                msg = "Please leave the date blank if you did not apply synthetic fertilizer."
+                self.add_error("synth_fert_for_covers_application_date", msg)   
 
     class Meta:
         model = SurveyField
