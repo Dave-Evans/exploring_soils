@@ -1125,6 +1125,25 @@ class SurveyFieldFormSection3(forms.ModelForm):
         required=False,
     )
 
+    # def clean(self):
+    #     super().clean()
+    #     addlt_species = [
+    #         ("cover_crop_species_2", "cover_crop_planting_rate_2", "cover_crop_planting_rate_2_units"),
+    #         ("cover_crop_species_3", "cover_crop_planting_rate_3", "cover_crop_planting_rate_3_units"),
+    #         ("cover_crop_species_4", "cover_crop_planting_rate_4", "cover_crop_planting_rate_4_units"),
+    #         ("cover_crop_species_5", "cover_crop_planting_rate_5", "cover_crop_planting_rate_5_units"),
+    #         ]
+    #     for addlt_tuple in addlt_species:
+    #         species = self.cleaned_data.get(addlt_tuple[0])
+    #         rate = self.cleaned_data.get(addlt_tuple[1])
+    #         unit = self.cleaned_data.get(addlt_tuple[2])
+
+    #     cover_crop_species_2 = self.cleaned_data.get("cover_crop_species_2")
+    #     cover_crop_planting_rate_2 = self.cleaned_data.get("cover_crop_planting_rate_2")
+    #     cover_crop_planting_rate_2_units = self.cleaned_data.get("cover_crop_planting_rate_2_units")
+        
+        
+
     class Meta:
         model = SurveyField
         fields = (
@@ -1520,6 +1539,22 @@ class SurveyFieldFormSection6(forms.ModelForm):
         min_value=0,
         required=True,
     )
+
+    def clean(self):
+        super().clean()
+        cover_crop_seeding_method = self.cleaned_data.get("cover_crop_seeding_method")
+        cover_crop_seeding_method_drone = self.cleaned_data.get("cover_crop_seeding_method_drone")
+        cover_crop_seeding_method_write_in = self.cleaned_data.get("cover_crop_seeding_method_write_in")
+        print(cover_crop_seeding_method_drone)
+        if cover_crop_seeding_method == "DRONE":
+            if cover_crop_seeding_method_drone == "":
+                msg = "Please let us know if you have used drones in the past, and for what years."
+                self.add_error("cover_crop_seeding_method_drone", msg)  
+
+        if cover_crop_seeding_method == "OTHER":
+            if cover_crop_seeding_method_write_in == "":
+                msg = "Since you selected 'other', please supply a bit more information about your seeding method."
+                self.add_error("cover_crop_seeding_method_write_in", msg)                               
 
     class Meta:
         model = SurveyField
