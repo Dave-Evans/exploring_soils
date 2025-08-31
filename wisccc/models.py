@@ -1263,8 +1263,7 @@ class SurveyFarm(models.Model):
     # New 2025
     # Make choice field in forms
     willing_to_share_more = models.TextField(
-        verbose_name="""Would you be willing share further thoughts via a phone call or follow up
-email on our effort to strengthen cover cropping in Wisconsin?""",
+        verbose_name="""Can we attribute this to you or do you prefer to remain anonymous?""",
         null=True
     )
     

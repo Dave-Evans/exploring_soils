@@ -133,7 +133,7 @@ def check_section_completed(farmer_id, survey_year, survey_farm, survey_fields):
     if survey_farm.percent_of_farm_cc is not None:
         section_statuses["section_2"] = True
 
-    if survey_farm.encourage_cc is not None:
+    if survey_farm.willing_to_share_more is not None:
         section_statuses["section_7"] = True
 
     for i, survey_field in enumerate(survey_fields):
