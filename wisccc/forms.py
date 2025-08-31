@@ -1345,17 +1345,25 @@ class SurveyFieldFormSection5(forms.ModelForm):
         manure_prior = self.cleaned_data.get("manure_prior")
         manure_prior_rate = self.cleaned_data.get("manure_prior_rate")
         manure_prior_rate_units = self.cleaned_data.get("manure_prior_rate_units")
+        manure_prior_source = self.cleaned_data.get("manure_prior_source")
+        manure_prior_consistency = self.cleaned_data.get("manure_prior_consistency")
         # print("Manure prior rate units:")
         # print("\t", manure_prior_rate_units)
         # print("\t", type(manure_prior_rate_units))
         # print("\tis equal to ''", manure_prior_rate_units == "")
+        # print("Manure prior rate units:")
+        # print("\t", manure_prior_source)
+        # print("\t", type(manure_prior_source))
+        # print("\tis equal to ''", manure_prior_source == "")        
         manure_post = self.cleaned_data.get("manure_post")
         manure_post_rate = self.cleaned_data.get("manure_post_rate")
         manure_post_rate_units = self.cleaned_data.get("manure_post_rate_units")
+        manure_post_source = self.cleaned_data.get("manure_post_source")
+        manure_post_consistency = self.cleaned_data.get("manure_post_consistency")        
 
-        # If manure is *NOT* applied prior to cc, ensure rate and units are *NOT* populated
+        # If manure is *NOT* applied prior to cc, ensure rate and units, source, consistency are *NOT* populated
         if manure_prior == "False" and (
-            manure_prior_rate is not None or manure_prior_rate_units != ""
+            manure_prior_rate is not None or manure_prior_rate_units != "" or manure_prior_source != "" or manure_prior_consistency != ""
         ):
             # Rate must be 0 or None
             if manure_prior_rate is not None:
@@ -1368,10 +1376,16 @@ class SurveyFieldFormSection5(forms.ModelForm):
             if manure_prior_rate_units != "":
                 msg = "If you are not applying manure, please leave blank."
                 self.add_error("manure_prior_rate_units", msg)
+            if manure_prior_source != "":
+                msg = "If you are not applying manure, please leave blank."
+                self.add_error("manure_prior_source", msg)       
+            if manure_prior_consistency != "":
+                msg = "If you are not applying manure, please leave blank."
+                self.add_error("manure_prior_consistency", msg)                                
 
         # If manure is *NOT* applied after to cc, ensure rate and units are *NOT* populated
         if manure_post == "False" and (
-            manure_post_rate is not None or manure_post_rate_units != ""
+            manure_post_rate is not None or manure_post_rate_units != "" or manure_post_source != "" or manure_post_consistency != ""
         ):
             # Rate must be 0 or None
             if manure_post_rate is not None:
@@ -1385,6 +1399,14 @@ class SurveyFieldFormSection5(forms.ModelForm):
                 msg = "If you are not applying manure, please leave blank."
                 self.add_error("manure_post_rate_units", msg)
 
+            if manure_post_source != "":
+                msg = "If you are not applying manure, please leave blank."
+                self.add_error("manure_prior_source", msg)       
+
+            if manure_post_consistency != "":
+                msg = "If you are not applying manure, please leave blank."
+                self.add_error("manure_prior_consistency", msg)             
+
         # If manure is applied prior to cc, ensure rate and units are populated
         if manure_prior == "True":
             if manure_prior_rate is None:
@@ -1395,6 +1417,14 @@ class SurveyFieldFormSection5(forms.ModelForm):
                 msg = "Please enter the units for this manure rate"
                 self.add_error("manure_prior_rate_units", msg)
 
+            if manure_prior_source == "":
+                msg = "Please enter the source of the manure"
+                self.add_error("manure_prior_source", msg)
+
+            if manure_prior_consistency == "":
+                msg = "Please select the approximate moisture level of the manure"
+                self.add_error("manure_prior_consistency", msg)                
+
         # If manure is applied after to cc, ensure rate and units are populated
         if manure_post == "True":
             if manure_post_rate is None:
@@ -1404,6 +1434,14 @@ class SurveyFieldFormSection5(forms.ModelForm):
             if manure_post_rate_units == "":
                 msg = "Please enter the units for this manure rate"
                 self.add_error("manure_post_rate_units", msg)
+
+            if manure_post_source == "":
+                msg = "Please enter the source of the manure"
+                self.add_error("manure_post_source", msg)
+
+            if manure_post_consistency == "":
+                msg = "Please select the approximate moisture level of the manure"
+                self.add_error("manure_post_consistency", msg)    
 
     class Meta:
         model = SurveyField

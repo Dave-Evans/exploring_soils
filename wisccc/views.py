@@ -915,13 +915,25 @@ def create_addtl_surveyfield(request, sfarmid):
     ):
         return redirect("wisc_cc_unauthorized")
 
-    new_survey_field = SurveyField.objects.create(survey_farm=survey_farm)
-    ancillary_data = AncillaryData.objects.create(survey_field=new_survey_field)
-    survey_photo = SurveyPhoto.objects.create(survey_field=new_survey_field)
+    if request.method == "POST":
+        # create surveyfield object
+        new_survey_field = SurveyField.objects.create(survey_farm=survey_farm)
+        ancillary_data = AncillaryData.objects.create(survey_field=new_survey_field)
+        survey_photo = SurveyPhoto.objects.create(survey_field=new_survey_field)
+        # after deleting redirect back to
+        # reponse table
+        return redirect(
+            reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
+        )    
 
-    return redirect(
-        reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
-    )
+
+    return render(
+        request,
+        "wisccc/create_addtl_surveyfield.html",
+        {
+            "sfarmid": survey_farm.id,
+            "farmer": farmer
+        })
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def delete_survey_field(request, sfieldid):
