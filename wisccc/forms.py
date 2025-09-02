@@ -1520,7 +1520,7 @@ class SurveyFieldFormSection6(forms.ModelForm):
 
     # New 2025
     cover_crop_seeding_method_drone = forms.CharField(
-        label="29c. If you selected drone, have you used drones for seeding covers in the past and for what years?",
+        label="29c. If you used a drone to seed covers, what years have you used them, ie Fall 2024?",
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=500,
         required=False,
@@ -1543,13 +1543,7 @@ class SurveyFieldFormSection6(forms.ModelForm):
     def clean(self):
         super().clean()
         cover_crop_seeding_method = self.cleaned_data.get("cover_crop_seeding_method")
-        cover_crop_seeding_method_drone = self.cleaned_data.get("cover_crop_seeding_method_drone")
         cover_crop_seeding_method_write_in = self.cleaned_data.get("cover_crop_seeding_method_write_in")
-        print(cover_crop_seeding_method_drone)
-        if cover_crop_seeding_method == "DRONE":
-            if cover_crop_seeding_method_drone == "":
-                msg = "Please let us know if you have used drones in the past, and for what years."
-                self.add_error("cover_crop_seeding_method_drone", msg)  
 
         if cover_crop_seeding_method == "OTHER":
             if cover_crop_seeding_method_write_in == "":
