@@ -60,12 +60,12 @@
         <div class="col-md-10">
           <div class="list-group">
             {% if farmer.last_name is not None %}
-            <a href="{% url 'wisc_cc_survey1' farmer.id %}"
+            <a href="{% url 'wisc_cc_survey1' survey_farm.survey_year farmer.id %}"
               class="list-group-item list-group-item-action list-group-item-success">
               I. General info - completed! Click to edit your response.
             </a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey1' farmer.id %}"
+            <a href="{% url 'wisc_cc_survey1' survey_farm.survey_year farmer.id %}"
               class="list-group-item list-group-item-action list-group-item-warning">
               I. General info
             </a>

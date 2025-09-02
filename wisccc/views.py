@@ -440,7 +440,7 @@ def wisc_cc_unauthorized(request):
 
 
 @login_required
-def wisc_cc_survey1(request, farmer_id):
+def wisc_cc_survey1(request, survey_year, farmer_id):
     """I. General info: Farmer information"""
 
     # check if user is the logged in farmer
@@ -463,13 +463,16 @@ def wisc_cc_survey1(request, farmer_id):
         # new_form.user = instance.user
         new_form.save()
 
-        return redirect(reverse("wisc_cc_survey") + f"?farmer_id={farmer_id}")
+        return redirect(
+            reverse("wisc_cc_survey")
+                + f"/{survey_year}/?farmer_id={farmer_id}"          
+        )
 
     template = "wisccc/survey_section_1_farmer.html"
     return render(
         request,
         template,
-        {"form_farmer": form_farmer, "farmer_id": farmer_id},
+        {"form_farmer": form_farmer, "farmer_id": farmer_id, "survey_year": survey_year},
     )
 
 
@@ -514,7 +517,10 @@ def wisc_cc_survey2(request, sfarmid):
         # If there is more than one field then we make them go back to survey page
         # otherwise we have them select a field from previous year or choose new field
         if survey_fields.count() > 1:
-            return redirect(reverse("wisc_cc_survey") + f"?farmer_id={farmer.id}")
+            return redirect(
+                reverse("wisc_cc_survey")
+                + f"/{survey_farm.survey_year}/?farmer_id={farmer.id}"                
+            )
         else:
             return redirect("wisc_cc_survey3", survey_fields[0].id)
 
