@@ -926,12 +926,13 @@ def create_addtl_surveyfield(request, sfarmid):
             reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
         )    
 
-
+    print(survey_farm.survey_year)
     return render(
         request,
         "wisccc/create_addtl_surveyfield.html",
         {
             "sfarmid": survey_farm.id,
+            "survey_farm": survey_farm,
             "farmer": farmer
         })
 
