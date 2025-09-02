@@ -9,6 +9,7 @@
       <div class="card-body">
         <h3 class="card-title">Welcome {{ farmer.first_name }} {{ farmer.last_name }}</h3>
         {% if perms.wisccc.survery_manager %}
+        Survey year: {{ survey_farm.survey_year }}
         <hr>
         <p>Click here to delete this survey.
           Note this cannot be undone (without tedious work)
