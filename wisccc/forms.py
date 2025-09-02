@@ -933,6 +933,17 @@ class SurveyFarmFormSection2(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 5}),
     )
 
+
+    def clean(self):
+        super().clean()
+        main_cc_goal_this_year = self.cleaned_data.get("main_cc_goal_this_year")
+        main_cc_goal_this_year_write_in = self.cleaned_data.get("main_cc_goal_this_year_write_in")
+        if main_cc_goal_this_year == "OTHER":
+            if main_cc_goal_this_year_write_in == "":
+                msg = "Since you selected 'other', please supply a bit more information about your goals."
+                self.add_error("main_cc_goal_this_year_write_in", msg)                               
+
+
     class Meta:
         model = SurveyFarm
         fields = (
