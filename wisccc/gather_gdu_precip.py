@@ -477,6 +477,43 @@ def gather_gdu_precip_2023plus(seasons=["fall"], mode="if_missing"):
             print(f"\t{season}")
             grab_and_update_weather_dat(survey_field, retrieve_acis, season, mode=mode)
 
+def gather_precip_around_planting_date():
+
+    # If survey year is before 2023 then we skip and handle elsewhere.
+    # These years had poorly formed dates.
+    retrieve_acis = RetrieveACIS()
+
+    survey_fields = SurveyField.objects.filter(survey_farm__survey_year__gt=2022)
+
+    for survey_field in survey_fields:
+
+        print(survey_field.survey_farm.id)
+
+        planting_date = survey_field.cover_crop_planting_date
+        ancillarydata = AncillaryData.objects.get(survey_field_id = survey_field.id)
+        fieldfarm = FieldFarm.objects.get(id = survey_field.field_farm_id)
+        lon = fieldfarm.y
+        lat = fieldfarm.x
+        result_2wk_pre = retrieve_acis.get_weather_data(
+            planting_date + datetime.timedelta(days=-14), planting_date, lon, lat, target="pcpn"
+        )
+        result_1wk_pre = retrieve_acis.get_weather_data(
+            planting_date + datetime.timedelta(days=-7), planting_date, lon, lat, target="pcpn"
+        )
+        result_1wk_post = retrieve_acis.get_weather_data(
+            planting_date + datetime.timedelta(days=7), planting_date, lon, lat, target="pcpn"
+        )
+        result_2wk_post = retrieve_acis.get_weather_data(
+            planting_date + datetime.timedelta(days=14), planting_date, lon, lat, target="pcpn"
+        )
+        ancillarydata.precip_preplant_2_wk = result_2wk_pre
+        ancillarydata.precip_preplant_1_wk = result_1wk_pre
+        ancillarydata.precip_postplant_1_wk = result_1wk_post
+        ancillarydata.precip_postplant_2_wk = result_2wk_post
+        ancillarydata.save()
+        
+        
+
 
 def grab_and_update_weather_dat(
     survey_field_instance, retrieve_acis, season="fall", mode="if_missing"

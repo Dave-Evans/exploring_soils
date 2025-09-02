@@ -2017,6 +2017,34 @@ class AncillaryData(models.Model):
         null=True,
     )
 
+    precip_preplant_2_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation 2 weeks until planting date",
+        null=True,
+    )
+
+    precip_preplant_1_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation 1 week before planting",
+        null=True,
+    )
+
+    precip_postplant_1_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation from planting date until 1 week later",
+        null=True,
+    )
+
+    precip_postplant_2_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation from planting date until 2 week later",
+        null=True,
+    )    
+
     def recalculate_fall_lbs_acre(self):
         """For recalculating the 'content' fields when the biomass value is updated"""
         if self.cc_biomass is None:
