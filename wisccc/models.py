@@ -1207,12 +1207,6 @@ class SurveyFarm(models.Model):
     )
 
     # New 2025
-    learn_about_other_farmers_cc = models.TextField(
-        verbose_name="Are you interested in learning what other farmers are doing with cover crops?",
-        null=True
-    )
-    
-    # New 2025
     learn_about_cc_preferred_way = models.TextField(
         verbose_name="""What is your preferred ways to learn about using cover crops? Please be
             specific, for example, if there are particular Youtube channels, podcasts,
@@ -1221,34 +1215,10 @@ class SurveyFarm(models.Model):
     )
 
     # New 2025
-    what_info_other_farmers_most_useful = models.TextField(
-        verbose_name="What information from other farms using cover crops would be most useful to you?",
-        null=True
-    )
-    # New 2025
     scenario_tool_feedback = models.TextField(
         verbose_name="""We created an online Cover Crop Scenario Tool 
             to share the cover crop practices gathered by this project for the last 5 years. Please provide us with any 
             feedback as we are in the testing phase: LINK""",
-        null=True
-    )
-
-    # New 2025
-    scenario_tool_easy_to_use = models.TextField(
-        verbose_name="""Did you find the scenario tool easy to use or not and why?""",
-        null=True
-    )
-
-    # New 2025
-    scenario_tool_return_to_tool = models.TextField(
-        verbose_name="""Do you imagine returning to use this in the future? Please explain why or
-            why not.""",
-        null=True
-    )
-
-    # New 2025
-    scenario_tool_lacking_info = models.TextField(
-        verbose_name="""Is there information on cover cropping you are most interested in that you don't find in the scenario tool?""",
         null=True
     )
 
