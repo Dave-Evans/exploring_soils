@@ -284,7 +284,6 @@ class SeedingMethodChoices(models.TextChoices):
         "FERT_BROADCAST_INCORP",
         "cover crop seed mixed with fertilizer + broadcast + incorporation",
     )
-    DRONE = "DRONE", "drone"
     OTHER = "OTHER", "other"
 
 
