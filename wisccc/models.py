@@ -2017,6 +2017,12 @@ class AncillaryData(models.Model):
         null=True,
     )
 
+    precip_preplant_3_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation 3 weeks until planting date",
+        null=True,
+    )
     precip_preplant_2_wk = models.DecimalField(
         decimal_places=3,
         max_digits=15,
@@ -2042,6 +2048,12 @@ class AncillaryData(models.Model):
         decimal_places=3,
         max_digits=15,
         verbose_name="Sum of precipitation from planting date until 2 week later",
+        null=True,
+    )    
+    precip_postplant_3_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation from planting date until 3 week later",
         null=True,
     )    
 
