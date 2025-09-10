@@ -32,6 +32,16 @@ cc_planting_date	Planting date of cover crop (approximate)
 cc_biomass_collection_date_fall	The date of fall biomass collection.
 total_precip_fall	Fall – Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
 acc_gdd_fall	Fall – growing degree days/units that have accumulated from when the cover crop was planted to when it was harvested derived from https://mrcc.purdue.edu/data_serv/cli-dap
+precip_preplant_3_wk	Sum of precipitation 3 weeks until cover crop planting date
+precip_preplant_2_wk	Sum of precipitation 2 weeks until cover crop planting date
+precip_preplant_1_wk	Sum of precipitation 1 week until cover crop planting date
+precip_postplant_1_wk	Sum of precipitation from cover crop planting date until 1 week later
+precip_postplant_2_wk	Sum of precipitation from cover crop planting date until 2 weeks later
+precip_postplant_3_wk	Sum of precipitation from cover crop planting date until 3 weeks later
+field_acreage	The size of the field in acres
+years_with_cover_crops	The number of years cover crops have been planted in this field
+cover_crop_planting_cost	The estimate per acre cost of cover crop planting
+cover_crop_seed_cost	The estimate per acre cost of cover crop seed
 cc_biomass_fall	Fall – dried biomass in (English) tons per acre. Analyzed by AgSource labs.
 fq_cp_fall	Fall – measured: crude protein (%). Analyzed by Dairyland Labs.
 fq_andf_fall	Fall – estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om). Analyzed by Dairyland Labs.
