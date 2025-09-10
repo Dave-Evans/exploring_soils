@@ -23,6 +23,28 @@
             {{ form.total_precip|as_crispy_field}}
         </div>
     </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.precip_preplant_3_wk|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.precip_preplant_2_wk|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.precip_preplant_1_wk|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.precip_postplant_1_wk|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.precip_postplant_2_wk|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.precip_postplant_3_wk|as_crispy_field}}
+        </div>
+    </div>
     <div>
         <h4>Fall Nutrient data</h4>
     </div>
