@@ -480,6 +480,14 @@ def get_survey_data():
                 "height_of_stand",
                 "acc_gdd",
                 "total_precip",
+
+                "precip_preplant_3_wk",
+                "precip_preplant_2_wk",
+                "precip_preplant_1_wk",
+                "precip_postplant_1_wk",
+                "precip_postplant_2_wk",
+                "precip_postplant_3_wk",        
+
                 "spring_biomass_collection_date",
                 "spring_cp",
                 "spring_andf",
@@ -550,6 +558,12 @@ def get_survey_data():
             "height_of_stand_fall",
             "acc_gdd_fall",
             "total_precip_fall",
+            "precip_preplant_3_wk",
+            "precip_preplant_2_wk",
+            "precip_preplant_1_wk",
+            "precip_postplant_1_wk",
+            "precip_postplant_2_wk",
+            "precip_postplant_3_wk",            
             "biomass_collection_date_spring",
             "cp_spring",
             "andf_spring",
@@ -593,6 +607,10 @@ def get_survey_data():
     for col in dct_choices:
         df[col] = df[col].apply(convert_to_human_readable, args=(dct_choices[col],))
 
+    # For creating concat of cc species
+    cols_species = ['cover_crop_species_1', 'cover_crop_species_2', "cover_crop_species_3", "cover_crop_species_4", "cover_crop_species_5"]
+    df['cc_species_raw'] = df[cols_species].fillna('').agg(','.join, axis=1)
+    df.cc_species_raw = df.cc_species_raw.str.replace(r",+$", "")
     return df
 
 
