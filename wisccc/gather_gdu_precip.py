@@ -190,12 +190,18 @@ class RetrieveACIS:
         # If "T" then just trace precip, and so set to 0
         if resp["smry"][0][0] == "T":
             resp["smry"][0][0] = "0"
+        
+        if resp["smry"][0][0] == "M":
+            resp["smry"][0][0] = "0"            
 
-        days_missing = resp["smry"][0][1]
-        if days_missing > null_threshold_cnt:
-            logging.warning(f"\tNull threshold is {null_threshold_cnt}")
-            logging.warning(f"\tCount missing from station {days_missing}")
-            return None
+        # If set to 1 then skip assessing missing
+        if self.null_threshold != 1:
+            days_missing = resp["smry"][0][1]
+            if days_missing > null_threshold_cnt:
+                logging.warning(f"\tNull threshold is {null_threshold_cnt}")
+                logging.warning(f"\tCount missing from station {days_missing}")
+                return None
+            
         if resp == {}:
             logging.warning("No data.")
             return None
@@ -524,7 +530,7 @@ def gather_precip_around_planting_date():
 
     # If survey year is before 2023 then we skip and handle elsewhere.
     # These years had poorly formed dates.
-    retrieve_acis = RetrieveACIS(null_threshold=1)
+    retrieve_acis = RetrieveACIS(null_threshold=0.1)
 
     survey_fields = SurveyField.objects.filter(survey_farm__survey_year__gt=2022)
     different_stations = []
@@ -587,37 +593,63 @@ def gather_precip_around_planting_date():
             "%Y-%m-%d"
         ) + datetime.timedelta(days=21)).strftime("%Y-%m-%d")                                
 
-        result_1wk_pre = retrieve_acis.get_weather_data(
-            dt_pre_1wk, planting_date, lon, lat, target="pcpn"
+        # Get total precip for 6wk window in order to find an acceptable station
+        retrieve_acis.null_threshold=0.1
+        if datetime.datetime.strptime(dt_post_3wk, '%Y-%m-%d') > datetime.datetime.today():
+            print("In future")
+            continue
+
+        result_full_window = retrieve_acis.get_weather_data(
+            dt_pre_3wk, dt_post_3wk, lon, lat, target="pcpn"
+        )
+
+        retrieve_acis.null_threshold=1
+        # result_1wk_pre = retrieve_acis.get_weather_data(
+        #     dt_pre_1wk, planting_date, lon, lat, target="pcpn"
+        # )
+        result_1wk_pre = retrieve_acis.retrieve_station_data_precip(
+            result_full_window["stationid"], dt_pre_1wk, planting_date
         )
         result_2wk_pre = retrieve_acis.retrieve_station_data_precip(
-            result_1wk_pre["stationid"], dt_pre_2wk, planting_date
+            result_full_window["stationid"], dt_pre_2wk, planting_date
         )
-        if result_2wk_pre is None:
-            result_2wk_pre = {'smry': [['0', 14]]}
+        # if result_2wk_pre is None:
+        #     result_2wk_pre = {'smry': [['0', 14]]}
         result_3wk_pre = retrieve_acis.retrieve_station_data_precip(
-            result_1wk_pre["stationid"], dt_pre_3wk, planting_date
+            result_full_window["stationid"], dt_pre_3wk, planting_date
         )
-        if result_3wk_pre is None:
-            result_3wk_pre = {'smry': [['0', 21]]}
+        # if result_3wk_pre is None:
+        #     result_full_window = {'smry': [['0', 21]]}
         # result_1wk_post = retrieve_acis.get_weather_data(
         #     planting_date, dt_post_1wk, lon, lat, target="pcpn"
         # )        
-        result_1wk_post = retrieve_acis.retrieve_station_data_precip(
-            result_1wk_pre["stationid"], planting_date, dt_post_1wk
-        )
-        if result_1wk_post is None:
-            result_1wk_post = {'smry': [['0', 7]]}
-        result_2wk_post = retrieve_acis.retrieve_station_data_precip(
-            result_1wk_pre["stationid"], planting_date, dt_post_2wk
-        )
-        if result_2wk_post is None:
-            result_2wk_post = {'smry': [['0', 14]]}        
-        result_3wk_post = retrieve_acis.retrieve_station_data_precip(
-            result_1wk_pre["stationid"], planting_date, dt_post_3wk
-        )
-        if result_3wk_post is None:
-            result_3wk_post = {'smry': [['0', 21]]}           
+        if datetime.datetime.strptime(dt_post_1wk, '%Y-%m-%d') > datetime.datetime.today():
+            print("In future")
+            result_1wk_post = {"smry": [[0,0]]}
+        else:
+            result_1wk_post = retrieve_acis.retrieve_station_data_precip(
+                result_full_window["stationid"], planting_date, dt_post_1wk
+            )
+        # if result_1wk_post is None:
+        #     result_1wk_post = {'smry': [['0', 7]]}
+        if datetime.datetime.strptime(dt_post_2wk, '%Y-%m-%d') > datetime.datetime.today():
+            print("In future")
+            result_2wk_post = {"smry": [[0,0]]}
+        else:
+            result_2wk_post = retrieve_acis.retrieve_station_data_precip(
+                result_full_window["stationid"], planting_date, dt_post_2wk
+            )
+        # if result_2wk_post is None:
+        #     result_2wk_post = {'smry': [['0', 14]]}        
+        if datetime.datetime.strptime(dt_post_3wk, '%Y-%m-%d') > datetime.datetime.today():
+            print("In future")
+            result_3wk_post = {"smry": [[0,0]]}
+        else:        
+            result_3wk_post = retrieve_acis.retrieve_station_data_precip(
+                result_full_window["stationid"], planting_date, dt_post_3wk
+            )
+        # if result_3wk_post is None:
+        #     result_3wk_post = {'smry': [['0', 21]]}           
         # result_2wk_pre = retrieve_acis.get_weather_data(
         #     dt_pre_2wk, planting_date, lon, lat, target="pcpn"
         # )
@@ -647,7 +679,7 @@ def gather_precip_around_planting_date():
         print("\t" + "\t".join([
             result_3wk_pre['smry'][0][0],
             result_2wk_pre['smry'][0][0],
-            result_1wk_pre['cumulative_precip'],
+            result_1wk_pre['smry'][0][0],
             result_1wk_post['smry'][0][0],            
             result_2wk_post['smry'][0][0],
             result_3wk_post['smry'][0][0],
@@ -656,15 +688,15 @@ def gather_precip_around_planting_date():
         print("\t" + "\t".join([
             str(result_3wk_pre['smry'][0][1]),
             str(result_2wk_pre['smry'][0][1]),
-            str(result_1wk_pre['days_missing']),
+            str(result_1wk_pre['smry'][0][1]),
             str(result_1wk_post['smry'][0][1]),            
             str(result_2wk_post['smry'][0][1]),
             str(result_3wk_post['smry'][0][1]),
             
         ]))       
-        print("Dist to station:", str(result_1wk_pre['dist_to_station_km']))
+        print("Dist to station:", str(result_full_window['dist_to_station_km']))
                 
-        ancillarydata.precip_preplant_1_wk = float(result_1wk_pre['cumulative_precip'])
+        ancillarydata.precip_preplant_1_wk = float(result_1wk_pre['smry'][0][0])
         ancillarydata.precip_preplant_2_wk = float(result_2wk_pre['smry'][0][0])
         ancillarydata.precip_preplant_3_wk = float(result_3wk_pre['smry'][0][0])
         ancillarydata.precip_postplant_3_wk = float(result_3wk_post['smry'][0][0])
