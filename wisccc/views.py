@@ -440,7 +440,7 @@ def wisc_cc_unauthorized(request):
 
 
 @login_required
-def wisc_cc_survey1(request, farmer_id):
+def wisc_cc_survey1(request, survey_year, farmer_id):
     """I. General info: Farmer information"""
 
     # check if user is the logged in farmer
@@ -463,13 +463,16 @@ def wisc_cc_survey1(request, farmer_id):
         # new_form.user = instance.user
         new_form.save()
 
-        return redirect(reverse("wisc_cc_survey") + f"?farmer_id={farmer_id}")
+        return redirect(
+            reverse("wisc_cc_survey")
+                + f"/{survey_year}/?farmer_id={farmer_id}"          
+        )
 
     template = "wisccc/survey_section_1_farmer.html"
     return render(
         request,
         template,
-        {"form_farmer": form_farmer, "farmer_id": farmer_id},
+        {"form_farmer": form_farmer, "farmer_id": farmer_id, "survey_year": survey_year},
     )
 
 
@@ -514,7 +517,10 @@ def wisc_cc_survey2(request, sfarmid):
         # If there is more than one field then we make them go back to survey page
         # otherwise we have them select a field from previous year or choose new field
         if survey_fields.count() > 1:
-            return redirect(reverse("wisc_cc_survey") + f"?farmer_id={farmer.id}")
+            return redirect(
+                reverse("wisc_cc_survey")
+                + f"/{survey_farm.survey_year}/?farmer_id={farmer.id}"                
+            )
         else:
             return redirect("wisc_cc_survey3", survey_fields[0].id)
 
@@ -926,12 +932,13 @@ def create_addtl_surveyfield(request, sfarmid):
             reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
         )    
 
-
+    print(survey_farm.survey_year)
     return render(
         request,
         "wisccc/create_addtl_surveyfield.html",
         {
             "sfarmid": survey_farm.id,
+            "survey_farm": survey_farm,
             "farmer": farmer
         })
 
@@ -1782,9 +1789,11 @@ class ResponseTableListView(SingleTableMixin, FilterView):
     template_name = "wisccc/response_table.html"
 
     filterset_class = SurveyResponseFilter
-
+    # Returning just those 2023 and later in the table
+    # Also returning only 1 record per survey farm id, thus make sure only one 
+    #  row in the table per survey farm
     def get_queryset(self):
-        return super().get_queryset().filter(survey_farm__survey_year__gt=2022)
+        return super().get_queryset().filter(survey_farm__survey_year__gt=2022).distinct('survey_farm_id')
 
     # def get_table_kwargs(self):
     #     return {"template_name": "django_tables2/bootstrap.html"}

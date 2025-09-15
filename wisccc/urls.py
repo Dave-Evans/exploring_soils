@@ -274,7 +274,7 @@ urlpatterns = [
     #     r"^wisc-cc-survey/1$", wisccc_views.wisc_cc_survey1, name="wisc_cc_survey1"
     # ),
     path(
-        r"wisc-cc-survey/1/<int:farmer_id>/",
+        r"wisc-cc-survey/1/<int:survey_year>/<int:farmer_id>/",
         wisccc_views.wisc_cc_survey1,
         name="wisc_cc_survey1",
     ),
