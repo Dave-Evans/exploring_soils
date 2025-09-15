@@ -526,7 +526,7 @@ def get_precip_window(planting_date, lon, lat, days_around, retrieve_acis):
     )
     return result
 
-def gather_precip_around_planting_date():
+def gather_precip_around_planting_date_23plus():
 
     # If survey year is before 2023 then we skip and handle elsewhere.
     # These years had poorly formed dates.
