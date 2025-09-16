@@ -844,6 +844,167 @@ def update_gdu_precip_2020_2022():
         update_static_record(static_id, "total_precip", total_precip)
         update_static_record(static_id, "acc_gdd", gdu)
 
+def append_text_to_file(file_path, text_to_append):
+    try:
+        with open(file_path, 'a') as file:
+            file.write(text_to_append + '\n')
+        print(f"Text appended to {file_path} successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+
+def gather_precip_around_planting_date_2020_2022():
+    '''Creates a static file which will be joined to 
+    wisc_cc_dat.tsv'''
+    retrieve_acis = RetrieveACIS(null_threshold=0.1)
+    from django.db import connection
+
+    retrieve_acis = RetrieveACIS()
+
+    with connection.cursor() as cursor:
+        cursor.execute("select * from wisc_cc")
+        wisc_cc = cursor.fetchall()
+
+    fl_output = "./data/wisc_dat_precip_window.tsv"
+    hdr_lne = "\t".join(
+        [
+        "id",
+        "precip_preplant_3_wk",
+        "precip_preplant_2_wk",
+        "precip_preplant_1_wk",
+        "precip_postplant_1_wk",
+        "precip_postplant_2_wk",
+        "precip_postplant_3_wk\n"
+        ]
+    )
+    with open(fl_output, "wt") as f:
+        f.write(hdr_lne)
+
+    for i, cc in enumerate(wisc_cc):
+        # if i < 10:
+        #     continue
+        str_id = cc[1]
+        lat = cc[21]
+        lon = cc[22]
+        planting_date = cc[23]
+        
+        print(str_id)
+
+        
+        if planting_date is None:
+            print("Planting date is none.")
+            continue
+
+        if planting_date.date() > datetime.datetime.today().date():
+            print("Planting date is in the future.")
+            continue
+
+        # print(f"{lon},{lat}")
+        dt_pre_3wk = (planting_date + datetime.timedelta(days=-21)).strftime("%Y-%m-%d")
+        dt_pre_2wk = (planting_date + datetime.timedelta(days=-14)).strftime("%Y-%m-%d")
+        dt_pre_1wk = (planting_date + datetime.timedelta(days=-7)).strftime("%Y-%m-%d")    
+        dt_post_1wk = (planting_date + datetime.timedelta(days=7)).strftime("%Y-%m-%d")                
+        dt_post_2wk = (planting_date + datetime.timedelta(days=14)).strftime("%Y-%m-%d")                        
+        dt_post_3wk = (planting_date + datetime.timedelta(days=21)).strftime("%Y-%m-%d")                                
+
+        # Get total precip for 6wk window in order to find an acceptable station
+        retrieve_acis.null_threshold=0.1
+
+
+        result_full_window = retrieve_acis.get_weather_data(
+            dt_pre_3wk, dt_post_3wk, lon, lat, target="pcpn"
+        )
+
+        retrieve_acis.null_threshold=1
+        # result_1wk_pre = retrieve_acis.get_weather_data(
+        #     dt_pre_1wk, planting_date, lon, lat, target="pcpn"
+        # )
+        result_1wk_pre = retrieve_acis.retrieve_station_data_precip(
+            result_full_window["stationid"], dt_pre_1wk, planting_date.strftime("%Y-%m-%d")
+        )
+        result_2wk_pre = retrieve_acis.retrieve_station_data_precip(
+            result_full_window["stationid"], dt_pre_2wk, planting_date.strftime("%Y-%m-%d")
+        )
+        # if result_2wk_pre is None:
+        #     result_2wk_pre = {'smry': [['0', 14]]}
+        result_3wk_pre = retrieve_acis.retrieve_station_data_precip(
+            result_full_window["stationid"], dt_pre_3wk, planting_date.strftime("%Y-%m-%d")
+        )
+        # if result_3wk_pre is None:
+        #     result_full_window = {'smry': [['0', 21]]}
+
+        
+        result_1wk_post = retrieve_acis.retrieve_station_data_precip(
+            result_full_window["stationid"], planting_date.strftime("%Y-%m-%d"), dt_post_1wk
+        )
+        result_2wk_post = retrieve_acis.retrieve_station_data_precip(
+            result_full_window["stationid"], planting_date.strftime("%Y-%m-%d"), dt_post_2wk
+        )
+        result_3wk_post = retrieve_acis.retrieve_station_data_precip(
+            result_full_window["stationid"], planting_date.strftime("%Y-%m-%d"), dt_post_3wk
+        )
+        # if result_3wk_post is None:
+        #     result_3wk_post = {'smry': [['0', 21]]}           
+        # result_2wk_pre = retrieve_acis.get_weather_data(
+        #     dt_pre_2wk, planting_date, lon, lat, target="pcpn"
+        # )
+        # result_1wk_pre = retrieve_acis.get_weather_data(
+        #     dt_pre_1wk, planting_date, lon, lat, target="pcpn"
+        # )
+        # result_1wk_post = retrieve_acis.get_weather_data(
+        #     planting_date, dt_post_1wk, lon, lat, target="pcpn"
+        # )
+        # result_2wk_post = retrieve_acis.get_weather_data(
+        #     planting_date, dt_post_2wk, lon, lat, target="pcpn"
+        # )
+
+        # all_same_stn = [
+        #     result_2wk_pre['stationid'] == result_3wk_pre['stationid'],
+        #     result_1wk_pre['stationid'] == result_3wk_pre['stationid'],
+        #     result_1wk_post['stationid'] == result_3wk_pre['stationid'],
+        #     result_2wk_post['stationid'] == result_3wk_pre['stationid'],
+        #     result_3wk_post['stationid'] == result_3wk_pre['stationid'],
+        # ]
+        # if not all(all_same_stn):
+        #     print("Different stations.")
+        #     different_stations.append( survey_field )
+        # else:
+        #     print("stations all the same.")
+        print("\t-3wk\t-2wk\t-1wk\t+1wk\t+2wk\t+3wk")
+        print("\t" + "\t".join([
+            result_3wk_pre['smry'][0][0],
+            result_2wk_pre['smry'][0][0],
+            result_1wk_pre['smry'][0][0],
+            result_1wk_post['smry'][0][0],            
+            result_2wk_post['smry'][0][0],
+            result_3wk_post['smry'][0][0],
+            
+        ]))        
+        print("\t" + "\t".join([
+            str(result_3wk_pre['smry'][0][1]),
+            str(result_2wk_pre['smry'][0][1]),
+            str(result_1wk_pre['smry'][0][1]),
+            str(result_1wk_post['smry'][0][1]),            
+            str(result_2wk_post['smry'][0][1]),
+            str(result_3wk_post['smry'][0][1]),
+            
+        ]))       
+        print("Dist to station:", str(result_full_window['dist_to_station_km']))
+        
+
+        lne = "\t".join(
+            [
+            str_id,
+            result_3wk_pre['smry'][0][0],
+            result_2wk_pre['smry'][0][0],
+            result_1wk_pre['smry'][0][0],
+
+            result_1wk_post['smry'][0][0],
+            result_2wk_post['smry'][0][0],
+            result_3wk_post['smry'][0][0],
+            ]
+        )
+        append_text_to_file(fl_output, lne)
+
 
 def weather_data():
     """For updating weather data
