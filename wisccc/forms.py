@@ -2361,37 +2361,37 @@ class AncillaryDataForm(forms.ModelForm):
     )
 
     precip_preplant_3_wk = forms.DecimalField(
-        decimal_places=2,
+        decimal_places=3,
         max_digits=15,
         label="Sum of precipitation 3 weeks until cover crop planting date",
         required=False
     )
     precip_preplant_2_wk = forms.DecimalField(
-        decimal_places=2,
+        decimal_places=3,
         max_digits=15,
         label="Sum of precipitation 2 weeks until cover crop planting date",
         required=False
     )
     precip_preplant_1_wk = forms.DecimalField(
-        decimal_places=2,
+        decimal_places=3,
         max_digits=15,
         label="Sum of precipitation 1 week until cover crop planting date",
         required=False
     )
     precip_postplant_1_wk = forms.DecimalField(
-        decimal_places=2,
+        decimal_places=3,
         max_digits=15,
         label="Sum of precipitation from cover crop planting date until 1 week later",
         required=False
     )    
     precip_postplant_2_wk = forms.DecimalField(
-        decimal_places=2,
+        decimal_places=3,
         max_digits=15,
         label="Sum of precipitation from cover crop planting date until 2 weeks later",
         required=False
     )    
     precip_postplant_3_wk = forms.DecimalField(
-        decimal_places=2,
+        decimal_places=3,
         max_digits=15,
         label="Sum of precipitation from cover crop planting date until 3 weeks later",
         required=False
