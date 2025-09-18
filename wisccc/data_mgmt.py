@@ -665,12 +665,12 @@ def pull_all_years_together(f_output):
         , stat.acc_gdd
         , stat.days_from_plant_to_bio_hrvst
 
-        , null as precip_preplant_3_wk
-        , null as precip_preplant_2_wk
-        , null as precip_preplant_1_wk
-        , null as precip_postplant_1_wk
-        , null as precip_postplant_2_wk
-        , null as precip_postplant_3_wk        
+        , stat.precip_preplant_3_wk
+        , stat.precip_preplant_2_wk
+        , stat.precip_preplant_1_wk
+        , stat.precip_postplant_1_wk
+        , stat.precip_postplant_2_wk
+        , stat.precip_postplant_3_wk        
 
         , stat.field_acreage as field_acreage
         , stat.years_with_cover_crops as years_with_cover_crops
