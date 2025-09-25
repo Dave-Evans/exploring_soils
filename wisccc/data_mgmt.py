@@ -780,11 +780,15 @@ def pull_all_years_together(f_output):
         case
             when manure_prior = 'true' then 'Yes'
             when manure_prior = 'false' then 'No'
+            when manure_prior = 'True' then 'Yes'
+            when manure_prior = 'False' then 'No'
             when manure_prior is null then 'No'
         end as manure_prior,
         manure_prior_rate,
         mod_manure_prior_rate_units as manure_prior_rate_units,
         case
+            when manure_post = 'True' then 'Yes'
+            when manure_post = 'False' then 'No'
             when manure_post = 'true' then 'Yes'
             when manure_post = 'false' then 'No'
             when manure_post is null then 'No'
