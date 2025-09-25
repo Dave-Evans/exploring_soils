@@ -778,6 +778,9 @@ def pull_all_years_together(f_output):
         lower(replace(dominant_soil_texture, '_', ' ')) as dominant_soil_texture,
         -- Make this yes no? Or change static to boolean?
         case
+            when manure_prior = 'Yes' then 'Yes'
+            when manure_prior = 'No' then 'No'
+            when manure_prior = '.' then 'No'        
             when manure_prior = 'true' then 'Yes'
             when manure_prior = 'false' then 'No'
             when manure_prior = 'True' then 'Yes'
@@ -787,6 +790,9 @@ def pull_all_years_together(f_output):
         manure_prior_rate,
         mod_manure_prior_rate_units as manure_prior_rate_units,
         case
+            when manure_post = 'Yes' then 'Yes'
+            when manure_post = 'No' then 'No'
+            when manure_post = '.' then 'No'        
             when manure_post = 'True' then 'Yes'
             when manure_post = 'False' then 'No'
             when manure_post = 'true' then 'Yes'
