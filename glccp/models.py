@@ -10,7 +10,7 @@ class CleanedData(models.Model):
     field = models.IntegerField(verbose_name="", null=True)
     state = models.CharField(verbose_name="", null=True, max_length=250)
     county = models.CharField(verbose_name="", null=True, max_length=250)
-    zipcode = models.IntegerField(verbose_name="", null=True)
+    zipcode = models.CharField(verbose_name="", null=True)
     ag_yrs = models.CharField(verbose_name="", null=True, max_length=250)
     farmtype = models.CharField(verbose_name="", null=True, max_length=250)
     soil_texture = models.CharField(verbose_name="", null=True, max_length=250)
@@ -60,8 +60,8 @@ class CleanedData(models.Model):
     cc_plantstrat = models.CharField(verbose_name="", null=True, max_length=250)
     cc_plantdate = models.DateField(null=True)
     cc_sampledate = models.DateField(null=True)
-    cc_area = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="", null=True
+    cc_area = models.CharField(
+        verbose_name="Area of the field", null=True
     )
     pc = models.CharField(verbose_name="", null=True, max_length=250)
     sc = models.CharField(verbose_name="", null=True, max_length=250)
