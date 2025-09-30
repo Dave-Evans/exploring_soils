@@ -72,13 +72,14 @@ def makeFarmLocationFile():
     '''Because the zip code file can't be 
     used on the remote server we need to create a file
     of farm locations which can be joined on.'''
-    fl_data = "~/Documents/glccp/GLCCP_2024-2025_interactive map_data_v3.xlsx"
+    fl_data = "~/Documents/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
     fl_zipcodes = "/home/evans/Documents/small_projects/wisc_cc/tl_2020_us_zcta520/tl_2020_us_zcta520.shp"
     zipcodes = geopandas.read_file(
         fl_zipcodes
         # bbox=(-96.42389620756555, 37.18015493447337, -81.83489159751977, 45.94466927653207),
     )
     # fl_data = "/home/ubuntu/GLCCP_2024-2025_interactive map_data_v3.xlsx"
+    year = "2025"
     fl_loc = "farm_locations_2025.csv"
     fl_nozip = "nozip_2025.csv"
     # fl_zipcodes = "/home/ubuntu/tl_2020_us_zcta520.shp"
@@ -92,7 +93,6 @@ def makeFarmLocationFile():
     for i, row in dat.iterrows():
         farm_id = row["farm"]
         field_id = row["field"]
-        year = "2025"
         zipcode = row['zipcode']
         if "-" in zipcode:
             
@@ -111,7 +111,7 @@ def makeFarmLocationFile():
         print("____________________")
 
 
-def load2024():
+def load2025():
     skip_cols = [
         "CC_current_grazecutmow",
         "CC_current_fieldprep",
@@ -133,15 +133,16 @@ def load2024():
 
     
 
-    fl_data = "/home/ubuntu/GLCCP_2024-2025_interactive map_data_v3.xlsx"
+    # fl_data = "/home/ubuntu/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
+    # fl_loc = "/home/ubuntu/exploring_soils/data/farm_locations_2025.csv"
     fl_data = "~/Documents/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
     fl_loc = "~/Documents/exploring_soils/farm_locations_2025.csv"
     # fl_zipcodes = "/home/ubuntu/tl_2020_us_zcta520.shp"
-    fl_zipcodes = "/home/evans/Documents/small_projects/wisc_cc/tl_2020_us_zcta520/tl_2020_us_zcta520.shp"
-    zipcodes = geopandas.read_file(
-        fl_zipcodes
-        # bbox=(-96.42389620756555, 37.18015493447337, -81.83489159751977, 45.94466927653207),
-    )
+    # fl_zipcodes = "/home/evans/Documents/small_projects/wisc_cc/tl_2020_us_zcta520/tl_2020_us_zcta520.shp"
+    # zipcodes = geopandas.read_file(
+    #     fl_zipcodes
+    #     # bbox=(-96.42389620756555, 37.18015493447337, -81.83489159751977, 45.94466927653207),
+    # )
     
 
     dat = pd.read_excel(fl_data)
@@ -211,6 +212,25 @@ def load2024():
             # setattr(cleaned_data_record, field, value)
             # cleaned_data_record.farm_location = GEOSGeometry(farm_location)
             # cleaned_data_record.save()
+
+
+def checkout2025():
+    # fl_data = "/home/ubuntu/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
+    # fl_loc = "/home/ubuntu/exploring_soils/data/farm_locations_2025.csv"
+    fl_data = "~/Documents/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
+    fl_loc = "~/Documents/exploring_soils/farm_locations_2025.csv"
+    dat = pd.read_excel(fl_data)
+
+    glccp_2025 = CleanedData.objects.filter(year=2025)
+
+    db_count = glccp_2025.count()
+    fl_count = len(dat)
+
+    try:
+        assert(db_count == fl_count)
+    except:
+        print("The count of records in the DB differs from the file!")
+
 
 
 
