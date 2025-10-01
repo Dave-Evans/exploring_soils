@@ -133,8 +133,8 @@ def load2025():
 
     
 
-    # fl_data = "/home/ubuntu/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
-    # fl_loc = "/home/ubuntu/exploring_soils/data/farm_locations_2025.csv"
+    fl_data = "/home/ubuntu/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
+    fl_loc = "/home/ubuntu/exploring_soils/data/farm_locations_2025.csv"
     fl_data = "~/Documents/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
     fl_loc = "~/Documents/exploring_soils/farm_locations_2025.csv"
     # fl_zipcodes = "/home/ubuntu/tl_2020_us_zcta520.shp"
@@ -215,8 +215,8 @@ def load2025():
 
 
 def checkout2025():
-    # fl_data = "/home/ubuntu/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
-    # fl_loc = "/home/ubuntu/exploring_soils/data/farm_locations_2025.csv"
+    fl_data = "/home/ubuntu/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
+    fl_loc = "/home/ubuntu/exploring_soils/data/farm_locations_2025.csv"
     fl_data = "~/Documents/exploring_soils/data/GLCCP_2024-2025_interactive map_data_v3.xlsx"
     fl_loc = "~/Documents/exploring_soils/farm_locations_2025.csv"
     dat = pd.read_excel(fl_data)
