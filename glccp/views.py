@@ -27,6 +27,11 @@ def get_glccp_data(request):
                         *
                     FROM (
                         select 
+                            /*cleanup 
+                                farm type
+                                cover crop type
+                                planting method
+                                */
                             *
                             from glccp_cleaneddata
                         ) AS geom
