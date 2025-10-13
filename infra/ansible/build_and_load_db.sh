@@ -36,6 +36,9 @@ echo "Making migrations, again"
 python ./manage.py makemigrations
 echo "Running migrate, again"
 python ./manage.py migrate
+echo "...migrations for glccp, why?"
+python ./manage.py makemigrations glccp
+python ./manage.py migrate glccp
 echo "Loading data"
 python ./manage.py loaddata data/$fl_bkup
 python ./manage.py collectstatic --noinput

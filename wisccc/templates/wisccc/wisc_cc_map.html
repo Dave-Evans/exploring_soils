@@ -156,10 +156,27 @@
             border-style: solid;
             border-color: transparent transparent#2f2f2f transparent;
         }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+        td {
+            /* top | right | bottom | left */
+            padding: 0px 0px 0px 10px;
+        }
+
+        .popupphoto {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+            border: 1px solid #555;
+        }
     </style>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Citizen Science Data Network</a>
+        <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Data Network</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
             aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -169,9 +186,13 @@
                 <li class="nav-item" id="nav-home">
                     <a class="nav-link" href="{% url 'wisc_cc_home' %}">Home</a>
                 </li>
+                <li class="nav-item" id="nav-scenario">
+                    <a class="nav-link" href="{% url 'wisc_cc_scenario' %}">Cover Crop Scenario Tool</a>
+                </li>
                 <li class="nav-item" id="nav-graph">
                     <a class="nav-link" href="{% url 'wisc_cc_graph' %}">Graph</a>
                 </li>
+
                 <li class="nav-item" id="nav-map">
                     <a class="nav-link" href="{% url 'wisc_cc_map' %}">Map</a>
                 </li>
@@ -363,6 +384,12 @@
             var whichpage = window.location.href.split("/").pop()
             if (whichpage.includes("graph")) {
                 $("#nav-graph").addClass("active");
+            }
+            if (whichpage.includes("manager")) {
+                $("#nav-manager").addClass("active");
+            }
+            if (whichpage.includes("scenario")) {
+                $("#nav-scenario").addClass("active");
             }
             if (whichpage.includes("survey")) {
                 $("#nav-survey").addClass("active");

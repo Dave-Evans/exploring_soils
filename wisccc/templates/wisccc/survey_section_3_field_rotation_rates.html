@@ -22,15 +22,17 @@
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
-  {% include 'wisccc/includes/survey_2024/form_section_3_rotation_rates_fieldfarm.html' %}
+  {% include form_file_name_fieldfarm %}
   <hr>
-  {% include 'wisccc/includes/survey_2024/form_section_3_rotation_rates_surveyfield.html' %}
+  {% include form_file_name_surveyfield %}
 
 
   <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
-  <a href="{% url 'wisc_cc_survey' %}?farmer_id={{farmer_id}}"><button type="button" class="btn btn-secondary">Back to
-      survey home
-      page</button></a>
+  <a href="{% url 'wisc_cc_survey' survey_year %}?farmer_id={{farmer_id}}">
+    <button type="button" class="btn btn-secondary">
+      Back to survey home page
+    </button>
+  </a>
 
 
 </form>

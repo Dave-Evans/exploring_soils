@@ -23,7 +23,20 @@
         <!-- Begin other experiment -->
         <div class="card-group">
 
-
+          <a href="{% url 'wisc_cc_scenario' %}">
+            <div class="card">
+              <img class="card-img-top" src="{% static 'img/kewaunee_covers.jpeg' %}"
+                alt="Map of participating farmers">
+              <div class="card-body">
+                <h5 class="card-title">Cover crop scenarios</h5>
+                <p class="card-text">
+                  On-farm data by farmers, for farmers.
+                  Explore how cover crops are being used by farmers around Wisconsin.
+                </p>
+                <a href="{% url 'wisc_cc_scenario' %}" class="btn btn-primary">Go to the scenarios</a>
+              </div>
+            </div>
+          </a>
           <a href="{% url 'wisc_cc_map' %}">
             <div class="card">
               <img class="card-img-top" src="{% static 'img/display_wisc_cc_map3_smaller.jpg' %}"
@@ -36,6 +49,41 @@
               </div>
             </div>
           </a>
+
+
+
+        </div>
+        <div class="card-group">
+
+          <!-- <a href="{% url 'wisc_cc_interested' %}"> -->
+          <div class="card">
+            <img class="card-img-top" src="{% static 'img/checking_corn.jpg' %}"
+              alt="Lafayette county agronomist checking corn emergence and planting depth">
+            <div class="card-body">
+              <h5 class="card-title">Survey for 2025</h5>
+              <p class="card-text">
+                Registration is open 2025-6.
+                Register here by clicking or email <a href="mailto:mingram@wisc.edu">Mrill Ingram</a>
+                if you have further questions
+              </p>
+
+              <a href="{% url 'wisc_cc_register_1' %}" class="btn btn-primary">Register?</a>
+            </div>
+          </div>
+          <!-- </a> -->
+          <!-- <a href="{% url 'wisc_cc_survey' %}">
+            <div class="card">
+              <img class="card-img-top" height="228" src="{% static 'img/oats_berseem_481x425.jpg' %}" alt="Oats photo">
+              <div class="card-body">
+                <h5 class="card-title">Cover crop survey </h5>
+                <p class="card-text">
+                  If you registered to participate, please fill out cover crop survey here.
+                </p>
+                
+                <a href="{% url 'wisc_cc_survey' %}" class="btn btn-primary">Go to survey</a>
+              </div>
+            </div>
+          </a> -->
           <a href="{% url 'wisc_cc_graph' %}">
             <div class="card">
               <img class="card-img-top" src="{% static 'img/graph_covercrop.png' %}" alt="Graph photo">
@@ -49,41 +97,6 @@
               </div>
             </div>
           </a>
-
-
-        </div>
-        <div class="card-group">
-          <!-- <a href="{% url 'wisc_cc_interested' %}"> -->
-          <div class="card">
-            <img class="card-img-top" src="{% static 'img/checking_corn.jpg' %}"
-              alt="Lafayette county agronomist checking corn emergence and planting depth">
-            <div class="card-body">
-              <h5 class="card-title">Interested in participating?</h5>
-              <p class="card-text">
-                Registration closed is for 2024-5.
-                If you would like to learn more or participate in the future please email <a
-                  href="mailto:mingram@wisc.edu">Mrill Ingram</a>
-                or click below to share your contact information.
-              </p>
-
-              <a href="{% url 'wisc_cc_interested' %}" class="btn btn-primary">Interested?</a>
-            </div>
-          </div>
-          <!-- </a> -->
-          <a href="{% url 'wisc_cc_survey' %}">
-            <div class="card">
-              <img class="card-img-top" height="228" src="{% static 'img/oats_berseem_481x425.jpg' %}" alt="Oats photo">
-              <div class="card-body">
-                <h5 class="card-title">Cover crop survey </h5>
-                <p class="card-text">
-                  If you registered to participate, please fill out cover crop survey here.
-                </p>
-                <!-- <p class="card-text">Click here if you've registered to participate in this year's survey.</p> -->
-                <a href="{% url 'wisc_cc_survey' %}" class="btn btn-primary">Go to survey</a>
-              </div>
-            </div>
-          </a>
-
 
         </div>
         <br>
@@ -102,8 +115,8 @@
         </p>
         <hr>
         <p>
-          The <a href="https://www.michaelfields.org/cover-crops" target="_blank" rel="noopener noreferrer">Michael
-            Fields Agricultural Institute's</a> Wisconsin Cover Crop Citizen Science Project is
+          The <a href="https://www.michaelfields.org/covercrops" target="_blank" rel="noopener noreferrer">Michael
+            Fields Agricultural Institute's</a> Wisconsin Cover Crop Data Network is
           a partnership with
           UW-Madison's <a
             href="https://ipcm.wisc.edu/#:~:text=The%20University%20of%20Wisconsin%20Nutrient,to%20Wisconsin%20farmers%20and%20landowners."

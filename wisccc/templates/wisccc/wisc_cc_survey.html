@@ -9,6 +9,7 @@
       <div class="card-body">
         <h3 class="card-title">Welcome {{ farmer.first_name }} {{ farmer.last_name }}</h3>
         {% if perms.wisccc.survery_manager %}
+        Survey year: {{ survey_farm.survey_year }}
         <hr>
         <p>Click here to delete this survey.
           Note this cannot be undone (without tedious work)
@@ -32,7 +33,7 @@
         {% else %}
 
         <p>
-          Welcome to the fifth season of our cover crop citizen science project.
+          Welcome to the sixth season of our cover crop citizen science project.
           You are part of a state-wide collaborative effort to build practical knowledge about cover cropping in
           Wisconsin.
           You're also helping improve tools like SnapPlus and developing better
@@ -41,7 +42,8 @@
 
         <p>
           We will be in touch to be sure the biomass sampling is going ok, and to share other project info. Also, check
-          out the <a href="{% url 'wisc_cc_graph' %}">map and graph</a> of the data we've collected so far!
+          out the <a href="{% url 'wisc_cc_scenario' %}">scenario tool</a>, created with the data we've collected so
+          far!
         </p>
         <p>Please contact Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a>
           or Dan Marzu <a href="mailto:dan.marzu@wisc.edu">(dan.marzu@wisc.edu)</a> with any questions</p>
@@ -58,12 +60,12 @@
         <div class="col-md-10">
           <div class="list-group">
             {% if farmer.last_name is not None %}
-            <a href="{% url 'wisc_cc_survey1' farmer.id %}"
+            <a href="{% url 'wisc_cc_survey1' survey_farm.survey_year farmer.id %}"
               class="list-group-item list-group-item-action list-group-item-success">
               I. General info - completed! Click to edit your response.
             </a>
             {% else %}
-            <a href="{% url 'wisc_cc_survey1' farmer.id %}"
+            <a href="{% url 'wisc_cc_survey1' survey_farm.survey_year farmer.id %}"
               class="list-group-item list-group-item-action list-group-item-warning">
               I. General info
             </a>
@@ -93,24 +95,28 @@
                 aria-controls="collapseOne" class="list-group-item list-group-item-action list-group-item-success">
                 Field {{ forloop.counter }} click to see sections
               </a>
+              {% if perms.wisccc.survery_manager %}
               <br>
               <a href="{% url 'delete_survey_field' survey_field_id %}">
                 <button type=" button" class="warn btn btn-danger btn-sm">
                   Delete this field
                 </button>
               </a>
+              {% endif %}
               {% else %}
 
               <a data-target="#collapse-{{ forloop.counter }}" data-toggle="collapse" aria-expanded="true"
                 aria-controls="collapseOne" class="list-group-item list-group-item-action list-group-item-warning">
                 Field {{ forloop.counter }}
               </a>
+              {% if perms.wisccc.survery_manager %}
               <br>
               <a href="{% url 'delete_survey_field' survey_field_id %}">
                 <button type=" button" class="warn btn btn-danger btn-sm">
                   Delete this field
                 </button>
               </a>
+              {% endif %}
 
 
 
@@ -219,7 +225,7 @@
             </div>
             {% endif %}
             <div class="list-group">
-              {% if survey_farm.encourage_cc is not None %}
+              {% if survey_farm.willing_to_share_more is not None %}
               <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
                 class="list-group-item list-group-item-action list-group-item-success">
                 VII. Final thoughts - completed! Click to edit your response.

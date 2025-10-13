@@ -1,0 +1,35 @@
+{% load crispy_forms_tags %}
+
+
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        {{ form_surveyfarm_section_7.learn_about_cc_preferred_way|as_crispy_field }}
+    </div>
+</div>
+
+
+
+
+<div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ form_surveyfarm_section_7.scenario_tool_feedback|as_crispy_field }}
+        </div>
+    </div>
+</div>
+
+<div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ form_surveyfarm_section_7.testimonial|as_crispy_field }}
+        </div>
+    </div>
+</div>
+<div>
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            {{ form_surveyfarm_section_7.willing_to_share_more|as_crispy_field }}
+        </div>
+    </div>
+</div>
+{{ form_surveyfarm_section_7.errors}}

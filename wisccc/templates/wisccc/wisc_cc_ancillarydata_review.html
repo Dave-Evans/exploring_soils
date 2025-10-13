@@ -20,7 +20,8 @@
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
-  {% include 'wisccc/includes/form.html' %}
+  {% include 'wisccc/includes/form_ancillary_data.html' %}
+
 
 
   <button type="submit" class="noprompt-required btn btn-primary">Submit</button>

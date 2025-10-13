@@ -8,7 +8,7 @@
 
 {% block body %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Citizen Science Data Network</a>
+  <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Data Network</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
     aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -17,6 +17,9 @@
     <ul class="navbar-nav mr-auto">
       <li class="nav-item" id="nav-home">
         <a class="nav-link" href="{% url 'wisc_cc_home' %}">Home</a>
+      </li>
+      <li class="nav-item" id="nav-scenario">
+        <a class="nav-link" href="{% url 'wisc_cc_scenario' %}">Cover Crop Scenario Tool</a>
       </li>
       <li class="nav-item" id="nav-graph">
         <a class="nav-link" href="{% url 'wisc_cc_graph' %}">Graph</a>
@@ -69,19 +72,6 @@
 
 <br>
 <div class="container">
-  <!-- <div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10 col-sm-12">
-      <div class="card">
-        <div class="card-body">
-          <h1 class="card-title logo text-center">
-            <a href="{% url 'wisc_cc_home' %}">
-              Wisconsin Cover Crop<br>Citizen Science Data Network
-            </a>
-          </h1>
-        </div>
-      </div>
-    </div>
-  </div> -->
 
   {% block content %}
   {% endblock content%}
@@ -96,6 +86,9 @@
     }
     if (whichpage.includes("survey")) {
       $("#nav-survey").addClass("active");
+    }
+    if (whichpage.includes("scenario")) {
+      $("#nav-scenario").addClass("active");
     }
     if (whichpage.includes("home")) {
       $("#nav-home").addClass("active");
@@ -120,5 +113,5 @@
 </h1>
 {% endblock %}
 {% block title %}
-Wisconsin Cover Crop Citizen Science Data Network
+Wisconsin Cover Crop Data Network
 {% endblock title %}

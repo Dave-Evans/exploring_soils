@@ -32,14 +32,42 @@ cc_planting_date	Planting date of cover crop (approximate)
 cc_biomass_collection_date_fall	The date of fall biomass collection.
 total_precip_fall	Fall – Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
 acc_gdd_fall	Fall – growing degree days/units that have accumulated from when the cover crop was planted to when it was harvested derived from https://mrcc.purdue.edu/data_serv/cli-dap
+precip_preplant_3_wk	Sum of precipitation 3 weeks until cover crop planting date
+precip_preplant_2_wk	Sum of precipitation 2 weeks until cover crop planting date
+precip_preplant_1_wk	Sum of precipitation 1 week until cover crop planting date
+precip_postplant_1_wk	Sum of precipitation from cover crop planting date until 1 week later
+precip_postplant_2_wk	Sum of precipitation from cover crop planting date until 2 weeks later
+precip_postplant_3_wk	Sum of precipitation from cover crop planting date until 3 weeks later
+field_acreage	The size of the field in acres
+years_with_cover_crops	The number of years cover crops have been planted in this field
+cover_crop_planting_cost	The estimate per acre cost of cover crop planting
+cover_crop_seed_cost	The estimate per acre cost of cover crop seed
 cc_biomass_fall	Fall – dried biomass in (English) tons per acre. Analyzed by AgSource labs.
 fq_cp_fall	Fall – measured: crude protein (%). Analyzed by Dairyland Labs.
 fq_andf_fall	Fall – estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om). Analyzed by Dairyland Labs.
+fq_undfom30	Fall – Analyzed by Dairyland labs
 fq_ndfd30_fall	Fall – Neutral detergent fiber digestibility after 30 hours. Analyzed by Dairyland Labs.
 fq_tdn_adf_fall	Fall – total digestible nutrients - acid detergent fiber. Analyzed by Dairyland Labs.
-fq_milkton_fall	"Fall – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters.. Analyzed by Dairyland Labs."
+fq_milkton_fall	"Fall – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters. Analyzed by Dairyland Labs."
 fq_rfq_fall	Fall – measured: relative forage quality. Analyzed by Dairyland Labs.
-total_nitrogen_fall	Fall – Total nitrogen in a the plant tissue, mg/L. Analyzed by AgSource labs.
+fq_undfom240_fall	Fall –  Analyzed by Dairyland Labs.
+fq_dry_matter_fall	Fall – Dry matter. Analyzed by Dairyland Labs.
+fq_adf_fall	Fall – Acid digestible fiber. Analyzed by Dairyland Labs.
+fq_rfv_fall	Fall – measured: relative forage value. Analyzed by Dairyland Labs.
+percent_nitrogen_fall	Fall – Nitrogen content in biomass, as percent. Analyzed by AgSource labs.
+percent_p_fall	Fall – Phosphorus content in biomass, as percent. Analyzed by AgSource labs.
+percent_k_fall	Fall – Potassium content in biomass, as percent. Analyzed by AgSource labs.
+percent_ca_fall	Fall – Calcium content in biomass, as percent. Analyzed by AgSource labs.
+percent_mg_fall	Fall – Magnesium content in biomass, as percent. Analyzed by AgSource labs.
+percent_s_fall	Fall – Sulfur content in biomass, as percent. Analyzed by AgSource labs.
+c_to_n_ratio_fall	Fall – Carbon to nitrogen ratio of biomass; above 20 will immobilize nitrogen and below 20 will mineralize (release) nitrogen. Analyzed by AgSource Labs.
+n_lbs_acre_fall	Fall – Nitrogen in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+p_lbs_acre_fall	Fall – Phosphorus in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+k_lbs_acre_fall	Fall – Potassium in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+ca_lbs_acre_fall	Fall – Calcium in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+mg_lbs_acre_fall	Fall – Magnesium in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+s_lbs_acre_fall	Fall – Sulfur content in biomass, as percent. Analyzed by AgSource labs.
+c_lbs_acre_fall	Fall – Carbon in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
 height_of_stand_fall	Fall – The average height, in inches, of the cover crop, measured by the participant when fall sample was taken.
 cc_biomass_collection_date_spring	The date of spring biomass collection.
 total_precip_spring	Spring – Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
@@ -47,10 +75,28 @@ acc_gdd_spring	Spring – growing degree days/units that have accumulated from w
 cc_biomass_spring	Spring – dried biomass in (English) tons per acre.  Analyzed by AgSource Labs.
 fq_cp_spring	Spring – measured: crude protein (%). Analyzed by Dairyland Labs.
 fq_andf_spring	Spring – estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om). Analyzed by Dairyland Labs.
+fq_undfom30_spring	Spring – Analyzed by Dairyland labs
 fq_ndfd30_spring	Spring – Neutral detergent fiber digestibility after 30 hours. Analyzed by Dairyland Labs.
 fq_tdn_adf_spring	Spring – total digestible nutrients - acid detergent fiber. Analyzed by Dairyland Labs.
 fq_milkton_spring	"Spring – a modeled value (using the ""Milk model"") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters. Analyzed by Dairyland Labs."
 fq_rfq_spring	Spring – measured: relative forage quality. Analyzed by Dairyland Labs.
-total_nitrogen_spring	Spring – Total nitrogen in a the plant tissue, mg/L. Analyzed by AgSource Labs.
+fq_undfom240_spring	Spring –  Analyzed by Dairyland Labs.
+fq_dry_matter_spring	Spring – Dry matter. Analyzed by Dairyland Labs.
+fq_adf_spring	Spring – Acid digestible fiber. Analyzed by Dairyland Labs.
+fq_rfv_spring	Spring – measured: relative forage value. Analyzed by Dairyland Labs.
+percent_nitrogen_spring	Spring – Nitrogen content in biomass, as percent. Analyzed by AgSource labs.
+percent_p_spring	Spring – Phosphorus content in biomass, as percent. Analyzed by AgSource labs.
+percent_k_spring	Spring – Potassium content in biomass, as percent. Analyzed by AgSource labs.
+percent_ca_spring	Spring – Calcium content in biomass, as percent. Analyzed by AgSource labs.
+percent_mg_spring	Spring – Magnesium content in biomass, as percent. Analyzed by AgSource labs.
+percent_s_spring	Spring – Sulfur content in biomass, as percent. Analyzed by AgSource labs.
+c_to_n_ratio_spring	Spring – Carbon to nitrogen ratio of biomass; above 20 will immobilize nitrogen and below 20 will mineralize (release) nitrogen. Analyzed by AgSource Labs.
+n_lbs_acre_spring	Spring – Nitrogen in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+p_lbs_acre_spring	Spring – Phosphorus in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+k_lbs_acre_spring	Spring – Potassium in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+ca_lbs_acre_spring	Spring – Calcium in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+mg_lbs_acre_spring	Spring – Magnesium in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
+s_lbs_acre_spring	Spring – Sulfur content in biomass, as percent. Analyzed by AgSource labs.
+c_lbs_acre_spring	Spring – Carbon in biomass, extrapolated to lbs/acre. Analyzed by AgSource labs.
 height_of_stand_spring	Spring – The average height, in inches, of the cover crop, measured by the participant when spring sample was taken.
 cc_species_raw	As entered by participant from a list: annual ryegrass; barley; berseem clover; canola/rapeseed; cereal (winter) rye; crimson clover; cowpea; field/forage pea; hairy vetch; kale; oats; other (legume); other (grass); other (broadleaf); radish; red clover; sorghum; sorghum-sudan; soybeans; sunflower; Tritcale; turnip; wheat (spring); wheat (winter); multispecies mix of 2 or more; other. 

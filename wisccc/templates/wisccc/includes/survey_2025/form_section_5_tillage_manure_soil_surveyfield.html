@@ -1,0 +1,109 @@
+{% load crispy_forms_tags %}
+
+
+
+<div>
+
+    <div class="form-row">
+        <div class="form-group col-md-5 mb-0">
+            {{ form_surveyfield_section_5.manure_prior|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-4 mb-0">
+            {{ form_surveyfield_section_5.manure_prior_rate|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-3 mb-0">
+            {{ form_surveyfield_section_5.manure_prior_rate_units|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5 mb-0">
+            {{ form_surveyfield_section_5.manure_prior_source|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-5 mb-0">
+            {{ form_surveyfield_section_5.manure_prior_consistency|as_crispy_field }}
+        </div>
+    </div>
+
+    <br>
+
+    <div class="form-row">
+        <div class="form-group col-md-5 mb-0">
+            {{ form_surveyfield_section_5.manure_post|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-4 mb-0">
+            {{ form_surveyfield_section_5.manure_post_rate|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-3 mb-0">
+            {{ form_surveyfield_section_5.manure_post_rate_units|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5 mb-0">
+            {{ form_surveyfield_section_5.manure_post_source|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-5 mb-0">
+            {{ form_surveyfield_section_5.manure_post_consistency|as_crispy_field }}
+        </div>
+    </div>
+
+
+    <div class="form-row">
+        <div class="form-group col-md-10 mb-0">
+            {{ form_surveyfield_section_5.synth_fert_for_covers|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-10 mb-0">
+            {{ form_surveyfield_section_5.synth_fert_for_covers_application_date|as_crispy_field }}
+        </div>
+
+    </div>
+
+
+
+    <div class="form-row">
+        <div class="form-group col-md-10 mb-0">
+            {{ form_surveyfield_section_5.tillage_system_cash_crop|as_crispy_field }}
+        </div>
+
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form_surveyfield_section_5.primary_tillage_equipment|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form_surveyfield_section_5.primary_tillage_equipment_write_in|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form_surveyfield_section_5.secondary_tillage_equipment|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form_surveyfield_section_5.secondary_tillage_equipment_write_in|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form_surveyfield_section_5.dominant_soil_texture|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form_surveyfield_section_5.soil_conditions_at_cover_crop_seeding|as_crispy_field }}
+        </div>
+    </div>
+
+
+
+</div>
+
+<script>
+    $(function () {
+        $("#id_synth_fert_for_covers_application_date").datepicker({
+            format: 'yyyy-mm-dd',
+        });
+    });
+
+
+
+</script>

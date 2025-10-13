@@ -461,9 +461,33 @@ def get_survey_data():
                 "rfv",
                 "cc_biomass",
                 "total_nitrogen",
+                
+                "percent_p",
+                "percent_k",
+                "percent_ca",
+                "percent_mg",
+                "percent_s",
+                "c_to_n_ratio",
+
+                "n_content",
+                "p_content",
+                "k_content",
+                "ca_content",
+                "mg_content",
+                "s_content",
+                "c_content",
+
                 "height_of_stand",
                 "acc_gdd",
                 "total_precip",
+
+                "precip_preplant_3_wk",
+                "precip_preplant_2_wk",
+                "precip_preplant_1_wk",
+                "precip_postplant_1_wk",
+                "precip_postplant_2_wk",
+                "precip_postplant_3_wk",        
+
                 "spring_biomass_collection_date",
                 "spring_cp",
                 "spring_andf",
@@ -477,6 +501,22 @@ def get_survey_data():
                 "spring_rfv",
                 "spring_cc_biomass",
                 "spring_total_nitrogen",
+
+                "spring_percent_p",
+                "spring_percent_k",
+                "spring_percent_ca",
+                "spring_percent_mg",
+                "spring_percent_s",
+                "spring_c_to_n_ratio",
+
+                "spring_n_content",
+                "spring_p_content",
+                "spring_k_content",
+                "spring_ca_content",
+                "spring_mg_content",
+                "spring_s_content",
+                "spring_c_content",
+
                 "spring_height_of_stand",
                 "spring_acc_gdd",
                 "spring_total_precip",
@@ -499,9 +539,31 @@ def get_survey_data():
             "rfv_fall",
             "cc_biomass_fall",
             "total_nitrogen_fall",
-            "height_of_stand",
+
+            "percent_p_fall",
+            "percent_k_fall",
+            "percent_ca_fall",
+            "percent_mg_fall",
+            "percent_s_fall",
+            "c_to_n_ratio_fall",
+
+            "n_content_fall",
+            "p_content_fall",
+            "k_content_fall",
+            "ca_content_fall",
+            "mg_content_fall",
+            "s_content_fall",
+            "c_content_fall",
+
+            "height_of_stand_fall",
             "acc_gdd_fall",
             "total_precip_fall",
+            "precip_preplant_3_wk",
+            "precip_preplant_2_wk",
+            "precip_preplant_1_wk",
+            "precip_postplant_1_wk",
+            "precip_postplant_2_wk",
+            "precip_postplant_3_wk",            
             "biomass_collection_date_spring",
             "cp_spring",
             "andf_spring",
@@ -515,7 +577,23 @@ def get_survey_data():
             "rfv_spring",
             "cc_biomass_spring",
             "total_nitrogen_spring",
-            "spring_height_of_stand",
+
+            "percent_p_spring",
+            "percent_k_spring",
+            "percent_ca_spring",
+            "percent_mg_spring",
+            "percent_s_spring",
+            "c_to_n_ratio_spring",
+
+            "n_content_spring",
+            "p_content_spring",
+            "k_content_spring",
+            "ca_content_spring",
+            "mg_content_spring",
+            "s_content_spring",
+            "c_content_spring",
+
+            "height_of_stand_spring",
             "acc_gdd_spring",
             "total_precip_spring",
             "notes_admin_lab_data",
@@ -529,6 +607,10 @@ def get_survey_data():
     for col in dct_choices:
         df[col] = df[col].apply(convert_to_human_readable, args=(dct_choices[col],))
 
+    # For creating concat of cc species
+    cols_species = ['cover_crop_species_1', 'cover_crop_species_2', "cover_crop_species_3", "cover_crop_species_4", "cover_crop_species_5"]
+    df['cc_species_raw'] = df[cols_species].fillna('').agg(','.join, axis=1)
+    df.cc_species_raw = df.cc_species_raw.str.replace(r",+$", "")
     return df
 
 
@@ -543,6 +625,7 @@ def pull_all_years_together(f_output):
 
     query = """
  
+
 	SELECT 
 		prevsurv.survey_farm_id as farm_id
         , prevsurv.survey_field_id as survey_field_id
@@ -582,6 +665,18 @@ def pull_all_years_together(f_output):
         , stat.acc_gdd
         , stat.days_from_plant_to_bio_hrvst
 
+        , stat.precip_preplant_3_wk
+        , stat.precip_preplant_2_wk
+        , stat.precip_preplant_1_wk
+        , stat.precip_postplant_1_wk
+        , stat.precip_postplant_2_wk
+        , stat.precip_postplant_3_wk        
+
+        , stat.field_acreage as field_acreage
+        , stat.years_with_cover_crops as years_with_cover_crops
+        , stat.cover_crop_planting_cost as cover_crop_planting_cost
+        , stat.cover_crop_seed_cost as cover_crop_seed_cost
+        
         , stat.cc_biomass
         , stat.fq_cp
         , stat.fq_andf
@@ -590,10 +685,27 @@ def pull_all_years_together(f_output):
         , stat.fq_tdn_adf
         , stat.fq_milkton
         , stat.fq_rfq
-        , null as fq_undfom240
-        , null as fq_dry_matter
-        , null as fq_rfv        
-        , null as total_nitrogen
+        , stat.fq_undfom240
+        , stat.fq_dry_matter
+        , stat.fq_adf
+        , stat.fq_rfv        
+        , stat.fq_total_nitrogen as total_nitrogen
+
+        , stat.fq_total_phosphorus as percent_p
+        , stat.fq_total_potassium as percent_k
+        , stat.fq_total_calcium as percent_ca
+        , stat.fq_total_magnesium as percent_mg
+        , stat.fq_total_sulfur as percent_s
+        , stat.fq_c_to_n_ratio as c_to_n_ratio
+
+        , stat.fq_nitrogen_content as n_content
+        , stat.fq_phosphorus_content as p_content
+        , stat.fq_potassium_content as k_content
+        , stat.fq_calcium_content as ca_content
+        , stat.fq_magnesium_content as mg_content
+        , stat.fq_sulfur_content as s_content
+        , stat.fq_carbon_content as c_content
+
         , null as height_of_stand
         , null as fall_notes
         , null as spring_cc_biomass_collection_date
@@ -609,9 +721,26 @@ def pull_all_years_together(f_output):
         , null as spring_fq_rfq
         , null as spring_fq_undfom240
         , null as spring_fq_dry_matter
+        , null as spring_fq_adf
         , null as spring_fq_rfv
 
         , null as spring_total_nitrogen        
+
+        , null as spring_percent_p
+        , null as spring_percent_k
+        , null as spring_percent_ca
+        , null as spring_percent_mg
+        , null as spring_percent_s
+        , null as spring_c_to_n_ratio
+
+        , null as spring_n_content
+        , null as spring_p_content
+        , null as spring_k_content
+        , null as spring_ca_content
+        , null as spring_mg_content
+        , null as spring_s_content
+        , null as spring_c_content
+        
         , null as spring_height_of_stand
         , null as spring_notes
         , stat.cc_rate_and_species
@@ -649,13 +778,23 @@ def pull_all_years_together(f_output):
         lower(replace(dominant_soil_texture, '_', ' ')) as dominant_soil_texture,
         -- Make this yes no? Or change static to boolean?
         case
+            when manure_prior = 'Yes' then 'Yes'
+            when manure_prior = 'No' then 'No'
+            when manure_prior = '.' then 'No'        
             when manure_prior = 'true' then 'Yes'
             when manure_prior = 'false' then 'No'
+            when manure_prior = 'True' then 'Yes'
+            when manure_prior = 'False' then 'No'
             when manure_prior is null then 'No'
         end as manure_prior,
         manure_prior_rate,
         mod_manure_prior_rate_units as manure_prior_rate_units,
         case
+            when manure_post = 'Yes' then 'Yes'
+            when manure_post = 'No' then 'No'
+            when manure_post = '.' then 'No'        
+            when manure_post = 'True' then 'Yes'
+            when manure_post = 'False' then 'No'
             when manure_post = 'true' then 'Yes'
             when manure_post = 'false' then 'No'
             when manure_post is null then 'No'
@@ -689,6 +828,18 @@ def pull_all_years_together(f_output):
         acc_gdd as acc_gdd,
         null as days_from_plant_to_bio_hrvst,
 
+        precip_preplant_3_wk, 
+        precip_preplant_2_wk,
+        precip_preplant_1_wk,
+        precip_postplant_1_wk,
+        precip_postplant_2_wk,
+        precip_postplant_3_wk,               
+
+        field_acreage as field_acreage, 
+        years_with_cover_crops as years_with_cover_crops, 
+        cover_crop_planting_cost as cover_crop_planting_cost, 
+        cover_crop_seed_cost as cover_crop_seed_cost, 
+        
         cc_biomass,
         cp as fq_cp,
         andf as fq_andf,
@@ -699,8 +850,25 @@ def pull_all_years_together(f_output):
         rfq as fq_rfq,
         undfom240 as fq_undfom240,
         dry_matter as fq_dry_matter,
+        adf as fq_adf,
         rfv as fq_rfv,                
         total_nitrogen as total_nitrogen,
+
+        percent_p,
+        percent_k,
+        percent_ca,
+        percent_mg,
+        percent_s,
+        c_to_n_ratio,
+
+        n_content,
+        p_content,
+        k_content,
+        ca_content,
+        mg_content,
+        s_content,
+        c_content,
+
         height_of_stand,
         fall_notes,
         spring_biomass_collection_date as spring_cc_biomass_collection_date,
@@ -716,8 +884,25 @@ def pull_all_years_together(f_output):
         spring_rfq as spring_fq_rfq,
         spring_undfom240 as spring_fq_undfom240,
         spring_dry_matter as spring_fq_dry_matter,
+        spring_adf as spring_fq_adf,
         spring_rfv as spring_fq_rfv,
         spring_total_nitrogen as spring_total_nitrogen,
+
+        spring_percent_p,
+        spring_percent_k,
+        spring_percent_ca,
+        spring_percent_mg,
+        spring_percent_s,
+        spring_c_to_n_ratio,
+
+        spring_n_content,
+        spring_p_content,
+        spring_k_content,
+        spring_ca_content,
+        spring_mg_content,
+        spring_s_content,
+        spring_c_content,
+
         spring_height_of_stand,
         spring_notes,
         
@@ -1085,7 +1270,7 @@ def pull_all_years_together(f_output):
 			where surveyfarm.survey_year >= 2023
                 and surveyfarm.confirmed_accurate = TRUE
 	) as a
- 
+	
     """
 
     if f_output == "sql":
@@ -1184,8 +1369,25 @@ def data_export():
             "fq_rfq": "fq_rfq_fall",
             "fq_undfom240": "fq_undfom240_fall",
             "fq_dry_matter": "fq_dry_matter_fall",
+            "fq_adf": "fq_adf_fall",
             "fq_rfv": "fq_rfv_fall",
-            "total_nitrogen": "total_nitrogen_fall",
+            "total_nitrogen": "percent_nitrogen_fall",
+
+            "percent_p":"percent_p_fall",
+            "percent_k":"percent_k_fall",
+            "percent_ca":"percent_ca_fall",
+            "percent_mg":"percent_mg_fall",
+            "percent_s":"percent_s_fall",
+            "c_to_n_ratio":"c_to_n_ratio_fall",
+
+            "n_content":"n_lbs_acre_fall",
+            "p_content":"p_lbs_acre_fall",
+            "k_content":"k_lbs_acre_fall",
+            "ca_content":"ca_lbs_acre_fall",
+            "mg_content":"mg_lbs_acre_fall",
+            "s_content":"s_lbs_acre_fall",
+            "c_content":"c_lbs_acre_fall",
+
             "height_of_stand": "height_of_stand_fall",
             "fall_notes": "notes_fall",
             "spring_cc_biomass_collection_date": "cc_biomass_collection_date_spring",
@@ -1201,8 +1403,25 @@ def data_export():
             "spring_fq_rfq": "fq_rfq_spring",
             "spring_fq_undfom240": "fq_undfom240_spring",
             "spring_fq_dry_matter": "fq_dry_matter_spring",
+            "spring_fq_adf": "fq_adf_spring",
             "spring_fq_rfv": "fq_rfv_spring",
-            "spring_total_nitrogen": "total_nitrogen_spring",
+            "spring_total_nitrogen": "percent_nitrogen_spring",
+            
+            "spring_percent_p":"percent_p_spring",
+            "spring_percent_k":"percent_k_spring",
+            "spring_percent_ca":"percent_ca_spring",
+            "spring_percent_mg":"percent_mg_spring",
+            "spring_percent_s":"percent_s_spring",
+            "spring_c_to_n_ratio":"c_to_n_ratio_spring",
+
+            "spring_n_content":"n_lbs_acre_spring",
+            "spring_p_content":"p_lbs_acre_spring",
+            "spring_k_content":"k_lbs_acre_spring",
+            "spring_ca_content":"ca_lbs_acre_spring",
+            "spring_mg_content":"mg_lbs_acre_spring",
+            "spring_s_content":"s_lbs_acre_spring",
+            "spring_c_content":"c_lbs_acre_spring",
+            
             "spring_height_of_stand": "height_of_stand_spring",
             "spring_notes": "notes_spring",
         }

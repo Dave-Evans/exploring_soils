@@ -1,0 +1,1708 @@
+{% extends 'wisccc/base_wisccc.html' %}
+{% load static %}
+
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+    integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+    integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+    .flex {
+        display: flex
+    }
+
+    .popupphoto {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+        border: 1px solid #555;
+    }
+
+    .selectize-dropdown,
+    .selectize-input {
+        width: 200px !important;
+    }
+
+    .selectize-short {
+        width: 175px !important
+    }
+
+    /* https://www.w3schools.com/css/tryit.asp?filename=trycss_tooltip_bottom */
+    .helptip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted #2f2f2f;
+    }
+
+    .bottomtip {
+        top: 100%
+    }
+
+    .toptip {
+        bottom: 100%
+    }
+
+    .helptip .helptiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #2f2f2f;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 100;
+        left: 50%;
+        margin-left: -80px;
+        margin-bottom: 10px;
+        /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+        opacity: 0;
+        transition: opacity 1s;
+    }
+
+    .helptip:hover .helptiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .helptip .helptiptext::after {
+        content: " ";
+        position: absolute;
+        /* bottom: 100%; */
+        /* At the bottom of the tooltip */
+        /* left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent#2f2f2f transparent; */
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+
+    tr td:first-child {
+        padding-left: 0px;
+    }
+
+    th:first-child {
+        padding-left: 0px;
+    }
+
+    td,
+    th {
+        /* top | right | bottom | left */
+        padding: 0px 0px 0px 10px;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+
+
+                <div class="alert alert-warning" role="alert">
+                    This tool is in development.
+                    To share feedback or ask any questions please
+                    email <a href="mailto:mingram@michaelfields.org">Mrill Ingram at
+                        mingram@michaelfields.org</a>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">On-farm cover crop data by farmers, for farmers</h3>
+                                <p class="card-text">
+
+                                    Select your cover crop goal under the Scenario dropdown. Then select the county or
+                                    counties and soil texture(s) that represent the conditions you are most interested
+                                    in. View participating farms with operations which meet the goals and conditions
+                                    you have selected. Click on the farm card to see additional data about that
+                                    operation, including agronomic information as well as biomass, forage, and
+                                    nutrient analysis of the cover crop.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Scenarios
+                                    <label style="font-size: small;">
+
+                                        Select a scenario from the dropdown to show a list of participating
+                                        farmers who have operations with results
+                                        which meet the goal of the scenario.
+                                        Note the farmers may not be planting covers for the selected scenario,
+                                        but their results would meet the goals of the scenario.
+
+                                    </label>
+                                </h5>
+                                <p class="card-text">
+
+                                    <select id="ScenarioSelector" class="selectize-control single selectize-input">
+                                        <option value="erosion_control">Erosion control</option>
+                                        <option value="nutrient_scavenger">Nutrient scavenger</option>
+                                        <option value="n_credits">Above ground nitrogen</option>
+                                        <option value="weed_suppression">Weed suppression</option>
+                                        <option value="graze_fall">Fall grazing</option>
+                                        <option value="graze_spring">Spring grazing</option>
+                                    </select>
+                                <p style="font-size: smaller;" id="scenario_helptip" class="helptiptext">
+                                </p>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Filters
+                                    <label style="font-size: medium;">
+                                        <div class="helptip"><sup>
+                                                <img width="20"
+                                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACoElEQVR4nO1ZzW4TMRC2UuDAkZ8DEIgdKg5cEQhOvAQBBA9SlEsQgrbXqp1Jo75BKpoDP5feCn0AKngAoAegLWpmSLTlEKPZ8teSKtnY62xRPmmklVaJv88ej8ffKjXCCCO4o27HCvPNGwaprJGfGuB3BvmrBvouET8jvY3fIZUL2LyuKjanho2L0D5vkKcN0LpBtklCI33UwFPjM618cOLjM3TaINc00E5S4v8Igfg/qpdqdCoI+SLyPQO85Uq8S2wWkO+mRvxKzR7VwAspELd7AnhexvJK/kzNHjdAL1Mnj7/T6oWM6YW8zEZI8ubPJl++XLfHnAUESRs8MKpO5E2V7w+RvN1NJ74zEPmzs82TGnhj2AIM8NZAJVbqvMvAj15H9nOrE8fDV5HjfmBIRF5OR5dD6najbf9Gx1pbarQd0oh2irX2hSSzP+0yY09WI7sfj1cdVwF4qj/2FZuTPsVlsFKXFbi11HbcC7QuTWNP/rtdpfvmk7z/9K0TR2XFbfbNr6huX+sjfajsZbAUooj0oLcA4KVhEzUHhEZe7ClALh7ZFUBr/ayAl1Z5P7wIAN7ovQIeLimpCUCK/n8B5tCnEPrZxCmtwFqwMpqOAF4MdpCltAITPQWI6ZRVAQZaV/tt5j5kTYAGet+3myeta+YEIE+qUBca3wI0UpSvts6pJBBHwEveeggNNKuSIr+wfSITl3rkzYF9U/EqMyCgpFwgXuUQU2dOOaNuxwxyIzh55Oc3K/aIN3NXDNdwM8/PvJm7e0zeAJVJA815m/luEK8yjeqkkb84b9hEvikyyAHjTpwiqfNStlVoyOkobccgvZP8RiNPJj5hU0HF5sR0Et9Gena5eMjNTtqRuCWRZ6Q3P99NxF1lFj6zjjCCOvz4ARXq0PBS824rAAAAAElFTkSuQmCC">
+                                            </sup>
+                                            <span style="font-size: smaller;" class="helptiptext">
+                                                Use these filters to show just farms with the selected soil types and
+                                                counties.
+                                                Note you can select more than one soil type and more than one county.
+                                                The more filters you apply, the more restricted will be the results you
+                                                return.
+                                            </span>
+                                        </div>
+                                    </label>
+                                </h5>
+                                <p class="card-text">
+                                    <select id="filterSoilType">
+                                    </select>
+                                </p>
+                                <p class="card-text">
+                                    <select id="filterCounty">
+                                    </select>
+                                </p>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="fieldcard-container">
+                                <div id="fieldcard-container-1" class="card-deck"></div><br>
+                                <div id="fieldcard-container-2" class="card-deck"></div><br>
+                                <div id="fieldcard-container-3" class="card-deck"></div><br>
+                                <div id="fieldcard-container-4" class="card-deck"></div><br>
+                                <div id="fieldcard-container-5" class="card-deck"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="fieldDetail" tabindex="-1" role="dialog" aria-labelledby="helpInformationLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Details
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </h3>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <p id="caption_photo_1"></p>
+                    <img id="image_1_url" class='popupphoto' src="" width="250" height="250">
+                </div>
+                <p id="table_farm_info" style="font-size: smaller;"></p>
+                <p id="table_growing_info" style="font-size: smaller;"></p>
+
+                <p id="table_forage_quality" style="font-size: smaller;"></p>
+                <p id="table_nutrient_analysis" style="font-size: smaller;"></p>
+                <p id="text_description_1"></p>
+                <p id="text_description_2"></p>
+                <p id="text_description_3"></p>
+                <p id="text_manure"></p>
+
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function updateHelpTipTextScenario() {
+        // Updates help text near scenario dropdown 
+        // to describe the scenario
+        console.log("updateHelpTipTextScenario firing!. Property: " + scenario)
+        var text = ""
+        // What scenario?
+        var scenario = $('#ScenarioSelector').val();
+        // Each scenario will have a different function for 
+        //  filtering and sorting
+
+        switch (scenario) {
+            case "erosion_control":
+                text = "The erosion control scenario assumes the goal of planting cover crops is to reduce erosion. ";
+                text += "Farms shown in the list below are farms which have the highest biomass from the fall sampling. ";
+                text += "The high biomass will slow water flow over a field and increase its infiltration into the soil."
+                break;
+            case "nutrient_scavenger":
+                text = "Nutrient scavenging refers to planting cover crops to take up excess nutrients, especially nitrogen. ";
+                text += "The farms shown for this scenario have the highest estimated lbs/acre N in the fall cover crop. ";
+                text += "These results exclude systems where a legume was planted in the mix. ";
+
+                break;
+            case "n_credits":
+                text = "This scenario is for farmers who are interested in planting a cover crop to add more nitrogen to their system ";
+                text += "and perhaps reduce the amount of synthetic nitrogen required for their cash crop. "
+                text += "The scenario returns farms with the highest total nitrogen from plant tissue analysis "
+                text += "and extrapolated to the highest estimated amount of N lbs/acre at the fall sampling. "
+                text += "This does not consider below ground N in the cover crop. "
+                text += "The farms shown always include a legume in the cover mix."
+                text += "<br>"
+                text += "<b>NOTE:</b> we supply a $/acre of urea ammonia replaced with cover crop N, "
+                text += "this is based on a $0.52/lb of urea amonia. ";
+                text += "<em>Not all of the nitrogen in the cover crop will be available to growing plants in the following season.</em> "
+                text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
+                text += "such as increased water storage, flood mitigation, or increased organic matter. "
+                break;
+            case "weed_suppression":
+                text = "Planting cover crops can improve a cash crop by out-competing weeds. ";
+                text += "This scenario returns farms with the tallest cover crops and the most biomass in the spring. ";
+                text += "";
+                break;
+            case "graze_spring":
+                text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, spring sampled values are used.";
+                text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
+                text += "such as increased water storage, flood mitigation, or increased organic matter. "
+                break;
+            case "graze_fall":
+                text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, fall sampled values are used.";
+                text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
+                text += "such as increased water storage, flood mitigation, or increased organic matter. "
+                break;
+        }
+        $("#scenario_helptip").html(text);
+    }
+
+    // Populate Modal
+    $('#fieldDetail').on('show.bs.modal', function (event) {
+
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var fieldid = button.data('fieldid') // Extract info from data-* attributes
+
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+
+        var fieldRecord = soilsLayer.find((element) => element.id == parseInt(fieldid))
+        $('.modal-title').text("Field " + fieldRecord.id);
+
+        $('#table_farm_info').html(
+            makeTableFarmInfo(fieldRecord)
+        )
+
+        $('#table_growing_info').html(
+            makeTableGrowingSampling(fieldRecord)
+        )
+
+        $('#table_forage_quality').html(
+            makeTableForageQuality(fieldRecord)
+        )
+        $('#table_nutrient_analysis').html(
+            makeTableNutrientAnalysis(fieldRecord)
+        )
+
+        if (fieldRecord.properties.caption_photo_1 == "" | fieldRecord.properties.caption_photo_1 == null) {
+            $('#caption_photo_1').text("");
+        } else {
+            $('#caption_photo_1').text(fieldRecord.properties.caption_photo_1);
+        }
+
+        if (fieldRecord.properties.image_1_url) {
+            console.log("Url 1: " + fieldRecord.properties.image_1_url)
+            $("#image_1_url").show();
+            $("#image_1_url").attr("src", fieldRecord.properties.image_1_url);
+        } else if (fieldRecord.properties.image_2_url) {
+            console.log("Url 2: " + fieldRecord.properties.image_2_url)
+            $("#image_1_url").show();
+            $("#image_1_url").attr("src", fieldRecord.properties.image_2_url);
+        } else {
+            $("#image_1_url").hide();
+        }
+
+    })
+
+
+    var dataurl = '/get_wisc_cc_data';
+    var soilsLayer;
+
+    $.getJSON(dataurl, function (data) {
+        soilsLayer = data;
+
+        console.log("ready!")
+        // Populate selectize boxes
+        for (k in Object.keys(boxes_select)) {
+
+            var id_selector = Object.keys(boxes_select)[k];
+            var target_field = boxes_select[id_selector]
+
+            var placeholder = "All";
+            if (target_field == "dominant_soil_texture") {
+                placeholder = "Soil texture"
+            } else if (target_field == "county_single") {
+                placeholder = "County"
+            }
+            $("#" + id_selector).selectize({
+                plugins: ["remove_button"],
+                delimiter: " - ",
+                placeholder: placeholder,
+                persist: false,
+                closeAfterSelect: true,
+                maxItems: null,
+                valueField: "value",
+                labelField: "label",
+                searchField: ["value", "label"],
+                options: pop_selectize_box(soilsLayer, id_selector, target_field),
+                onChange: function (value, isOnInitialize) {
+
+                    updateFieldCards();
+
+                }
+            })
+        };
+
+        updateFieldCards();
+        updateHelpTipTextScenario();
+    });
+
+    var scenario_selector = document.getElementById('ScenarioSelector');
+    scenario_selector.addEventListener('change', function (ev) {
+        updateHelpTipTextScenario();
+        updateFieldCards();
+
+    });
+
+
+    function updateFieldCards() {
+        //Remove existing cards
+        $("#fieldcard-container").find(".field").remove()
+        // Filter our fields
+        var filtered_data = soilsLayer;
+        console.log("starting length: " + filtered_data.length)
+        filtered_data = scenarioSortData(filtered_data);
+        console.log("After scenario: " + filtered_data.length)
+        filtered_data = applyFilters(filtered_data);
+        console.log("after filtering: " + filtered_data.length)
+        // Make cards
+        initListOfFieldCards(filtered_data);
+
+    };
+
+    function applyFilters(filtered_data) {
+        // Applies county and soil type filters
+        for (k in Object.keys(boxes_select)) {
+
+            id_selector = Object.keys(boxes_select)[k];
+            target_field = boxes_select[id_selector]
+
+            filtered_data = filterDataSelectize(filtered_data, id_selector, target_field)
+
+        }
+        return filtered_data;
+
+    }
+
+    function filterDataSelectize(filtered_data, id_selector, target_field) {
+
+
+        var array = $('#' + id_selector).selectize()[0].selectize.getValue()
+
+        if (array == null | array.length == 0) {
+            return filtered_data
+        }
+
+        return filtered_data.filter(function (d) {
+            if (d.properties[target_field] == null) { return false }
+            return array.includes(d.properties[target_field].toString())
+        });
+    }
+
+    function scenarioSortData(soilsLayer) {
+        // What scenario?
+        var scenario = $('#ScenarioSelector').val();
+        // Each scenario will have a different function for 
+        //  filtering and sorting
+        let filtered_data = soilsLayer;
+        switch (scenario) {
+            case "erosion_control":
+                filtered_data = erosionControlProcessor(filtered_data);
+                break;
+            case "nutrient_scavenger":
+                filtered_data = nutrientScavengerProcessor(filtered_data);
+                break;
+            case "n_credits":
+                filtered_data = nCreditsProcessor(filtered_data);
+                break;
+            case "weed_suppression":
+                filtered_data = weedSuppressionProcessor(filtered_data);
+                break;
+            case "graze_spring":
+                filtered_data = grazeSpringProcessor(filtered_data);
+                break;
+            case "graze_fall":
+                filtered_data = grazeFallProcessor(filtered_data);
+                break;
+        }
+        return filtered_data;
+    }
+
+    function erosionControlProcessor(filtered_data) {
+        // erosion control sorter
+        //  remove cases where fall biomass is null
+        //  sort by most to least biomass
+
+        filtered_data = filtered_data
+            .filter(function (d) { return d.properties.cc_biomass !== null })
+            .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass);
+
+        return filtered_data;
+    }
+
+    function nutrientScavengerProcessor(filtered_data) {
+        // Nutrient scavenger sorter
+        //  remove cases where fall n lbs/acre is null
+        //  remove cases where a legume was planted
+        //  sort by most to least total nitrogen mass per acre
+
+        filtered_data = filtered_data
+            .filter(function (d) { return d.properties.n_content !== null })
+            .filter(function (d) {
+                if (d.properties.cc_species == null) {
+                    return false
+                }
+                return d.properties.cc_species.indexOf("legume") == -1;
+            });
+        filtered_data = filtered_data
+            .toSorted((a, b) => +b.properties.n_content - +a.properties.n_content);
+
+        return filtered_data;
+    }
+
+    function nCreditsProcessor(filtered_data) {
+        // N credits
+        // remove cases where no n lbs/acre
+        // remove cases where there is no legume
+        // Sort by n lbs/acre
+        filtered_data = filtered_data
+            .filter(function (d) { return d.properties.n_content !== null })
+            .filter(function (d) {
+                if (d.properties.cc_species == null) {
+                    return false
+                }
+                return d.properties.cc_species.indexOf("legume") > -1
+
+            })
+            .toSorted((a, b) => b.properties.n_content - a.properties.n_content);
+
+        return filtered_data;
+    };
+
+    function weedSuppressionProcessor(filtered_data) {
+        // spring Biomass and plant height
+        filtered_data = filtered_data
+            .filter(function (d) { return d.properties.spring_cc_biomass != null })
+            .filter(function (d) { return d.properties.spring_height_of_stand != null })
+            .toSorted((a, b) => b.properties.spring_cc_biomass - a.properties.spring_cc_biomass || b.properties.spring_height_of_stand - a.properties.spring_height_of_stand)
+
+
+        return filtered_data;
+
+    }
+
+    function grazeFallProcessor(filtered_data) {
+        // Fall grazing, sort by biomass and then RFQ
+        filtered_data = filtered_data
+            .filter(function (d) { return d.properties.cc_biomass !== null })
+            .filter(function (d) { return d.properties.fq_rfq !== null })
+            .toSorted((a, b) => b.properties.cc_biomass - a.properties.cc_biomass || b.properties.fq_rfq - a.properties.fq_rfq);
+
+        return filtered_data;
+
+    }
+
+    function grazeSpringProcessor(filtered_data) {
+        // Spring grazing: sort by 
+        // spring biomass and then spring rfq
+        filtered_data = filtered_data
+            .filter(function (d) { return d.properties.spring_cc_biomass !== null })
+            .filter(function (d) { return d.properties.spring_fq_rfq !== null })
+            .toSorted((a, b) => b.properties.spring_cc_biomass - a.properties.spring_cc_biomass || b.properties.spring_fq_rfq - a.properties.spring_fq_rfq);
+
+        return filtered_data;
+
+    }
+
+    function makeTableNutrientAnalysis(fieldRecord) {
+        let nute_propnames = {
+            "CC Biomass (tons/acre)": "cc_biomass",
+            "N %": "total_nitrogen",
+            "P %": "percent_p",
+            "C %": "percent_p",
+            "K %": "percent_k",
+            "Ca %": "percent_ca",
+            "Mg %": "percent_mg",
+            "S %": "percent_s",
+
+            "C to N Ratio": "c_to_n_ratio",
+            "N lbs/acre": "n_content",
+            "P lbs/acre": "p_content",
+            "C lbs/acre": "c_content",
+            "K lbs/acre": "k_content",
+            "Ca lbs/acre": "ca_content",
+            "Mg lbs/acre": "mg_content",
+            "S lbs/acre": "s_content",
+
+            "Height of stand (in)": "height_of_stand"
+        }
+
+        let nute_trtd = "";
+
+        for (cleanname in nute_propnames) {
+
+            var prop = nute_propnames[cleanname]
+
+            var fallprop = fieldRecord.properties[prop];
+            if (fallprop == null) { fallprop = "Not sampled"; }
+            var springprop = fieldRecord.properties["spring_" + prop];
+            if (springprop == null) { springprop = "Not sampled"; }
+
+            nute_trtd += "<tr><td>" + cleanname + "</td><td>" + fallprop + "</td><td>" + springprop + "</td></tr>"
+
+        }
+
+
+
+        let table_nute_info = "<table>" +
+            "<thead><tr><th>Nutrient</th><th>Fall</th><th>Spring</th></tr></thead>" +
+            nute_trtd +
+            "</table>";
+
+        return table_nute_info;
+    }
+
+    function makeTableForageQuality(fieldRecord) {
+        let fq_propnames = [
+            "fq_cp",
+            "fq_andf",
+            "fq_undfom30",
+            "fq_ndfd30",
+            "fq_tdn_adf",
+            "fq_milkton",
+            "fq_rfq",
+            "fq_undfom240",
+            "fq_dry_matter",
+            // "fq_adf",
+            "fq_rfv"]
+
+        let fq_trtd = "";
+
+        for (prop of fq_propnames) {
+            var cleanname = prop.replace("fq_", "");
+            var fallprop = fieldRecord.properties[prop];
+            if (fallprop == null) { fallprop = "Not sampled"; }
+            var springprop = fieldRecord.properties["spring_" + prop];
+            if (springprop == null) { springprop = "Not sampled"; }
+
+            fq_trtd += "<tr><td>" + cleanname + "</td><td>" + fallprop + "</td><td>" + springprop + "</td></tr>"
+
+        }
+
+
+
+        let table_fq_info = "<table>" +
+            "<thead><tr><th>Forage quality</th><th>Fall</th><th>Spring</th></tr></thead>" +
+            fq_trtd +
+            "</table>"
+
+        return table_fq_info;
+    }
+
+    function makeTableGrowingSampling(fieldRecord) {
+        let propnames = {
+            "Sampling date": "cc_biomass_collection_date",
+            "Precipitation (in)": "total_precip",
+            "Cumulative growing degree days": "acc_gdd"
+        }
+
+        let trtd = "";
+
+        for (cleanname in propnames) {
+
+            var prop = propnames[cleanname]
+
+            var fallprop = fieldRecord.properties[prop];
+
+            var springprop = fieldRecord.properties["spring_" + prop];
+            if (cleanname == "Sampling date") {
+                fallprop = prettifyDate(fallprop)
+                springprop = prettifyDate(springprop)
+            }
+            if (fallprop == null) { fallprop = "Not sampled"; }
+            if (springprop == null) { springprop = "Not sampled"; }
+
+
+
+            trtd += "<tr><td>" + cleanname + "</td><td>" + fallprop + "</td><td>" + springprop + "</td></tr>"
+
+        }
+
+
+
+
+        let table_info = "<table>" +
+            "<thead><tr><th></th><th>Fall</th><th>Spring</th></tr></thead>" +
+            trtd +
+            "</table>"
+
+        return table_info;
+    }
+
+    function makeTableFarmInfo(fieldRecord) {
+
+
+        var planting_rate = fieldRecord.properties.cc_planting_rate;
+        if (planting_rate === null | planting_rate == ".") {
+            planting_rate = "Not reported";
+        }
+
+        var tillage_equip_primary = fieldRecord.properties.tillage_equip_primary;
+        if (tillage_equip_primary) {
+            tillage_equip_primary = tillage_equip_primary.toLowerCase()
+        }
+        var tillage_equip_secondary = fieldRecord.properties.tillage_equip_secondary;
+        if (tillage_equip_secondary) {
+            tillage_equip_secondary = tillage_equip_secondary.toLowerCase()
+        }
+
+        let table_farm_info = "<b><em>General info:</em></b>" +
+            "<table>" +
+            "<tr>" +
+            "<td>ID</td> <td>" + fieldRecord.id + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Farmer yrs of cc experience</td> <td>" + fieldRecord.properties.years_experience + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Yrs of covers in field</td> <td>" + fieldRecord.properties.years_with_cover_crops + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Field acreage</td> <td>" + fieldRecord.properties.field_acreage + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Previous cash crop</td> <td>" + prettifyPreviousCrop(fieldRecord.properties.previous_crop) + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Previous crop planting date</td> <td>" + prettifyDate(fieldRecord.properties.cash_crop_planting_date) + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Cover crops</td> <td>" + fieldRecord.properties.cc_species_raw + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Cover crop seeding rate</td> <td>" + planting_rate + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Cover crop seeding method</td> <td>" + prettifySeedingMethod(fieldRecord.properties.cc_seeding_method) + "</td>" +
+            "</tr>" +
+
+            "<tr>" +
+            "<td>Cover crop seed cost</td> <td>$" + fieldRecord.properties.cover_crop_seed_cost + " per acre</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Cover crop planting cost</td> <td>$" + fieldRecord.properties.cover_crop_planting_cost + " per acre</td>" +
+            "</tr>" +
+
+            "<tr>" +
+            "<td>Cover crop planting date</td> <td>" + prettifyDate(fieldRecord.properties.cc_planting_date) + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Soil conditions at planting</td> <td>" + prettifyInitialSoilConditions(fieldRecord.properties.soil_conditions) + "</td>" +
+            "</tr>" +
+
+            "<tr>" +
+            "<td>Dominant soil texture</td> <td>" + fieldRecord.properties.dominant_soil_texture + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Tillage intensity</td> <td>" + fieldRecord.properties.residue_remaining + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Primary tillage equipment</td> <td>" + tillage_equip_primary + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Secondary tillage equipment</td> <td>" + tillage_equip_secondary + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>Termination</td> <td>" + fieldRecord.properties.cc_termination + "</td>" +
+            "</tr>" +
+            "</table>";
+
+
+
+        return table_farm_info;
+    }
+
+    function prettifySeedingMethod(cc_seeding_method) {
+        // For adding the seeding method into a sentance
+        // "The cover crop was [pretty seeding method] on [planting date]"
+        let pretty_seeding_method;
+        switch (cc_seeding_method) {
+
+            case "frost seeded":
+                pretty_seeding_method = "frost seeded"
+                break;
+            case "broadcast, no incorporation":
+                pretty_seeding_method = "broadcast without incorporating"
+                break;
+            case "drilled":
+                pretty_seeding_method = "drilled"
+                break;
+            case "broadcast + incorporation":
+                pretty_seeding_method = "broadcast with incorporation"
+                break;
+            case "early interseeded-- broadcast":
+                pretty_seeding_method = "interseeded early by broadcast"
+                break;
+            case "late interseeded-- broadcast":
+                pretty_seeding_method = "interseeded late by broadcast"
+                break;
+            case "late interseeded-- aerial":
+                pretty_seeding_method = "interseeded late by aerial planting"
+                break;
+            case "aerial":
+                pretty_seeding_method = "aerially broadcast"
+                break;
+            case "interseed(early)":
+                pretty_seeding_method = "interseeded early"
+                break;
+            case "interseed(late)":
+                pretty_seeding_method = "interseeded late"
+                break;
+            case "other":
+                pretty_seeding_method = "other"
+                break;
+
+        }
+        return pretty_seeding_method;
+    }
+
+    function prettifyInitialSoilConditions(soil_conditions) {
+        // Formats the initial soil conditions so it nicely slots into
+        //  a sentence like "The soil [had adequate moisture|was dry|was wet] at planting."
+        let pretty_soil_conditions;
+        switch (soil_conditions) {
+
+            case null:
+                pretty_soil_conditions = null;
+                break;
+
+            case "adequate":
+                pretty_soil_conditions = "had adequate moisture"
+                break;
+
+            case "adequate moisture":
+                pretty_soil_conditions = "had adequate moisture"
+                break;
+
+            case "dry":
+                pretty_soil_conditions = "was dry"
+                break;
+
+            case "Rained 1/2 inch that night dry before":
+                pretty_soil_conditions = "was wet"
+                break;
+
+            case "wet":
+                pretty_soil_conditions = "was wet"
+                break;
+
+        }
+        return pretty_soil_conditions;
+
+
+    }
+
+    function prettifyPreviousCrop(previous_crop) {
+        // formats the previous crop so it slots into a sentence
+        //  like "this cover crop was planting following [pretty_previous_crop]"
+        let pretty_previous_crop;
+        switch (previous_crop) {
+            case "alfalfa":
+                pretty_previous_crop = "alfalfa"
+                break;
+            case "corn for grain":
+                pretty_previous_crop = "corn grown for grain"
+                break;
+            case "corn silage":
+                pretty_previous_crop = "corn silage"
+                break;
+            case "livestock feeding/grazing":
+                pretty_previous_crop = "livestock grazing"
+                break;
+            case "corn silage":
+                pretty_previous_crop = "corn silage"
+                break;
+            case "oats":
+                pretty_previous_crop = "oats"
+                break;
+            case "other forage":
+                pretty_previous_crop = "forage crop"
+                break;
+            case "other grain":
+                pretty_previous_crop = "grain crop"
+                break;
+            case "other small grains":
+                pretty_previous_crop = "small grains crop"
+                break;
+            case "soybeans":
+                pretty_previous_crop = "soybeans"
+                break;
+            case "vegetable crop":
+                pretty_previous_crop = "vegetable crop"
+                break;
+            case "wheat":
+                pretty_previous_crop = "wheat"
+                break;
+            case "winter wheat":
+                pretty_previous_crop = "winter wheat"
+                break;
+        }
+        return pretty_previous_crop
+    }
+
+    function prettyTextPlantingDetails(fieldRecord) {
+        // Add planting rate, initial soil conditions,
+
+        let planting_date = new Date(fieldRecord.properties.cc_planting_date);
+        let str_planting_date = planting_date.toLocaleDateString(
+            "en-US",
+            { year: 'numeric', month: 'long', day: 'numeric' }
+        )
+
+        // Clean up seeding method
+        let cc_seeding_method = prettifySeedingMethod(fieldRecord.properties.cc_seeding_method);
+        let previous_crop = prettifyPreviousCrop(fieldRecord.properties.previous_crop)
+        let textDetails;
+        if (fieldRecord.properties.cc_species_raw) {
+            textDetails = "This farm planted "
+            if (fieldRecord.properties.cc_species_raw.includes("mix")) {
+                textDetails += " a "
+            }
+            textDetails += fieldRecord.properties.cc_species_raw +
+                " following " + previous_crop + ". ";
+        } else {
+            textDetails = "The farms planted a cover crop mix following " + previous_crop + ". ";
+        }
+
+
+
+        textDetails += "The cover crop was " +
+            cc_seeding_method + " on " +
+            str_planting_date + ". ";
+        let pretty_soil_conditions = prettifyInitialSoilConditions(fieldRecord.properties.soil_conditions);
+        if (pretty_soil_conditions != null) {
+            textDetails += "The soil " + pretty_soil_conditions + " at planting."
+        }
+
+
+        return textDetails;
+    }
+
+    function prettifyDate(str_date) {
+        // str_date of the format "2022-10-01T00:00:00+00:00"
+        if (str_date == null) { return null };
+        let date_obj = new Date(str_date);
+        let str_format_date = date_obj.toLocaleDateString(
+            "en-US",
+            { year: 'numeric', month: 'long', day: 'numeric' }
+        )
+        return str_format_date;
+    }
+
+    function prettyTextFallAddlDetails(fieldRecord) {
+        // Add a statement about the field's
+        // field acreage, soil texture
+        // biomass and height
+        // growing conditions GDU and precip
+        // "The field is dominanted by a [silt loam] soil texture{ and is [100] acres}.
+        // When measured in the fall, the cover crop averaged [25] inches in height, with an average
+        // of [1.6] tons of biomass per acre. From when it was planted 
+        // on [August 6, 2024] to when it was sampled on [November 19, 2024] the field received an estimated
+        // [1.5] inches of rain and [1500] growing degree units."
+        let str_planting_date = prettifyDate(fieldRecord.properties.cc_planting_date);
+        let str_fall_sampling_date = prettifyDate(fieldRecord.properties.cc_biomass_collection_date);
+
+        var text_soil_texture;
+        var text_fall_biomass;
+        var text_fall_avg_height;
+        var text_fall_growing_conditions;
+
+        var dominant_soil_texture = fieldRecord.properties.dominant_soil_texture;
+        if (dominant_soil_texture == "not sure") {
+            text_soil_texture = "The soil texture of the field is unknown. "
+        } else {
+            text_soil_texture = "The field is dominated by a " + dominant_soil_texture + " soil texture. "
+        }
+
+        // fall biomass
+        if (fieldRecord.properties.cc_biomass == null) {
+            text_fall_biomass = "Biomass was not sampled in the fall. "
+        } else {
+            text_fall_biomass = "In the fall, the cover crop had an estimated " + fieldRecord.properties.cc_biomass +
+                " tons of biomass per acre. "
+        }
+
+        // Fall average height
+        if (fieldRecord.properties.height_of_stand == null) {
+            text_fall_avg_height = "There is no average cover crop stand height measured for this field. "
+        } else {
+            text_fall_avg_height = "The average cover crop stand height was " + fieldRecord.properties.height_of_stand +
+                " inches tall. "
+        }
+
+        // Fall growing conditions
+        if (str_fall_sampling_date == null) {
+            text_fall_growing_conditions = ""
+        } else {
+            text_fall_growing_conditions = "From when it was planted on " + str_planting_date +
+                " to when it was sampled on " +
+                str_fall_sampling_date +
+                " the field received an estimated " +
+                fieldRecord.properties.total_precip +
+                " inches of rain and " +
+                fieldRecord.properties.acc_gdd + " growing degree units. "
+        }
+
+        return text_soil_texture + text_fall_biomass + text_fall_avg_height + text_fall_growing_conditions;
+
+    }
+
+    function prettifyTermination(cc_termination) {
+        // for making pretty cover crop termination sentence. Returns full sentence.
+        let pretty_termination;
+        switch (cc_termination) {
+            case "early spring, herbicide application (14 plus days prior to crop establishment)":
+                pretty_termination = "The cover crop was terminated with herbicide in the spring at least 14 days before cash crop establishment. "
+                break;
+            case "early spring, roller-crimper termination":
+                pretty_termination = "The cover crop was terminated with a roller-crimper in the spring. "
+                break;
+
+            case "fall frost":
+                pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                break;
+            case "frost/winterkill - little to no cover crop growth in spring":
+                pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                break;
+            case "frost/winterkill - little to no cover crop growth in spring, early spring, herbicide application (14 plus days prior to crop establishment)":
+                pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                break;
+            case "frost/winterkill - little to no cover crop growth in spring, harvest for forage":
+                pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                break;
+            case "frost/winterkill - little to no cover crop growth in spring, harvest for forage, plant green, herbicide termination":
+                pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                break;
+            case "killing frost (fall)":
+                pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                break;
+            case "little to no cover crop growth in spring":
+                pretty_termination = "The cover crop was killed by the cold weather of the fall or winter, producing little to no growth in the spring. "
+                break;
+
+            case "graze fall":
+                pretty_termination = "The cover crop was terminated by fall grazing. "
+                break;
+            case "graze fall, frost/winterkill - little to no cover crop growth in spring, plant green, herbicide termination":
+                pretty_termination = "The cover crop was terminated by fall grazing. "
+                break;
+            case "graze spring":
+                pretty_termination = "The cover crop was terminated by spring grazing. "
+                break;
+            case "graze spring, plant green, herbicide termination":
+                pretty_termination = "The cover crop was terminated by spring grazing, with any remaining cover terminated with herbicide. "
+                break;
+
+            case "harvest for forage":
+                pretty_termination = "The cover crop was harvested for forage. "
+                break;
+            case "harvest for forage, plant green, herbicide termination":
+                pretty_termination = "The cover crop was harvested for forage, with any remaining cover crop terminated with herbicide. "
+                break;
+
+            case "plant green":
+                pretty_termination = "The cash crop was planted green into the living cover crop. "
+                break;
+
+            case "plant green, herbicide termination":
+                pretty_termination = "The cash crop was planted green into the living cover crop and later terminated with herbicide. "
+                break;
+            case "plant green, herbicide termination, graze fall":
+                pretty_termination = "The cash crop was planted green into the living cover crop and later terminated with herbicide. "
+                break;
+
+            case "plant green, roller-crimper termination":
+                pretty_termination = "The cash crop was planted green into the living cover crop and later terminated with a roller-crimper. "
+                break;
+
+            case "early":
+                pretty_termination = "The cover crop was terminated in the spring with a roller-crimper or herbicide. "
+                break;
+
+            case ".":
+                pretty_termination = "";
+                break;
+            case null:
+                pretty_termination = "";
+        }
+
+        return pretty_termination;
+
+    }
+
+    function prettifyResidue(residue_remaining, primary_tillage, secondary_tillage) {
+        // for making pretty residue remaining. Returns full sentence.
+        let pretty_residue;
+        if (residue_remaining == "Conservation, >30% residue remaining") {
+            if (primary_tillage == "NONE" & secondary_tillage == "NONE") {
+                pretty_residue = "This farm used no-till. ";
+            } else {
+                pretty_residue = "This farm used conservation tillage, with greater than 30% of the residue remaining. ";
+            }
+        } else if (residue_remaining == "Reduced, 15-30% residue remaining") {
+            pretty_residue = "This farm used reduced tillage, with between 15 and 30% of residue remaining. "
+        } else if (residue_remaining == "Conventional, <15% residue remaining") {
+            pretty_residue = "This farm used conventional tillage, with less than 15% of residue remaining. "
+        }
+
+        return pretty_residue;
+    }
+
+    function prettyTextTillTermAddlDetails(fieldRecord) {
+        // For creating a paragraph about the farm's tillage,
+        // termination of the cover crop.
+
+
+
+        let text_termination = prettifyTermination(fieldRecord.properties.cc_termination);
+
+        let text_residue_remaining = prettifyResidue(
+            fieldRecord.properties.residue_remaining,
+            fieldRecord.properties.tillage_equip_primary,
+            fieldRecord.properties.tillage_equip_secondary
+        );
+
+        return text_residue_remaining + text_termination;
+
+    }
+
+    function prettyTextScenarioInfo(fieldRecord) {
+        var text_scenario_details;
+
+        var scenario = $('#ScenarioSelector').val();
+        // Each scenario will have a different function for 
+        //  filtering and sorting
+
+        switch (scenario) {
+            case "erosion_control":
+                text_scenario_details = "Fall sampled biomass was " +
+                    "<b>" + fieldRecord.properties.cc_biomass.toFixed(1) + "</b>" +
+                    " tons per acre. ";
+                break;
+            case "nutrient_scavenger":
+                text_scenario_details = "There was an estimated " +
+                    "<b>" + fieldRecord.properties.n_content.toFixed(0) + "</b>" +
+                    " lbs per acre " +
+                    "of nitrogen at fall sampling. " +
+                    "See full nutrient analysis by clicking 'Farm details'. ";
+                break;
+            case "n_credits":
+                // https://www.dtnpf.com/agriculture/web/ag/crops/article/2025/06/18/retail-fertilizers-see-slight-price
+                text_scenario_details = "There was an estimated " +
+                    "<b>" + fieldRecord.properties.n_content.toFixed(1) + "</b>" +
+                    " lbs per acre " +
+                    "of nitrogen at fall sampling. ";
+                text_scenario_details += "This equates to about " +
+                    "<b>$" + (fieldRecord.properties.n_content * 0.52).toFixed(0) + "</b>" +
+                    " per acre of anhydrous N fertilizer. " +
+                    "See full nutrient analysis by clicking 'Farm details'. " +
+                    "<br>" +
+                    "<br>" +
+
+                    "The ROI for above ground N for this cover crop was " +
+                    "<b>" + ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
+                        fieldRecord.properties.cover_crop_planting_cost)).toFixed(1) + "</b>" +
+                    ", based on lbs/acre of N in the cover crop divided by seed and planting costs. " +
+                    "<br>" +
+                    "<em><b>Note</b> that not all of the nitrogen in the cover crop will be available to growing plants in the following season.<em>";
+                break;
+            case "weed_suppression":
+                text_scenario_details = "There was an estimated " +
+                    "<b>" + fieldRecord.properties.spring_cc_biomass.toFixed(0) + "</b>" +
+                    " tons of biomass per acre during the spring sampling " +
+                    "with an average crop height of " +
+                    "<b>" + fieldRecord.properties.spring_height_of_stand + "</b>" +
+                    " inches.";
+                break;
+            case "graze_spring":
+                var roi = calcGrazingROI(fieldRecord, season = 'spring');
+                if (roi == -1) {
+                    text_scenario_details = "The RFQ of the fall cover crop sample was too low to be sold for forage. " +
+                        "No ROI could be calculated since the hay could not be sold. " +
+                        "These forage quality estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
+                    return text_scenario_details;
+                }
+                text_scenario_details = "The RFQ of the spring cover crop sample was " +
+                    "<b>" + fieldRecord.properties.spring_fq_rfq.toFixed(1) + "</b>" +
+                    // ", placing it in the " +
+                    // Forage quality category +
+                    // " category for forage. "
+                    ", with an estimated " +
+                    "<b>" + fieldRecord.properties.spring_cc_biomass.toFixed(0) + "</b> " +
+                    "tons per acre of biomass. " +
+                    "See full forage analysis by clicking 'Farm details'. " +
+
+
+                    "<br>" +
+                    "<br>" +
+                    "The ROI for grazing this cover crop in the spring was " +
+                    "<b>" + roi.toFixed(1) + "</b>" +
+                    ", based on the estimated tons of biomass produced and the forage quality as measured by RFQ. " +
+                    "We use the Hay Market Report to estimated the price of this forage by assuming the average price for a large round bale of hay. " +
+                    "The estimated income from the hay is then divided by seed and planting costs. " +
+                    "This ROI does not include costs for mechanical harvest (mowing, raking, baling, etc.). Those costs can be estimated using the Wisconsin Custom Rate Guide. " +
+                    "These estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
+                // Debug
+                // "<br>" +
+                // "RFQ: " + fieldRecord.properties.spring_fq_rfq + "<br>" +
+                // "Tons biomass: " + fieldRecord.properties.spring_cc_biomass + "<br>" +
+                // "Price per ton: " + calcPricePerTon(fieldRecord.properties.spring_fq_rfq, fieldRecord.properties.year, season = "spring") + "<br>" +
+                // "Seed cost: " + fieldRecord.properties.cover_crop_seed_cost + "<br>" +
+                // "Planting cost: " + fieldRecord.properties.cover_crop_planting_cost;
+
+                break;
+            case "graze_fall":
+                var roi = calcGrazingROI(fieldRecord, season = 'fall');
+                if (roi == -1) {
+                    text_scenario_details = "The RFQ of the fall cover crop sample was too low to be sold for forage. " +
+                        "No ROI could be calculated since the hay could not be sold. " +
+                        "These forage quality estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
+                    return text_scenario_details;
+                }
+                text_scenario_details = "The RFQ of the fall cover crop sample was " +
+                    "<b>" + fieldRecord.properties.fq_rfq.toFixed(1) + "</b>" +
+                    // ", placing it in the " +
+                    // Forage quality category +
+                    // " category for forage. "
+                    ", with an estimated " +
+                    "<b>" + fieldRecord.properties.cc_biomass.toFixed(0) + "</b>" +
+                    " tons per acre of biomass. " +
+                    "See full forage analysis by clicking 'Farm details'. " +
+
+                    "<br>" +
+                    "<br>" +
+                    "The ROI for grazing this cover crop in the fall was " +
+                    "<b>" + roi.toFixed(1) + "</b>" +
+                    ", based on the estimated tons of biomass produced and the forage quality as measured by RFQ. " +
+                    "We used the " +
+                    '<a href="https://cropsandsoils.extension.wisc.edu/hay-market-report/" target="_blank" rel = "noopener noreferrer"> Hay Market Report</a>. ' +
+                    " to estimate the price of this forage by assuming the average price for a large round bale of hay. " +
+                    "The estimated income from the hay is then divided by seed and planting costs. " +
+                    'This ROI does not include costs for mechanical harvest (mowing, raking, baling, etc.). ' +
+                    'Those costs can be estimated using  ' +
+                    '<a href="https://farms.extension.wisc.edu/articles/custom-rates-for-2024-wisconsin-farm-operations/#forage" target="_blank" rel = "noopener noreferrer"> the Wisconsin Custom Rate Guide</a>. ' +
+                    "These estimates are based on a sample of the cover crop from a 2ft by 2ft square.";
+                // Debug
+                // "<br>" +
+                // "RFQ: " + fieldRecord.properties.fq_rfq + "<br>" +
+                // "Tons biomass: " + fieldRecord.properties.cc_biomass + "<br>" +
+                // "Price per ton: " + calcPricePerTon(fieldRecord.properties.fq_rfq, fieldRecord.properties.year, 'fall') + "<br>" +
+                // "Seed cost: " + fieldRecord.properties.cover_crop_seed_cost + "<br>" +
+                // "Planting cost: " + fieldRecord.properties.cover_crop_planting_cost;
+                break;
+        }
+
+
+
+        return text_scenario_details;
+    }
+
+    function calcPricePerTon(rfq, year, season) {
+        // We assume the price for an average round bale
+        // https://cropsandsoils.extension.wisc.edu/hay-market-report/
+        var price_per_ton;
+
+        if (year == 2024) {
+            if (season == "fall") {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-october-31st-2024/
+
+                if (rfq >= 151) {
+                    price_per_ton = 100;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 88;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 79;
+                } else if (rfq < 103) {
+                    price_per_ton = 0
+                }
+            } else {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-may-27-2025/
+                if (rfq >= 151) {
+                    price_per_ton = 116;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 86;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 74;
+                }
+            }
+
+        } else if (year == 2023) {
+            if (season == "fall") {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-10-2023/
+                if (rfq >= 151) {
+                    price_per_ton = 250;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 176;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 151;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 93;
+                } else if (rfq < 87) {
+                    price_per_ton = 0;
+                }
+            } else {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-report-for-the-upper-midwest-for-may-28th-2024/
+                if (rfq >= 151) {
+                    price_per_ton = 156;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 127;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 95;
+                }
+                else if (rfq < 103) {
+                    price_per_ton = 0;
+                }
+            }
+        }
+
+        else if (year == 2022) {
+            // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-24-2022/
+            if (season == "fall") {
+                if (rfq >= 151) {
+                    price_per_ton = 235;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 179;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 185;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 89;
+                }
+                else if (rfq < 87) {
+                    price_per_ton = 0
+                }
+            } else {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-may-22-2023/
+                if (rfq >= 151) {
+                    price_per_ton = 269;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 189;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 149;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 133;
+                } else if (rfq < 87) {
+                    price_per_ton = 0
+                }
+            }
+
+        }
+        else if (year == 2021) {
+            if (season == "fall") {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-25-2021/
+                if (rfq >= 151) {
+                    price_per_ton = 209;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 154;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 143;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 83;
+                }
+            } else {
+                // https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-may-23-2022/
+                if (rfq >= 151) {
+                    price_per_ton = 208;
+                } else if (rfq < 151 & rfq >= 125) {
+                    price_per_ton = 170;
+                }
+                else if (rfq < 125 & rfq >= 103) {
+                    price_per_ton = 154;
+                }
+                else if (rfq < 103 & rfq >= 87) {
+                    price_per_ton = 130;
+                }
+            }
+
+        }
+        return price_per_ton;
+    }
+
+    function calcGrazingROI(fieldRecord, season = 'fall') {
+        // helper for calcing Grazing roi
+        var year = fieldRecord.properties.year;
+
+        if (season == "fall") {
+            var biomass = fieldRecord.properties.cc_biomass;
+            var rfq = fieldRecord.properties.fq_rfq;
+        } else {
+            var biomass = fieldRecord.properties.spring_cc_biomass;
+            var rfq = fieldRecord.properties.spring_fq_rfq;
+        }
+
+
+        var price_per_ton = calcPricePerTon(rfq, year, season);
+        // RFQ so bad, can't sell for forage
+        if (price_per_ton == 0) {
+            return -1
+        }
+        var total_forage_income = biomass * price_per_ton;
+
+        var planting_cost = fieldRecord.properties.cover_crop_planting_cost;
+        var seed_cost = fieldRecord.properties.cover_crop_seed_cost;
+        // Operator costs - we are currently going to assume grazing,
+        //  so no operator costs.
+        var mowing_cost = 16.2
+        var raking_cost = 9.46
+        var tedding_cost = 10.57
+        var windrowing_cost = 12.58
+        var baling_cost = 11.29
+
+        var operator_costs = 0;
+        // (
+        //     mowing_cost +
+        //     raking_cost +
+        //     tedding_cost +
+        //     windrowing_cost +
+        //     baling_cost
+        // )
+
+        var roi = total_forage_income / (planting_cost + seed_cost + operator_costs);
+
+        return roi;
+
+    }
+
+
+    function createROISpan(fieldRecord) {
+        // <i class="fa fa-solid fa-thumbs-up" style="color: #4e9a06;"></i>
+
+        let roi_span = document.createElement('div');
+        let selected_scenario = $('#ScenarioSelector').val();
+        // If selected scenario doesn't require ROI, then return empty roi span
+        if (["erosion_control", "nutrient_scavenger", "weed_suppression"].includes(selected_scenario)) {
+            return roi_span;
+        }
+
+
+        var roi_val = 0;
+        var helptiptext = ''
+        helptiptext = "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
+        helptiptext += "such as increased water storage, flood mitigation, or increased organic matter."
+        if (selected_scenario == "n_credits") {
+
+            roi_val = ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
+                fieldRecord.properties.cover_crop_planting_cost));
+
+        } else if (selected_scenario == "graze_fall") {
+
+            roi_val = calcGrazingROI(fieldRecord, season = 'fall');
+
+        } else if (selected_scenario == "graze_spring") {
+
+            roi_val = calcGrazingROI(fieldRecord, season = 'spring');
+        }
+
+        if (roi_val <= 1) {
+            return roi_span;
+        }
+        roi_span.className = "flex" // Add helptip for tooltip
+        // roi_span.style.float = "left"
+        // roi_span.style.display = "inline-block"
+        // roi_span.style.padding = "0.5em"
+        let roi_text = document.createElement('p')
+        roi_text.innerText = "Positive ROI"
+        roi_text.style.paddingLeft = '10px'
+        roi_text.style.paddingRight = '10px'
+        roi_text.style.backgroundColor = '#308348'
+        roi_text.style.borderRadius = "10px 100px / 120px"
+        roi_text.style.color = "white"
+        // let roi_icon = document.createElement('i')
+        // roi_icon.className = 'fa fa-solid fa-thumbs-up'
+        // roi_icon.style.color = '#308348'
+
+
+        // let helptext = document.createElement("span")
+        // helptext.className = "helptiptext toptip";
+        // helptext.innerText = helptiptext;
+        // helptext.style.fontSize = "smaller";
+        // roi_span.appendChild(helptext)
+
+        // roi_span.appendChild(roi_icon)
+
+        roi_span.appendChild(roi_text)
+
+        return roi_span;
+
+    }
+    let cardContainer;
+    // fieldRecord is one instance of a field from our data
+
+    let createFieldCard = (fieldRecord, container) => {
+
+        let card = document.createElement('div');
+        card.className = 'card field';
+        card.id = "field-" + fieldRecord.id
+
+        let cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+        let roi_span = createROISpan(fieldRecord)
+
+
+        let img = document.createElement('img');
+        if (fieldRecord.properties.image_1_url != null) {
+            img.src = fieldRecord.properties.image_1_url;
+        } else if (fieldRecord.properties.image_2_url != null) {
+            img.src = fieldRecord.properties.image_2_url;
+        }
+
+        img.className = "card-img-top";
+
+        let title = document.createElement('h5');
+        // title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
+        title.innerText = fieldRecord.properties.county_single + " County, WI"
+        title.className = 'card-title';
+
+        let text = document.createElement('p');
+        // If it was a mix we need an article: "a mix of..."
+        text.innerText = prettyTextPlantingDetails(fieldRecord);
+        text.className = 'card-text';
+
+
+        let text_addl = document.createElement('p');
+        text_addl.innerHTML = prettyTextScenarioInfo(fieldRecord);
+
+
+        let btn = document.createElement('a');
+        btn.className = "btn btn-primary"
+        btn.innerText = "Farm details"
+        // btn.href = "/wisc_cc_graph"
+        btn.setAttribute("data-toggle", "modal");
+        btn.setAttribute("data-target", "#fieldDetail");
+        btn.setAttribute("data-fieldid", fieldRecord.id);
+
+        cardBody.appendChild(title);
+        cardBody.appendChild(roi_span)
+        cardBody.appendChild(img);
+
+        cardBody.appendChild(text);
+        cardBody.appendChild(text_addl);
+        cardBody.appendChild(btn);
+
+        card.appendChild(cardBody);
+        // cardContainer.appendChild(card);
+        container.appendChild(card);
+
+    }
+
+    let createFieldCardEmptyResult = (container) => {
+
+        let card = document.createElement('div');
+        card.className = 'card field';
+        card.id = "field-" + 0
+
+        let cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+
+        // let img = document.createElement('img');
+        // if (fieldRecord.properties.image_1_url != null) {
+        //     img.src = fieldRecord.properties.image_1_url;
+        // } else if (fieldRecord.properties.image_2_url != null) {
+        //     img.src = fieldRecord.properties.image_2_url;
+        // }
+
+        // img.className = "card-img-top";
+
+        let title = document.createElement('h5');
+        // title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
+        title.innerText = "No results"
+        title.className = 'card-title';
+
+        let text = document.createElement('p');
+        // If it was a mix we need an article: "a mix of..."
+        text.innerText = "There are no farms with in this scenario with the filters you have select. "
+        text.innerText += "Please try reducing the number of filters or trying a different combination of them. "
+        text.className = 'card-text';
+
+        cardBody.appendChild(title);
+
+        cardBody.appendChild(text);
+
+        card.appendChild(cardBody);
+
+        container.appendChild(card);
+
+    }
+
+
+    let initListOfFieldCards = (data) => {
+        // Returning only top 15 here
+        //  later if we want to show different "pages" of results
+        //  this can be use to slice the filtered data at different points.
+        cardContainer = document.getElementById('fieldcard-container');
+        var cardContainer1 = document.getElementById('fieldcard-container-1');
+        var cardContainer2 = document.getElementById('fieldcard-container-2');
+        var cardContainer3 = document.getElementById('fieldcard-container-3');
+        var cardContainer4 = document.getElementById('fieldcard-container-4');
+        var cardContainer5 = document.getElementById('fieldcard-container-5');
+
+        if (data.length == 0) {
+            createFieldCardEmptyResult(cardContainer1)
+            return null;
+
+        }
+
+        // Taking just first fifteen
+        var tmpdata = data
+            .slice(0, 15);
+        for (i in tmpdata) {
+            console.log(i, "modulo: ", Math.floor(i / 3) + 1);
+            createFieldCard(tmpdata[i], document.getElementById('fieldcard-container-' + (Math.floor(i / 3) + 1)))
+        }
+
+        // createFieldCard(tmpdata[0], cardContainer1);
+        // createFieldCard(tmpdata[1], cardContainer1);
+        // createFieldCard(tmpdata[2], cardContainer1);
+
+        // createFieldCard(tmpdata[3], cardContainer2);
+        // createFieldCard(tmpdata[4], cardContainer2);
+        // createFieldCard(tmpdata[5], cardContainer2);
+
+        // createFieldCard(tmpdata[6], cardContainer3);
+        // createFieldCard(tmpdata[7], cardContainer3);
+        // createFieldCard(tmpdata[8], cardContainer3);
+
+        // createFieldCard(tmpdata[9], cardContainer4);
+        // createFieldCard(tmpdata[10], cardContainer4);
+        // createFieldCard(tmpdata[11], cardContainer4);
+
+        // createFieldCard(tmpdata[12], cardContainer5);
+        // createFieldCard(tmpdata[13], cardContainer5);
+        // createFieldCard(tmpdata[14], cardContainer5);
+        // Reordering because the bootstrap .card-columns fills from top to bottom then left to right.
+        // tmpdata = [
+        //     tmpdata[0],
+        //     tmpdata[3],
+        //     tmpdata[6],
+        //     tmpdata[9],
+        //     tmpdata[12],
+
+        //     tmpdata[1],
+        //     tmpdata[4],
+        //     tmpdata[7],
+        //     tmpdata[10],
+        //     tmpdata[13],
+
+        //     tmpdata[2],
+        //     tmpdata[5],
+        //     tmpdata[8],
+        //     tmpdata[11],
+        //     tmpdata[14],
+        // ]
+        // tmpdata.forEach((fieldRecord) => {
+        //     createFieldCard(fieldRecord);
+        // });
+    };
+
+    var boxes_select = {
+
+        "filterCounty": "county_single",
+        "filterSoilType": "dominant_soil_texture",
+    }
+    // $('#select_model_type').selectize();
+    // $('#xFactor').selectize();
+    // $('#select_color').selectize();
+
+    // for populating select boxes
+    var pop_selectize_box = function (geojson_data, id_selector, field_name) {
+        var all_instances = [];
+        for (item in geojson_data) {
+
+            all_instances.push(geojson_data[item]['properties'][field_name])
+
+        }
+        // Deduplicating
+        const uniq_instances = [...new Set(all_instances)];
+        uniq_instances.sort()
+        var filt = document.getElementById(id_selector);
+        var option_array = []
+        uniq_instances.forEach(function (item) {
+            option_array.push({ label: item, value: item })
+        })
+        return option_array;
+    }
+
+
+
+</script>
+
+{% endblock %}

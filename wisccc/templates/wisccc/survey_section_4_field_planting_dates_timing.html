@@ -16,16 +16,17 @@
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
-  {% include 'wisccc/includes/survey_2024/form_section_4_planting_dates_timing_surveyfield_part_1.html' %}
-  {% include 'wisccc/includes/survey_2024/form_section_4_planting_dates_timing_surveyfarm.html' %}
-  {% include 'wisccc/includes/survey_2024/form_section_4_planting_dates_timing_surveyfield_part_2.html' %}
+  {% include form_file_name_surveyfield_part_1 %}
+  {% include form_file_name_surveyfarm %}
+  {% include form_file_name_surveyfield_part_2 %}
 
 
   <button type="submit" class="noprompt-required btn btn-primary">Submit</button>
-  <a href="{% url 'wisc_cc_survey' %}?farmer_id={{farmer_id}}"><button type="button" class="btn btn-secondary">Back to
-      survey home
-      page</button></a>
-
+  <a href="{% url 'wisc_cc_survey' survey_year %}?farmer_id={{ farmer_id }}">
+    <button type="button" class="btn btn-secondary">
+      Back to survey home page
+    </button>
+  </a>
 
 </form>
 

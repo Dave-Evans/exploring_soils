@@ -9,6 +9,13 @@ urlpatterns = [
     re_path(r"^wisc-cc-home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
     re_path(r"^wisc_cc_home$", wisccc_views.wisc_cc_home, name="wisc_cc_home"),
     re_path(
+        r"^wisc_cc_scenario$",
+        
+        wisccc_views.ScenarioTableListView.as_view(),
+        
+        name="wisc_cc_scenario",
+    ),    
+    re_path(
         r"^wisc_cc_manager_home$",
         wisccc_views.wisc_cc_manager_home,
         name="wisc_cc_manager",
@@ -23,6 +30,11 @@ urlpatterns = [
         wisccc_views.wisc_cc_about,
         name="wisc_cc_about",
     ),
+    re_path(
+        r"^wisc_cc_about_weather$",
+        wisccc_views.wisc_cc_about_weather,
+        name="wisc_cc_about_weather",
+    ),    
     re_path(
         r"^wisc_cc_acis$",
         wisccc_views.wisc_cc_acis,
@@ -95,16 +107,8 @@ urlpatterns = [
     ),
     re_path(
         r"^wisc_cc_register_1$",
-        # wisccc_views.wisc_cc_interested,
         wisccc_views.wisc_cc_register_1,
         name="wisc_cc_register_1",
-    ),
-    re_path(
-        r"^wisc_cc_register_1$",
-        wisccc_views.wisc_cc_interested,
-        name="wiscc_cc_interested",
-        # wisccc_views.wisc_cc_register_1,
-        # name="wisc_cc_register_1",
     ),
     re_path(
         r"^wisc_cc_register_2$",
@@ -164,6 +168,7 @@ urlpatterns = [
     path(
         "upload_photo_fld/<id>", wisccc_views.upload_photo_fld, name="upload_photo_fld"
     ),
+    path("recalculate_lbs_acre/<sfieldid>/<season>", wisccc_views.recalculate_lbs_acre, name="recalculate_lbs_acre"),
     path(
         "update_labdata_fld/<id>",
         wisccc_views.update_labdata_fld,
@@ -181,7 +186,10 @@ urlpatterns = [
     ),
     re_path(
         r"^registration_table$",
-        wisccc_views.registration_table,
+        permission_required("wisccc.survery_manager")(
+            wisccc_views.RegistrationTableListView.as_view()
+        ),        
+        # wisccc_views.registration_table,
         name="registration_table",
     ),
     path(
@@ -271,7 +279,7 @@ urlpatterns = [
     #     r"^wisc-cc-survey/1$", wisccc_views.wisc_cc_survey1, name="wisc_cc_survey1"
     # ),
     path(
-        r"wisc-cc-survey/1/<int:farmer_id>/",
+        r"wisc-cc-survey/1/<int:survey_year>/<int:farmer_id>/",
         wisccc_views.wisc_cc_survey1,
         name="wisc_cc_survey1",
     ),
@@ -332,7 +340,13 @@ urlpatterns = [
         "delete_survey_field/<int:sfieldid>/",
         wisccc_views.delete_survey_field,
         name="delete_survey_field",
-    ),    
+    ),   
+    path(
+        "create_addtl_surveyfield/<int:sfarmid>/",
+        wisccc_views.create_addtl_surveyfield,
+        name="create_addtl_surveyfield",
+    ),       
+    
     path(
         "wisc_cc_survey_populate_fieldfarm/<id>",
         wisccc_views.wisc_cc_survey_populate_fieldfarm,

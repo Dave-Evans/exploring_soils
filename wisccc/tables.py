@@ -1,16 +1,41 @@
 import django_tables2 as tables
 from django_tables2 import TemplateColumn
 from django.db import connection
+import itertools
 import pandas as pd
-from wisccc.models import Survey, Farmer, SurveyRegistration
+from wisccc.models import SurveyFarm, Farmer, SurveyRegistration, SurveyField
 
+class ScenarioTable(tables.Table):
+    row_number = tables.Column(empty_values=())
+    # survey_field__survey_farm__id = tables.Column()
+    survey_field__crop_rotation_2023_cash_crop_species = tables.Column()
+    survey_field__cash_crop_planting_date = tables.Column()
+    # survey_field__cover_crop_species_1 = tables.Column()
+    survey_field__cover_crop_seeding_method = tables.Column()
+    survey_field__cover_crop_planting_date = tables.Column()
+    survey_field__manure_prior = tables.Column(verbose_name="Manure added before cover?")
+    # survey_field__tillage_system_cash_crop = tables.Column()
+    cc_biomass = tables.Column()
+    total_nitrogen = tables.Column()
+    # def render_cover_crop_species(self, record):
+        # return ", ".join(record.cover_crop_species_1 + record.cover_crop_species_2, record.cover_crop_species_3 + record.cover_crop_species_4, record.cover_crop_species_5)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.counter = itertools.count()
+
+    def render_row_number(self):
+        return f"{next(self.counter) + 1}"
+    
+    class Meta:
+        orderable = False
 
 class ResponseTable(tables.Table):
-    farmer__first_name = tables.Column()
-    farmer__last_name = tables.Column()
+    survey_farm__farmer__first_name = tables.Column()
+    survey_farm__farmer__last_name = tables.Column()
     # username = tables.Column()
-    farmer__user__email = tables.Column()
-    survey_created = tables.Column()
+    survey_farm__farmer__user__email = tables.Column()
+    survey_farm__survey_created = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column_response.html")
     upload_photo = TemplateColumn(template_name="wisccc/upload_photo_column.html")
     update_labdata = TemplateColumn(
@@ -27,10 +52,10 @@ class ResponseTable(tables.Table):
             # For highlighting rows according to if confirmed good
             "class": lambda record: (
                 "table-success"
-                if record.confirmed_accurate == True
+                if record.survey_farm.confirmed_accurate == True
                 else (
                     "table-danger"
-                    if record.confirmed_accurate == False
+                    if record.survey_farm.confirmed_accurate == False
                     else "table-warning"
                 )
             )
@@ -39,9 +64,9 @@ class ResponseTable(tables.Table):
 
 class RegistrationTable(tables.Table):
     signup_timestamp = tables.Column()
-    first_name = tables.Column()
-    last_name = tables.Column()
-    email = tables.Column()
+    farmer__first_name = tables.Column()
+    farmer__last_name = tables.Column()
+    farmer__user__email = tables.Column()
     belong_to_groups = tables.Column()
     notes = tables.Column()
     edit = TemplateColumn(template_name="wisccc/update_column_registration.html")

@@ -1,5 +1,6 @@
 
-var margin = { top: 10, right: 30, bottom: 55, left: 50 },
+
+var margin = { top: 10, right: 5, bottom: 55, left: 60 },
     width = 700 - margin.left - margin.right,
     height = 450 - margin.top - margin.bottom;
 
@@ -12,36 +13,6 @@ var svg = d3.select("#my_dataviz")
     .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
-
-
-
-
-
-var seeding2symbol = {
-    "DRILL": d3.symbol().type(d3.symbolSquare)(),
-    "BROADCAST": d3.symbol().type(d3.symbolTriangle)(),
-    "BROADCAST_INCORPORATION": d3.symbol().type(d3.symbolCross)(),
-    "AERIAL": d3.symbol().type(d3.symbolStar)(),
-    "MANURE_SLURRY": d3.symbol().type(d3.symbolDiamond)(),
-    "OTHER": d3.symbol().type(d3.symbolCircle)()
-}
-
-var listSeedingMethods = [
-    "DRILL",
-    "BROADCAST",
-    "BROADCAST_INCORPORATION",
-    "AERIAL",
-    "MANURE_SLURRY",
-    "OTHER"
-]
-
-var seedingMethodsMap = listSeedingMethods.map(function (f) {
-    return f in seeding2symbol ? seeding2symbol[f] : d3.symbol().type(d3.symbolWye)
-})
-
-var seedingSymbolScale = d3.scaleOrdinal()
-    .domain(listSeedingMethods)
-    .range(seedingMethodsMap);
 
 function formatToolTip(feature) {
 
@@ -77,7 +48,7 @@ var submission_data;
 var model_data = [];
 
 d3.json(dataurl, function (data) {
-    // submission_data = data;
+    submission_data = data;
     // For tooltip
     var div = d3.select("body").append("div")
         .attr("class", "tooltip")
@@ -115,6 +86,11 @@ d3.json(dataurl, function (data) {
             data[i].properties.cc_planting_date_flat = null;
             continue;
         }
+
+        // Removing negative milkton values and setting to zero
+        if (data[i].properties.fq_milkton < 0) {
+            data[i].properties.fq_milkton = 0;
+        }
         // Convert these to dates
 
         data[i].properties.cc_planting_date = dParserYmd(data[i].properties.cc_planting_date.slice(0, 10))
@@ -136,7 +112,7 @@ d3.json(dataurl, function (data) {
 
 
         data[i].properties.cc_planting_date_flat = cov_crop_planting_date
-
+        submission_data = data;
     }
 
     data = data.filter(function (el) { return el.properties.cc_biomass != null });
@@ -204,7 +180,8 @@ d3.json(dataurl, function (data) {
             options: pop_selectize_box(data, id_selector, target_field),
             onChange: function (value, isOnInitialize) {
                 updateChart(false)
-                updateHelpTipText()
+                // updateHelpTipText()
+                // updateYHelpTipText()
             }
         })
     }
@@ -239,7 +216,7 @@ d3.json(dataurl, function (data) {
 
     svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", 0 - margin.left)
+        .attr("y", (0 - margin.left))
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
@@ -259,13 +236,14 @@ d3.json(dataurl, function (data) {
         var color_property = property_and_scale[2]
         var color_scale = property_and_scale[3]
         var y_property = property_and_scale[4]
+        var y_scale = property_and_scale[5]
         svg.append('g')
             .selectAll("dot")
             .data(data)
             .enter()
             .append("circle")
             .attr("cx", function (d) { return scale(d.properties[property]); })
-            .attr("cy", function (d) { return yScale(d.properties[y_property]); })
+            .attr("cy", function (d) { return y_scale(d.properties[y_property]); })
             .attr("r", 5)
             .style("fill", function (d) { return color_scale((d.properties[color_property])); })
             .style("stroke", "#252525")
@@ -302,7 +280,7 @@ d3.json(dataurl, function (data) {
                 .attr("stroke-width", 1.5)
                 .attr("d", d3.line()
                     .x(function (d) { return scale(d.properties[property]); })
-                    .y(function (d) { return yScale(d.properties.predicted); })
+                    .y(function (d) { return y_scale(d.properties.predicted); })
                 )
         }
     }
@@ -313,17 +291,28 @@ d3.json(dataurl, function (data) {
         var color_property = property_and_scale[2]
         var color_scale = property_and_scale[3]
         var y_property = property_and_scale[4]
+        var y_scale = property_and_scale[5]
         svg.selectAll("circle")
             .data(data)
             .transition().duration(1000)
             .attr("cx", function (d) { return scale(d.properties[property]); })
-            .attr("cy", function (d) { return yScale(d.properties[y_property]); })
+            .attr("cy", function (d) { return y_scale(d.properties[y_property]); })
             .style("fill", function (d) {
 
                 return d.properties[color_property] ? color_scale((d.properties[color_property])) : "#ccc";
 
             })
+            .attr("r", 5);
 
+
+        svg.select(".myYAxis")
+            .transition()
+            .call(d3.axisLeft(y_scale))
+            .selectAll("text")
+            .style("text-anchor", "end")
+        // .attr("dx", "-.8em")
+        // .attr("dy", ".15em")
+        // .attr("transform", "rotate(-25)");
 
         svg.select(".myXAxis")
             .transition()
@@ -356,7 +345,83 @@ d3.json(dataurl, function (data) {
             svg.select('.y_axis_label')
                 .transition().duration(1000)
                 .text("Spring cover crop biomass (ton/acre)");
+        } else if (y_property == "total_nitrogen") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall total nitrogen (% of dry matter)");
         }
+        else if (y_property == "spring_total_nitrogen") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall total nitrogen (% of dry matter)");
+        }
+        else if (y_property == "fq_milkton") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall modeled milk production from 1 ton of forage");
+        }
+        else if (y_property == "spring_fq_milkton") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall modeled milk production from 1 ton of forage");
+        } else if (y_property == "fq_rfq") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall relative forage quality");
+        } else if (y_property == "spring_fq_rfq") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring relative forage quality");
+        } else if (y_property == "fq_dry_matter") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall dry matter (%)");
+        } else if (y_property == "spring_fq_dry_matter") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring dry matter (%)");
+        } else if (y_property == "fq_cp") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall crude protein (% dry matter)");
+        } else if (y_property == "spring_fq_cp") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring crude protein (% dry matter)");
+        } else if (y_property == "fq_undfom240") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall uNDFom240");
+        } else if (y_property == "spring_fq_undfom240") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring uNDFom240");
+        } else if (y_property == "fq_rfv") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall RFV");
+        } else if (y_property == "spring_fq_rfv") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring RFV");
+        } else if (y_property == "fq_tdn_adf") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall TDN ADF");
+        } else if (y_property == "spring_fq_tdn_adf") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring TDN ADF");
+        } else if (y_property == "fq_ndfd30") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall NDFD 30");
+        } else if (y_property == "spring_fq_ndfd30") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring NDFD 30");
+        }
+
 
 
         updateLegendGraph(color_scale)
@@ -395,7 +460,7 @@ d3.json(dataurl, function (data) {
         }
         if (property == "region") {
             text = "<a href='wisc_cc_clireg'>See map for regions</a>. "
-            text = text + "Climate regions refer to nine areas of Wisconsin delineated by the <a href = 'https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions'>National Oceanic and Atmospheric Administration</a> as having similar temperature and precipitation."
+            text += "Climate regions refer to nine areas of Wisconsin delineated by the <a href = 'https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions'>National Oceanic and Atmospheric Administration</a> as having similar temperature and precipitation."
         }
         $("#legend_helptip").html(text);
     }
@@ -406,10 +471,12 @@ d3.json(dataurl, function (data) {
         if (property == "acc_gdd") {
             text = "Cumulative growing degree units measure the amount of growth-producing warmth a crop plant receives by a certain date. "
             text += "The growing degree units accumulate from the cover crop planting date to when the biomass was collected. "
+            text += "For more information about how the weather data was obtained, see our <a href='wisc_cc_about_weather'>About weather</a> page."
 
         }
         if (property == "total_precip") {
             text = "Total precipitation is the cumulative amount of precipitation that fell from the cover crop planting date to when the biomass was collected. "
+            text += "For more information about how the weather data was obtained, see our <a href='wisc_cc_about_weather'>About weather</a> page."
 
         }
         if (property == "cc_planting_date_flat") {
@@ -417,14 +484,57 @@ d3.json(dataurl, function (data) {
         }
         $("#xFactor_helptip").html(text);
     }
+    function updateYHelpTipText(property) {
+        console.log("updateYHelpTipText firing!. Property: " + property)
+        var text = ""
+        if (property.indexOf("cc_biomass") > -1) {
+            text = "Fall biomass was collected in the fall, whereas spring biomass was collected sometime in the spring."
+            text += "This is the above group biomass of the cover crop, collected within a 2ft by 2ft sampling square."
+            text += "The sample was then sent to a lab, dried, weighed and extrapolated to an acre."
+        }
+        if (property.indexOf("rfq") > -1) {
+            text = "Relative forage quality is a measure of how good the harvested cover crop was for use as forage for livestock."
+            text += 'The grades are based on a scale from <a href="https://cropsandsoils.extension.wisc.edu/hay-market-demand-and-price-report-for-the-upper-midwest-for-october-10-2023/">UW Extension</a>.'
+            text += "<br>   Prime (> 151 RFV/RFQ)<br>"
+            text += "Grade 1 (125 to 150 RFV/RFQ)<br>"
+            text += "Grade 2 (103 to 124 RFV/RFQ)<br>"
+            text += "Grade 3 (87 to 102 RFV/RFQ)"
+        }
+        if (property.indexOf("milkton") > -1) {
+            text = 'A modeled value (using the "Milk model") to estimate how much milk one short ton (2000 lbs) of forage would produce given its quality parameters.'
+        }
+        if (property.indexOf("cp") > -1) {
+            text = 'Crude protein is an indicator of forage quality. The units are percent of dry matter.'
+        }
+        if (property.indexOf("total_nitrogen") > -1) {
+            text = 'Total nitrogen in sample, as percent of dry matter.'
+        }
+        if (property.indexOf("dry_matter") > -1) {
+            text = 'Dry matter is the non-moisture portion of a feed ingredient or diet. It is given as a percent.'
+        }
+        if (property.indexOf("fq_rfv") > -1) {
+            text = 'Relative feed value'
+        }
+        if (property.indexOf("fq_undfom240") > -1) {
+            text = 'Analysis by DairyLand Labs'
+        }
+        if (property.indexOf("fq_tdn_adf") > -1) {
+            text = 'Analysis by DairyLand Labs'
+        }
+        if (property.indexOf("fq_ndfd30") > -1) {
+            text = 'Analysis by DairyLand Labs'
+        }
 
-    function getDataForModel(data, xproperty) {
+        $("#yFactor_helptip").html(text);
+    }
+
+    function getDataForModel(data, xproperty, yproperty) {
 
 
         let mod_data = [];
         for (let i = 0; i < data.length; i++) {
 
-            var y = data[i].properties.cc_biomass;
+            var y = data[i].properties[yproperty];
             if (y === null) { continue }
 
             var x = data[i].properties[xproperty];
@@ -435,8 +545,8 @@ d3.json(dataurl, function (data) {
         }
 
         var n_removed = 99 - mod_data.length
-        console.log(n_removed, " values were removed")
-        console.log(mod_data)
+        // console.log(n_removed, " values were removed")
+        // console.log(mod_data)
         for (let i = 0; i < mod_data.length; i++) {
             if (mod_data[i][0] == undefined) {
 
@@ -469,8 +579,9 @@ d3.json(dataurl, function (data) {
 
     }
 
-    function prettyRegExplanation(xproperty, r2) {
+    function prettyRegExplanation(xproperty, yproperty, r2) {
         var pretty_prop;
+        var pretty_y_prop;
         if (xproperty == "julian_day") {
             pretty_prop = "Planting date"
         } else if (xproperty == "total_precip") {
@@ -478,8 +589,14 @@ d3.json(dataurl, function (data) {
         } else if (xproperty == "acc_gdd") {
             pretty_prop = "Accumulated growing degree units"
         }
-
-        pretty_prop += " explains " + roundUp(r2 * 100, 1) + " percent of the variation in cover crop biomass."
+        if (yproperty.indexOf("fq_milkton") > -1) {
+            pretty_y_prop = "estimated milk production"
+        } else if (yproperty.indexOf("cc_biomass") > -1) {
+            pretty_y_prop = "cover crop biomass"
+        } else if (yproperty.indexOf("rfq") > -1) {
+            pretty_y_prop = "relative forage quality"
+        }
+        pretty_prop += " explains " + roundUp(r2 * 100, 1) + " percent of the variation in " + pretty_y_prop + "."
 
         return pretty_prop
 
@@ -488,12 +605,13 @@ d3.json(dataurl, function (data) {
     function addRegressionLine(data) {
         var reg_expl = "explains"
         var xproperty = getScaleAndProperty(data)[0];
+        var yproperty = getScaleAndProperty(data)[4];
         if (xproperty == "cc_planting_date_flat") {
             xproperty = "julian_day"
         }
         var model_type = d3.select("#select_model_type").node().value
 
-        var data_for_model = getDataForModel(data, xproperty)
+        var data_for_model = getDataForModel(data, xproperty, yproperty)
 
         var model_result = fitModel(data_for_model, model_type)
         console.log(model_result.string)
@@ -501,7 +619,7 @@ d3.json(dataurl, function (data) {
 
 
         $('#regression_equation').text(model_result.string)
-        $('#regression_explanation').text(prettyRegExplanation(xproperty, model_result.r2))
+        $('#regression_explanation').text(prettyRegExplanation(xproperty, yproperty, model_result.r2))
         // model_data = []
         for (let i = 0; i < data.length; i++) {
 
@@ -564,7 +682,7 @@ d3.json(dataurl, function (data) {
     }
     function filterDataSelectize(data, id_selector, target_field) {
 
-        console.log("FilterDataSelectize for:", id_selector, target_field)
+        // console.log("FilterDataSelectize for:", id_selector, target_field)
         var array = $('#' + id_selector).selectize()[0].selectize.getValue()
 
         if (array == null | array.length == 0) {
@@ -651,7 +769,7 @@ d3.json(dataurl, function (data) {
         console.log("Changed y to: " + this.value);
 
         updateChart(false);
-        updateHelpTipText(this.value)
+        updateYHelpTipText(this.value)
 
     })
 
@@ -737,24 +855,62 @@ d3.json(dataurl, function (data) {
             scale.domain([0,
                 d3.max(filtered_data.map(function (child) {
                     return child.properties[property]
-                })
-                )
+                }))
             ]
             );
         } else if ((property == "cc_planting_date") || (property == "cc_planting_date_flat")) {
 
             scale = xScaleTime
 
-
             scale.domain(
                 d3.extent(filtered_data.map(function (child) {
                     return child.properties[property]
-                })
-                )
+                }))
             );
         }
 
-        return [property, scale, color_property, color_scale, y_property]
+        var y_scale;
+        if (y_property.indexOf("cc_biomass") > -1) {
+
+            y_scale = yScale
+
+            y_scale.domain(
+                [0, 4.5]
+            ).nice();
+        } else if ((y_property.indexOf("fq_milkton") > -1) | y_property.indexOf("total_nitrogen") > -1) {
+
+            y_scale = yScale
+
+            y_scale.domain(
+                [
+                    0,
+                    d3.max(filtered_data.map(function (child) {
+                        return child.properties[y_property]
+                    }))
+                ]
+            ).nice();
+        } else if (y_property.indexOf("fq_rfq") > -1) {
+
+            y_scale = yScale
+
+            y_scale.domain(
+                d3.extent(filtered_data.map(function (child) {
+                    return child.properties[y_property]
+                }))
+            ).nice();
+            // We are just take the extent of all these
+        } else if ((y_property.indexOf("fq_dry_matter") > -1) | (y_property.indexOf("fq_cp") > -1) | (y_property.indexOf("fq_rfv") > -1) | (y_property.indexOf("fq_undfom240") > -1) | (y_property.indexOf("fq_tdn_adf") > -1) | (y_property.indexOf("fq_ndfd30") > -1)) {
+
+            y_scale = yScale
+
+            y_scale.domain(
+                d3.extent(filtered_data.map(function (child) {
+                    return child.properties[y_property]
+                }))
+            ).nice();
+        }
+
+        return [property, scale, color_property, color_scale, y_property, y_scale]
     }
 
     // Legend
@@ -782,6 +938,7 @@ d3.json(dataurl, function (data) {
     $(document).ready(function () {
         updateChart(false)
         updateHelpTipText(d3.select("#xFactor").node().value)
+        updateYHelpTipText(d3.select("#yFactor").node().value)
         updateHelpTipTextLegend(d3.select("#select_color").node().value)
     });
 

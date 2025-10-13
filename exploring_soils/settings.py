@@ -127,6 +127,7 @@ CSP_SCRIPT_SRC = [
     # "http://code.jquery.com/jquery.js",
     "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js",
+    "http://d3js.org/d3.v3.min.js",
     "https://d3js.org/d3.v4.js",
     "https://cdn.jsdelivr.net/npm/d3@7",
     "https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js",

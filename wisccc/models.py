@@ -53,6 +53,27 @@ class ExpandAcresChoices(models.TextChoices):
     ALREADY_MAX = "ALREADY_MAX", "Already all cover cropped"
     OTHER = "OTHER", "Other"
 
+class TopGoalChoices(models.TextChoices):
+    """Top goals for planting cover crops"""
+    
+    BLANK = "", ""
+    EROSION = "EROSION_CONTROL", "Erosion control"
+    NUTRIENT_SCAVENGER = "NUTRIENT_SCAVENGER", "Nutrient scavenging"
+    N_CREDITS = "N_CREDITS", "Nitrogen input"
+    WEED_SUPPRESSION = "WEED_SUPPRESSION", "Weed suppression"
+    FALL_GRAZING = "FALL_GRAZING", "Fall grazing"
+    SPRING_GRAZING = "SPRING_GRAZING", "Spring grazing"
+    OTHER = "OTHER", "Other"
+
+
+class HowSatisfiedChoices(models.TextChoices):
+    """How satisfied are you?"""
+    BLANK = "", ""
+    VERY_SATISFIED = "VERY_SATISFIED", "Very satisfied"
+    SOMEWHAT_SATISFIED = "SOMEWHAT_SATISFIED", "Somewhat satisfied"
+    NEUTRAL = "NEUTRAL", "Neutral" 
+    SOMEWHAT_DISSATISFIED = "SOMEWHAT_DISSATISFIED", "Somewhat disatisfied"
+    VERY_DISSATISFIED = "VERY_DISSATISFIED", "Very disatisfied"
 
 class NutrientMgmtSourcesChoices(models.TextChoices):
     """Different Nutrient management information sources"""
@@ -293,6 +314,25 @@ class ManureApplicateUnitsChoices(models.TextChoices):
     POUNDS_ACRE = "TONS_ACRE", "tons/acre"
     GALLONS = "GALLONS", "gallons/acre"
 
+
+class ManureSourceChoices(models.TextChoices):
+    """Manure source options"""
+    BLANK = "", ""
+    DAIRY = "DAIRY", "Dairy"
+    BEEF = "BEEF", "Beef"
+    POULTRY = "POULTRY", "Poultry"
+    SWINE = "SWINE", "Swine"
+    OTHER = "OTHER", "Other"
+
+class ManureConsistencyChoices(models.TextChoices):
+    """Manure consistency options"""
+    BLANK = "", ""
+    LIQUID_LT4 = "LIQUID_LT4", "liquid (<4% dm)"
+    LIQUID_4_11 = "LIQUID_4_11", "liquid (4-11% dm)"
+    SOLID_11_20 = "SOLID_11_20", "solid (11-20% dm)"
+    SOLID_GT20 = "SOLID_GT20", "solid (>20% dm)"
+    BEDPACK = "BEDPACK", "bedpack"
+    COMPOSTED_MANURE = "COMPOSTED_MANURE", "composted manure"
 
 class TillageSystemChoices(models.TextChoices):
     """Tillage system options"""
@@ -947,15 +987,27 @@ class SurveyFarm(models.Model):
         null=True,
     )
 
-    # New in 2024
+    # New in 2024, modified with TopGoalChoices in 2024
     main_cc_goal_this_year = models.TextField(
-        verbose_name="What is your main goal for cover cropping this year?",
+        verbose_name="Select your top goal.",
         null=True,
     )
 
-    # New in 2024
+    # New in 2025
+    main_cc_goal_this_year_write_in = models.TextField(
+        verbose_name="Write-in for other option for top goal",
+        null=True,
+    )
+
+    # New in 2024, modified to ChoiceField in forms
     satisfied_with_cc_results = models.TextField(
         verbose_name="How satisfied are you with results you get from cover cropping? ",
+        null=True,
+    )
+
+    # New in 2025
+    satisfied_with_cc_results_write_in = models.TextField(
+        verbose_name="Write-in for satisfaction level",
         null=True,
     )
 
@@ -1015,7 +1067,7 @@ class SurveyFarm(models.Model):
 
     # 6. From the following list select and rank your top 1 - 3 most important sources of information on cover cropping:
     info_source_cover_crops_1 = models.TextField(
-        verbose_name="Top information source for cover crops",
+        verbose_name="DEPRECATED Top information source for cover crops",
         # choices=CoverCropInfoSourcesChoices.choices,
         max_length=1000,
         null=True,
@@ -1045,14 +1097,31 @@ class SurveyFarm(models.Model):
         null=True,
     )
 
+    # New 2025
+    biggest_challenge_cc_changed_over_time = models.TextField(
+        verbose_name="Have these challenges changed with time?",
+        null=True,
+    )
+
     learning_history_cc = models.TextField(
-        verbose_name="How would you describe your learning history for cover cropping (including personal experience)?",
+        verbose_name="DEPRECATED in 2025 How would you describe your learning history for cover cropping (including personal experience)?",
         null=True,
     )
 
     conservation_programs = models.TextField(
         verbose_name="Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices?",
         null=True,
+    )
+
+    # New 2025
+    conservation_programs_which_ones = models.TextField(
+        verbose_name="If you are enrolled in cons programs, which ones?",
+        null = True
+    )
+    # New in 2025
+    conservation_programs_if_helped_how = models.TextField(
+        verbose_name="If government/agency conservation programs have helped you use cover crops, please explain.",
+        null=True
     )
 
     # 7. In terms of support for cover cropping, select and rank the top 1 to 3 factors you’d like to see more of:
@@ -1112,7 +1181,7 @@ class SurveyFarm(models.Model):
 
     # 11. If so, does it influence your cover cropping decisions, and how?
     if_use_crop_insurance = models.TextField(
-        verbose_name="If so, does it influence your cover cropping decisions, and how?",
+        verbose_name="DEPRECATED IN 2025 If so, does it influence your cover cropping decisions, and how?",
         null=True,
     )
     # 12. Why do you cover crop? From the list below select and rank your top 3 - 5 motivations
@@ -1123,46 +1192,74 @@ class SurveyFarm(models.Model):
     )
     # 14. Does planting a cover crop delay when you would otherwise plant your cash crop?
     cover_crops_delay_cash_crop = models.CharField(
-        verbose_name="Does planting a cover crop delay when you would otherwise plant your cash crop?",
+        verbose_name="DEPRECATED 2025, Does planting a cover crop delay when you would otherwise plant your cash crop?",
         null=True,
         max_length=260,
     )
 
-    # 15a. Do you save cover crop seed?
+    
     save_cover_crop_seed = models.BooleanField(
         verbose_name="Do you save cover crop seed?", null=True
     )
-    # 15b. What is your source for cover crop seed?
+    
     source_cover_crop_seed = models.TextField(
         verbose_name="What is your cover crop seed source?", null=True
     )
 
-    # 37	Please share any interesting experiments, failures, equipment challenges with cover crops.
+    # New 2025
+    learn_about_cc_preferred_way = models.TextField(
+        verbose_name="""What is your preferred ways to learn about using cover crops? Please be
+            specific, for example, if there are particular Youtube channels, podcasts,
+            consultants, or leaders in your county that have helped you.""",
+        null=True
+    )
+
+    # New 2025
+    scenario_tool_feedback = models.TextField(
+        verbose_name="""We created an online Cover Crop Scenario Tool 
+            to share the cover crop practices gathered by this project for the last 5 years. Please provide us with any 
+            feedback as we are in the testing phase: LINK""",
+        null=True
+    )
+
+    # New 2025
+    testimonial = models.TextField(
+        verbose_name="""Please share an observation we might use as a testimonial about your
+            participation in this project""",
+        null=True
+    )
+
+    # New 2025
+    # Make choice field in forms
+    willing_to_share_more = models.TextField(
+        verbose_name="""Can we attribute this to you or do you prefer to remain anonymous?""",
+        null=True
+    )
+    
     interesting_tales = models.TextField(
         verbose_name="DEPRECATED What has been your cover crop “learning curve”? Please share any interesting experiments including failures that have helped you adapt cover cropping to your farm.",
         null=True,
     )
-    # 38	If another grower asked you where to start with cover cropping what would you recommend and why?
+    
     where_to_start = models.TextField(
         verbose_name="DEPRECATED Where would you tell another grower to start with cover crops? Why?",
         null=True,
     )
-    # 39	Do you have any additional thoughts or questions about this data gathering process? Any important survey questions we should ask next time?
-    # 2023 Any additional thoughts or questions? Any important survey questions we should ask next time?Any additional thoughts or questions? Any important survey questions we should ask next time?
+    
     additional_thoughts = models.TextField(
-        verbose_name="Please share anything else we should know, including any feedback on the survey.",
+        verbose_name="DEPRECATED in 2025 Please share anything else we should know, including any feedback on the survey.",
         null=True,
     )
 
     encourage_cc = models.CharField(
-        verbose_name="Which of the following would do the most to encourage more farmers to cover crop?",
+        verbose_name="DEPRECATED in 2025 Which of the following would do the most to encourage more farmers to cover crop?",
         choices=CoverCropSupportChoices.choices,
         null=True,
         max_length=100,
     )
 
     encourage_cc_write_in = models.TextField(
-        verbose_name="Please share any details",
+        verbose_name="DEPRECATED in 2025 Please share any details",
         null=True,
     )
 
@@ -1400,13 +1497,13 @@ class SurveyField(models.Model):
         null=True,
     )
 
-    # 24	Will you apply manure prior to seeding cover crops on this field, and at what rate?
+    
     manure_prior = models.CharField(
         verbose_name="Will you apply manure prior to seeding cover crops on this field?",
         max_length=120,
         null=True,
     )
-    # 24a
+    
     manure_prior_rate = models.IntegerField(
         verbose_name="At what rate will the manure be applied?", null=True
     )
@@ -1417,7 +1514,23 @@ class SurveyField(models.Model):
         null=True,
     )
 
-    # 25	Will manure be applied to the field after the cover crop is established?
+    # New 2025
+    manure_prior_source = models.CharField(
+        verbose_name="The source of the manure, animal",
+        # choices=ManureSourceChoices.choices,
+        max_length=15,
+        null=True,
+    )
+
+    # New 2025
+    manure_prior_consistency = models.CharField(
+        verbose_name="Manure consistency",
+        # choices=ManureConsistencyChoices.choices,
+        max_length=100,
+        null=True
+    )
+
+    # Will manure be applied to the field after the cover crop is established?
     manure_post = models.CharField(
         verbose_name="Will manure be applied to the field after the cover crop is established?",
         max_length=120,
@@ -1433,6 +1546,37 @@ class SurveyField(models.Model):
         max_length=15,
         null=True,
     )
+
+    # New 2025
+    manure_post_source = models.CharField(
+        verbose_name="The source of the manure, animal",
+        # choices=ManureSourceChoices.choices,
+        max_length=15,
+        null=True,
+    )
+
+    # new 2025
+    manure_post_consistency = models.CharField(
+        verbose_name="Manure consistency",
+        # choices=ManureConsistencyChoices.choices,
+        max_length=100,
+        null=True
+    )    
+
+    # New for 2025
+    synth_fert_for_covers = models.CharField(
+        verbose_name="Did you apply synthetic fertilizer for growing a cover crop?",
+        max_length=500,
+        null=True,
+    )
+
+    # New for 2025
+    synth_fert_for_covers_application_date = models.DateField(
+        verbose_name="If yes, what is the estimated date of application?",
+        null=True,
+    )
+
+
     # 26	"What is your tillage system for the cash crop preceding the cover crop?
     tillage_system_cash_crop = models.CharField(
         verbose_name="Tillage system for cash crop preceding",
@@ -1481,7 +1625,13 @@ class SurveyField(models.Model):
     )
 
     cover_crop_seeding_method_write_in = models.TextField(
-        verbose_name="Cover crop seeding method, write in", null=True
+        verbose_name="Cover crop seeding method, write in", 
+        null=True
+    )
+
+    cover_crop_seeding_method_drone = models.TextField(
+        verbose_name="If you selected drone, have you used drones for seeding covers in the past and for what years?", 
+        null=True
     )
 
     # 32
@@ -1566,13 +1716,13 @@ class AncillaryData(models.Model):
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
     dry_matter = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="", null=True
+        decimal_places=2, max_digits=15, verbose_name="Dry matter, the proportion of the sample which is dry matter versus moisture; expressed as percent. From Dairyland.", null=True
     )
-    ndf = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="", null=True
+    adf = models.DecimalField(
+        decimal_places=2, max_digits=15, verbose_name="Fall acid detergent fiber", null=True
     )
     rfv = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="", null=True
+        decimal_places=2, max_digits=15, verbose_name="Relative feed value, Dairyland", null=True
     )
     cc_biomass = models.DecimalField(
         decimal_places=2,
@@ -1581,7 +1731,7 @@ class AncillaryData(models.Model):
         null=True,
     )
     total_nitrogen = models.DecimalField(
-        decimal_places=2, max_digits=15, verbose_name="Total nitrogen", null=True
+        decimal_places=2, max_digits=15, verbose_name="Nitrogen content as percent of dry matter, agsource", null=True
     )
     height_of_stand = models.DecimalField(
         decimal_places=2,
@@ -1589,6 +1739,87 @@ class AncillaryData(models.Model):
         verbose_name="Height of cover crop stand stand (in)",
         null=True,
     )
+    c_to_n_ratio = models.DecimalField(
+        decimal_places=2,
+        max_digits=5,
+        verbose_name="Fall C to N ratio, agsource",
+        null=True,
+    )
+    
+    percent_p = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Phosphorus content as percent of dry matter, agsource",
+        null=True,
+    )
+    percent_k = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Potassium content as percent of dry matter, agsource",
+        null=True,
+    )    
+    percent_ca = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Calcium content as percent of dry matter, agsource",
+        null=True,
+    )        
+    percent_mg = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Magnesium content as percent of dry matter, agsource",
+        null=True,
+    )         
+    percent_s = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Sulfur content as percent of dry matter, agsource",
+        null=True,
+    )               
+    p_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Phosphate content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+    n_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Nitrogen content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
+    k_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Potassium Oxide content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
+    ca_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Calcium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )        
+    mg_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Magnesium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )         
+    s_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Sulfur content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+    c_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Carbon content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+
+
     acc_gdd = models.DecimalField(
         decimal_places=2,
         max_digits=15,
@@ -1634,7 +1865,7 @@ class AncillaryData(models.Model):
     spring_dry_matter = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
-    spring_ndf = models.DecimalField(
+    spring_adf = models.DecimalField(
         decimal_places=2, max_digits=15, verbose_name="", null=True
     )
     spring_rfv = models.DecimalField(
@@ -1667,6 +1898,85 @@ class AncillaryData(models.Model):
         verbose_name="Spring height of cover crop stand stand (in)",
         null=True,
     )
+    spring_c_to_n_ratio = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring C to N ratio, agsource",
+        null=True,
+    )
+    
+    spring_percent_p = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Phosphorus content as percent of dry matter, agsource",
+        null=True,
+    )
+    spring_percent_k = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Potassium content as percent of dry matter, agsource",
+        null=True,
+    )    
+    spring_percent_ca = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Calcium content as percent of dry matter, agsource",
+        null=True,
+    )        
+    spring_percent_mg = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Magnesium content as percent of dry matter, agsource",
+        null=True,
+    )         
+    spring_percent_s = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Sulfur content as percent of dry matter, agsource",
+        null=True,
+    )               
+    spring_p_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Phosphate content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+    spring_n_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Nitrogen content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
+    spring_k_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Potassium Oxide content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
+    spring_ca_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Calcium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )        
+    spring_mg_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Magnesium content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )         
+    spring_s_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Sulfur content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )
+    spring_c_content = models.DecimalField(
+        decimal_places=2,
+        max_digits=7,
+        verbose_name="Spring Carbon content of forage if 100% dry matter, lbs/acre; agsource",
+        null=True,
+    )    
     spring_notes = models.TextField(
         verbose_name="Notes about spring biomass sampling",
         null=True,
@@ -1675,6 +1985,130 @@ class AncillaryData(models.Model):
         verbose_name="Notes about lab data or sampling or about edits. These notes will not be displayed.",
         null=True,
     )
+
+    precip_preplant_3_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation 3 weeks until planting date",
+        null=True,
+    )
+    precip_preplant_2_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation 2 weeks until planting date",
+        null=True,
+    )
+
+    precip_preplant_1_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation 1 week before planting",
+        null=True,
+    )
+
+    precip_postplant_1_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation from planting date until 1 week later",
+        null=True,
+    )
+
+    precip_postplant_2_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation from planting date until 2 week later",
+        null=True,
+    )    
+    precip_postplant_3_wk = models.DecimalField(
+        decimal_places=3,
+        max_digits=15,
+        verbose_name="Sum of precipitation from planting date until 3 week later",
+        null=True,
+    )    
+
+    def recalculate_fall_lbs_acre(self):
+        """For recalculating the 'content' fields when the biomass value is updated"""
+        if self.cc_biomass is None:
+            return None
+        
+        try:
+            self.n_content = (self.cc_biomass * 2000) * (self.total_nitrogen/100)
+        except TypeError as e:
+            print("N content", str(e))
+
+        # To convert from P to P2O5 multiply by 2.29
+        try:
+            self.p_content = float(self.cc_biomass * 2000) * float(self.percent_p/100) * 2.29
+        except TypeError as e:
+            print("P content", str(e))
+
+        # To convert from K to K2O multiply by 1.2
+        try:
+            self.k_content = float(self.cc_biomass * 2000) * float(self.percent_k/100) * 1.2
+        except TypeError as e:
+            print("K content", str(e))
+
+        try:
+            self.ca_content = (self.cc_biomass * 2000) * (self.percent_ca/100)
+        except TypeError as e:
+            print("Ca content", str(e))            
+        
+        try:
+            self.mg_content = (self.cc_biomass * 2000) * (self.percent_mg/100)
+        except TypeError as e:
+            print("Mg content", str(e))
+        
+        try:            
+            self.s_content = (self.cc_biomass * 2000) * (self.percent_s/100)
+        except TypeError as e:
+            print("S content", str(e))
+        
+        try:
+            self.c_content = (self.n_content * self.c_to_n_ratio)
+        except TypeError as e:
+            print("C content", str(e))
+
+    def recalculate_spring_lbs_acre(self):
+        """For recalculating the spring 'content' fields when the biomass value is updated"""
+        if self.spring_cc_biomass is None:
+            return None
+        
+        try:
+            self.spring_n_content = (self.spring_cc_biomass * 2000) * (self.spring_total_nitrogen/100)
+        except TypeError as e:
+            print("N content", str(e))
+
+        # To convert from P to P2O5 multiply by 2.29
+        try:
+            self.spring_p_content = float(self.spring_cc_biomass * 2000) * float(self.spring_percent_p/100) * 2.29
+        except TypeError as e:
+            print("P content", str(e))
+
+        # To convert from K to K2O multiply by 1.2
+        try:
+            self.spring_k_content = float(self.spring_cc_biomass * 2000) * float(self.spring_percent_k/100) * 1.2
+        except TypeError as e:
+            print("K content", str(e))
+
+        try:
+            self.spring_ca_content = (self.spring_cc_biomass * 2000) * (self.spring_percent_ca/100)
+        except TypeError as e:
+            print("Ca content", str(e))            
+        
+        try:
+            self.spring_mg_content = (self.spring_cc_biomass * 2000) * (self.spring_percent_mg/100)
+        except TypeError as e:
+            print("Mg content", str(e))
+        
+        try:            
+            self.spring_s_content = (self.spring_cc_biomass * 2000) * (self.spring_percent_s/100)
+        except TypeError as e:
+            print("S content", str(e))
+        
+        try:
+            self.spring_c_content = (self.spring_cc_biomass * self.spring_c_to_n_ratio)
+        except TypeError as e:
+            print("C content", str(e))
 
 
 class SurveyPhoto(models.Model):
@@ -1709,11 +2143,11 @@ class SurveyRegistration(models.Model):
     class HaveAKit(models.TextChoices):
         HAVE_A_KIT = (
             "HAVE_A_KIT",
-            "I have a biomass sampling kit from previous years’ participation. You will send me reminder instructions & prepaid addressed envelopes for my 2024-5 samples.",
+            "I have a biomass sampling kit from previous years’ participation. You will send me reminder instructions & prepaid addressed envelopes for my 2025-6 samples.",
         )
         NEED_A_KIT = (
             "NEED_A_KIT",
-            "I need a biomass sampling kit sent to the address above along with instructions & prepaid addressed envelopes for my 2024-5 samples.",
+            "I need a biomass sampling kit sent to the address above along with instructions & prepaid addressed envelopes for my 2025-6 samples.",
         )
 
     survey_year = models.IntegerField(null=True)

@@ -30,8 +30,9 @@ from wisccc.tables import (
     ResearcherTable,
     InterestedPartyTable,
     InterestedAgronomistTable,
+    ScenarioTable
 )
-from wisccc.filters import SurveyResponseFilter
+from wisccc.filters import SurveyResponseFilter, SurveyRegistrationFilter
 from django_filters.views import FilterView
 from wisccc.forms import (
     SurveyFieldFormFull,
@@ -68,6 +69,20 @@ from wisccc.forms_2023 import (
     SurveyFieldFormFull_2023_partb,
     FieldFarmFormFull_2023,
     SurveyFarmFormPart3_2023,
+)
+
+from wisccc.forms_2024 import (
+    SurveyFarmFormSection2 as SurveyFarmFormSection2_2024,
+    SurveyFieldFormSection3 as SurveyFieldFormSection3_2024,
+    SurveyFieldFormSection4_part1 as SurveyFieldFormSection4_part1_2024,
+    FieldFarmFormSection3 as FieldFarmFormSection3_2024,
+    SurveyFarmFormSection4 as SurveyFarmFormSection4_2024,
+    SurveyFieldFormSection4_part2 as SurveyFieldFormSection4_part2_2024,
+    SurveyFieldFormSection5 as SurveyFieldFormSection5_2024,
+    SurveyFarmFormSection6 as SurveyFarmFormSection6_2024,
+    SurveyFieldFormSection6 as SurveyFieldFormSection6_2024,
+    SurveyFarmFormSection7 as SurveyFarmFormSection7_2024
+    
 )
 from wisccc.models import (
     Survey,
@@ -118,7 +133,7 @@ def check_section_completed(farmer_id, survey_year, survey_farm, survey_fields):
     if survey_farm.percent_of_farm_cc is not None:
         section_statuses["section_2"] = True
 
-    if survey_farm.encourage_cc is not None:
+    if survey_farm.willing_to_share_more is not None:
         section_statuses["section_7"] = True
 
     for i, survey_field in enumerate(survey_fields):
@@ -162,6 +177,22 @@ def wisc_cc_manager_home(request):
 
 def wisc_cc_about(request):
     return render(request, "wisccc/wisc_cc_about.html")
+
+def wisc_cc_about_weather(request):
+    return render(request, "wisccc/wisc_cc_about_weather.html")
+
+class ScenarioTableListView(SingleTableMixin, FilterView):
+    """List wisc registration entries"""
+
+    table_class = ScenarioTable
+    model = AncillaryData
+    template_name = "wisccc/wisc_cc_scenario.html"
+
+    def get_queryset(self):
+        
+        return super().get_queryset().filter(survey_field__survey_farm__survey_year__gt=2022)[:25]
+    # filterset_class = SurveyRegistrationFilter
+    
 
 
 def wisc_cc_acis(request):
@@ -308,7 +339,7 @@ def wisccc_download_data(request, opt):
 
 
 @login_required
-def wisc_cc_survey(request, survey_year=2024):
+def wisc_cc_survey(request, survey_year=2025):
     """
     Home page for Cover Crop survey. We check progress of different sections of the survey
     by querying one required question from each section (0 (the farmer section),1,2,3).
@@ -412,7 +443,7 @@ def wisc_cc_unauthorized(request):
 
 
 @login_required
-def wisc_cc_survey1(request, farmer_id):
+def wisc_cc_survey1(request, survey_year, farmer_id):
     """I. General info: Farmer information"""
 
     # check if user is the logged in farmer
@@ -435,23 +466,26 @@ def wisc_cc_survey1(request, farmer_id):
         # new_form.user = instance.user
         new_form.save()
 
-        return redirect(reverse("wisc_cc_survey") + f"?farmer_id={farmer_id}")
+        return redirect(
+            reverse("wisc_cc_survey")
+                + f"/{survey_year}/?farmer_id={farmer_id}"          
+        )
 
     template = "wisccc/survey_section_1_farmer.html"
     return render(
         request,
         template,
-        {"form_farmer": form_farmer, "farmer_id": farmer_id},
+        {"form_farmer": form_farmer, "farmer_id": farmer_id, "survey_year": survey_year},
     )
 
 
 @login_required
-def wisc_cc_survey2(request, sfarmid, survey_year=2024):
+def wisc_cc_survey2(request, sfarmid):
     """II. Cover cropping goals and support
     only Survey Farm data"""
 
     survey_farm = SurveyFarm.objects.get(id=sfarmid)
-
+    print("survey year: ", survey_farm.survey_year)
     farmer = Farmer.objects.get(id=survey_farm.farmer_id)
 
     # check if user is the logged in farmer
@@ -460,32 +494,49 @@ def wisc_cc_survey2(request, sfarmid, survey_year=2024):
         not request.user.has_perm("wisccc.survery_manager")
     ):
         return redirect("wisc_cc_unauthorized")
-    # pass the object as instance in form
-    form_surveyfarm_section_2 = SurveyFarmFormSection2(
-        request.POST or None, instance=survey_farm
-    )
+    # pass the object as instance in form.
+    
+    # Use year specific forms.
+    if survey_farm.survey_year == 2025:
+
+        form_surveyfarm_section_2 = SurveyFarmFormSection2(
+            request.POST or None, instance=survey_farm
+        )
+    elif survey_farm.survey_year == 2024:
+        form_surveyfarm_section_2 = SurveyFarmFormSection2_2024(
+            request.POST or None, instance=survey_farm
+        )
 
     survey_fields = SurveyField.objects.filter(survey_farm=survey_farm)
 
     if form_surveyfarm_section_2.is_valid():
         new_form = form_surveyfarm_section_2.save(commit=False)
-        new_form.farmer = farmer
-        # Make sure to make a slot for this in the form.
-        new_form.survey_year = survey_year
+        # Should not need to add farmer or year to these sections as they are 
+        #   auto created with the registration
+        # new_form.farmer = farmer
+        # new_form.survey_year = survey_year
         new_form.save()
 
+        # If there is more than one field then we make them go back to survey page
+        # otherwise we have them select a field from previous year or choose new field
         if survey_fields.count() > 1:
-            return redirect(reverse("wisc_cc_survey") + f"?farmer_id={farmer.id}")
+            return redirect(
+                reverse("wisc_cc_survey")
+                + f"/{survey_farm.survey_year}/?farmer_id={farmer.id}"                
+            )
         else:
             return redirect("wisc_cc_survey3", survey_fields[0].id)
 
     template = "wisccc/survey_section_2_goals_support.html"
+    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_2_goals_support_surveyfarm.html'
     return render(
         request,
         template,
         {
             "form_surveyfarm_section_2": form_surveyfarm_section_2,
             "farmer_id": farmer.id,
+            "survey_year": survey_farm.survey_year,
+            "form_file_name_surveyfarm": form_file_name_surveyfarm,
         },
     )
 
@@ -503,9 +554,6 @@ def wisc_cc_survey3(request, sfieldid):
     """
     # field names as keys
     context = {}
-
-    # Don't forget to grab based on survey_year!!!
-    survey_year = 2024
 
     survey_field = SurveyField.objects.get(id=sfieldid)
 
@@ -536,12 +584,26 @@ def wisc_cc_survey3(request, sfieldid):
             return redirect("wisc_cc_survey3a", survey_farm.farmer.id, sfieldid)
         # Else, then we will just be creating it here.
 
-    form_surveyfield_section_3 = SurveyFieldFormSection3(
-        request.POST or None, instance=survey_field
-    )
-    form_fieldfarm_section_3 = FieldFarmFormSection3(
-        request.POST or None, instance=field_farm
-    )
+    # Use year specific forms.
+    if survey_farm.survey_year == 2025:
+
+        form_surveyfield_section_3 = SurveyFieldFormSection3(
+            request.POST or None, instance=survey_field
+        )
+        form_fieldfarm_section_3 = FieldFarmFormSection3(
+            request.POST or None, instance=field_farm
+        )
+
+    elif survey_farm.survey_year == 2024:
+        form_surveyfield_section_3 = SurveyFieldFormSection3_2024(
+            request.POST or None, instance=survey_field
+        )
+        form_fieldfarm_section_3 = FieldFarmFormSection3_2024(
+            request.POST or None, instance=field_farm
+        )
+
+    form_file_name_fieldfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_3_rotation_rates_fieldfarm.html'
+    form_file_name_surveyfield = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_3_rotation_rates_surveyfield.html'
 
     if form_surveyfield_section_3.is_valid() and form_fieldfarm_section_3.is_valid():
 
@@ -557,12 +619,21 @@ def wisc_cc_survey3(request, sfieldid):
         return redirect("wisc_cc_survey4", sfieldid)
     # add form dictionary to context
 
-    context["form_surveyfield_section_3"] = form_surveyfield_section_3
-    context["form_fieldfarm_section_3"] = form_fieldfarm_section_3
-    context["sfieldid"] = sfieldid
-    context["farmer_id"] = survey_farm.farmer.id
+    
     template = "wisccc/survey_section_3_field_rotation_rates.html"
-    return render(request, template, context)
+    return render(
+        request,
+        template,
+        {
+            "form_surveyfield_section_3" : form_surveyfield_section_3,
+            "form_fieldfarm_section_3" : form_fieldfarm_section_3,
+            "sfieldid" : sfieldid,
+            "farmer_id" : survey_farm.farmer.id,
+            "survey_year" : survey_farm.survey_year,
+            "form_file_name_fieldfarm": form_file_name_fieldfarm,
+            "form_file_name_surveyfield": form_file_name_surveyfield,
+        }
+    )
 
 
 @login_required
@@ -593,8 +664,6 @@ def wisc_cc_survey3a(request, farmer_id, sfieldid):
 def wisc_cc_survey4(request, sfieldid):
     """IV. Research Field: Planting dates & timing
     Uses survey_field and one question, cash crop planting date, from surveyfarm"""
-    # Don't forget to grab based on survey_year!!!
-    survey_year = 2024
 
     survey_field = SurveyField.objects.get(id=sfieldid)
     # Grab survey farm objects
@@ -610,15 +679,27 @@ def wisc_cc_survey4(request, sfieldid):
 
     farmer = Farmer.objects.get(id=survey_farm.farmer.id)
 
-    form_surveyfarm_section_4 = SurveyFarmFormSection4(
-        request.POST or None, instance=survey_farm
-    )
-    form_surveyfield_section_4_part_1 = SurveyFieldFormSection4_part1(
-        request.POST or None, instance=survey_field
-    )
-    form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2(
-        request.POST or None, instance=survey_field
-    )
+    if survey_farm.survey_year == 2025:
+        form_surveyfarm_section_4 = SurveyFarmFormSection4(
+            request.POST or None, instance=survey_farm
+        )
+        form_surveyfield_section_4_part_1 = SurveyFieldFormSection4_part1(
+            request.POST or None, instance=survey_field
+        )
+        form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2(
+            request.POST or None, instance=survey_field
+        )
+
+    elif survey_farm.survey_year == 2024:
+        form_surveyfarm_section_4 = SurveyFarmFormSection4_2024(
+            request.POST or None, instance=survey_farm
+        )
+        form_surveyfield_section_4_part_1 = SurveyFieldFormSection4_part1_2024(
+            request.POST or None, instance=survey_field
+        )
+        form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2_2024(
+            request.POST or None, instance=survey_field
+        )        
 
     if (
         form_surveyfarm_section_4.is_valid()
@@ -627,8 +708,6 @@ def wisc_cc_survey4(request, sfieldid):
     ):
 
         new_survey_farm_form = form_surveyfarm_section_4.save(commit=False)
-        new_survey_farm_form.farmer = farmer
-        new_survey_farm_form.survey_year = survey_year
         new_survey_farm_form.save()
         new_form_survey_field_part_1 = form_surveyfield_section_4_part_1.save(
             commit=False
@@ -644,6 +723,10 @@ def wisc_cc_survey4(request, sfieldid):
         return redirect("wisc_cc_survey5", sfieldid)
 
     template = "wisccc/survey_section_4_field_planting_dates_timing.html"
+    form_file_name_surveyfield_part_1 = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfield_part_1.html'
+    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfarm.html'
+    form_file_name_surveyfield_part_2 = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfield_part_2.html'
+
     return render(
         request,
         template,
@@ -652,6 +735,10 @@ def wisc_cc_survey4(request, sfieldid):
             "form_surveyfield_section_4_part_1": form_surveyfield_section_4_part_1,
             "form_surveyfield_section_4_part_2": form_surveyfield_section_4_part_2,
             "farmer_id": survey_farm.farmer.id,
+            "survey_year": survey_farm.survey_year,
+            "form_file_name_surveyfield_part_1": form_file_name_surveyfield_part_1,
+            "form_file_name_surveyfarm": form_file_name_surveyfarm,
+            "form_file_name_surveyfield_part_2": form_file_name_surveyfield_part_2
         },
     )
 
@@ -662,8 +749,6 @@ def wisc_cc_survey5(request, sfieldid):
     Uses SurveyField"""
     # field names as keys
     context = {}
-    # Don't forget to grab based on survey_year!!!
-    survey_year = 2024
 
     survey_field = SurveyField.objects.get(id=sfieldid)
     # Grab survey farm objects
@@ -678,11 +763,19 @@ def wisc_cc_survey5(request, sfieldid):
         return redirect("wisc_cc_unauthorized")
 
     farmer = Farmer.objects.get(id=survey_farm.farmer.id)
-
+    # form_surveyfield_section_5 = SurveyFieldFormSection5(
+    #     request.POST or None, instance=survey_field
+    # )
     # pass the object as instance in form
-    form_surveyfield_section_5 = SurveyFieldFormSection5(
-        request.POST or None, instance=survey_field
-    )
+    if survey_farm.survey_year == 2025:
+
+        form_surveyfield_section_5 = SurveyFieldFormSection5(
+            request.POST or None, instance=survey_field
+        )
+    elif survey_farm.survey_year == 2024:
+        form_surveyfield_section_5 = SurveyFieldFormSection5_2024(
+            request.POST or None, instance=survey_field
+        )
 
     if form_surveyfield_section_5.is_valid():
 
@@ -695,7 +788,12 @@ def wisc_cc_survey5(request, sfieldid):
 
     context["form_surveyfield_section_5"] = form_surveyfield_section_5
     context["farmer_id"] = farmer.id
+    context["survey_year"] = survey_farm.survey_year
+    context["form_file_name_surveyfield"] = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_5_tillage_manure_soil_surveyfield.html'
+
+
     template = "wisccc/survey_section_5_field_tillage_manure_soil.html"
+    
     return render(request, template, context)
 
 
@@ -703,8 +801,6 @@ def wisc_cc_survey5(request, sfieldid):
 def wisc_cc_survey6(request, sfieldid):
     """VI. Research Field: Cover crop seeding & cost
     Uses survey_field and surveyfarm"""
-    # Don't forget to grab based on survey_year!!!
-    survey_year = 2024
 
     survey_field = SurveyField.objects.get(id=sfieldid)
     # Grab survey farm objects
@@ -719,19 +815,24 @@ def wisc_cc_survey6(request, sfieldid):
         return redirect("wisc_cc_unauthorized")
 
     farmer = Farmer.objects.get(id=survey_farm.farmer.id)
-
-    form_surveyfarm_section_6 = SurveyFarmFormSection6(
-        request.POST or None, instance=survey_farm
-    )
-    form_surveyfield_section_6 = SurveyFieldFormSection6(
-        request.POST or None, instance=survey_field
-    )
-
+    if survey_farm.survey_year == 2025:
+        form_surveyfarm_section_6 = SurveyFarmFormSection6(
+            request.POST or None, instance=survey_farm
+        )
+        form_surveyfield_section_6 = SurveyFieldFormSection6(
+            request.POST or None, instance=survey_field
+        )
+    elif survey_farm.survey_year == 2024:
+        form_surveyfarm_section_6 = SurveyFarmFormSection6_2024(
+            request.POST or None, instance=survey_farm
+        )
+        form_surveyfield_section_6 = SurveyFieldFormSection6_2024(
+            request.POST or None, instance=survey_field
+        )        
+            
     if form_surveyfarm_section_6.is_valid() and form_surveyfield_section_6.is_valid():
 
         new_form_survey_farm = form_surveyfarm_section_6.save(commit=False)
-        new_form_survey_farm.farmer = farmer
-        new_form_survey_farm.survey_year = survey_year
         new_form_survey_farm.save()
 
         new_form_survey_field = form_surveyfield_section_6.save(commit=False)
@@ -741,6 +842,9 @@ def wisc_cc_survey6(request, sfieldid):
         return redirect("wisc_cc_survey7", survey_farm.id)
 
     template = "wisccc/survey_section_6_field_seeding_cost.html"
+    form_file_name_surveyfield = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfield.html'
+    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfarm.html'
+
     return render(
         request,
         template,
@@ -748,6 +852,9 @@ def wisc_cc_survey6(request, sfieldid):
             "form_surveyfarm_section_6": form_surveyfarm_section_6,
             "form_surveyfield_section_6": form_surveyfield_section_6,
             "farmer_id": farmer.id,
+            "survey_year": survey_farm.survey_year,
+            "form_file_name_surveyfield": form_file_name_surveyfield,
+            "form_file_name_surveyfarm": form_file_name_surveyfarm
         },
     )
 
@@ -757,7 +864,6 @@ def wisc_cc_survey7(request, sfarmid):
     """VII. Final thoughts
     Uses SurveyFarm"""
     context = {}
-    survey_year = 2024
 
     survey_farm = SurveyFarm.objects.get(id=sfarmid)
 
@@ -771,25 +877,34 @@ def wisc_cc_survey7(request, sfarmid):
         return redirect("wisc_cc_unauthorized")
 
     # pass the object as instance in form
-    form_surveyfarm_section_7 = SurveyFarmFormSection7(
-        request.POST or None, instance=survey_farm
-    )
+    if survey_farm.survey_year == 2025:
+        form_surveyfarm_section_7 = SurveyFarmFormSection7(
+            request.POST or None, instance=survey_farm
+        )
+    elif survey_farm.survey_year == 2024:
+        form_surveyfarm_section_7 = SurveyFarmFormSection7_2024(
+            request.POST or None, instance=survey_farm
+        )
 
     if form_surveyfarm_section_7.is_valid():
         new_form_surveyfarm_section_7 = form_surveyfarm_section_7.save(commit=False)
-        new_form_surveyfarm_section_7.farmer = farmer
-        new_form_surveyfarm_section_7.survey_year = survey_year
         new_form_surveyfarm_section_7.save()
 
+        if request.user.has_perm("wisccc.survery_manager"):
+            return redirect("response_table")
+        
         return redirect("wisc_cc_survey")
 
     template = "wisccc/survey_section_7_final_thoughts.html"
+    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_7_final_thoughts_surveyfarm.html'
     return render(
         request,
         template,
         {
             "form_surveyfarm_section_7": form_surveyfarm_section_7,
             "farmer_id": farmer.id,
+            "form_file_name_surveyfarm": form_file_name_surveyfarm,
+            "survey_year": survey_farm.survey_year
         },
     )
 
@@ -797,11 +912,9 @@ def wisc_cc_survey7(request, sfarmid):
 @login_required
 def create_addtl_surveyfield(request, sfarmid):
     """Takes survey farm id"""
-    survey_year = 2024
-    context = {}
 
     survey_farm = SurveyFarm.objects.get(id=sfarmid)
-
+    survey_year = survey_farm.survey_year
     farmer = Farmer.objects.get(id=survey_farm.farmer_id)
 
     # check if user is the logged in farmer
@@ -811,13 +924,26 @@ def create_addtl_surveyfield(request, sfarmid):
     ):
         return redirect("wisc_cc_unauthorized")
 
-    new_survey_field = SurveyField.objects.create(survey_farm=survey_farm)
-    ancillary_data = AncillaryData.objects.create(survey_field=new_survey_field)
-    survey_photo = SurveyPhoto.objects.create(survey_field=new_survey_field)
+    if request.method == "POST":
+        # create surveyfield object
+        new_survey_field = SurveyField.objects.create(survey_farm=survey_farm)
+        ancillary_data = AncillaryData.objects.create(survey_field=new_survey_field)
+        survey_photo = SurveyPhoto.objects.create(survey_field=new_survey_field)
+        # after deleting redirect back to
+        # reponse table
+        return redirect(
+            reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
+        )    
 
-    return redirect(
-        reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
-    )
+    print(survey_farm.survey_year)
+    return render(
+        request,
+        "wisccc/create_addtl_surveyfield.html",
+        {
+            "sfarmid": survey_farm.id,
+            "survey_farm": survey_farm,
+            "farmer": farmer
+        })
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def delete_survey_field(request, sfieldid):
@@ -855,48 +981,40 @@ def delete_survey_field(request, sfieldid):
 
     return render(request, "wisccc/delete_survey_field.html", context)
 
+
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def update_labdata(request, id):
     """For updating labdata
     Will navigate to this page via the survey table
-    page so will use SurveyFarm id to grab ancillary data
+    page so will use SurveyFarm id to grab ancillary data.
+
+    If more than one survey_field for the farm then this will 
+    direct to a "select your field" page.
+
+    If just one, it will direct to update_labdata_fld
     """
-    context = {}
+    
     survey_farm = get_object_or_404(SurveyFarm, id=id)
-    first_and_last_name = (
-        f"{survey_farm.farmer.first_name} {survey_farm.farmer.last_name}"
-    )
+    farmer = survey_farm.farmer
+
     survey_year = f"{survey_farm.survey_year}"
 
-    survey_field = SurveyField.objects.filter(survey_farm_id=survey_farm.id).first()
-    # Get any lab data for this survey response
-    ancillary_data = AncillaryData.objects.filter(
-        survey_field_id=survey_field.id
-    ).first()
+    survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id)
 
-    form_ancillary_data = AncillaryDataForm(
-        request.POST or None, instance=ancillary_data
-    )
-    if form_ancillary_data.is_valid():
+    # If more than one, then take to "select a field" page
+    if survey_fields.count() > 1:
 
-        new_ancillary_data = form_ancillary_data.save()
-        new_ancillary_data.survey_field_id = survey_field.id
+        context = {}
+        context["survey_field_list"] = survey_fields
+        context["farmer"] = farmer
+        context["survey_year"] = survey_year
+        template = "wisccc/select_field_ancillary_data.html"
+        return render(request, template, context)
 
-        new_ancillary_data.save()
+    # If only one field then we will just show the page for that
+    # field.
+    return redirect("update_labdata_fld", survey_fields[0].id)
 
-        return redirect("response_table")
-
-    template = "wisccc/wisc_cc_ancillarydata_review.html"
-    return render(
-        request,
-        template,
-        {
-            "form": form_ancillary_data,
-            "first_and_last_name": first_and_last_name,
-            "survey_year": survey_year,
-            "farmer_id": survey_field.survey_farm.farmer.id,
-        },
-    )
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -905,10 +1023,10 @@ def update_labdata_fld(request, id):
     Will navigate to this page from new wisc survey page
     uses survey field id to grab ancillary data
     """
-    context = {}
+    
     survey_field = SurveyField.objects.get(id=id)
     first_and_last_name = f"{survey_field.survey_farm.farmer.first_name} {survey_field.survey_farm.farmer.last_name}"
-    survey_year = f"{survey_field.survey_farm.survey_year}"
+    survey_year = survey_field.survey_farm.survey_year
 
     # Get any lab data for this survey response
     ancillary_data = AncillaryData.objects.get(survey_field_id=survey_field.id)
@@ -919,6 +1037,15 @@ def update_labdata_fld(request, id):
     if form_ancillary_data.is_valid():
 
         new_ancillary_data = form_ancillary_data.save()
+        
+        if "cc_biomass" in form_ancillary_data.changed_data:
+            print("Recalculating because new fall biomass value")
+            new_ancillary_data.recalculate_fall_lbs_acre()
+        
+        if "spring_cc_biomass" in form_ancillary_data.changed_data:
+            print("Recalculating because new spring biomass value")
+            new_ancillary_data.recalculate_spring_lbs_acre()            
+
         new_ancillary_data.survey_field_id = survey_field.id
 
         new_ancillary_data.save()
@@ -937,16 +1064,38 @@ def update_labdata_fld(request, id):
             "first_and_last_name": first_and_last_name,
             "survey_year": survey_year,
             "farmer_id": survey_field.survey_farm.farmer.id,
+            "survey_field": survey_field
         },
     )
+
+@permission_required("wisccc.survery_manager", raise_exception=True)
+def recalculate_lbs_acre(request, sfieldid, season="fall"):
+    '''For running the model method to recalculate the 
+    lbs per acre when the biomass has been changed.
+    Uses survey field ID
+    '''
+
+    survey_field = SurveyField.objects.get(id=sfieldid)
+
+    ancillary_data = AncillaryData.objects.get(survey_field_id=survey_field.id)
+
+    if season == "fall":
+        ancillary_data.recalculate_fall_lbs_acre()
+        ancillary_data.save()    
+
+    if season == "spring":
+        ancillary_data.recalculate_spring_lbs_acre()
+        ancillary_data.save()            
+
+
+    return redirect("update_labdata_fld", sfieldid)
+
+
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def update_response(request, id):
     """For updating survey"""
-    # dictionary for initial data with
-    # field names as keys
-    context = {}
 
     # fetch the survey object related to passed id
     survey_farm = get_object_or_404(SurveyFarm, id=id)
@@ -1028,7 +1177,8 @@ def update_response(request, id):
         form_context["form_surveyfarm_section_3"] = form_surveyfarm_section_3
         # 2023 template
         template = "wisccc/survey_review_2023.html"
-    elif survey_farm.survey_year == 2024:
+        # until 2025 survey is different enough...
+    elif survey_farm.survey_year in [2024, 2025]:
         # Section 2 - SurveyFarm
         form_surveyfarm_section_2 = SurveyFarmFormSection2(
             request.POST or None, instance=survey_farm
@@ -1226,6 +1376,8 @@ def wisc_cc_survey_populate_fieldfarm(request, id):
 
 
 def wisc_cc_graph(request):
+
+    
     return render(request, "wisccc/wisc_cc_graph.html")
 
 
@@ -1636,13 +1788,15 @@ class ResponseTableListView(SingleTableMixin, FilterView):
     """List survey responses, with filters"""
 
     table_class = ResponseTable
-    model = SurveyFarm
+    model = SurveyField
     template_name = "wisccc/response_table.html"
 
     filterset_class = SurveyResponseFilter
-
+    # Returning just those 2023 and later in the table
+    # Also returning only 1 record per survey farm id, thus make sure only one 
+    #  row in the table per survey farm
     def get_queryset(self):
-        return super().get_queryset().filter(survey_year__gt=2022)
+        return super().get_queryset().filter(survey_farm__survey_year__gt=2022).distinct('survey_farm_id')
 
     # def get_table_kwargs(self):
     #     return {"template_name": "django_tables2/bootstrap.html"}
@@ -1675,47 +1829,56 @@ def response_table_bkup(request):
     )
 
 
-@permission_required("wisccc.survery_manager", raise_exception=True)
-def registration_table(request):
+
+class RegistrationTableListView(SingleTableMixin, FilterView):
     """List wisc registration entries"""
 
-    # all_regs = SurveyRegistration.objects.prefetch_related("farmer__user")
-    def get_table_data():
-        """For getting registration data"""
-        query = """
-            select
-                ws.id
-                , signup_timestamp
-                , wf.farm_name
-                , wf.first_name 
-                , wf.last_name 
-                , wf.address_zipcode
-                , au.email
-                , ws.belong_to_groups
-                , ws.notes
-                , howd_you_hear	
-            from wisccc_surveyregistration ws 
-            inner join wisccc_farmer wf 
-            on ws.farmer_id = wf.id
-            inner join auth_user au 
-            on wf.user_id = au.id"""
-        dat = pd.read_sql(query, connection)
-        dat = dat.to_dict("records")
+    table_class = RegistrationTable
+    model = SurveyRegistration
+    template_name = "wisccc/registration_table.html"
 
-        return dat
+    filterset_class = SurveyRegistrationFilter
 
-    data = get_table_data()
-    # total_regs = data.count()
+    # def get_queryset(self):
+    #     return super().get_queryset().filter(survey_year__gt=2022)
+    # # all_regs = SurveyRegistration.objects.prefetch_related("farmer__user")
+    # def get_table_data():
+    #     """For getting registration data"""
+    #     query = """
+    #         select
+    #             ws.id
+    #             , signup_timestamp
+    #             , wf.farm_name
+    #             , wf.first_name 
+    #             , wf.last_name 
+    #             , wf.address_zipcode
+    #             , au.email
+    #             , ws.belong_to_groups
+    #             , ws.notes
+    #             , howd_you_hear	
+    #         from wisccc_surveyregistration ws 
+    #         inner join wisccc_farmer wf 
+    #         on ws.farmer_id = wf.id
+    #         inner join auth_user au 
+    #         on wf.user_id = au.id
+    #         order by signup_timestamp desc"""
+    #     dat = pd.read_sql(query, connection)
+    #     dat = dat.to_dict("records")
 
-    # table = ResponseTable(Survey.objects.all())
-    table = RegistrationTable(data)
-    RequestConfig(request, paginate={"per_page": 15}).configure(table)
+    #     return dat
 
-    return render(
-        request,
-        "wisccc/registration_table.html",
-        {"table": table, "total_regs": 3},
-    )
+    # data = get_table_data()
+    # # total_regs = data.count()
+
+    # # table = ResponseTable(Survey.objects.all())
+    # table = RegistrationTable(data)
+    # RequestConfig(request, paginate={"per_page": 15}).configure(table)
+
+    # return render(
+    #     request,
+    #     "wisccc/registration_table.html",
+    #     {"table": table, "total_regs": 3},
+    # )
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -1890,7 +2053,7 @@ def wisc_cc_register_1(request):
 @login_required
 def wisc_cc_register_2(request):
     """For when a user already exists."""
-    survey_year = 2024
+    survey_year = 2025
     user = User.objects.get(id=request.user.id)
     # !!!!!!!!!!!!!!!!!!!!!!!!! #
     # CREATE necessary records here!
@@ -1952,7 +2115,6 @@ def wisc_cc_register_by_mgmt_exist_user_select(request):
     This is for when the user already exists in our system.
     This first page is for just selecting the user.
     """
-    survey_year = 2024
 
     select_user_form = SelectUserForm(request.POST or None)
 
@@ -1980,7 +2142,7 @@ def wisc_cc_register_by_mgmt_exist_user(request, pk):
     This is for when the user already exists in our system.
     This page is for when the user has been selected. The id here is the user id.
     """
-    survey_year = 2024
+    survey_year = 2025
 
     selected_user = get_object_or_404(User, id=pk)
 
@@ -2036,7 +2198,7 @@ def wisc_cc_register_by_mgmt(request):
     """For when a registrant is signed up by survey manager
     This is for when the user is new.
     """
-    survey_year = 2024
+    survey_year = 2025
     client_ip = request.META.get("REMOTE_ADDR")
 
     registration_form = SurveyRegistrationFullForm(request.POST or None)

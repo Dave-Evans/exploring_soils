@@ -1,0 +1,28 @@
+{% load crispy_forms_tags %}
+
+
+
+<div>
+
+    <div class="form-row">
+        <div class="form-group col-md-5 mb-0">
+            {{ form_surveyfield_section_4_part_1.cash_crop_planting_date|as_crispy_field }}
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            $("#id_cover_crop_planting_date").datepicker({
+                format: 'yyyy-mm-dd',
+            });
+        });
+
+
+        $(function () {
+            $("#id_cash_crop_planting_date").datepicker({
+                format: 'yyyy-mm-dd',
+            });
+        });
+    </script>
+
+</div>
