@@ -243,7 +243,7 @@ var soilsCircle = $.getJSON(dataurl, function (data) {
         "FarmTypeFilter": "farmtype",
         "SoilTextFilter": "soil_texture",
         "CoverCropFilter": "cc_current_type",
-        "NoOfOverwinterFilter": "richness",
+        "NoOfOverwinterFilter": "richness_category",
         "PlantingFilter": "cc_plantstrat",
         "PriorCropFilter": "pc",
     }
@@ -349,7 +349,7 @@ var filterer = function (feature) {
     filter_values['soil_texture'] = $("#SoilTextFilter").selectize()[0].selectize.getValue();
 
     filter_values['cc_current_type'] = $("#CoverCropFilter").selectize()[0].selectize.getValue();
-    filter_values['richness'] = $("#NoOfOverwinterFilter").selectize()[0].selectize.getValue().map((x) => parseInt(x));
+    filter_values['richness_category'] = $("#NoOfOverwinterFilter").selectize()[0].selectize.getValue();
     filter_values['cc_plantstrat'] = $("#PlantingFilter").selectize()[0].selectize.getValue();
     filter_values['pc'] = $("#PriorCropFilter").selectize()[0].selectize.getValue();
 
@@ -413,7 +413,7 @@ function addLayerToMap() {
             const filt_soiltext = (filter_values.soil_texture.length == 0) ? true : (filter_values.soil_texture.includes(feature.properties.soil_texture));
 
             const filt_covercrop = (filter_values.cc_current_type.length == 0) ? true : (filter_values.cc_current_type.includes(feature.properties.cc_current_type));
-            const filt_noofoverwintering = (filter_values.richness.length == 0) ? true : (filter_values.richness.includes(feature.properties.richness));
+            const filt_noofoverwintering = (filter_values.richness_category.length == 0) ? true : (filter_values.richness_category.includes(feature.properties.richness_category));
 
             const filt_cc_plantstrat = (filter_values.cc_plantstrat.length == 0) ? true : (filter_values.cc_plantstrat.includes(feature.properties.cc_plantstrat));
             const filt_priorcrop = (filter_values.pc.length == 0) ? true : (filter_values.pc.includes(feature.properties.pc));
