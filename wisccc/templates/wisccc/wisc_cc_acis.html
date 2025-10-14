@@ -30,6 +30,12 @@
                     <option value="US1MNRM0054 6">St. Paul</option>
                     <option value="14922 1">MSP</option>
                 </select>
+                <select name="freq_select" id="freqSelect">
+                    <option value="monthly">Monthly</option>
+                    <option value="daily">Daily</option>
+                    <!-- <option value="yearly">Yearly</option> -->
+
+                </select>
             </div>
         </div>
     </div>
@@ -46,7 +52,7 @@
             stroke-width: 1px;
         }
 
-        div.tooltip {
+        /* div.tooltip {
             position: absolute;
             text-align: left;
             padding: 5px;
@@ -55,7 +61,7 @@
             border: 0.5px;
             border-radius: 8px;
             pointer-events: none;
-        }
+        } */
     </style>
     <script>
 
@@ -148,7 +154,10 @@
         var width_mini = 600 - margin_mini.left - margin_mini.right,
             height_mini = 130 - margin_mini.top - margin_mini.bottom;
 
-        //create new svg container for the graph
+        var div = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+        //create new svg container for the mini graph
         var chart_mini = d3.select("div.card")
             .append("svg")
             .attr("class", "chart_mini")
@@ -216,12 +225,12 @@
                 console.log("Brushed!")
                 var begin_date = xScale_mini.invert(selection[0])
                 var end_date = xScale_mini.invert(selection[1])
-                console.log("Begin date: " + begin_date)
-                console.log("End date: " + end_date)
+                console.log("Begin date selected: " + begin_date)
+                console.log("End date selected: " + end_date)
                 var filtered_data = []
                 console.log(data[0])
                 for (d in data[0]) {
-                    if (data[0][d][0] > begin_date && data[0][d][0] < end_date) {
+                    if (data[0][d][0] >= begin_date && data[0][d][0] <= end_date) {
                         filtered_data.push(data[0][d])
                     }
                 }
@@ -275,15 +284,21 @@
         function getStnData(sid, sdate, edate) {
 
             var url_station_collect = "https://data.rcc-acis.org/StnData"
+            var monthly_level = [{ "name": "pcpn", "interval": [0, 1], "reduce": "sum" }];
             // var sdate = '2024-04-01';
             // var edate = '2025-03-01';
             // var sid = "US1MNHN0169 6";
-            var monthly_level = [{ "name": "pcpn", "interval": [0, 1], "reduce": "sum" }];
+            var frequency;
+            if ($("#freqSelect").val() == "monthly") {
+                frequency = monthly_level;
+            } else if ($("#freqSelect").val() == "daily") {
+                frequency = "pcpn"
+            }
             var params = {
                 sid: sid,
                 sdate: sdate,
                 edate: edate,
-                elems: monthly_level //"pcpn"
+                elems: frequency
             }
 
 
@@ -326,7 +341,10 @@
                 function () {
                     rslt = updateGraph(data)
                 }
-            );
+            ).catch((error) => {
+                // This code will handle the error
+                console.log(error);
+            });
         }
 
         function setContext(context_data) {
@@ -391,6 +409,13 @@
                 .call(brush)
 
         }
+        //function to highlight enumeration units and bars
+        function highlight(d) {
+            //change stroke
+            var selected = d3.selectAll("." + d[0])
+                .style("stroke", "blue")
+                .style("stroke-width", "2");
+        };
         function updateGraph(focus_data) {
             // because its in a list of promises
             console.log(focus_data)
@@ -411,8 +436,8 @@
                 return (d[1]);
             });
 
-            console.log("Min date: " + minDate)
-            console.log("Max date: " + maxDate)
+            // console.log("Min date: " + minDate)
+            // console.log("Max date: " + maxDate)
             // update X scale
             xScale.domain([minDate, maxDate])
             // Update X axis
@@ -428,7 +453,7 @@
             // Update the bars
             var rects = chart.selectAll("rect")
                 .data(precip_data);
-
+            // https://stackoverflow.com/questions/33854557/mouseover-doesnt-work-on-d3-rectangle?rq=3
             rects
                 .join("rect") //one of the great mysteries of the universe
                 .transition(1000)
@@ -451,10 +476,24 @@
                 .attr("fill", function (d) {
                     return colorScale(d[1]);
                 })
+                // .on("mouseover", function (event, d) {
+                //     console.log("Mouseover!")
+                // })
                 .style("stroke", "#000");
 
+            // .on("mouseover", function (event, d) {
+            //     console.log(d)
+            //     highlight(d)
+            //     // div.transition()
+            //     //     .duration(200)
+            //     //     .style("opacity", .9)
+            //     //     .attr("r", 5);
+            //     // div
+            //     //     .html(formatToolTip(d))
+            //     //     .style("left", (event.pageX + 22) + "px")
+            //     //     .style("top", (event.pageY - 28) + "px");
+            // });
 
-            // return precip_data
         };
         // };
         // function handleBrush(e) {
