@@ -219,6 +219,7 @@ create_ansible_vars() {
         fi
     done
     # Pull directly from current branch
+    DEBUG "branch: $branchname"
     echo "branch: $branchname" >> $ansvars
 
 }
