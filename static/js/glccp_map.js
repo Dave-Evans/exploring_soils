@@ -194,13 +194,13 @@ function onEachFeature(feature, layer) {
         "</table>"
 
     if (feature.properties.image_1_url != null) {
-        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_1_url + '" width="250" height="250">'
+        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_1_url + '" width="250">'
     }
     if (feature.properties.image_2_url != null) {
-        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_2_url + '" width="250" height="250">'
+        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_2_url + '" width="250">'
     }
     if (feature.properties.image_3_url != null) {
-        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_3_url + '" width="250" height="250">'
+        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_3_url + '" width="250">'
     }
 
 
@@ -232,7 +232,7 @@ var geojsonMarkerOptions = {
 var dataurl = '/get_glccp_data';
 var geojsonObject;
 var soilsLayer;
-
+map.spin(true);
 var soilsCircle = $.getJSON(dataurl, function (data) {
 
     soilsLayer = data;
@@ -265,15 +265,19 @@ var soilsCircle = $.getJSON(dataurl, function (data) {
             options: pop_selectize_box(soilsLayer, id_selector, target_field),
             onChange: function (value, isOnInitialize) {
                 // updateChart(false)
+
+                map.spin(true);
                 filterer()
                 //add the layer to the map again, now that we have changed the filter value. 
                 addLayerToMap();
+                map.spin(false);
             }
         })
     }
 
     filterer();
     addLayerToMap();
+    map.spin(false);
 });
 
 // for populating select boxes
@@ -390,6 +394,7 @@ var containsTargetSpeciesOr = function (filterArray, plantedArray) {
 
 
 function addLayerToMap() {
+
     //remove the layer from the map entirely
     if (map.hasLayer(geojsonObject)) {
         geojsonObject.remove();
@@ -440,9 +445,12 @@ function addLayerToMap() {
 
 
 $("#YearFilter").on("input", function () {
+
+
     filterer()
     //add the layer to the map again, now that we have changed the filter value. 
     addLayerToMap();
+
 });
 $("#FarmTypeFilter").on("input", function () {
     filterer()
