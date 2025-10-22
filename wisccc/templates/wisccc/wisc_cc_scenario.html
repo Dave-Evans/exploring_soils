@@ -290,8 +290,8 @@
                 text += "This does not consider below ground N in the cover crop. "
                 text += "The farms shown always include a legume in the cover mix."
                 text += "<br>"
-                text += "<b>NOTE:</b> we supply a $/acre of urea ammonia replaced with cover crop N, "
-                text += "this is based on a $0.52/lb of urea amonia. ";
+                text += "<b>NOTE:</b> we supply a $/acre of urea nitrogen replaced with cover crop N, "
+                text += "this is based on a $0.52/lb of urea. ";
                 text += "<em>Not all of the nitrogen in the cover crop will be available to growing plants in the following season.</em> "
                 text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
                 text += "such as increased water storage, flood mitigation, or increased organic matter. "
@@ -302,12 +302,12 @@
                 text += "";
                 break;
             case "graze_spring":
-                text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, spring sampled values are used.";
+                text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, spring sampled values are used. ";
                 text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
                 text += "such as increased water storage, flood mitigation, or increased organic matter. "
                 break;
             case "graze_fall":
-                text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, fall sampled values are used.";
+                text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, fall sampled values are used. ";
                 text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
                 text += "such as increased water storage, flood mitigation, or increased organic matter. "
                 break;
@@ -1163,7 +1163,7 @@
                     "of nitrogen at fall sampling. ";
                 text_scenario_details += "This equates to about " +
                     "<b>$" + (fieldRecord.properties.n_content * 0.52).toFixed(0) + "</b>" +
-                    " per acre of anhydrous N fertilizer. " +
+                    " per acre of urea N fertilizer. " +
                     "See full nutrient analysis by clicking 'Farm details'. " +
                     "<br>" +
                     "<br>" +
