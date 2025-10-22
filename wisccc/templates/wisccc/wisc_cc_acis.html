@@ -13,14 +13,9 @@
     <div class="col-lg-8 col-md-10 col-sm-12">
         <div class="card">
             <div class="card-body">
-                <h5>Wisconsin Climate Regions</h5>
+                <h5>ACIS Climate data</h5>
                 <div>
-                    <p> Climate regions refer to nine areas of Wisconsin delineated by the
-                        <a href="https://www.ncei.noaa.gov/access/monitoring/reference-maps/conus-climate-divisions">
-                            National Oceanic and Atmospheric Administration</a>
-                        as having similar temperature and precipitation.
-                        We use them in our graph to help group points according to similar latitudes with similar
-                        weather patterns.
+                    <p> Precip data
                     </p>
                 </div>
                 <a id="getDataButton" class="btn-sm btn-secondary">Check it.</a>
@@ -34,8 +29,11 @@
                     <option value="monthly">Monthly</option>
                     <option value="daily">Daily</option>
                     <!-- <option value="yearly">Yearly</option> -->
-
                 </select>
+                <br>
+                <div>
+                    <p id="precipDetail"></p>
+                </div>
             </div>
         </div>
     </div>
@@ -416,6 +414,17 @@
                 .style("stroke", "blue")
                 .style("stroke-width", "2");
         };
+        // Create tooltip container
+        var tooltip = chart.append("g")
+            .attr("class", "tip")
+            .style("opacity", 0);
+
+        // give the tooltip a text element, but push
+        // it to the right and down little bit
+        tooltip.append("text")
+            .attr("dx", 5)
+            .attr("dy", 15);
+
         function updateGraph(focus_data) {
             // because its in a list of promises
             console.log(focus_data)
@@ -449,37 +458,133 @@
             yScale.domain([0, maxPcpn]);
             axisY.transition().duration(1000).call(d3.axisLeft(yScale));
             // Update Y axis
-
             // Update the bars
             var rects = chart.selectAll("rect")
                 .data(precip_data);
+            var labs = chart.selectAll(".labs")
+                .data(precip_data)
+                .join(
+                    enter => enter.append("text")
+                        .text(function (d) {
+                            if (precip_data.length < 21) {
+                                return d[1]
+                            } else {
+                                return ''
+                            }
+
+                        })
+                        .attr("class", "labs")
+                        .attr("x", function (d, i) {
+                            return xScale(d[0]);
+                        }) // Position based on data index
+                        .attr("y", function (d) {
+                            return yScale(d[1]);
+                        })
+                        .attr('dy', -5), // Height based on data value
+                    update => update // For updating existing bars
+                        .text(function (d) {
+                            if (precip_data.length < 21) {
+                                return d[1]
+                            } else {
+                                return ''
+                            }
+
+                        })
+                        .attr("x", function (d, i) {
+                            return xScale(d[0]);
+                        }) // Position based on data index
+                        .attr("y", function (d) {
+                            return yScale(d[1]);
+                        }), // Height based on data value
+                    exit => exit.remove() // Remove text that no longer have data                    
+                )
             // https://stackoverflow.com/questions/33854557/mouseover-doesnt-work-on-d3-rectangle?rq=3
             rects
-                .join("rect") //one of the great mysteries of the universe
-                .transition(1000)
-                .attr("class", function (d) {
-                    return "bars d" + d[0];
-                })
-                .attr("width", width / precip_data.length)
-                .attr("x", function (d, i) {
-                    return xScale(d[0]);
-                })
-                // drawing from the top, minus the scaled value
-                //  removing the height of the X axis
-                .attr("height", function (d) {
-                    return height - yScale(d[1]);
-                })
-                //the vertical coordinate of the rectangle bottom
-                .attr("y", function (d) {
-                    return yScale(d[1]);
-                })
-                .attr("fill", function (d) {
-                    return colorScale(d[1]);
-                })
-                // .on("mouseover", function (event, d) {
-                //     console.log("Mouseover!")
-                // })
-                .style("stroke", "#000");
+                .join(
+                    enter => enter.append("rect") // Create new rectangles
+                        .attr("x", function (d, i) {
+                            return xScale(d[0]);
+                        }) // Position based on data index
+                        .attr("y", function (d) {
+                            return yScale(d[1]);
+                        }) // Height based on data value
+                        .attr("width", width / precip_data.length) // Width of each bar
+                        .attr("height", function (d) {
+                            return height - yScale(d[1]);
+                        }) // Bar height
+                        .attr("fill", function (d) {
+                            return colorScale(d[1]);
+                        }) // Initial color
+                        .style("stroke", "#000")
+                        .on("mouseover", function (event, d) { // Mouseover event
+                            // console.log("d: " + d);
+                            // console.log("d[0]: " + d[0]);
+                            // console.log("d[1]: " + d[1]);
+                            // var height_val = height - yScale(d[1]);
+                            // console.log("height: " + height_val);
+                            d3.select(this)
+                                .attr("fill", "orange")
+                                .attr("id", d[0]);
+
+                            var detail_text = d[0].toLocaleDateString()
+                            detail_text += ": "
+                            detail_text += d[1] + " in"
+                            $("#precipDetail").html(detail_text)
+                        })
+                        .on("mouseout", function (event, d) { // Mouseout event
+                            d3.select(this)
+                                .attr("fill", colorScale(d[1]));
+                        }),
+                    update => update // For updating existing bars
+                        .attr("x", function (d, i) {
+                            return xScale(d[0]);
+                        }) // Position based on data index
+                        .attr("y", function (d) {
+                            return yScale(d[1]);
+                        }) // Height based on data value
+                        .attr("width", width / precip_data.length) // Width of each bar
+                        .attr("height", function (d) {
+                            return height - yScale(d[1]);
+                        }) // Bar height
+                        .attr("fill", function (d) {
+                            return colorScale(d[1]);
+                        }) // Initial color
+                        .style("stroke", "#000"),
+                    exit => exit.remove() // Remove bars that no longer have data
+                )
+
+
+            // ------------------ Original ------------------------- //
+            // // Update the bars
+            // var rects = chart.selectAll("rect")
+            //     .data(precip_data);
+            // // https://stackoverflow.com/questions/33854557/mouseover-doesnt-work-on-d3-rectangle?rq=3
+            // rects
+            //     .join("rect") //one of the great mysteries of the universe
+            //     .transition(1000)
+            //     .attr("class", function (d) {
+            //         return "bars d" + d[0];
+            //     })
+            //     .attr("width", width / precip_data.length)
+            //     .attr("x", function (d, i) {
+            //         return xScale(d[0]);
+            //     })
+            //     // drawing from the top, minus the scaled value
+            //     //  removing the height of the X axis
+            //     .attr("height", function (d) {
+            //         return height - yScale(d[1]);
+            //     })
+            //     //the vertical coordinate of the rectangle bottom
+            //     .attr("y", function (d) {
+            //         return yScale(d[1]);
+            //     })
+            //     .attr("fill", function (d) {
+            //         return colorScale(d[1]);
+            //     })
+            //     // .on("mouseover", function (event, d) {
+            //     //     console.log("Mouseover!")
+            //     // })
+            //     .style("stroke", "#000");
 
             // .on("mouseover", function (event, d) {
             //     console.log(d)
