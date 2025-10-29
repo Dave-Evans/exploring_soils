@@ -107,10 +107,9 @@
             <div class="card-body">
 
 
-                <div class="alert alert-warning" role="alert">
-                    This tool is in development.
-                    To share feedback or ask any questions please
-                    email <a href="mailto:mingram@michaelfields.org">Mrill Ingram at
+                <div class="alert alert-primary" role="alert">
+                    This tool is brand new.
+                    Please tell us what you think by emailing <a href="mailto:mingram@michaelfields.org">Mrill Ingram at
                         mingram@michaelfields.org</a>
                 </div>
 
@@ -118,7 +117,7 @@
                     <div class="col-sm-12">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="card-title">On-farm cover crop data by farmers, for farmers</h3>
+                                <h3 class="card-title">Cover crop results: By farmers, for farmers</h3>
                                 <p class="card-text">
 
                                     Select your cover crop goal under the Scenario dropdown. Then select the county or
@@ -220,6 +219,31 @@
     </div>
 </div>
 
+
+<!-- ROI Modal -->
+<div class="modal fade" id="roiDetailModal" tabindex="-1" role="dialog" aria-labelledby="helpInformationLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">
+                    What is ROI?
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </h3>
+            </div>
+            <div class="modal-body">
+
+                <p id="roi_info" style="font-size: smaller;">ROI!</p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal -->
 <div class="modal fade" id="fieldDetail" tabindex="-1" role="dialog" aria-labelledby="helpInformationLabel"
     aria-hidden="true">
@@ -290,6 +314,8 @@
                 text += "This does not consider below ground N in the cover crop. "
                 text += "The farms shown always include a legume in the cover mix."
                 text += "<br>"
+                text += '<a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#roiDetailModal" data-scenario="N">About ROI</a>'
+                text += "<br>"
                 text += "<b>NOTE:</b> we supply a $/acre of urea nitrogen replaced with cover crop N, "
                 text += "this is based on a $0.52/lb of urea. ";
                 text += "<em>Not all of the nitrogen in the cover crop will be available to growing plants in the following season.</em> "
@@ -305,15 +331,28 @@
                 text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, spring sampled values are used. ";
                 text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
                 text += "such as increased water storage, flood mitigation, or increased organic matter. "
+                text += "<br>"
+                text += '<a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#roiDetailModal" data-scenario="grazing">About ROI</a>'
                 break;
             case "graze_fall":
                 text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, fall sampled values are used. ";
                 text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
                 text += "such as increased water storage, flood mitigation, or increased organic matter. "
+                text += "<br>"
+                text += '<a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#roiDetailModal" data-scenario="grazing">About ROI</a>'
                 break;
         }
         $("#scenario_helptip").html(text);
     }
+
+    $('#roiDetailModal').on('show.bs.modal', function (event) {
+
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var scenario = button.data('scenario') // Extract info from data-* attributes
+        $('#roi_info').html(
+            "It means return on investment. " + scenario
+        )
+    })
 
     // Populate Modal
     $('#fieldDetail').on('show.bs.modal', function (event) {
@@ -897,7 +936,7 @@
                 pretty_previous_crop = "soybeans"
                 break;
             case "vegetable crop":
-                pretty_previous_crop = "vegetable crop"
+                pretty_previous_crop = "a vegetable crop"
                 break;
             case "wheat":
                 pretty_previous_crop = "wheat"
