@@ -20,7 +20,7 @@
                 </div>
                 <a id="getDataButton" class="btn-sm btn-secondary">Check it.</a>
                 <select name="station_select" id="stnSelect">
-                    <option value="US1MNHN0169 6">Nate's</option>
+                    <option value="US1MNHN0639 6">Nate's</option>
                     <option value="US1MNHN0042 6">Eden Prairie station</option>
                     <option value="US1MNRM0054 6">St. Paul</option>
                     <option value="14922 1">MSP</option>
@@ -76,7 +76,7 @@
             // "14922 1" MSP; 1938-04-01 to 2025-03-28
             var sid = $("#stnSelect").val()
             console.log("Selected sid: " + sid)
-            if (sid == "US1MNHN0169 6") {
+            if (sid == "US1MNHN0639 6") {
                 getStnData(sid, "2024-04-28", new Date().toISOString().slice(0, 10))
             } else if (sid == "US1MNHN0042 6") {
                 getStnData(sid, "2011-04-01", "2023-10-25")
@@ -152,9 +152,7 @@
         var width_mini = 600 - margin_mini.left - margin_mini.right,
             height_mini = 130 - margin_mini.top - margin_mini.bottom;
 
-        var div = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0);
+
         //create new svg container for the mini graph
         var chart_mini = d3.select("div.card")
             .append("svg")
@@ -170,7 +168,8 @@
 
 
         var xScale_mini = d3.scaleTime()
-            .range([0, width])
+            // .range([0, width_mini])
+            .range([margin_mini.right, width_mini + margin_mini.right])
             // Replace with min and max dates
             .domain([new Date('2024/04/01'), new Date('2025/04/01')])
             .nice();
@@ -180,7 +179,8 @@
             //create axis g element and add axis
             .attr("class", "axisx_mini")
             // translate(0,0) puts this at the top
-            .attr("transform", "translate(" + margin_mini.right + "," + (height_mini) + ")")
+            .attr("transform", "translate(" + 0 + "," + (height_mini) + ")")
+            // .attr("transform", "translate(" + margin_mini.right + "," + (height_mini) + ")")
             .call(xAxis_mini);
 
         var axisXText_mini = axisX_mini.selectAll("text")
@@ -201,17 +201,16 @@
             .attr("transform", "translate(" + margin_mini.right + "," + 0 + ")")
             .call(yAxis_mini);
 
-
-
         const brush = d3.brushX()
             .extent([
+                // Shows total brush area, [bottom left coords],[top right coords]
                 [margin_mini.right, margin_mini.top],
-                [width_mini + margin_mini.right, height_mini]
+                [width_mini + margin_mini.left + margin_mini.right, height_mini]
             ])
-            .on("brush", brushed)
+            .on("start brush", brushed)
             .on("end", brushended);
 
-        const defaultSelection = [xScale_mini(d3.utcYear.offset(xScale_mini.domain()[1], -1)), xScale_mini.range()[1]];
+        // const defaultSelection = [xScale_mini(d3.utcYear.offset(xScale_mini.domain()[1], -1)), xScale_mini.range()[1]];
         // const gb = chart_mini.append("g")
         //     .call(brush)
         // .call(brush.move, defaultSelection);
@@ -221,17 +220,21 @@
         function brushed({ selection }) {
             if (selection) {
                 console.log("Brushed!")
+                console.log("Begin px selected: " + selection[0])
+                console.log("End px selected: " + selection[1])
                 var begin_date = xScale_mini.invert(selection[0])
                 var end_date = xScale_mini.invert(selection[1])
                 console.log("Begin date selected: " + begin_date)
                 console.log("End date selected: " + end_date)
                 var filtered_data = []
-                console.log(data[0])
+                // console.log(data[0])
                 for (d in data[0]) {
                     if (data[0][d][0] >= begin_date && data[0][d][0] <= end_date) {
                         filtered_data.push(data[0][d])
                     }
                 }
+                console.log("Full data length: " + data[0].length.toString())
+                console.log("Filtered data length: " + filtered_data.length.toString())
                 updateGraph([filtered_data])
 
 
@@ -246,7 +249,7 @@
         }
 
         function cleanData(raw_data) {
-            console.log("beginning cleanData...")
+            // console.log("beginning cleanData...")
 
 
             // Process our data
@@ -270,10 +273,10 @@
                 // With a "/" we get js to take local timezone into account
                 d[0] = d[0].replaceAll("-", "/")
                 d[0] = new Date(d[0])
-                console.log(i, d)
+                // console.log(i, d)
 
             }
-            console.log("End of cleanData...")
+            // console.log("End of cleanData...")
             // console.log(raw_data)
             return raw_data
         }
@@ -298,7 +301,6 @@
                 edate: edate,
                 elems: frequency
             }
-
 
             Promise.all(
                 [fetch(url_station_collect, {
@@ -349,19 +351,19 @@
             var mini_chart = d3.select("#chart_mini");
             // renaming our global data variable within the function to context data
             // And naming the precip data.
-            precip_data = context_data[0]
-            console.log("setContext begin...")
-            console.log(precip_data)
-            var minDate = d3.min(precip_data, function (d) {
+            var context_precip_data = context_data[0]
+            // console.log("setContext begin...")
+            // console.log(context_precip_data)
+            var minDate = d3.min(context_precip_data, function (d) {
                 return d[0];
             });
-            var maxDate = d3.max(precip_data, function (d) {
+            var maxDate = d3.max(context_precip_data, function (d) {
                 return d[0];
             });
-            var minPcpn = d3.min(precip_data, function (d) {
+            var minPcpn = d3.min(context_precip_data, function (d) {
                 return (d[1]);
             });
-            var maxPcpn = d3.max(precip_data, function (d) {
+            var maxPcpn = d3.max(context_precip_data, function (d) {
                 return (d[1]);
             });
             // update X scale
@@ -373,31 +375,29 @@
                 .style("text-anchor", "end");
             // update Y scale
             yScale_mini.domain([0, maxPcpn]);
-            axisY_mini.transition().duration(1000).call(d3.axisLeft(yScale_mini));
             // Update Y axis
+            axisY_mini.transition().duration(1000).call(d3.axisLeft(yScale_mini));
+
 
             // Update the bars
             var rects_mini = chart_mini.selectAll("rect")
-                .data(precip_data);
+                .data(context_precip_data);
 
             rects_mini
                 .join("rect") //one of the great mysteries of the universe
                 .transition(1000)
-                .attr("class", function (d) {
-                    return "bars d" + d[0];
-                })
-                .attr("width", width_mini / precip_data.length)
                 .attr("x", function (d, i) {
-                    return xScale_mini(d[0]) + (margin_mini.right);
-                })
-                // drawing from the top, minus the scaled value
-                //  removing the height of the X axis
-                .attr("height", function (d) {
-                    return height_mini - yScale_mini(d[1]);
+                    return xScale_mini(d[0]);
                 })
                 //the vertical coordinate of the rectangle bottom
                 .attr("y", function (d) {
                     return yScale_mini(d[1]);
+                })
+                .attr("width", (width_mini + margin_mini.right) / context_precip_data.length)
+                // drawing from the top, minus the scaled value
+                //  removing the height of the X axis
+                .attr("height", function (d) {
+                    return height_mini - yScale_mini(d[1]);
                 })
                 .attr("fill", function (d) {
                     return colorScale(d[1]);
@@ -407,46 +407,59 @@
                 .call(brush)
 
         }
-        //function to highlight enumeration units and bars
-        function highlight(d) {
-            //change stroke
-            var selected = d3.selectAll("." + d[0])
-                .style("stroke", "blue")
-                .style("stroke-width", "2");
-        };
-        // Create tooltip container
-        var tooltip = chart.append("g")
-            .attr("class", "tip")
-            .style("opacity", 0);
 
-        // give the tooltip a text element, but push
-        // it to the right and down little bit
-        tooltip.append("text")
-            .attr("dx", 5)
-            .attr("dy", 15);
+        function createDateText(record) {
+            var dt = record[0]
+
+            if ($("#freqSelect").val() == "monthly") {
+                var options = {
+                    year: "numeric",
+                    month: "long",
+                }
+            } else {
+                // Daily
+                var options = {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                }
+            }
+            var detail_text = dt.toLocaleDateString(
+                "en-US",
+                options
+            )
+            detail_text += ": "
+            detail_text += record[1] + " in"
+
+            return detail_text
+        }
+
+
 
         function updateGraph(focus_data) {
             // because its in a list of promises
-            console.log(focus_data)
-            precip_data = focus_data[0]
+            // console.log(focus_data)
+            var focus_precip_data = focus_data[0]
 
             // Get updated min and max for X and U variables
-            var minDate = d3.min(precip_data, function (d) {
+            var minDate = d3.min(focus_precip_data, function (d) {
 
                 return d[0];
             });
-            var maxDate = d3.max(precip_data, function (d) {
+            var maxDate = d3.max(focus_precip_data, function (d) {
                 return d[0];
             });
-            var minPcpn = d3.min(precip_data, function (d) {
+            var minPcpn = d3.min(focus_precip_data, function (d) {
                 return (d[1]);
             });
-            var maxPcpn = d3.max(precip_data, function (d) {
+            var maxPcpn = d3.max(focus_precip_data, function (d) {
                 return (d[1]);
             });
+            if ($("#freqSelect").val() == "monthly") {
 
-            // console.log("Min date: " + minDate)
-            // console.log("Max date: " + maxDate)
+            }
+            console.log("Focus Min date: " + minDate)
+            console.log("Focus Max date: " + maxDate)
             // update X scale
             xScale.domain([minDate, maxDate])
             // Update X axis
@@ -456,22 +469,22 @@
                 .style("text-anchor", "end");
             // update Y scale
             yScale.domain([0, maxPcpn]);
-            axisY.transition().duration(1000).call(d3.axisLeft(yScale));
             // Update Y axis
+            axisY.transition().duration(1000).call(d3.axisLeft(yScale));
+
             // Update the bars
             var rects = chart.selectAll("rect")
-                .data(precip_data);
+                .data(focus_precip_data);
             var labs = chart.selectAll(".labs")
-                .data(precip_data)
+                .data(focus_precip_data)
                 .join(
                     enter => enter.append("text")
                         .text(function (d) {
-                            if (precip_data.length < 21) {
+                            if (focus_precip_data.length < 21) {
                                 return d[1]
                             } else {
                                 return ''
                             }
-
                         })
                         .attr("class", "labs")
                         .attr("x", function (d, i) {
@@ -483,7 +496,7 @@
                         .attr('dy', -5), // Height based on data value
                     update => update // For updating existing bars
                         .text(function (d) {
-                            if (precip_data.length < 21) {
+                            if (focus_precip_data.length < 21) {
                                 return d[1]
                             } else {
                                 return ''
@@ -499,6 +512,7 @@
                     exit => exit.remove() // Remove text that no longer have data                    
                 )
             // https://stackoverflow.com/questions/33854557/mouseover-doesnt-work-on-d3-rectangle?rq=3
+            // https://stackoverflow.com/questions/18835053/d3-js-calculate-width-of-bars-in-time-scale-with-changing-range
             rects
                 .join(
                     enter => enter.append("rect") // Create new rectangles
@@ -507,14 +521,15 @@
                         }) // Position based on data index
                         .attr("y", function (d) {
                             return yScale(d[1]);
-                        }) // Height based on data value
-                        .attr("width", width / precip_data.length) // Width of each bar
+                        })
+                        .attr("width", (width_mini + margin_mini.right) / focus_precip_data.length) // Width of each bar
+                        // Bar height                        
                         .attr("height", function (d) {
                             return height - yScale(d[1]);
-                        }) // Bar height
+                        })
                         .attr("fill", function (d) {
                             return colorScale(d[1]);
-                        }) // Initial color
+                        })
                         .style("stroke", "#000")
                         .on("mouseover", function (event, d) { // Mouseover event
                             // console.log("d: " + d);
@@ -526,9 +541,7 @@
                                 .attr("fill", "orange")
                                 .attr("id", d[0]);
 
-                            var detail_text = d[0].toLocaleDateString()
-                            detail_text += ": "
-                            detail_text += d[1] + " in"
+                            var detail_text = createDateText(d)
                             $("#precipDetail").html(detail_text)
                         })
                         .on("mouseout", function (event, d) { // Mouseout event
@@ -542,7 +555,7 @@
                         .attr("y", function (d) {
                             return yScale(d[1]);
                         }) // Height based on data value
-                        .attr("width", width / precip_data.length) // Width of each bar
+                        .attr("width", (width_mini + margin_mini.right) / focus_precip_data.length) // Width of each bar
                         .attr("height", function (d) {
                             return height - yScale(d[1]);
                         }) // Bar height
@@ -553,78 +566,7 @@
                     exit => exit.remove() // Remove bars that no longer have data
                 )
 
-
-            // ------------------ Original ------------------------- //
-            // // Update the bars
-            // var rects = chart.selectAll("rect")
-            //     .data(precip_data);
-            // // https://stackoverflow.com/questions/33854557/mouseover-doesnt-work-on-d3-rectangle?rq=3
-            // rects
-            //     .join("rect") //one of the great mysteries of the universe
-            //     .transition(1000)
-            //     .attr("class", function (d) {
-            //         return "bars d" + d[0];
-            //     })
-            //     .attr("width", width / precip_data.length)
-            //     .attr("x", function (d, i) {
-            //         return xScale(d[0]);
-            //     })
-            //     // drawing from the top, minus the scaled value
-            //     //  removing the height of the X axis
-            //     .attr("height", function (d) {
-            //         return height - yScale(d[1]);
-            //     })
-            //     //the vertical coordinate of the rectangle bottom
-            //     .attr("y", function (d) {
-            //         return yScale(d[1]);
-            //     })
-            //     .attr("fill", function (d) {
-            //         return colorScale(d[1]);
-            //     })
-            //     // .on("mouseover", function (event, d) {
-            //     //     console.log("Mouseover!")
-            //     // })
-            //     .style("stroke", "#000");
-
-            // .on("mouseover", function (event, d) {
-            //     console.log(d)
-            //     highlight(d)
-            //     // div.transition()
-            //     //     .duration(200)
-            //     //     .style("opacity", .9)
-            //     //     .attr("r", 5);
-            //     // div
-            //     //     .html(formatToolTip(d))
-            //     //     .style("left", (event.pageX + 22) + "px")
-            //     //     .style("top", (event.pageY - 28) + "px");
-            // });
-
         };
-        // };
-        // function handleBrush(e) {
-        //     console.log("Boom!")
-        // }
-
-        // let brush = d3.brushX([0 + margin_mini.bottom, width])
-        //     .on('brush', handleBrush);
-        // let brushExtent;
-
-        // function handleBrush(e) {
-        //     brushExtent = e.selection;
-        //     updateFocus();
-        // }
-
-        // function isInBrushExtent(d) {
-        //     return brushExtent &&
-        //         d.x >= brushExtent[0] &&
-        //         d.x <= brushExtent[1];
-        // }
-        // function updateFocus() {
-
-        //     var rects = select("#chart")
-        //         .selectAll("rect")
-        //         .data(data);
-        // }
 
     </script>
 
