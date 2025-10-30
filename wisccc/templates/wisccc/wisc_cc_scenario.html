@@ -203,14 +203,82 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
+
                     <div class="card">
+
+
                         <div class="card-body">
+
                             <div id="fieldcard-container">
+                                <nav aria-label="Table navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item active">
+                                            <a class="page-link" id="page1ButtonTop"
+                                                onclick="updateFieldCards(page = 1)">
+                                                1
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" id="page2ButtonTop"
+                                                onclick="updateFieldCards(page = 2)">
+                                                2
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" id="page3ButtonTop"
+                                                onclick="updateFieldCards(page = 3)">
+                                                3
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" id="page4ButtonTop"
+                                                onclick="updateFieldCards(page = 4)">
+                                                4
+                                            </a>
+                                        </li>
+                                        <!-- <li class="next page-item" id="nextPageButton">
+                                            <a class="page-link">
+                                                next
+                                                <span aria-hidden="true">»</span>
+                                            </a>
+                                        </li> -->
+                                    </ul>
+                                </nav>
                                 <div id="fieldcard-container-1" class="card-deck"></div><br>
                                 <div id="fieldcard-container-2" class="card-deck"></div><br>
                                 <div id="fieldcard-container-3" class="card-deck"></div><br>
                                 <div id="fieldcard-container-4" class="card-deck"></div><br>
-                                <div id="fieldcard-container-5" class="card-deck"></div>
+                                <div id="fieldcard-container-5" class="card-deck"></div><br>
+                                <nav aria-label="Table navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item active">
+                                            <a class="page-link" id="page1Button" onclick="updateFieldCards(page = 1)">
+                                                1
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" id="page2Button" onclick="updateFieldCards(page = 2)">
+                                                2
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" id="page3Button" onclick="updateFieldCards(page = 3)">
+                                                3
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" id="page4Button" onclick="updateFieldCards(page = 4)">
+                                                4
+                                            </a>
+                                        </li>
+                                        <!-- <li class="next page-item" id="nextPageButton">
+                                            <a class="page-link">
+                                                next
+                                                <span aria-hidden="true">»</span>
+                                            </a>
+                                        </li> -->
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -350,11 +418,11 @@
         }
 
         if (fieldRecord.properties.image_1_url) {
-            console.log("Url 1: " + fieldRecord.properties.image_1_url)
+            // console.log("Url 1: " + fieldRecord.properties.image_1_url)
             $("#image_1_url").show();
             $("#image_1_url").attr("src", fieldRecord.properties.image_1_url);
         } else if (fieldRecord.properties.image_2_url) {
-            console.log("Url 2: " + fieldRecord.properties.image_2_url)
+            // console.log("Url 2: " + fieldRecord.properties.image_2_url)
             $("#image_1_url").show();
             $("#image_1_url").attr("src", fieldRecord.properties.image_2_url);
         } else {
@@ -370,7 +438,7 @@
     $.getJSON(dataurl, function (data) {
         soilsLayer = data;
 
-        console.log("ready!")
+        // console.log("ready!")
         // Populate selectize boxes
         for (k in Object.keys(boxes_select)) {
 
@@ -402,19 +470,19 @@
             })
         };
 
-        updateFieldCards();
+        updateFieldCards(1);
         updateHelpTipTextScenario();
     });
 
     var scenario_selector = document.getElementById('ScenarioSelector');
     scenario_selector.addEventListener('change', function (ev) {
         updateHelpTipTextScenario();
-        updateFieldCards();
+        updateFieldCards(page = 1);
 
     });
 
 
-    function updateFieldCards() {
+    function updateFieldCards(page = 1) {
         //Remove existing cards
         $("#fieldcard-container").find(".field").remove()
         // Filter our fields
@@ -424,10 +492,193 @@
         console.log("After scenario: " + filtered_data.length)
         filtered_data = applyFilters(filtered_data);
         console.log("after filtering: " + filtered_data.length)
+        // Update and remake paginator
+        setPaginator(filtered_data.length)
         // Make cards
-        initListOfFieldCards(filtered_data);
+        initListOfFieldCards(filtered_data, page);
+    };
+
+
+    function setPaginator(no_of_records) {
+
+        if (no_of_records <= 15) {
+            $("#page2Button").hide()
+            $("#page3Button").hide()
+            $("#page4Button").hide()
+            $("#page2ButtonTop").hide()
+            $("#page3ButtonTop").hide()
+            $("#page4ButtonTop").hide()
+            return null;
+        }
+        if (no_of_records > 45) {
+            $("#page2Button").show()
+            $("#page3Button").show()
+            $("#page4Button").show()
+            $("#page2ButtonTop").show()
+            $("#page3ButtonTop").show()
+            $("#page4ButtonTop").show()
+            return null;
+        }
+        if (no_of_records < 31) {
+            $("#page2Button").show()
+            $("#page3Button").hide()
+            $("#page4Button").hide()
+            $("#page2ButtonTop").show()
+            $("#page3ButtonTop").hide()
+            $("#page4ButtonTop").hide()
+            return null;
+        }
+        if ((no_of_records >= 31) & (no_of_records <= 45)) {
+            $("#page2Button").show()
+            $("#page3Button").show()
+            $("#page4Button").hide()
+            $("#page2ButtonTop").show()
+            $("#page3ButtonTop").show()
+            $("#page4ButtonTop").hide()
+            return null;
+        }
+    }
+    var current_page;
+    $(".page-item").click(function () {
+        // $(".page-item").removeClass('active');
+        // $(this).addClass('active');
+        current_page = $(this).text().trim();
+        updatePaginator(current_page)
+    });
+
+    function updatePaginator(new_page) {
+        $(".page-item").removeClass('active');
+        $("#page" + new_page + "ButtonTop").parent().addClass('active');
+        $("#page" + new_page + "Button").parent().addClass('active');
+    }
+    // fieldRecord is one instance of a field from our data
+    let initListOfFieldCards = (data, page) => {
+        // Page will be which page of results to display
+        updatePaginator(page)
+        var cardContainer1 = document.getElementById('fieldcard-container-1');
+        var cardContainer2 = document.getElementById('fieldcard-container-2');
+        var cardContainer3 = document.getElementById('fieldcard-container-3');
+        var cardContainer4 = document.getElementById('fieldcard-container-4');
+        var cardContainer5 = document.getElementById('fieldcard-container-5');
+
+        if (data.length == 0) {
+            createFieldCardEmptyResult(cardContainer1)
+            return null;
+        }
+
+        var tmpdata = data
+            .slice(((page * 15) - 15), page * 15);
+        if ((15 - tmpdata.length) == 1) {
+            console.log("add 1 blank Card")
+        }
+        if ((15 - tmpdata.length) == 2) {
+            console.log("add 2 blank Cards")
+        }
+        for (i in tmpdata) {
+            // console.log(i, "modulo: ", Math.floor(i / 3) + 1);
+            createFieldCard(tmpdata[i], document.getElementById('fieldcard-container-' + (Math.floor(i / 3) + 1)))
+        }
 
     };
+
+    let createFieldCard = (fieldRecord, container) => {
+
+        let card = document.createElement('div');
+        card.className = 'card field';
+        card.id = "field-" + fieldRecord.id
+
+        let cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+        let roi_span = createROISpan(fieldRecord)
+
+
+        let img = document.createElement('img');
+        if (fieldRecord.properties.image_1_url != null) {
+            img.src = fieldRecord.properties.image_1_url;
+        } else if (fieldRecord.properties.image_2_url != null) {
+            img.src = fieldRecord.properties.image_2_url;
+        }
+
+        img.className = "card-img-top";
+
+        let title = document.createElement('h5');
+        // title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
+        title.innerText = fieldRecord.properties.county_single + " County, WI"
+        title.className = 'card-title';
+
+        let text = document.createElement('p');
+        // If it was a mix we need an article: "a mix of..."
+        text.innerText = prettyTextPlantingDetails(fieldRecord);
+        text.className = 'card-text';
+
+
+        let text_addl = document.createElement('p');
+        text_addl.innerHTML = prettyTextScenarioInfo(fieldRecord);
+
+
+        let btn = document.createElement('a');
+        btn.className = "btn btn-primary"
+        btn.innerText = "Farm details"
+        // btn.href = "/wisc_cc_graph"
+        btn.setAttribute("data-toggle", "modal");
+        btn.setAttribute("data-target", "#fieldDetail");
+        btn.setAttribute("data-fieldid", fieldRecord.id);
+
+        cardBody.appendChild(title);
+        cardBody.appendChild(roi_span)
+        cardBody.appendChild(img);
+
+        cardBody.appendChild(text);
+        cardBody.appendChild(text_addl);
+        cardBody.appendChild(btn);
+
+        card.appendChild(cardBody);
+        // cardContainer.appendChild(card);
+        container.appendChild(card);
+
+    }
+
+    let createFieldCardEmptyResult = (container) => {
+
+        let card = document.createElement('div');
+        card.className = 'card field';
+        card.id = "field-" + 0
+
+        let cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+
+        // let img = document.createElement('img');
+        // if (fieldRecord.properties.image_1_url != null) {
+        //     img.src = fieldRecord.properties.image_1_url;
+        // } else if (fieldRecord.properties.image_2_url != null) {
+        //     img.src = fieldRecord.properties.image_2_url;
+        // }
+
+        // img.className = "card-img-top";
+
+        let title = document.createElement('h5');
+        // title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
+        title.innerText = "No results"
+        title.className = 'card-title';
+
+        let text = document.createElement('p');
+        // If it was a mix we need an article: "a mix of..."
+        text.innerText = "There are no farms with in this scenario with the filters you have select. "
+        text.innerText += "Please try reducing the number of filters or trying a different combination of them. "
+        text.className = 'card-text';
+
+        cardBody.appendChild(title);
+
+        cardBody.appendChild(text);
+
+        card.appendChild(cardBody);
+
+        container.appendChild(card);
+
+    }
+
+
+
 
     function applyFilters(filtered_data) {
         // Applies county and soil type filters
@@ -1504,174 +1755,7 @@
         return roi_span;
 
     }
-    let cardContainer;
-    // fieldRecord is one instance of a field from our data
 
-    let createFieldCard = (fieldRecord, container) => {
-
-        let card = document.createElement('div');
-        card.className = 'card field';
-        card.id = "field-" + fieldRecord.id
-
-        let cardBody = document.createElement('div');
-        cardBody.className = 'card-body';
-        let roi_span = createROISpan(fieldRecord)
-
-
-        let img = document.createElement('img');
-        if (fieldRecord.properties.image_1_url != null) {
-            img.src = fieldRecord.properties.image_1_url;
-        } else if (fieldRecord.properties.image_2_url != null) {
-            img.src = fieldRecord.properties.image_2_url;
-        }
-
-        img.className = "card-img-top";
-
-        let title = document.createElement('h5');
-        // title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
-        title.innerText = fieldRecord.properties.county_single + " County, WI"
-        title.className = 'card-title';
-
-        let text = document.createElement('p');
-        // If it was a mix we need an article: "a mix of..."
-        text.innerText = prettyTextPlantingDetails(fieldRecord);
-        text.className = 'card-text';
-
-
-        let text_addl = document.createElement('p');
-        text_addl.innerHTML = prettyTextScenarioInfo(fieldRecord);
-
-
-        let btn = document.createElement('a');
-        btn.className = "btn btn-primary"
-        btn.innerText = "Farm details"
-        // btn.href = "/wisc_cc_graph"
-        btn.setAttribute("data-toggle", "modal");
-        btn.setAttribute("data-target", "#fieldDetail");
-        btn.setAttribute("data-fieldid", fieldRecord.id);
-
-        cardBody.appendChild(title);
-        cardBody.appendChild(roi_span)
-        cardBody.appendChild(img);
-
-        cardBody.appendChild(text);
-        cardBody.appendChild(text_addl);
-        cardBody.appendChild(btn);
-
-        card.appendChild(cardBody);
-        // cardContainer.appendChild(card);
-        container.appendChild(card);
-
-    }
-
-    let createFieldCardEmptyResult = (container) => {
-
-        let card = document.createElement('div');
-        card.className = 'card field';
-        card.id = "field-" + 0
-
-        let cardBody = document.createElement('div');
-        cardBody.className = 'card-body';
-
-        // let img = document.createElement('img');
-        // if (fieldRecord.properties.image_1_url != null) {
-        //     img.src = fieldRecord.properties.image_1_url;
-        // } else if (fieldRecord.properties.image_2_url != null) {
-        //     img.src = fieldRecord.properties.image_2_url;
-        // }
-
-        // img.className = "card-img-top";
-
-        let title = document.createElement('h5');
-        // title.innerText = fieldRecord.properties.county_single + " County, WI; Farm: " + fieldRecord.properties.farm_id + "; Field: " + fieldRecord.id;
-        title.innerText = "No results"
-        title.className = 'card-title';
-
-        let text = document.createElement('p');
-        // If it was a mix we need an article: "a mix of..."
-        text.innerText = "There are no farms with in this scenario with the filters you have select. "
-        text.innerText += "Please try reducing the number of filters or trying a different combination of them. "
-        text.className = 'card-text';
-
-        cardBody.appendChild(title);
-
-        cardBody.appendChild(text);
-
-        card.appendChild(cardBody);
-
-        container.appendChild(card);
-
-    }
-
-
-    let initListOfFieldCards = (data) => {
-        // Returning only top 15 here
-        //  later if we want to show different "pages" of results
-        //  this can be use to slice the filtered data at different points.
-        cardContainer = document.getElementById('fieldcard-container');
-        var cardContainer1 = document.getElementById('fieldcard-container-1');
-        var cardContainer2 = document.getElementById('fieldcard-container-2');
-        var cardContainer3 = document.getElementById('fieldcard-container-3');
-        var cardContainer4 = document.getElementById('fieldcard-container-4');
-        var cardContainer5 = document.getElementById('fieldcard-container-5');
-
-        if (data.length == 0) {
-            createFieldCardEmptyResult(cardContainer1)
-            return null;
-
-        }
-
-        // Taking just first fifteen
-        var tmpdata = data
-            .slice(0, 15);
-        for (i in tmpdata) {
-            console.log(i, "modulo: ", Math.floor(i / 3) + 1);
-            createFieldCard(tmpdata[i], document.getElementById('fieldcard-container-' + (Math.floor(i / 3) + 1)))
-        }
-
-        // createFieldCard(tmpdata[0], cardContainer1);
-        // createFieldCard(tmpdata[1], cardContainer1);
-        // createFieldCard(tmpdata[2], cardContainer1);
-
-        // createFieldCard(tmpdata[3], cardContainer2);
-        // createFieldCard(tmpdata[4], cardContainer2);
-        // createFieldCard(tmpdata[5], cardContainer2);
-
-        // createFieldCard(tmpdata[6], cardContainer3);
-        // createFieldCard(tmpdata[7], cardContainer3);
-        // createFieldCard(tmpdata[8], cardContainer3);
-
-        // createFieldCard(tmpdata[9], cardContainer4);
-        // createFieldCard(tmpdata[10], cardContainer4);
-        // createFieldCard(tmpdata[11], cardContainer4);
-
-        // createFieldCard(tmpdata[12], cardContainer5);
-        // createFieldCard(tmpdata[13], cardContainer5);
-        // createFieldCard(tmpdata[14], cardContainer5);
-        // Reordering because the bootstrap .card-columns fills from top to bottom then left to right.
-        // tmpdata = [
-        //     tmpdata[0],
-        //     tmpdata[3],
-        //     tmpdata[6],
-        //     tmpdata[9],
-        //     tmpdata[12],
-
-        //     tmpdata[1],
-        //     tmpdata[4],
-        //     tmpdata[7],
-        //     tmpdata[10],
-        //     tmpdata[13],
-
-        //     tmpdata[2],
-        //     tmpdata[5],
-        //     tmpdata[8],
-        //     tmpdata[11],
-        //     tmpdata[14],
-        // ]
-        // tmpdata.forEach((fieldRecord) => {
-        //     createFieldCard(fieldRecord);
-        // });
-    };
 
     var boxes_select = {
 
