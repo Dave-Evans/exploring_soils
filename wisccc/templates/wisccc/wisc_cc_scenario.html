@@ -117,15 +117,19 @@
                     <div class="col-sm-12">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="card-title">Cover crop results: By farmers, for farmers</h3>
+                                <h3 class="card-title">Cover crop results. By farmers, for farmers.</h3>
                                 <p class="card-text">
 
-                                    Select your cover crop goal under the Scenario dropdown. Then select the county or
-                                    counties and soil texture(s) that represent the conditions you are most interested
-                                    in. View participating farms with operations which meet the goals and conditions
-                                    you have selected. Click on the farm card to see additional data about that
-                                    operation, including agronomic information as well as biomass, forage, and
-                                    nutrient analysis of the cover crop.
+                                    These cover crop scenarios have been created from results produced on working farms
+                                    around the state.
+                                    To learn what other farmers have achieved with cover crops, select
+                                    a cover crop goal under the Scenario dropdown.
+                                    Then select the county or counties,
+                                    and soil texture(s) that represent conditions you are interested in.
+                                    The list of
+                                    “farm card” results will be sorted by results most likely to achieve the selected
+                                    goal.
+                                    (Note that the farmer may have planted that cover with a different goal in mind.)
                                 </p>
                             </div>
                         </div>
@@ -138,7 +142,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Scenarios
-                                    <label style="font-size: small;">
+                                    <!-- <label style="font-size: small;">
 
                                         Select a scenario from the dropdown to show a list of participating
                                         farmers who have operations with results
@@ -146,7 +150,7 @@
                                         Note the farmers may not be planting covers for the selected scenario,
                                         but their results would meet the goals of the scenario.
 
-                                    </label>
+                                    </label> -->
                                 </h5>
                                 <p class="card-text">
 
@@ -226,12 +230,13 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+
                 <h3 class="modal-title" id="exampleModalLabel">
                     What is ROI?
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
 
@@ -251,10 +256,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="exampleModalLabel">Details
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div>
@@ -297,8 +302,8 @@
         switch (scenario) {
             case "erosion_control":
                 text = "The erosion control scenario assumes the goal of planting cover crops is to reduce erosion. ";
-                text += "Farms shown in the list below are farms which have the highest biomass from the fall sampling. ";
-                text += "The high biomass will slow water flow over a field and increase its infiltration into the soil."
+                text += "The farms shown in the list grew cover crops with higher biomass at fall sampling. ";
+                text += "Higher levels of biomass help slow water flow over a field and increase its infiltration."
                 break;
             case "nutrient_scavenger":
                 text = "Nutrient scavenging refers to planting cover crops to take up excess nutrients, especially nitrogen. ";
@@ -308,19 +313,18 @@
                 break;
             case "n_credits":
                 text = "This scenario is for farmers who are interested in planting a cover crop to add more nitrogen to their system ";
-                text += "and perhaps reduce the amount of synthetic nitrogen required for their cash crop. "
-                text += "The scenario returns farms with the highest total nitrogen from plant tissue analysis "
-                text += "and extrapolated to the highest estimated amount of N lbs/acre at the fall sampling. "
+                text += "and perhaps reduce the amount of synthetic nitrogen inputs for their cash crop. "
+                text += "The farm cards are sorted according to those with the highest total nitrogen at fall sampling. "
                 text += "This does not consider below ground N in the cover crop. "
                 text += "The farms shown always include a legume in the cover mix."
                 text += "<br>"
                 text += '<a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#roiDetailModal" data-scenario="N">About ROI</a>'
-                text += "<br>"
-                text += "<b>NOTE:</b> we supply a $/acre of urea nitrogen replaced with cover crop N, "
-                text += "this is based on a $0.52/lb of urea. ";
-                text += "<em>Not all of the nitrogen in the cover crop will be available to growing plants in the following season.</em> "
-                text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
-                text += "such as increased water storage, flood mitigation, or increased organic matter. "
+                // text += "<br>"
+                // text += "<b>NOTE:</b> we supply a $/acre of urea nitrogen replaced with cover crop N, "
+                // text += "this is based on a $0.52/lb of urea. ";
+                // text += "<em>Not all of the nitrogen in the cover crop will be available to growing plants in the following season.</em> "
+                // text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
+                // text += "such as increased water storage, flood mitigation, or increased organic matter. "
                 break;
             case "weed_suppression":
                 text = "Planting cover crops can improve a cash crop by out-competing weeds. ";
@@ -328,16 +332,12 @@
                 text += "";
                 break;
             case "graze_spring":
-                text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, spring sampled values are used. ";
-                text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
-                text += "such as increased water storage, flood mitigation, or increased organic matter. "
+                text = "Farms shown in this scenario are ranked first by relative forage quality (RFQ), then on biomass levels at spring sampling.  "
                 text += "<br>"
                 text += '<a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#roiDetailModal" data-scenario="grazing">About ROI</a>'
                 break;
             case "graze_fall":
-                text = "Farms shown in this scenario are based first on a ranking of relative forage quality (RFQ), then on biomass, in order to understand how much forage was produced. For this scenario, fall sampled values are used. ";
-                text += "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
-                text += "such as increased water storage, flood mitigation, or increased organic matter. "
+                text = "Farms shown in this scenario are ranked first by relative forage quality (RFQ), then on biomass levels at fall sampling.  "
                 text += "<br>"
                 text += '<a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#roiDetailModal" data-scenario="grazing">About ROI</a>'
                 break;
@@ -349,8 +349,37 @@
 
         var button = $(event.relatedTarget) // Button that triggered the modal
         var scenario = button.data('scenario') // Extract info from data-* attributes
+        var scenario_text;
+        if (scenario == "N") {
+            scenario_text = "We estimated Returns on Investment (ROI) for above-ground nitrogen based "
+            scenario_text += "on lab analyses of the plant tissue of the cover crop along with biomass quantity produced. "
+            scenario_text += "Cover crop samples were gathered by farmers from a 2x2 foot square and "
+            scenario_text += "taken before a hard frost in the fall or before planting a cash crop in the spring. "
+            scenario_text += "We figured a cost per acre for nitrogen based on an estimate of $0.52/lb for urea. "
+            scenario_text += "Caveats: Of course not all of the above ground nitrogen in the cover crop will "
+            scenario_text += "be available to growing plants in the following season depending on decomposition "
+            scenario_text += "rates and other factors. "
+            scenario_text += "Also, this ROI is estimated only for the planting season following the cover crop, "
+            scenario_text += "and does not include additional soil health benefits, such as increased water storage, "
+            scenario_text += "flood mitigation, or increased organic matter. "
+            scenario_text += "We also do not take into account below ground nitrogen produced by the cover crop."
+
+
+        } else if (scenario == "grazing") {
+            scenario_text = "We estimated Returns on Investment (ROI) for fall and spring grazing "
+            scenario_text += "based on lab analyses of a cover crop sample from a 2x2 foot square "
+            scenario_text += "taken before a hard frost in the fall or before planting a cash crop in the spring. "
+            scenario_text += "We took relative forage quality (RFQ) and tons of biomass produced and referred to the "
+            scenario_text += '<a href="https://cropsandsoils.extension.wisc.edu/hay-market-report/" target="_blank" rel = "noopener noreferrer"> Hay Market Report</a> to estimate a value for that grade of cover crop as potential forage. '
+            scenario_text += "We used the more conservative estimates for a large round bale of hay. "
+            scenario_text += "We then divided that value by the costs reported by the farmer for cover crop seed and planting. "
+            scenario_text += "This ROI does not include costs for mechanical harvest (mowing, raking, baling, etc.). "
+            scenario_text += "Those additional costs can be estimated using the "
+            scenario_text += '<a href="https://farms.extension.wisc.edu/articles/custom-rates-for-2024-wisconsin-farm-operations/#forage" target="_blank" rel = "noopener noreferrer"> the Wisconsin Custom Rate Guide</a>. '
+
+        }
         $('#roi_info').html(
-            "It means return on investment. " + scenario
+            scenario_text
         )
     })
 
@@ -962,7 +991,7 @@
         let previous_crop = prettifyPreviousCrop(fieldRecord.properties.previous_crop)
         let textDetails;
         if (fieldRecord.properties.cc_species_raw) {
-            textDetails = "This farm planted "
+            textDetails = "A cover crop of "
             if (fieldRecord.properties.cc_species_raw.includes("mix")) {
                 textDetails += " a "
             }
@@ -973,14 +1002,14 @@
         }
 
 
-
-        textDetails += "The cover crop was " +
-            cc_seeding_method + " on " +
-            str_planting_date + ". ";
-        let pretty_soil_conditions = prettifyInitialSoilConditions(fieldRecord.properties.soil_conditions);
-        if (pretty_soil_conditions != null) {
-            textDetails += "The soil " + pretty_soil_conditions + " at planting."
-        }
+        // Dropping seeding method, planting date, soil conditions on 2025/11/2
+        // textDetails += "The cover crop was " +
+        //     cc_seeding_method + " on " +
+        //     str_planting_date + ". ";
+        // let pretty_soil_conditions = prettifyInitialSoilConditions(fieldRecord.properties.soil_conditions);
+        // if (pretty_soil_conditions != null) {
+        //     textDetails += "The soil " + pretty_soil_conditions + " at planting."
+        // }
 
 
         return textDetails;
@@ -1207,12 +1236,13 @@
                     "<br>" +
                     "<br>" +
 
-                    "The ROI for above ground N for this cover crop was " +
+                    "We estimate an ROI for above ground N of " +
                     "<b>" + ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
-                        fieldRecord.properties.cover_crop_planting_cost)).toFixed(1) + "</b>" +
-                    ", based on lbs/acre of N in the cover crop divided by seed and planting costs. " +
-                    "<br>" +
-                    "<em><b>Note</b> that not all of the nitrogen in the cover crop will be available to growing plants in the following season.<em>";
+                        fieldRecord.properties.cover_crop_planting_cost)).toFixed(1) + " dollars/acre from this cover crop. " +
+                    "</b>" +
+                    "The estimate is based on lab analysis of lbs/acre of N " +
+                    "divided by the reported seed and planting costs. " +
+                    "Not all of the nitrogen in the cover crop will be available to growing plants in the following season.";
                 break;
             case "weed_suppression":
                 text_scenario_details = "There was an estimated " +
@@ -1497,18 +1527,23 @@
         var helptiptext = ''
         helptiptext = "ROI is only considering this season of the cover crop, and does not include additional benefits, ";
         helptiptext += "such as increased water storage, flood mitigation, or increased organic matter."
+        var roi_inner_text = '';
         if (selected_scenario == "n_credits") {
 
             roi_val = ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
                 fieldRecord.properties.cover_crop_planting_cost));
 
+            roi_inner_text += "Positive ROI for Above Ground N";
+
         } else if (selected_scenario == "graze_fall") {
 
             roi_val = calcGrazingROI(fieldRecord, season = 'fall');
+            roi_inner_text += "Positive ROI for Grazing";
 
         } else if (selected_scenario == "graze_spring") {
 
             roi_val = calcGrazingROI(fieldRecord, season = 'spring');
+            roi_inner_text += "Positive ROI for Grazing";
         }
 
         if (roi_val <= 1) {
@@ -1519,12 +1554,14 @@
         // roi_span.style.display = "inline-block"
         // roi_span.style.padding = "0.5em"
         let roi_text = document.createElement('p')
-        roi_text.innerText = "Positive ROI"
+        roi_text.innerText = roi_inner_text;
         roi_text.style.paddingLeft = '10px'
         roi_text.style.paddingRight = '10px'
         roi_text.style.backgroundColor = '#308348'
         roi_text.style.borderRadius = "10px 100px / 120px"
+        roi_text.style.marginBottom = "1px"
         roi_text.style.color = "white"
+
         // let roi_icon = document.createElement('i')
         // roi_icon.className = 'fa fa-solid fa-thumbs-up'
         // roi_icon.style.color = '#308348'
@@ -1555,6 +1592,16 @@
         let cardBody = document.createElement('div');
         cardBody.className = 'card-body';
         let roi_span = createROISpan(fieldRecord)
+        let roi_click_details = document.createElement('a')
+        if (roi_span.textContent != "") {
+
+            roi_click_details.innerText = "Click for details"
+            roi_click_details.setAttribute("data-toggle", "modal");
+            roi_click_details.setAttribute("data-target", "#roiDetailModal");
+            roi_click_details.setAttribute("data-scenario", "N");
+            roi_click_details.style.color = "red"
+            roi_click_details.style.fontSize = "small"
+        }
 
 
         let img = document.createElement('img');
@@ -1581,16 +1628,19 @@
         text_addl.innerHTML = prettyTextScenarioInfo(fieldRecord);
 
 
+
         let btn = document.createElement('a');
         btn.className = "btn btn-primary"
         btn.innerText = "Farm details"
-        // btn.href = "/wisc_cc_graph"
+
         btn.setAttribute("data-toggle", "modal");
         btn.setAttribute("data-target", "#fieldDetail");
         btn.setAttribute("data-fieldid", fieldRecord.id);
 
         cardBody.appendChild(title);
-        cardBody.appendChild(roi_span)
+        cardBody.appendChild(roi_span);
+        cardBody.appendChild(roi_click_details)
+
         cardBody.appendChild(img);
 
         cardBody.appendChild(text);
