@@ -998,16 +998,18 @@
                 textDetails += " a "
             }
             textDetails += fieldRecord.properties.cc_species_raw +
-                " following " + previous_crop + ". ";
+                " following " + previous_crop + " ";
+            textDetails += "was " +
+                cc_seeding_method + " on " +
+                str_planting_date + " ";
+
         } else {
-            textDetails = "The farms planted a cover crop mix following " + previous_crop + ". ";
+            textDetails = "A cover crop mix following " + previous_crop + " ";
         }
 
 
-        // Dropping seeding method, planting date, soil conditions on 2025/11/2
-        // textDetails += "The cover crop was " +
-        //     cc_seeding_method + " on " +
-        //     str_planting_date + ". ";
+
+
         // let pretty_soil_conditions = prettifyInitialSoilConditions(fieldRecord.properties.soil_conditions);
         // if (pretty_soil_conditions != null) {
         //     textDetails += "The soil " + pretty_soil_conditions + " at planting."
@@ -1226,6 +1228,7 @@
                     "See full nutrient analysis by clicking 'Farm details'. ";
                 break;
             case "n_credits":
+                var n_roi = calcAGNROI(fieldRecord);
                 // https://www.dtnpf.com/agriculture/web/ag/crops/article/2025/06/18/retail-fertilizers-see-slight-price
                 text_scenario_details = "There was an estimated " +
                     "<b>" + fieldRecord.properties.n_content.toFixed(1) + "</b>" +
@@ -1236,15 +1239,17 @@
                     " per acre of urea N fertilizer. " +
                     "See full nutrient analysis by clicking 'Farm details'. " +
                     "<br>" +
-                    "<br>" +
+                    "<br>";
+                if (n_roi !== null) {
+                    text_scenario_details += "We estimate an ROI for above ground N of " +
+                        "<b>" + n_roi + " dollars/acre from this cover crop. " +
+                        "</b>" +
+                        "The estimate is based on lab analysis of lbs/acre of N " +
+                        "divided by the reported seed and planting costs. ";
+                }
 
-                    "We estimate an ROI for above ground N of " +
-                    "<b>" + ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
-                        fieldRecord.properties.cover_crop_planting_cost)).toFixed(1) + " dollars/acre from this cover crop. " +
-                    "</b>" +
-                    "The estimate is based on lab analysis of lbs/acre of N " +
-                    "divided by the reported seed and planting costs. " +
-                    "Not all of the nitrogen in the cover crop will be available to growing plants in the following season.";
+
+                text_scenario_details += "Not all of the nitrogen in the cover crop will be available to growing plants in the following season.";
                 break;
             case "weed_suppression":
                 text_scenario_details = "There was an estimated " +
@@ -1335,6 +1340,29 @@
 
 
         return text_scenario_details;
+    }
+    function calcAGNROI(fieldRecord) {
+        // helper for calcing Above ground N, n_credits ROI
+
+
+        var dollar_price_for_urea_per_pounds = 0.52;
+        // lbs/acre
+        var n_content = fieldRecord.properties.n_content;
+
+        // $/acre
+        var cover_crop_seed_cost = fieldRecord.properties.cover_crop_seed_cost;
+        var cover_crop_planting_cost = fieldRecord.properties.cover_crop_planting_cost;
+
+        var roi = (
+            (n_content * dollar_price_for_urea_per_pounds) / (
+                cover_crop_seed_cost + cover_crop_planting_cost
+            ));
+        if (roi == Infinity) {
+            return null
+        } else {
+            return roi.toFixed(1);
+        }
+
     }
 
     function calcPricePerTon(rfq, year, season) {
@@ -1532,8 +1560,9 @@
         var roi_inner_text = '';
         if (selected_scenario == "n_credits") {
 
-            roi_val = ((fieldRecord.properties.n_content * 0.52) / (fieldRecord.properties.cover_crop_seed_cost +
-                fieldRecord.properties.cover_crop_planting_cost));
+            roi_val = calcAGNROI(fieldRecord)
+            // If planting or seed costs are null then we get infinity, so just making null here
+            if (roi_val == null) { return roi_span; }
 
             roi_inner_text += "Positive ROI for Above Ground N";
 
