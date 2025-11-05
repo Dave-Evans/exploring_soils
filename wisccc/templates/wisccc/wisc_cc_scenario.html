@@ -660,6 +660,21 @@
         let cardBody = document.createElement('div');
         cardBody.className = 'card-body';
         let roi_span = createROISpan(fieldRecord)
+        let roi_click_details = document.createElement('a')
+        if (roi_span.textContent != "") {
+            var scenario = $('#ScenarioSelector').val();
+            roi_click_details.innerText = "Click for details"
+            roi_click_details.setAttribute("data-toggle", "modal");
+            roi_click_details.setAttribute("data-target", "#roiDetailModal");
+            if (scenario == "n_credits") {
+                roi_click_details.setAttribute("data-scenario", "N");
+            } else {
+                roi_click_details.setAttribute("data-scenario", "grazing");
+            }
+
+            roi_click_details.style.color = "red"
+            roi_click_details.style.fontSize = "small"
+        }
 
 
         let img = document.createElement('img');
@@ -686,16 +701,19 @@
         text_addl.innerHTML = prettyTextScenarioInfo(fieldRecord);
 
 
+
         let btn = document.createElement('a');
         btn.className = "btn btn-primary"
         btn.innerText = "Farm details"
-        // btn.href = "/wisc_cc_graph"
+
         btn.setAttribute("data-toggle", "modal");
         btn.setAttribute("data-target", "#fieldDetail");
         btn.setAttribute("data-fieldid", fieldRecord.id);
 
         cardBody.appendChild(title);
-        cardBody.appendChild(roi_span)
+        cardBody.appendChild(roi_span);
+        cardBody.appendChild(roi_click_details)
+
         cardBody.appendChild(img);
 
         cardBody.appendChild(text);
