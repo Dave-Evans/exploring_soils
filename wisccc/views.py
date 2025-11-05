@@ -1793,7 +1793,7 @@ class ResponseTableListView(SingleTableMixin, FilterView):
     # Also returning only 1 record per survey farm id, thus make sure only one 
     #  row in the table per survey farm
     def get_queryset(self):
-        return super().get_queryset().filter(survey_farm__survey_year__gt=2022).distinct('survey_farm_id')
+        return super().get_queryset().filter(survey_farm__survey_year__gt=2022)#.distinct('survey_farm_id')
 
     # def get_table_kwargs(self):
     #     return {"template_name": "django_tables2/bootstrap.html"}
