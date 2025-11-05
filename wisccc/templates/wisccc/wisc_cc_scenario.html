@@ -434,6 +434,8 @@
             scenario_text += "flood mitigation, or increased organic matter. "
             scenario_text += "We also do not take into account below ground nitrogen produced by the cover crop."
 
+            $('.modal-title').text("Aboveground N Return on Investment");
+
 
         } else if (scenario == "grazing") {
             scenario_text = "We estimated Returns on Investment (ROI) for fall and spring grazing "
@@ -446,7 +448,7 @@
             scenario_text += "This ROI does not include costs for mechanical harvest (mowing, raking, baling, etc.). "
             scenario_text += "Those additional costs can be estimated using the "
             scenario_text += '<a href="https://farms.extension.wisc.edu/articles/custom-rates-for-2024-wisconsin-farm-operations/#forage" target="_blank" rel = "noopener noreferrer"> the Wisconsin Custom Rate Guide</a>. '
-
+            $('.modal-title').text("Grazing Return on Investment");
         }
         $('#roi_info').html(
             scenario_text

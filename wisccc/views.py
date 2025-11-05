@@ -1792,6 +1792,7 @@ class ResponseTableListView(SingleTableMixin, FilterView):
     # Returning just those 2023 and later in the table
     # Also returning only 1 record per survey farm id, thus make sure only one 
     #  row in the table per survey farm
+    # Scratch above! Return duplicates because other wise we can't search for field ID
     def get_queryset(self):
         from django.db.models import Window, F
         from django.db.models.functions import RowNumber 
@@ -1799,13 +1800,13 @@ class ResponseTableListView(SingleTableMixin, FilterView):
             "partition_by": [F("survey_farm_id")],
         }
         result_set = super().get_queryset().filter(survey_farm__survey_year__gt=2022)
-        result_set = result_set.annotate(
-            field_cnt=Window(
-                expression=RowNumber(),
-                **window,
-            )
-        )
-        result_set = result_set.filter(field_cnt = 1)
+        # result_set = result_set.annotate(
+        #     field_cnt=Window(
+        #         expression=RowNumber(),
+        #         **window,
+        #     )
+        # )
+        # result_set = result_set.filter(field_cnt = 1)
 
         return result_set
 
