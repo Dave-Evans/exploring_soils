@@ -1743,6 +1743,22 @@ class SurveyPhotoForm(forms.ModelForm):
         initial="",
     )
 
+    spring_image_1 = forms.FileField(label="Spring Photo 1", required=False)
+    spring_caption_photo_1 = forms.CharField(
+        label="Add a caption to be displayed with Spring photo 1.",
+        required=False,
+        max_length=50,
+        initial="",
+    )
+    spring_image_2 = forms.FileField(label="Spring Photo 2", required=False)
+    spring_caption_photo_2 = forms.CharField(
+        label="Add a caption to be displayed with Spring photo 2.",
+        required=False,
+        max_length=50,
+        initial="",
+    )
+
+
     notes = forms.CharField(
         label="Add any notes about these photos, notes will not be displayed.",
         widget=forms.TextInput(
@@ -1756,7 +1772,8 @@ class SurveyPhotoForm(forms.ModelForm):
 
     class Meta:
         model = SurveyPhoto
-        fields = ["image_1", "caption_photo_1", "image_2", "caption_photo_2", "notes"]
+        fields = ["image_1", "caption_photo_1", "image_2", "caption_photo_2",
+                  "spring_image_1", "spring_caption_photo_1", "spring_image_2", "spring_caption_photo_2", "notes"]
 
 
 class CustomUserCreationForm(UserCreationForm):

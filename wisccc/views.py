@@ -2295,6 +2295,11 @@ def upload_photo(request, id):
             new_survey_photo.image_1 = request.FILES["image_1"]
         if "image_2" in request.FILES.keys():
             new_survey_photo.image_2 = request.FILES["image_2"]
+            
+        if "spring_image_1" in request.FILES.keys():
+            new_survey_photo.spring_image_1 = request.FILES["spring_image_1"]
+        if "spring_image_2" in request.FILES.keys():
+            new_survey_photo.spring_image_2 = request.FILES["spring_image_2"]          
 
         new_survey_photo.save()
 
@@ -2338,6 +2343,11 @@ def upload_photo_fld(request, id):
             new_survey_photo.image_1 = request.FILES["image_1"]
         if "image_2" in request.FILES.keys():
             new_survey_photo.image_2 = request.FILES["image_2"]
+
+        if "spring_image_1" in request.FILES.keys():
+            new_survey_photo.spring_image_1 = request.FILES["spring_image_1"]
+        if "spring_image_2" in request.FILES.keys():
+            new_survey_photo.spring_image_2 = request.FILES["spring_image_2"]            
 
         new_survey_photo.save()
         return redirect(
