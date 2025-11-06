@@ -1,0 +1,124 @@
+<div class="container">
+
+    {% if record.survey_farm.survey_year == 2023 %}
+
+    {% if record.survey_farm.farmer.last_name != "" or record.survey_farm.farmer.last_name is not None %}
+    <!-- wisc-cc-survey/2025/?farmer_id=106 -->
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-success text-white">1</a>
+    {% else %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-warning text-white">1</a>
+    {% endif %}
+
+    {% if record.survey_farm.percent_of_farm_cc is not None %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-success text-white">2</a>
+    {% else %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-warning text-white">2</a>
+    {% endif %}
+
+    {% if record.crop_rotation_2023_cash_crop_species is not None %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-success text-white">3</a>
+    {% else %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-warning text-white">3</a>
+    {% endif %}
+
+    {% if record.cash_crop_planting_date is not None %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-success text-white">4</a>
+    {% else %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-warning text-white">4</a>
+    {% endif %}
+
+    {% if record.manure_post is not None %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-success text-white">5</a>
+    {% else %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-warning text-white">5</a>
+    {% endif %}
+
+    {% if record.cover_crop_seeding_method is not None %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-success text-white">6</a>
+    {% else %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-warning text-white">6</a>
+    {% endif %}
+
+    {% if record.survey_farm.interesting_tales is not None %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-success text-white">7</a>
+    {% else %}
+    <a href="{% url 'update_response' record.survey_farm.id %}" class="bg-warning text-white">7</a>
+    {% endif %}
+
+
+
+
+    {% else %}
+
+
+    {% if record.survey_farm.farmer.last_name != "" or record.survey_farm.farmer.last_name is not None %}
+    <!-- wisc-cc-survey/2025/?farmer_id=106 -->
+    <a href="{% url 'wisc_cc_survey1' record.survey_farm.survey_year record.survey_farm.farmer.id %}"
+        class="bg-success text-white">1</a>
+    {% else %}
+    <a href="{% url 'wisc_cc_survey1' record.survey_farm.survey_year record.survey_farm.farmer.id %}"
+        class="bg-warning text-white">1</a>
+    {% endif %}
+
+
+    {% if record.survey_farm.percent_of_farm_cc is not None %}
+    <a href="{% url 'wisc_cc_survey2' record.survey_farm.id %}" class="bg-success text-white">2</a>
+    {% else %}
+    <a href="{% url 'wisc_cc_survey2' record.survey_farm.id %}" class="bg-warning text-white">2</a>
+    {% endif %}
+
+
+
+    {% if record.crop_rotation_2023_cash_crop_species is not None %}
+    <a href="{% url 'wisc_cc_survey3' record.id %}" class="bg-success text-white">3</a>
+    {% else %}
+    <a href="{% url 'wisc_cc_survey3' record.id %}" class="bg-warning text-white">3</a>
+    {% endif %}
+
+
+
+    {% if record.cash_crop_planting_date is not None %}
+    <a href="{% url 'wisc_cc_survey4' record.id %}" class="bg-success text-white">4</a>
+    {% else %}
+    <a href="{% url 'wisc_cc_survey4' record.id %}" class="bg-warning text-white">4</a>
+    {% endif %}
+
+    {% if record.manure_post is not None %}
+    <a href="{% url 'wisc_cc_survey5' record.id %}" class="bg-success text-white">5</a>
+    {% else %}
+    <a href="{% url 'wisc_cc_survey5' record.id %}" class="bg-warning text-white">5</a>
+    {% endif %}
+
+    {% if record.cover_crop_seeding_method is not None %}
+    <a href="{% url 'wisc_cc_survey6' record.id %}" class="bg-success text-white">6</a>
+    {% else %}
+    <a href="{% url 'wisc_cc_survey6' record.id %}" class="bg-warning text-white">6</a>
+    {% endif %}
+
+    {% if record.survey_farm.survey_year == 2024 %}
+
+    {% if record.survey_farm.encourage_cc is not None %}
+    <a href="{% url 'wisc_cc_survey7' record.survey_farm.id %}" class="bg-success text-white">7</a>
+    {% else %}
+    <a href="{% url 'wisc_cc_survey7' record.survey_farm.id %}" class="bg-warning text-white">7</a>
+    {% endif %}
+
+    {% else %}
+
+    {% if record.survey_farm.willing_to_share_more is not None %}
+    <a href="{% url 'wisc_cc_survey7' record.survey_farm.id %}" class="bg-success text-white">7</a>
+    {% else %}
+    <a href="{% url 'wisc_cc_survey7' record.survey_farm.id %}" class="bg-warning text-white">7</a>
+    {% endif %}
+
+    {% endif %}
+    <!-- This last endif is for encompassing non 2023 years -->
+    {% endif %}
+</div>
+
+
+
+<!-- <a class="btn btn-info btn-sm" href="{% url 'update_response' record.survey_farm.id %}">Open</a> -->
+
+<!-- <a class="btn btn-info btn-sm" -->
+<!-- href="{% url 'wisc_cc_survey' record.survey_farm.survey_year %}?farmer_id={{ record.survey_farm.farmer_id }}">Open</a> -->

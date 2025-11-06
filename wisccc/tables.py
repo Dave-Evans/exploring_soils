@@ -36,6 +36,7 @@ class ResponseTable(tables.Table):
     # username = tables.Column()
     survey_farm__farmer__user__email = tables.Column()
     survey_farm__survey_created = tables.Column()
+    progress = TemplateColumn(template_name="wisccc/column_response_progress.html")
     edit = TemplateColumn(template_name="wisccc/update_column_response.html")
     upload_photo = TemplateColumn(template_name="wisccc/upload_photo_column.html")
     update_labdata = TemplateColumn(
