@@ -61,13 +61,20 @@
     {% endif %}
 
 
+    {% if record.survey_farm.survey_year == 2024 %}
     {% if record.survey_farm.percent_of_farm_cc is not None %}
     <a href="{% url 'wisc_cc_survey2' record.survey_farm.id %}" class="bg-success text-white">2</a>
     {% else %}
     <a href="{% url 'wisc_cc_survey2' record.survey_farm.id %}" class="bg-warning text-white">2</a>
     {% endif %}
 
-
+    {% else %}
+    {% if record.survey_farm.main_cc_goal_this_year is not None %}
+    <a href="{% url 'wisc_cc_survey2' record.survey_farm.id %}" class="bg-success text-white">2</a>
+    {% else %}
+    <a href="{% url 'wisc_cc_survey2' record.survey_farm.id %}" class="bg-warning text-white">2</a>
+    {% endif %}
+    {% endif %}
 
     {% if record.crop_rotation_2023_cash_crop_species is not None %}
     <a href="{% url 'wisc_cc_survey3' record.id %}" class="bg-success text-white">3</a>
