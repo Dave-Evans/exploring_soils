@@ -12,39 +12,7 @@
     <div>
         <h3>Fall Data</h3>
     </div>
-    <div class="form-row">
-        <div class="col">
-            {{ form.biomass_collection_date|as_crispy_field}}
-        </div>
-        <div class="col">
-            {{ form.acc_gdd|as_crispy_field}}
-        </div>
-        <div class="col">
-            {{ form.total_precip|as_crispy_field}}
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="col">
-            {{ form.precip_preplant_3_wk|as_crispy_field}}
-        </div>
-        <div class="col">
-            {{ form.precip_preplant_2_wk|as_crispy_field}}
-        </div>
-        <div class="col">
-            {{ form.precip_preplant_1_wk|as_crispy_field}}
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="col">
-            {{ form.precip_postplant_1_wk|as_crispy_field}}
-        </div>
-        <div class="col">
-            {{ form.precip_postplant_2_wk|as_crispy_field}}
-        </div>
-        <div class="col">
-            {{ form.precip_postplant_3_wk|as_crispy_field}}
-        </div>
-    </div>
+
     <div>
         <h4>Fall Nutrient data</h4>
     </div>
@@ -150,7 +118,39 @@
         </div>
 
     </div>
-
+    <div class="form-row">
+        <div class="col">
+            {{ form.biomass_collection_date|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.acc_gdd|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.total_precip|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.precip_preplant_3_wk|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.precip_preplant_2_wk|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.precip_preplant_1_wk|as_crispy_field}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            {{ form.precip_postplant_1_wk|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.precip_postplant_2_wk|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.precip_postplant_3_wk|as_crispy_field}}
+        </div>
+    </div>
     <div class="col">
         {{ form.fall_notes|as_crispy_field}}
     </div>
@@ -160,17 +160,6 @@
 
     <div>
         <h3>Spring Data</h3>
-    </div>
-    <div class="form-row">
-        <div class="col">
-            {{ form.spring_biomass_collection_date|as_crispy_field}}
-        </div>
-        <div class="col">
-            {{ form.spring_acc_gdd|as_crispy_field}}
-        </div>
-        <div class="col">
-            {{ form.spring_total_precip|as_crispy_field}}
-        </div>
     </div>
     <div>
         <h4>Spring Nutrient data</h4>
@@ -277,7 +266,17 @@
         </div>
 
     </div>
-
+    <div class="form-row">
+        <div class="col">
+            {{ form.spring_biomass_collection_date|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_acc_gdd|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{ form.spring_total_precip|as_crispy_field}}
+        </div>
+    </div>
     <div class="col">
         {{ form.spring_notes|as_crispy_field}}
     </div>

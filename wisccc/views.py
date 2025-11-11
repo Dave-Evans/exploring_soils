@@ -1795,8 +1795,23 @@ class ResponseTableListView(SingleTableMixin, FilterView):
     # Returning just those 2023 and later in the table
     # Also returning only 1 record per survey farm id, thus make sure only one 
     #  row in the table per survey farm
+    # Scratch above! Return duplicates because other wise we can't search for field ID
     def get_queryset(self):
-        return super().get_queryset().filter(survey_farm__survey_year__gt=2022).distinct('survey_farm_id')
+        from django.db.models import Window, F
+        from django.db.models.functions import RowNumber 
+        window = {
+            "partition_by": [F("survey_farm_id")],
+        }
+        result_set = super().get_queryset().filter(survey_farm__survey_year__gt=2022)
+        # result_set = result_set.annotate(
+        #     field_cnt=Window(
+        #         expression=RowNumber(),
+        #         **window,
+        #     )
+        # )
+        # result_set = result_set.filter(field_cnt = 1)
+
+        return result_set
 
     # def get_table_kwargs(self):
     #     return {"template_name": "django_tables2/bootstrap.html"}
@@ -2283,6 +2298,11 @@ def upload_photo(request, id):
             new_survey_photo.image_1 = request.FILES["image_1"]
         if "image_2" in request.FILES.keys():
             new_survey_photo.image_2 = request.FILES["image_2"]
+            
+        if "spring_image_1" in request.FILES.keys():
+            new_survey_photo.spring_image_1 = request.FILES["spring_image_1"]
+        if "spring_image_2" in request.FILES.keys():
+            new_survey_photo.spring_image_2 = request.FILES["spring_image_2"]          
 
         new_survey_photo.save()
 
@@ -2326,6 +2346,11 @@ def upload_photo_fld(request, id):
             new_survey_photo.image_1 = request.FILES["image_1"]
         if "image_2" in request.FILES.keys():
             new_survey_photo.image_2 = request.FILES["image_2"]
+
+        if "spring_image_1" in request.FILES.keys():
+            new_survey_photo.spring_image_1 = request.FILES["spring_image_1"]
+        if "spring_image_2" in request.FILES.keys():
+            new_survey_photo.spring_image_2 = request.FILES["spring_image_2"]            
 
         new_survey_photo.save()
         return redirect(

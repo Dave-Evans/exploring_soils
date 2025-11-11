@@ -67,6 +67,11 @@ def get_glccp_data(request):
                         cc_current_rate_winterkill, 
                         fdiversity, 
                         richness, 
+                        -- for tidying filtering
+                        case
+                            when richness >= 5 then '5+'
+                            else richness::integer::text 
+                        end as richness_category,                
                         irrigation, 
                         case
                             when cc_plantstrat = 'Broadcast ,Frost-seeded' then 'Broadcast, Frost-seeded'

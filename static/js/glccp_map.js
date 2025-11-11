@@ -194,13 +194,13 @@ function onEachFeature(feature, layer) {
         "</table>"
 
     if (feature.properties.image_1_url != null) {
-        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_1_url + '" width="250" height="250">'
+        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_1_url + '" width="250">'
     }
     if (feature.properties.image_2_url != null) {
-        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_2_url + '" width="250" height="250">'
+        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_2_url + '" width="250">'
     }
     if (feature.properties.image_3_url != null) {
-        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_3_url + '" width="250" height="250">'
+        popupContent = popupContent + '<br><img class="popupphoto" src="' + feature.properties.image_3_url + '" width="250">'
     }
 
 
@@ -232,7 +232,7 @@ var geojsonMarkerOptions = {
 var dataurl = '/get_glccp_data';
 var geojsonObject;
 var soilsLayer;
-
+map.spin(true);
 var soilsCircle = $.getJSON(dataurl, function (data) {
 
     soilsLayer = data;
@@ -243,7 +243,7 @@ var soilsCircle = $.getJSON(dataurl, function (data) {
         "FarmTypeFilter": "farmtype",
         "SoilTextFilter": "soil_texture",
         "CoverCropFilter": "cc_current_type",
-        "NoOfOverwinterFilter": "richness",
+        "NoOfOverwinterFilter": "richness_category",
         "PlantingFilter": "cc_plantstrat",
         "PriorCropFilter": "pc",
     }
@@ -265,15 +265,19 @@ var soilsCircle = $.getJSON(dataurl, function (data) {
             options: pop_selectize_box(soilsLayer, id_selector, target_field),
             onChange: function (value, isOnInitialize) {
                 // updateChart(false)
+
+                map.spin(true);
                 filterer()
                 //add the layer to the map again, now that we have changed the filter value. 
                 addLayerToMap();
+                map.spin(false);
             }
         })
     }
 
     filterer();
     addLayerToMap();
+    map.spin(false);
 });
 
 // for populating select boxes
@@ -349,7 +353,7 @@ var filterer = function (feature) {
     filter_values['soil_texture'] = $("#SoilTextFilter").selectize()[0].selectize.getValue();
 
     filter_values['cc_current_type'] = $("#CoverCropFilter").selectize()[0].selectize.getValue();
-    filter_values['richness'] = $("#NoOfOverwinterFilter").selectize()[0].selectize.getValue().map((x) => parseInt(x));
+    filter_values['richness_category'] = $("#NoOfOverwinterFilter").selectize()[0].selectize.getValue();
     filter_values['cc_plantstrat'] = $("#PlantingFilter").selectize()[0].selectize.getValue();
     filter_values['pc'] = $("#PriorCropFilter").selectize()[0].selectize.getValue();
 
@@ -390,6 +394,7 @@ var containsTargetSpeciesOr = function (filterArray, plantedArray) {
 
 
 function addLayerToMap() {
+
     //remove the layer from the map entirely
     if (map.hasLayer(geojsonObject)) {
         geojsonObject.remove();
@@ -413,7 +418,7 @@ function addLayerToMap() {
             const filt_soiltext = (filter_values.soil_texture.length == 0) ? true : (filter_values.soil_texture.includes(feature.properties.soil_texture));
 
             const filt_covercrop = (filter_values.cc_current_type.length == 0) ? true : (filter_values.cc_current_type.includes(feature.properties.cc_current_type));
-            const filt_noofoverwintering = (filter_values.richness.length == 0) ? true : (filter_values.richness.includes(feature.properties.richness));
+            const filt_noofoverwintering = (filter_values.richness_category.length == 0) ? true : (filter_values.richness_category.includes(feature.properties.richness_category));
 
             const filt_cc_plantstrat = (filter_values.cc_plantstrat.length == 0) ? true : (filter_values.cc_plantstrat.includes(feature.properties.cc_plantstrat));
             const filt_priorcrop = (filter_values.pc.length == 0) ? true : (filter_values.pc.includes(feature.properties.pc));
@@ -440,9 +445,12 @@ function addLayerToMap() {
 
 
 $("#YearFilter").on("input", function () {
+
+
     filterer()
     //add the layer to the map again, now that we have changed the filter value. 
     addLayerToMap();
+
 });
 $("#FarmTypeFilter").on("input", function () {
     filterer()

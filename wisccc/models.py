@@ -2124,7 +2124,18 @@ class SurveyPhoto(models.Model):
     caption_photo_2 = models.CharField(
         max_length=50, verbose_name="Caption about photo 2", blank=True
     )
-    notes = models.TextField(verbose_name="Notes about photo", null=True)
+
+    
+    spring_image_1 = models.ImageField(storage=WiscCCPhotoStorage(), blank=True)
+    spring_caption_photo_1 = models.CharField(
+        max_length=50, verbose_name="Caption about spring photo 1", blank=True
+    )
+    spring_image_2 = models.ImageField(storage=WiscCCPhotoStorage(), blank=True)
+    spring_caption_photo_2 = models.CharField(
+        max_length=50, verbose_name="Caption about spring photo 2", blank=True
+    )    
+
+    notes = models.TextField(verbose_name="Notes about photos", null=True)
 
 
 class SurveyRegistration(models.Model):

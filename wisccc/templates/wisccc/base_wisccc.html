@@ -7,8 +7,13 @@
 {% endblock stylesheet%}
 
 {% block body %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="{% url 'wisc_cc_home' %}">Wisconsin Cover Crop Data Network</a>
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #8BB19C;">
+  <a class=" navbar-brand" href="https://www.michaelfields.org/covercrops">
+
+    <!-- <img height="50" src="{% static 'img/2025LogoBlackLetters.png' %}" /> -->
+    <img height="50" src="{% static 'img/cultivating resilience since 1984-5.png' %}" />
+    WI Cover Crop Data Network
+  </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
     aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -108,10 +113,10 @@
 
 </script>
 
-<h1 class="text-center logo my-4">
+<!-- <h1 class="text-center logo my-4">
   <img width="700" height="230" src="{% static 'img/logo_wisc_cc_affiliations_2.png' %}" />
-</h1>
+</h1> -->
 {% endblock %}
 {% block title %}
-Wisconsin Cover Crop Data Network
+WI Cover Crop Data Network
 {% endblock title %}

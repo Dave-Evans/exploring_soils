@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<h4>Add photo to survey</h4>
+<h4>Add fall photos to survey</h4>
 <div class="form-row">
     <div class="form-group col-md-4 mb-0">
         {{ survey_photo_form.image_1|as_crispy_field }}
@@ -16,6 +16,25 @@
         {{ survey_photo_form.caption_photo_2|as_crispy_field }}
     </div>
 </div>
+
+<h4>Spring photos</h4>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_photo_form.spring_image_1|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_photo_form.spring_caption_photo_1|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_photo_form.spring_image_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-4 mb-0">
+        {{ survey_photo_form.spring_caption_photo_2|as_crispy_field }}
+    </div>
+</div>
+
 <div class="form-row">
     <div class="form-group col-md-4 mb-0">
         {{ survey_photo_form.notes|as_crispy_field }}

@@ -126,9 +126,9 @@
             </div>
 
             {% if dict_vals.is_completed %}
-
+            <!-- Showing these as expanded by default -->
             <div id="collapse-{{ forloop.counter }}" aria-labelledby="headingOne" data-parent="#accordionExample"
-              class="collapse">
+              class="collapse show">
               {% else %}
               <div id="collapse-{{ forloop.counter }}" aria-labelledby="headingOne" data-parent="#accordionExample"
                 class="collapse show">
