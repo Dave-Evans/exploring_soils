@@ -69,7 +69,7 @@
     {% endif %}
 
     {% else %}
-    {% if record.survey_farm.main_cc_goal_this_year is not None %}
+    {% if record.survey_farm.main_cc_goal_this_year != '' %}
     <a href="{% url 'wisc_cc_survey2' record.survey_farm.id %}" class="bg-success text-white">2</a>
     {% else %}
     <a href="{% url 'wisc_cc_survey2' record.survey_farm.id %}" class="bg-warning text-white">2</a>
