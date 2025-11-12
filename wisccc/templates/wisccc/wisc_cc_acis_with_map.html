@@ -128,44 +128,13 @@
         <div class="sidebar-content">
             <div class="sidebar-pane" id="home">
                 <h1 class="sidebar-header">
-                    sidebar-v2
+                    Controls
                     <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                 </h1>
 
-                <p>A responsive sidebar for mapping libraries like <a href="http://leafletjs.com/">Leaflet</a> or <a
-                        href="http://openlayers.org/">OpenLayers</a>.</p>
+                <a id="getStationsButton" class="btn-sm btn-secondary">Get stations here</a>
 
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet.</p>
 
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet.</p>
             </div>
 
             <div class="sidebar-pane" id="profile">
@@ -230,6 +199,7 @@
             popupContent += '<dl><dd id="sid_"' + feature.properties.sids[0].replaceAll(" ", "_") + '>' + feature.properties.sids[0] + '</dd></dl>'
             popupContent += '<dl><dd id="mindate">' + feature.properties.mindate + " to " + feature.properties.maxdate + '</dd></dl>';
             popupContent += '<a id="graphit_' + feature.properties.sids[0].replaceAll(" ", "_") + '" class="btn-sm btn-secondary">Check it.</a>'
+
             var popup = L.popup({
 
                 maxHeight: 500,
@@ -260,57 +230,72 @@
             opacity: 1,
             fillOpacity: 0.8
         };
-        var url_station_meta = "https://data.rcc-acis.org/StnMeta";
-        var params = {
-            // Bounding box for just WI
-            // W, S, E, N
-            "bbox": "-93,44.8,-93.5,45",
-            "meta": "name,sids,ll,valid_daterange",
-            "elems": "pcpn",
-            // "sdate": "2020-01-01",
-            // "edate": "2025-12-31",
-        }
+
+
+        $("#getStationsButton").click(getStations)
         var station_layer;
-        map.spin(true);
-        fetch(url_station_meta, {
-            method: "POST",
-            body: JSON.stringify(
-                params
-            ),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        }).then((response) => response.json())
-            .then((json) => stations = createGeoJSON(json))
-            .then((stations) => layer = addUpdatePoints(stations));
-        // .then(console.log(json));
-        var stations_geo = [];
-        var createGeoJSON = function (json) {
-            console.log("Made it to createGeoJSON")
-            // var stations_geo = [];
-            for (i in json.meta) {
-                var pt_ft = {
-                    "id": i,
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": json.meta[i]["ll"]
-                    },
-                    "properties": {
-                        "name": json.meta[i]["name"],
-                        "sids": json.meta[i]["sids"],
-                        "mindate": json.meta[i]["valid_daterange"][0][0],
-                        "maxdate": json.meta[i]["valid_daterange"][0][1]
-                    }
-                }
-                stations_geo.push(pt_ft);
+        function getStations() {
+            var url_station_meta = "https://data.rcc-acis.org/StnMeta";
+            var bounds = map.getBounds()
+            var bbox = bounds.getEast().toString() + "," +
+                bounds.getSouth().toString() + "," +
+                bounds.getWest().toString() + "," +
+                bounds.getNorth().toString();
+            var params = {
+                // W, S, E, N
+                // "bbox": "-93,44.8,-93.5,45",
+                "bbox": bbox,
+                "meta": "name,sids,ll,valid_daterange",
+                "elems": "pcpn",
+                // "sdate": "2020-01-01",
+                // "edate": "2025-12-31",
             }
 
-            return stations_geo;
+            map.spin(true);
+            fetch(url_station_meta, {
+                method: "POST",
+                body: JSON.stringify(
+                    params
+                ),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            }).then((response) => response.json())
+                .then((json) => stations = createGeoJSON(json))
+                .then((stations) => layer = addUpdatePoints(stations));
+            // .then(console.log(json));
+            var stations_geo = [];
+            var createGeoJSON = function (json) {
+                console.log("Made it to createGeoJSON")
+                // var stations_geo = [];
+                for (i in json.meta) {
+                    var pt_ft = {
+                        "id": i,
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": json.meta[i]["ll"]
+                        },
+                        "properties": {
+                            "name": json.meta[i]["name"],
+                            "sids": json.meta[i]["sids"],
+                            "mindate": json.meta[i]["valid_daterange"][0][0],
+                            "maxdate": json.meta[i]["valid_daterange"][0][1]
+                        }
+                    }
+                    stations_geo.push(pt_ft);
+                }
+                console.log(stations_geo.length)
+                return stations_geo;
+            }
         }
 
         var addUpdatePoints = function (stations_geo) {
             console.log("Made it to addUpdatePoints");
+            if (stations_geo.length == 0) {
+                map.spin(false)
+                return null
+            }
             if (station_layer !== undefined) {
                 //console.log("removing old points")
                 station_layer.remove();
@@ -334,6 +319,7 @@
                 var sid = e.popup._source.feature.properties.sids[0];
                 var mindate = e.popup._source.feature.properties.mindate;
                 var maxdate = e.popup._source.feature.properties.maxdate;
+
                 $("#graphit_" + sid.replaceAll(" ", "_")).on("click", function () {
 
                     drawGraph(
