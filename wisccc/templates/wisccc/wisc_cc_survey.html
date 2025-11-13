@@ -225,11 +225,18 @@
             </div>
             {% endif %}
             <div class="list-group">
-              {% if survey_farm.willing_to_share_more is not None %}
+              {% if survey_farm.willing_to_share_more is not None and survey_farm.survey_year == 2025 %}
               <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
                 class="list-group-item list-group-item-action list-group-item-success">
                 VII. Final thoughts - completed! Click to edit your response.
               </a>
+
+              {% elif survey_farm.encourage_cc is not None and survey_farm.survey_year == 2024 %}
+              <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
+                class="list-group-item list-group-item-action list-group-item-success">
+                VII. Final thoughts - completed! Click to edit your response.
+              </a>
+
               {% else %}
               <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
                 class="list-group-item list-group-item-action list-group-item-warning">
