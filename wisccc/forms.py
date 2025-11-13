@@ -1057,8 +1057,8 @@ class SurveyFieldFormSection3(forms.ModelForm):
         required=True,
     )
     # 24b
-    cover_crop_planting_rate_1 = forms.IntegerField(
-        label="b. Planting rate", required=True
+    cover_crop_planting_rate_1 = forms.DecimalField(
+        label="b. Planting rate", required=True, max_value=1000, min_value=0
     )
     # 24c
     cover_crop_planting_rate_1_units = forms.ChoiceField(
@@ -1074,8 +1074,8 @@ class SurveyFieldFormSection3(forms.ModelForm):
         required=False,
     )
     # 25b
-    cover_crop_planting_rate_2 = forms.IntegerField(
-        label="e. Planting rate", required=False
+    cover_crop_planting_rate_2 = forms.DecimalField(
+        label="e. Planting rate", required=False, max_value=1000, min_value=0
     )
     # 25c
     cover_crop_planting_rate_2_units = forms.ChoiceField(
@@ -1090,8 +1090,8 @@ class SurveyFieldFormSection3(forms.ModelForm):
         choices=CoverCropChoices.choices,
         required=False,
     )
-    cover_crop_planting_rate_3 = forms.IntegerField(
-        label="h. Planting rate", required=False
+    cover_crop_planting_rate_3 = forms.DecimalField(
+        label="h. Planting rate", required=False, max_value=1000, min_value=0
     )
     cover_crop_planting_rate_3_units = forms.ChoiceField(
         label="i. Planting rate units",
@@ -1105,8 +1105,8 @@ class SurveyFieldFormSection3(forms.ModelForm):
         choices=CoverCropChoices.choices,
         required=False,
     )
-    cover_crop_planting_rate_4 = forms.IntegerField(
-        label="k. Planting rate", required=False
+    cover_crop_planting_rate_4 = forms.DecimalField(
+        label="k. Planting rate", required=False, max_value=1000, min_value=0
     )
     cover_crop_planting_rate_4_units = forms.ChoiceField(
         label="l. Planting rate units",
@@ -1120,8 +1120,8 @@ class SurveyFieldFormSection3(forms.ModelForm):
         choices=CoverCropChoices.choices,
         required=False,
     )
-    cover_crop_planting_rate_5 = forms.IntegerField(
-        label="n. Planting rate", required=False
+    cover_crop_planting_rate_5 = forms.DecimalField(
+        label="n. Planting rate", required=False, max_value=1000, min_value=0
     )
     cover_crop_planting_rate_5_units = forms.ChoiceField(
         label="o. Planting rate units",
