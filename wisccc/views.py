@@ -386,10 +386,19 @@ def wisc_cc_survey(request, survey_year=2025):
             return redirect("wisc_cc_unauthorized")
 
     farmer = Farmer.objects.get(id=farmer_id)
+
     # Just grabbing the first for rare cases when there might be two survey farms in a year
     survey_farm = SurveyFarm.objects.filter(
         farmer_id=farmer.id, survey_year=survey_year
     ).first()
+    if survey_farm is None:
+        survey_farm = SurveyFarm.objects.create(farmer_id=farmer.id, survey_year=survey_year)
+
+    survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id).order_by(
+        "id"
+    )
+    if survey_fields.count() == 0:
+        survey_field = SurveyField.objects.create(survey_farm_id = survey_farm.id)
 
     survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id).order_by(
         "id"
