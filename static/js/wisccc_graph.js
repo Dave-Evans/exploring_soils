@@ -875,7 +875,7 @@ d3.json(dataurl, function (data) {
             y_scale = yScale
 
             y_scale.domain(
-                [0, 4.5]
+                [0, 5.6]
             ).nice();
         } else if ((y_property.indexOf("fq_milkton") > -1) | y_property.indexOf("total_nitrogen") > -1) {
 
