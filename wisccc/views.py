@@ -1808,7 +1808,7 @@ class ResponseTableListView(SingleTableMixin, FilterView):
         window = {
             "partition_by": [F("survey_farm_id")],
         }
-        result_set = super().get_queryset().filter(survey_farm__survey_year__gt=2022)
+        result_set = super().get_queryset()#.filter(survey_farm__survey_year__gt=2022)
         # result_set = result_set.annotate(
         #     field_cnt=Window(
         #         expression=RowNumber(),

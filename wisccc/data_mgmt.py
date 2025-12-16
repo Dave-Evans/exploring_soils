@@ -641,9 +641,15 @@ def pull_all_years_together(f_output):
         , stat.manure_prior 
         , null as manure_prior_rate
         , null as manure_prior_rate_units
+        , null as manure_prior_source
+        , null as manure_prior_consistency
         , stat.manure_post
         , null manure_post_rate
         , null as manure_post_rate_units
+        , null as manure_post_source
+        , null as manure_post_consistency
+        , null as synth_fert_for_covers
+        , null as synth_fert_for_covers_application_date
         , stat.manure_rate 
         , stat.manure_value 
         , stat.tillage_system 
@@ -789,6 +795,8 @@ def pull_all_years_together(f_output):
         end as manure_prior,
         manure_prior_rate,
         mod_manure_prior_rate_units as manure_prior_rate_units,
+        manure_prior_source, 
+        mod_manure_prior_consistency as manure_prior_consistency,
         case
             when manure_post = 'Yes' then 'Yes'
             when manure_post = 'No' then 'No'
@@ -800,7 +808,11 @@ def pull_all_years_together(f_output):
             when manure_post is null then 'No'
         end as manure_post,
         manure_post_rate,
-        mod_manure_post_rate_units as mod_manure_post_rate_units,	
+        mod_manure_post_rate_units as mod_manure_post_rate_units,
+        mod_manure_post_source, 
+        mod_manure_post_consistency as manure_post_consistency,
+        synth_fert_for_covers as synth_fert_for_covers,
+        synth_fert_for_covers_application_date as synth_fert_for_covers_application_date,
         null as manure_rate, 
         null as manure_value, 	
         mod_tillage_system_cash_crop as tillage_system,
@@ -1198,7 +1210,7 @@ def pull_all_years_together(f_output):
                 when surveyfield.tillage_system_cash_crop = 'NO_TILL' then 'Conservation, >30% residue remaining'    
             end as mod_residue_remaining
             , case 
-                when surveyfield.cover_crop_seeding_method = 'FROST' then'frost seeded'
+                when surveyfield.cover_crop_seeding_method = 'FROST' then 'frost seeded'
                 when surveyfield.cover_crop_seeding_method = 'DRILLED' then 'drilled'
                 when surveyfield.cover_crop_seeding_method = 'BROADCAST_NO_INCORP' then 'broadcast, no incorporation'
                 when surveyfield.cover_crop_seeding_method = 'EARLY_INTERSEED' then 'early interseeded -- broadcast'
@@ -1212,10 +1224,47 @@ def pull_all_years_together(f_output):
                 when surveyfield.manure_prior_rate_units = 'GALLONS' then 'gal/acre'
                 when surveyfield.manure_prior_rate_units = 'POUNDS_ACRE' then 'lbs/acre'
             end as mod_manure_prior_rate_units
+            , case
+                when manure_prior_source = 'DAIRY' then 'Dairy'
+                when manure_prior_source = 'BEEF' then 'Beef'
+                when manure_prior_source = 'POULTRY' then 'Poultry'
+                when manure_prior_source = 'SWINE' then 'Swine'
+                when manure_prior_source = 'OTHER' then 'Other'
+                when manure_prior_source is null then ''
+                else manure_prior_source
+            end as mod_manure_prior_source        
+            , case
+                when manure_prior_consistency = 'LIQUID_LT4' then 'liquid (<4% dm)'
+                when manure_prior_consistency = 'LIQUID_4_11' then 'liquid (4-11% dm)'
+                when manure_prior_consistency = 'SOLID_11_20' then 'solid (11-20% dm)'
+                when manure_prior_consistency = 'SOLID_GT20' then 'solid (>20% dm)'
+                when manure_prior_consistency = 'BEDPACK' then 'bedpack'
+                when manure_prior_consistency = 'COMPOSTED_MANURE' then 'composted manure'
+                else manure_prior_consistency
+            end as mod_manure_prior_consistency
+
             , case 
                 when surveyfield.manure_post_rate_units = 'GALLONS' then 'gal/acre'
                 when surveyfield.manure_post_rate_units = 'POUNDS_ACRE' then 'lbs/acre'
             end as mod_manure_post_rate_units
+            , case
+                when manure_post_source = 'DAIRY' then 'Dairy'
+                when manure_post_source = 'BEEF' then 'Beef'
+                when manure_post_source = 'POULTRY' then 'Poultry'
+                when manure_post_source = 'SWINE' then 'Swine'
+                when manure_post_source = 'OTHER' then 'Other'
+                when manure_post_source is null then ''
+                else manure_post_source
+            end as mod_manure_post_source            
+            , case
+                when manure_post_consistency = 'LIQUID_LT4' then 'liquid (<4% dm)'
+                when manure_post_consistency = 'LIQUID_4_11' then 'liquid (4-11% dm)'
+                when manure_post_consistency = 'SOLID_11_20' then 'solid (11-20% dm)'
+                when manure_post_consistency = 'SOLID_GT20' then 'solid (>20% dm)'
+                when manure_post_consistency = 'BEDPACK' then 'bedpack'
+                when manure_post_consistency = 'COMPOSTED_MANURE' then 'composted manure'
+                else manure_post_consistency          
+            end as mod_manure_post_consistency
             , case 
                 when surveyfield.cover_crop_estimated_termination = 'GRAZE_FALL' then 'graze fall'
                 when surveyfield.cover_crop_estimated_termination = 'WINTERKILL' then 'little to no cover crop growth in spring'

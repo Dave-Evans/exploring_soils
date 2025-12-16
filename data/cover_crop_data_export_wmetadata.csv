@@ -1,4 +1,5 @@
 Data category	Explanation
+Note for spring sampling results: 	Spring sampling began in 2023.
 Note for sampling survey years 2020 through 2021	Dan Smith collected three samples at each farm using 0.5 meter quadrat, which were then dried, and weighed, and then reported in tons/acre.
 Note for sampling survey years 2022	We had two methods: i)the nutrient analysis sample was collected via a 2x2 foot square and sent to the lab, and for biomass Dan Smith also collected three 0.5 meter2 samples, dried, weighed and reported results in tons per acre.
 Note for sampling survey years 2023 and 2024	All samples were obtained via the farmers using a 2x2 foot square; farmers mailed in samples to Dairyland and AgSource labs, and the labs handled the samples after collection. 
@@ -13,9 +14,15 @@ dominant_soil_texture	Selected from a list: clay; clay loam; loam; loamy sand; s
 manure_prior	Will you apply manure prior to seeding cover crops on this field? Yes/No
 manure_prior_rate	At what rate will the manure be applied? (numerical)
 manure_prior_rate_units	tons/acre; gallons/acre
+manure_prior_source	Source of manure; one of Dairy, Beef, Poultry, Swine, Other
+manure_prior_consistency	Consistency of manure; one of liquid (<4% dm), liquid (4-11% dm), solid (11-20% dm), solid (>20% dm), bedpack, composted manure
 manure_post	Will you apply manure post to seeding cover crops on this field? Yes/No
 manure_post_rate	At what rate will the manure be applied?
 manure_post_rate_units	tons/acre; gallons/acre
+manure_post_source	Source of manure; one of Dairy, Beef, Poultry, Swine, Other
+manure_post_consistency	Consistency of manure; one of liquid (<4% dm), liquid (4-11% dm), solid (11-20% dm), solid (>20% dm), bedpack, composted manure
+synth_fert_for_covers	Was synthetic fertilizer applied to the cover crop?
+synth_fert_for_covers_application_date	What was the estimated date of the synthetic fertilizer application?
 manure_rate	Units for manure application; When manure was applied prior to and post cover cropping, then surveys prior to Fall 2023 did not distinguish whether manure applications rates were for before or after.
 manure_value	Amount of manure (numerical); When manure was applied prior to and post cover cropping, then surveys prior to Fall 2023 did not distinguish whether manure applications rates were for before or after.
 residue_remaining	Describe the degree of tillage. Selected from a list:  Conservation, >30% residue remaining; Reduced, 15-30% residue remaining; Conventional, <15% residue remaining
@@ -23,7 +30,7 @@ tillage_equip_primary	Selected from a list: moldboard plow; disk-harrow; chisel 
 tillage_equip_secondary	Selected from a list: field cultivator/field finisher; disk-harrow; high-speed disk; disk-chisel; vertical tillage; none; other
 soil_conditions	Selected from a list: dry; adequate moisture, excessively wet
 cc_seeding_method	Selected from a list: frost seeded; drilled; broadcast, no incorporation; early interseeded -- broadcast; late interseeded -- broadcast; late interseeded -- aerial; broadcast + incorporation; cover crop seed mixed with fertilizer + broadcast + incorporation; other
-cc_planting_rate	ln lbs/acre unless specified otherwise.
+cc_planting_rate	ln lbs/acre unless specified otherwise. Data before 2023 will be structured differently because a different survey format.
 cc_termination_timing_method	Selected from a list: graze fall; little to no cover crop growth in spring; killing frost (fall); graze spring; early spring, herbicide application (14 plus days prior to crop establishment); harvest for forage; plant green, herbicide termination; early spring, roller-crimper termination; plant green, roller-crimper termination; other
 days_between_crop_hvst_and_cc_estd	(numerical) Days between when cash crop was harvested and cover crop was established.
 site_lon	Longitude of field, farmer selected location of field in online map. To maintain privacy, this value has been randomly shifted up to a mile away from the selected longitude.
@@ -72,7 +79,7 @@ height_of_stand_fall	Fall – The average height, in inches, of the cover crop, 
 cc_biomass_collection_date_spring	The date of spring biomass collection.
 total_precip_spring	Spring – Cumulative precipitation from cover crop planting to when biomass was harvested (inches) derived from https://mrcc.purdue.edu/data_serv/cli-dap
 acc_gdd_spring	Spring – growing degree days/units that have accumulated from when the cover crop was planted to when it was harvested derived from https://mrcc.purdue.edu/data_serv/cli-dap
-cc_biomass_spring	Spring – dried biomass in (English) tons per acre.  Analyzed by AgSource Labs.
+cc_biomass_spring	Spring – dried biomass in (English) tons per acre. Analyzed by AgSource Labs. Spring sampling began in 2023.
 fq_cp_spring	Spring – measured: crude protein (%). Analyzed by Dairyland Labs.
 fq_andf_spring	Spring – estimate of Neutral Detergent Fiber content with corrections for starch (amylase), and ash (om). Analyzed by Dairyland Labs.
 fq_undfom30_spring	Spring – Analyzed by Dairyland labs
