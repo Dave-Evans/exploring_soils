@@ -83,7 +83,7 @@ def clean_descr(s_description):
     return cleaned_descr
 
 
-def find_farmer(lab_id):
+def find_farmer(clean_lab_id):
     '''For taking the description from Dairyland or Agsource,
     and returning the wisccc_farmer object
     For 2024 and later, when the evansgeospatial farmer id is incorporated
@@ -232,10 +232,10 @@ def load_data_agsource(ancillarydata, row):
 fl_dairyland_2025 = './data/labdata_2025/Dairyland Fall 2025.csv'
 fl_agsource_2025 = './data/labdata_2025/AgSource Fall 2025.csv'
 
-fl_dairyland_2025 = '~/Dairyland Fall 2025.csv'
-fl_agsource_2025 = '~/AgSource Fall 2025.csv'
+fl_dairyland_2025 = '/home/ubuntu/exploring_soils/Dairyland Fall 2025.csv'
+fl_agsource_2025 = '/home/ubuntu/exploring_soils/AgSource Fall 2025.csv'
 
-def process_dl_2025(fl_name):
+def process_dl_2025(fl_dairyland_2025):
     dat = pd.read_csv(fl_dairyland_2025)
     dat['Farmer_id'] = 0
     dat['Farmer_name'] = ''
@@ -248,8 +248,9 @@ def process_dl_2025(fl_name):
         farmer = Farmer.objects.get(id = farmer_id)
         farmer_name = f"{farmer.first_name} {farmer.last_name}"
 
-        dat["Farmer_id"].iloc[i] = farmer_id
-        dat["Farmer_name"].iloc[i] = farmer_name
+        dat.iloc[i, dat.columns.tolist().index("Farmer_id")] = farmer_id
+        dat.iloc[i, dat.columns.tolist().index("Farmer_name")] = farmer_name
+
 
     print(f"Unique farmer ids: {len(dat.Farmer_id.unique())}")
     dupe_names = dat.Farmer_name[dat.Farmer_id.duplicated()].tolist()
@@ -281,7 +282,7 @@ def process_dl_2025(fl_name):
         except:
             print(farmer_name)
     
-    return (dl_need_farmers_2025, dl_loaded_farmers_2025)
+    return (need_farmers_2025, loaded_farmers_2025)
 
 dl_need_farmers_2025, dl_loaded_farmers_2025 = process_dl_2025(fl_dairyland_2025)
 
