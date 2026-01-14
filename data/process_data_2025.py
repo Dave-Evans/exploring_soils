@@ -303,7 +303,7 @@ def process_dl_2025(fl_dairyland_2025):
     
     return (need_farmers_2025, loaded_farmers_2025)
 
-dl_need_farmers_2025, dl_loaded_farmers_2025 = process_dl_2025(fl_dairyland_2025)
+
 
 def process_as_2025(fl_name):
     dat = pd.read_csv(fl_agsource_2025)
@@ -361,7 +361,8 @@ def process_as_2025(fl_name):
 
 
 
-
+dl_need_farmers_2025, dl_loaded_farmers_2025 = process_dl_2025(fl_dairyland_2025)
+as_need_farmers_2025, as_loaded_farmers_2025 = process_as_2025(fl_agsource_2025)
 
 
 # # Cross walk between lab IDs and old survey_response_ids
