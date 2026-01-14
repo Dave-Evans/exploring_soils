@@ -1,0 +1,34 @@
+{% extends 'wisccc/base_survey.html' %}
+
+{% block title %}Field information{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+<!-- Not a true form but should still work... -->
+{% block form %}
+
+<h3 class="card-title">Select a lab analysis</h3>
+<p>Select a lab analysis for this field</p>
+
+
+{% if ancillarydata_list %}
+<div class="col-md-10">
+  <div class="list-group">
+
+    {% for ancillarydata in ancillarydata_list %}
+    <a href="{% url 'update_labdata' ancillarydata.id %}"
+      class="list-group-item list-group-item-action list-group-item-success">
+
+      Sample collected on {{ancillarydata.biomass_collection_date}}
+
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+{% else %}
+<p>There are no fields yet created for this farmer.</p>
+{% endif %}
+
+{% endblock %}

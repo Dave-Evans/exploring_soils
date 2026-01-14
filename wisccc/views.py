@@ -990,36 +990,52 @@ def delete_survey_field(request, sfieldid):
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def update_labdata(request, id):
-    """For updating labdata
-    Will navigate to this page via the survey table
-    page so will use SurveyFarm id to grab ancillary data.
-
-    If more than one survey_field for the farm then this will 
-    direct to a "select your field" page.
-
-    If just one, it will direct to update_labdata_fld
+    """For updating labdata based on *ancillarydata id*
     """
     
-    survey_farm = get_object_or_404(SurveyFarm, id=id)
-    farmer = survey_farm.farmer
+    # ancillary_data = AncillaryData.objects.get(id = anc_id)
+    ancillary_data = get_object_or_404(AncillaryData, id=id)
+    form_ancillary_data = AncillaryDataForm(
+        request.POST or None, instance=ancillary_data
+    )
 
-    survey_year = f"{survey_farm.survey_year}"
+    survey_field = ancillary_data.survey_field
+    survey_year = survey_field.survey_farm.survey_year
+    first_and_last_name = f"{survey_field.survey_farm.farmer.first_name} {survey_field.survey_farm.farmer.last_name}"
+    
+    if form_ancillary_data.is_valid():
 
-    survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id)
+        new_ancillary_data = form_ancillary_data.save()
+        
+        if "cc_biomass" in form_ancillary_data.changed_data:
+            print("Recalculating because new fall biomass value")
+            new_ancillary_data.recalculate_fall_lbs_acre()
+        
+        if "spring_cc_biomass" in form_ancillary_data.changed_data:
+            print("Recalculating because new spring biomass value")
+            new_ancillary_data.recalculate_spring_lbs_acre()            
 
-    # If more than one, then take to "select a field" page
-    if survey_fields.count() > 1:
+        new_ancillary_data.survey_field_id = survey_field.id
 
-        context = {}
-        context["survey_field_list"] = survey_fields
-        context["farmer"] = farmer
-        context["survey_year"] = survey_year
-        template = "wisccc/select_field_ancillary_data.html"
-        return render(request, template, context)
+        new_ancillary_data.save()
 
-    # If only one field then we will just show the page for that
-    # field.
-    return redirect("update_labdata_fld", survey_fields[0].id)
+        return redirect(
+            reverse("wisc_cc_survey")
+            + f"/{survey_year}/?farmer_id={survey_field.survey_farm.farmer.id}"
+        )
+
+    template = "wisccc/wisc_cc_ancillarydata_review.html"
+    return render(
+        request,
+        template,
+        {
+            "form": form_ancillary_data,
+            "first_and_last_name": first_and_last_name,
+            "survey_year": survey_year,
+            "farmer_id": survey_field.survey_farm.farmer.id,
+            "survey_field": survey_field
+        },
+    )
 
 
 
@@ -1035,7 +1051,25 @@ def update_labdata_fld(request, id):
     survey_year = survey_field.survey_farm.survey_year
 
     # Get any lab data for this survey response
-    ancillary_data = AncillaryData.objects.get(survey_field_id=survey_field.id)
+    # If there is more than one lab data sheet then
+    #   go to a place where you can select which one
+
+    try:
+        ancillary_data = AncillaryData.objects.get(survey_field_id=survey_field.id)
+    except:
+        ancillary_data = AncillaryData.objects.filter(survey_field_id=survey_field.id)
+
+        return render(
+            request,
+            "wisccc/wisc_cc_ancillarydata_select_analysis.html",
+            {
+                "ancillarydata_list": ancillary_data,
+                "first_and_last_name": first_and_last_name,
+                "survey_year": survey_year,
+                "farmer_id": survey_field.survey_farm.farmer.id,
+                "survey_field": survey_field
+            },
+        )        
 
     form_ancillary_data = AncillaryDataForm(
         request.POST or None, instance=ancillary_data
