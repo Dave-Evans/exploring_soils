@@ -509,7 +509,14 @@
 
     $.getJSON(dataurl, function (data) {
         soilsLayer = data;
-
+        // Hate this. This is so that this doubly sampled field doesn't pop up twice
+        soilsLayer = soilsLayer.filter(function (item) {
+            if (item.id == 274 && item.properties.cc_biomass === 6.1) {
+                console.log("skip.")
+            } else {
+                return item
+            }
+        })
         // console.log("ready!")
         // Populate selectize boxes
         for (k in Object.keys(boxes_select)) {
