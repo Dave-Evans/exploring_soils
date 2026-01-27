@@ -32,7 +32,7 @@ dl_fieldnames = {
     'undfom30' : "uNDFom30",
     'ndfd30' : "NDFD30",
     'tdn_adf' : "TDN - ADF",
-    # 'milk_ton_milk2013' : "Milk/Ton_Milk2013",
+    'milk_ton_milk2013' : "Milk/Ton_Milk2013",
     'rfq' : "RFQ",
     'undfom240' : "uNDFom240",
     'dry_matter' : "Dry Matter",
