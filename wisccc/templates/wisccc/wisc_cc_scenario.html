@@ -382,7 +382,7 @@
             case "n_credits":
                 text = "This scenario is for farmers who are interested in planting a cover crop to add more nitrogen to their system ";
                 text += "and perhaps reduce the amount of synthetic nitrogen inputs for their cash crop. "
-                text += "The farm cards are sorted according to those with the highest total nitrogen at fall sampling. "
+                text += "The farm cards are sorted according to those with the highest total nitrogen at spring sampling. "
                 text += "This does not consider below ground N in the cover crop. "
                 text += "The farms shown always include a legume in the cover mix."
                 text += "<br>"
@@ -422,7 +422,7 @@
             scenario_text = "We estimated Returns on Investment (ROI) for above-ground nitrogen based "
             scenario_text += "on lab analyses of the plant tissue of the cover crop along with biomass quantity produced. "
             scenario_text += "Cover crop samples were gathered by farmers from a 2x2 foot square and "
-            scenario_text += "taken before a hard frost in the fall or before planting a cash crop in the spring. "
+            scenario_text += "before planting a cash crop in the spring. "
             scenario_text += "We figured a cost per acre for nitrogen based on an estimate of $0.52/lb for urea. "
             scenario_text += "<br>"
             scenario_text += "Caveats: Of course not all of the above ground nitrogen in the cover crop will "
@@ -873,7 +873,7 @@
         // remove cases where there is no legume
         // Sort by n lbs/acre
         filtered_data = filtered_data
-            .filter(function (d) { return d.properties.n_content !== null })
+            .filter(function (d) { return d.properties.spring_n_content !== null })
             .filter(function (d) {
                 if (d.properties.cc_species == null) {
                     return false
@@ -881,7 +881,7 @@
                 return d.properties.cc_species.indexOf("legume") > -1
 
             })
-            .toSorted((a, b) => b.properties.n_content - a.properties.n_content);
+            .toSorted((a, b) => b.properties.spring_n_content - a.properties.spring_n_content);
 
         return filtered_data;
     };
@@ -1509,11 +1509,11 @@
                 var n_roi = calcAGNROI(fieldRecord);
                 // https://www.dtnpf.com/agriculture/web/ag/crops/article/2025/06/18/retail-fertilizers-see-slight-price
                 text_scenario_details = "There was an estimated " +
-                    "<b>" + fieldRecord.properties.n_content.toFixed(1) + "</b>" +
+                    "<b>" + fieldRecord.properties.spring_n_content.toFixed(1) + "</b>" +
                     " lbs per acre " +
-                    "of nitrogen at fall sampling. ";
+                    "of nitrogen at spring sampling. ";
                 text_scenario_details += "This equates to about " +
-                    "<b>$" + (fieldRecord.properties.n_content * 0.52).toFixed(0) + "</b>" +
+                    "<b>$" + (fieldRecord.properties.spring_n_content * 0.52).toFixed(0) + "</b>" +
                     " per acre of urea N fertilizer. " +
                     "See full nutrient analysis by clicking 'Farm details'. " +
                     "<br>" +
@@ -1627,7 +1627,7 @@
 
         var dollar_price_for_urea_per_pounds = 0.52;
         // lbs/acre
-        var n_content = fieldRecord.properties.n_content;
+        var n_content = fieldRecord.properties.spring_n_content;
 
         // $/acre
         var cover_crop_seed_cost = fieldRecord.properties.cover_crop_seed_cost;
