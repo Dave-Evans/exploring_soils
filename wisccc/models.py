@@ -1292,9 +1292,9 @@ class FieldFarm(models.Model):
         - then use provided zipcode: use 5 digit to centroid table?
         - if all outside wisc? not used
         """
-        id = self.id
-
-        def lookup_county_from_loc(id):
+        fid = self.id
+        
+        def lookup_county_from_loc(fid):
             from django.db import connection
 
             with connection.cursor() as cursor:
@@ -1304,17 +1304,23 @@ class FieldFarm(models.Model):
                 from wisccc_fieldfarm ws
                 left join wi_counties wc
                 on ST_Intersects(ws.field_location, wc.shape)
-                where ws.id = {id}"""
+                where ws.id = {fid}"""
                 )
                 row = cursor.fetchone()
 
             derived_county = row[0]
+            print(f'Current: {self.derived_county},\nNew: {derived_county}')
             return derived_county
 
         if self.field_location is not None:
-            self.derived_county = lookup_county_from_loc(id)
+            derived_county = lookup_county_from_loc(fid)
+            if derived_county is not None:
+                self.derived_county = derived_county
+            else:
+                self.derived_county = ""    
         else:
             self.derived_county = ""
+        self.save()
 
     farmer = models.ForeignKey(
         Farmer,
