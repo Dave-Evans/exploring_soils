@@ -1309,7 +1309,7 @@ class FieldFarm(models.Model):
                 row = cursor.fetchone()
 
             derived_county = row[0]
-            print(f'Current: {self.derived_county},\nNew: {derived_county}')
+            print(f'Current: {self.derived_county}\nNew: {derived_county}')
             return derived_county
 
         if self.field_location is not None:

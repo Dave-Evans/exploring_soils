@@ -10,8 +10,9 @@ pullip () {
 }
 ipaddress=$( pullip )
 
+scp -i ~/.ssh/wieff_1.pem ../data/labdata_2025/dairyland_fall_2025.csv ubuntu@$ipaddress:~/.
 scp -i ~/.ssh/wieff_1.pem ../data/labdata_2025/AgSource\ Fall\ 2025.csv ubuntu@$ipaddress:~/.
-scp -i ~/.ssh/wieff_1.pem ../data/labdata_2025/Dairyland\ Fall\ 2025.csv ubuntu@$ipaddress:~/.
+
 
 # on remote server
 sudo mv *.csv ./exploring_soils/data/.
@@ -24,19 +25,33 @@ sudo mv *.xlsx ./exploring_soils/data/.
 
 # Keys are field names in db
 #   values are column titles in spreadsheet
+# dl_fieldnames = {
+#     # 'biomass_collection_date': 'Date Processed',
+#     'cp' : "CP",
+#     'adf' : "ADF",
+#     'andf' : "aNDF",
+#     'undfom30' : "uNDFom30",
+#     'ndfd30' : "NDFD30",
+#     'tdn_adf' : "TDN - ADF",
+#     'milk_ton_milk2013' : "Milk/Ton_Milk2013",
+#     'rfq' : "RFQ",
+#     'undfom240' : "uNDFom240",
+#     'dry_matter' : "Dry Matter",
+#     'rfv' : "RFV"
+# }
 dl_fieldnames = {
     # 'biomass_collection_date': 'Date Processed',
-    'cp' : "CP",
-    'adf' : "ADF",
-    'andf' : "aNDF",
-    'undfom30' : "uNDFom30",
-    'ndfd30' : "NDFD30",
-    'tdn_adf' : "TDN - ADF",
-    'milk_ton_milk2013' : "Milk/Ton_Milk2013",
-    'rfq' : "RFQ",
-    'undfom240' : "uNDFom240",
-    'dry_matter' : "Dry Matter",
-    'rfv' : "RFV"
+    'cp' : "cp_percdm",
+    'adf' : "adf_perc_dm",
+    'andf' : "andf_perc_dm",
+    'undfom30' : "undfdom30_perc_dm",
+    'ndfd30' : "ndfd30_perc_ndfom",
+    'tdn_adf' : "tdn_adf_perc_dm",
+    'milk_ton_milk2013' : "milk2013_lbs_per_ton",
+    'rfq' : "rfq_perc_dm",
+    'undfom240' : "undfdom240_perc_dm",     
+    'dry_matter' : "dry_matter",
+    'rfv' : "rfv_perc_dm"
 }
 as_fieldnames = {
     # 'biomass_collection_date' : "DATE Reported",
@@ -200,12 +215,12 @@ def load_data_dl(ancillarydata, row):
     
     # If none then add the date for collection    
     if ancillarydata.biomass_collection_date is None:
-        ancillarydata.biomass_collection_date = pd.to_datetime(row["Date Processed"])
+        ancillarydata.biomass_collection_date = pd.to_datetime(row["sample_date"])
     # If current date is LATER than this collection date, replace with earlier
     elif pd.to_datetime(ancillarydata.biomass_collection_date) > pd.to_datetime(
-        row["Date Processed"]
+        row["sample_date"]
     ):
-        ancillarydata.biomass_collection_date = pd.to_datetime(row["Date Processed"])
+        ancillarydata.biomass_collection_date = pd.to_datetime(row["sample_date"])
 
     for col in dl_fieldnames:
         # Set the column in Ancillarydata to value in row corresponding to the 
@@ -250,10 +265,10 @@ def load_data_agsource(ancillarydata, row):
     
     ancillarydata.save()
 
-fl_dairyland_2025 = './data/labdata_2025/Dairyland Fall 2025.csv'
+fl_dairyland_2025 = './data/labdata_2025/dairyland_fall_2025.csv'
 fl_agsource_2025 = './data/labdata_2025/AgSource Fall 2025.csv'
 
-# fl_dairyland_2025 = '/home/ubuntu/exploring_soils/Dairyland Fall 2025.csv'
+fl_dairyland_2025 = '/home/ubuntu/exploring_soils/dairyland_fall_2025.csv'
 # fl_agsource_2025 = '/home/ubuntu/exploring_soils/AgSource Fall 2025.csv'
 
 def process_dl_2025(fl_dairyland_2025):
@@ -263,9 +278,9 @@ def process_dl_2025(fl_dairyland_2025):
     print(f"Number of records {len(dat)}")
 
     for i, row in dat.iterrows():
-        clean_lab_id = clean_descr(row['Description 1'])
+        clean_lab_id = clean_descr(row['field_id'])
         farmer_id = find_farmer(clean_lab_id)
-        
+        if i == 4: break
         farmer = Farmer.objects.get(id = farmer_id)
         farmer_name = f"{farmer.first_name} {farmer.last_name}"
 
@@ -285,7 +300,7 @@ def process_dl_2025(fl_dairyland_2025):
     # Dl
     issues = []
     for i, row in dat.iterrows():
-        clean_lab_id = clean_descr(row['Description 1'])
+        clean_lab_id = clean_descr(row['field_id'])
         farmer_id = find_farmer(clean_lab_id)
         farmer = Farmer.objects.get(id = farmer_id)
         farmer_name = f"{farmer.first_name} {farmer.last_name}"
