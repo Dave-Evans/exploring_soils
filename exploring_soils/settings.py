@@ -116,6 +116,7 @@ CSP_STYLE_SRC = [
     "https://unpkg.com/leaflet@1.7.1/dist/leaflet.css",
     "https://unpkg.com/leaflet@1.0.1/dist/leaflet.css",
     "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+    "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css",
 ]
 CSP_SCRIPT_SRC = [
     "'self'",
@@ -145,7 +146,7 @@ CSP_SCRIPT_SRC = [
     "https://unpkg.com/leaflet@1.7.1/dist/leaflet.js",
     "https://unpkg.com/leaflet@1.0.1/dist/leaflet.js",
     "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
-    
+    "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js",
 ]
 CSP_IMG_SRC = [
     "'self'",
