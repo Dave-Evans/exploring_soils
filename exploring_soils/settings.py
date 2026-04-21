@@ -97,6 +97,7 @@ CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 CSP_FRAME_ANCESTORS = [
     "https://www.michaelfields.org",
@@ -149,16 +150,16 @@ CSP_IMG_SRC = [
     "'self'",
     "data:",
     "blob:",
-    "http://a.tile.osm.org/",
-    "http://b.tile.osm.org/",
-    "http://c.tile.osm.org/",
-    "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/",
+    "https://a.tile.osm.org/",
+    "https://b.tile.osm.org/",
+    "https://c.tile.osm.org/",
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/",
     "https://unpkg.com/leaflet@1.3.4/dist/images/",
     "https://unpkg.com/leaflet@1.0.1/dist/images/",
     "https://unpkg.com/leaflet@1.7.1/dist/images/",
     "https://tile.openstreetmap.org",
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/",
-    "http://ows.mundialis.de/services/",
+    "https://ows.mundialis.de/services/",
     "https://{}.s3.amazonaws.com/media/private/".format(
         config("AWS_STORAGE_BUCKET_NAME")
     ),
@@ -272,9 +273,9 @@ LOGIN_REDIRECT_URL = "wisc_cc_home"
 
 LEAFLET_CONFIG = {
     "SPATIAL_EXTENT": (-96.6, 43.0, -90, 48.5),
-    "TILES": "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "TILES": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     "OVERLAYS": [
-        ("Cadastral", "http://server/a/{z}/{x}/{y}.png", {"attribution": "&copy; IGN"})
+        ("Cadastral", "https://server/a/{z}/{x}/{y}.png", {"attribution": "&copy; IGN"})
     ],
     "MINIMAP": True,
     # 'DEFAULT_CENTER': (-94.0, 46.0),

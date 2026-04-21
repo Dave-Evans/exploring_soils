@@ -8,8 +8,10 @@ var satelite = L.tileLayer(
     attribution: '&copy; ' + mapLink + ', ' + wholink,
     maxZoom: 18,
 });
-var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+var osm = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    //referrerPolicy: 'origin-when-cross-origin'
+    referrerPolicy: 'strict-origin-when-cross-origin'
 });
 
 var baseMaps = {
