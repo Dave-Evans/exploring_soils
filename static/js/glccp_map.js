@@ -8,7 +8,7 @@ var satelite = L.tileLayer(
     attribution: '&copy; ' + mapLink + ', ' + wholink,
     maxZoom: 18,
 });
-var osm = L.tileLayer('http:s//{s}.tile.osm.org/{z}/{x}/{y}.png', {
+var osm = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
 });
 
