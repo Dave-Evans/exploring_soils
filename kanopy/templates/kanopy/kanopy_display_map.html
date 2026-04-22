@@ -77,8 +77,8 @@ https://datadrivensecurity.info/blog/vis/malmaps-d3/
         attribution: '&copy; ' + mapLink + ', ' + wholink,
         maxZoom: 18,
     });
-    var osm = L.tileLayer('http://{s}.tiles.osm.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    var osm = L.tileLayer('https://{s}.tiles.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
     });
 
     var hillshade_color = L.tileLayer.wms('https://ows.mundialis.de/services/service?', {
