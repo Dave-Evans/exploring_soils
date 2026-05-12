@@ -1379,7 +1379,15 @@ def pull_all_years_together(f_output):
             FROM (
                     select
                         *, 
-                        ST_SetSRID(ST_MakePoint(site_lon, site_lat), 4326) as farmlocation
+                        ST_GeometryN(
+                            ST_GeneratePoints(
+                                ST_Buffer(
+                                    ST_SetSRID(
+                                        ST_MakePoint(site_lon, site_lat),
+                                    4326),
+                                0.02),
+                            1),
+                        1) as farmlocation
                     from (
                         {query}
                         ) as b
