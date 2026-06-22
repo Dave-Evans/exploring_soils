@@ -750,7 +750,7 @@ def pull_all_years_together(f_output):
         , stat.fq_sulfur_content as s_content
         , stat.fq_carbon_content as c_content
 
-        , null as height_of_stand
+        , stat.height_of_stand_fall as height_of_stand
         , null as fall_notes
         , null as spring_cc_biomass_collection_date
         , null as spring_total_precip
