@@ -119,12 +119,26 @@ def find_farmer(clean_lab_id):
 def find_exceptions(clean_lab_id):
     
 
+    if clean_lab_id == "16-25-S":
+        ancdata = AncillaryData.objects.get(survey_field_id = 226)
+        return ancdata        
+
     # MO, just goofed on the dairyland sample label
     if clean_lab_id in ["00002-25-S", "00002-25-F"]:
         ancdata = AncillaryData.objects.get(survey_field_id = 282)
         return ancdata
         
+    if clean_lab_id == "00045-25-Field 1":
+        # The one with 28 oz
+        # Ancillary Data record 263
+        ancdata = AncillaryData.objects.get(id = 263)
+        return ancdata
     
+    if clean_lab_id == "00045-25-Field 2":
+        # Ancillary Data record 277
+        ancdata = AncillaryData.objects.get(id = 277)
+        return ancdata
+
     # JD
     # These are from the same field, just different treatments
     # Making new ancillary data records for each, both tied to surveyfield 274
@@ -155,7 +169,7 @@ def find_exceptions(clean_lab_id):
         ancdata = AncillaryData.objects.get(survey_field_id = 282)
         return ancdata
     
-    if clean_lab_id == "00032-25-F":
+    if clean_lab_id in ["00032-25-F", "00032-25-S (rye)"]:
         ancdata = AncillaryData.objects.get(survey_field_id= 246)
         return ancdata
 
@@ -172,14 +186,20 @@ def find_exceptions(clean_lab_id):
 
     return None
 
-def find_ancdata_record(clean_lab_id, farmer_id, survey_year = 2025):
+def find_ancdata_record(raw_lab_id, survey_year = 2025):
 
-    ancdata = find_exceptions(clean_lab_id)
+    ancdata = find_exceptions(raw_lab_id)
 
     if ancdata:
         return ancdata
     
+    clean_lab_id = clean_descr(raw_lab_id)
     
+    farmer_id = find_farmer(clean_lab_id)
+    
+    farmer = Farmer.objects.get(id = farmer_id)
+    farmer_name = f"{farmer.first_name} {farmer.last_name}"
+    print(farmer_name)
 
     survey_farm = SurveyFarm.objects.filter(farmer_id=farmer_id, survey_year=survey_year)
     
@@ -210,58 +230,79 @@ def find_ancdata_record(clean_lab_id, farmer_id, survey_year = 2025):
     ancdata = AncillaryData.objects.get(survey_field = survey_field)
     return ancdata
 
-def load_data_dl(ancillarydata, row):
+
+def load_data_dl(ancillarydata, row, season = "fall"):
     '''Loading dairyland 2025'''
-    
+    dl_f = dl_fieldnames.copy()
+    col_collection_date = "biomass_collection_date"
+    if season == "spring":
+        for key in list(dl_f):
+            dl_f["spring_" + key] = dl_f.pop(key)
+
+        col_collection_date = "spring_biomass_collection_date"
+
     # If none then add the date for collection    
-    if ancillarydata.biomass_collection_date is None:
-        ancillarydata.biomass_collection_date = pd.to_datetime(row["sample_date"])
+    if getattr(ancillarydata, col_collection_date) is None:
+        setattr(ancillarydata, col_collection_date, pd.to_datetime(row["sample_date"]))
+        
     # If current date is LATER than this collection date, replace with earlier
-    elif pd.to_datetime(ancillarydata.biomass_collection_date) > pd.to_datetime(
+    elif pd.to_datetime(getattr(ancillarydata, col_collection_date)) > pd.to_datetime(
         row["sample_date"]
     ):
-        ancillarydata.biomass_collection_date = pd.to_datetime(row["sample_date"])
+        setattr(ancillarydata, col_collection_date, pd.to_datetime(row["sample_date"]))
 
-    for col in dl_fieldnames:
+    for col in dl_f:    
         # Set the column in Ancillarydata to value in row corresponding to the 
         #   column name in dl_fieldnames
-        value = row[ dl_fieldnames[col] ]
-        print(f"Settting {col} in ancdata according to {dl_fieldnames[col]}")
+        value = row[ dl_f[col] ]
+        print(f"Settting {col} in ancdata according to {dl_f[col]}")
         print(f"\tvalue: {value}")
         # if its nan then skip
         if pd.isna(value):
             continue
 
-        setattr(ancillarydata, col, row[ dl_fieldnames[col] ])
+        setattr(ancillarydata, col, row[ dl_f[col] ])
     
     ancillarydata.save()
 
-def load_data_agsource(ancillarydata, row):
+def load_data_agsource(ancillarydata, row, season="fall"):
     '''Loading Agsource 2025'''
     
+    as_f = as_fieldnames.copy()
+    col_collection_date = "biomass_collection_date"
+    n_content_field_name = 'n_content'
+    if season == "spring":
+        for key in list(as_f):
+            as_f["spring_" + key] = as_f.pop(key)
+
+        col_collection_date = "spring_biomass_collection_date"
+        n_content_field_name = "spring_n_content"
+
     # If none then add the date for collection    
-    if ancillarydata.biomass_collection_date is None:
-        ancillarydata.biomass_collection_date = pd.to_datetime(row["DATE Reported"])
+    if getattr(ancillarydata, col_collection_date) is None:
+        setattr(ancillarydata, col_collection_date, pd.to_datetime(row["DATE Reported"]))
+        
     # If current date is LATER than this collection date, replace with earlier
-    elif pd.to_datetime(ancillarydata.biomass_collection_date) > pd.to_datetime(
+    elif pd.to_datetime(getattr(ancillarydata, col_collection_date)) > pd.to_datetime(
         row["DATE Reported"]
     ):
-        ancillarydata.biomass_collection_date = pd.to_datetime(row["DATE Reported"])
+        setattr(ancillarydata, col_collection_date, pd.to_datetime(row["DATE Reported"]))
 
 
-    setattr(ancillarydata, 'n_content', row["Carbon Lbs/Acre"] / row["C-N Ratio"])
 
-    for col in as_fieldnames:
+    setattr(ancillarydata, n_content_field_name, row["Carbon Lbs/Acre"] / row["C-N Ratio"])
+
+    for col in as_f:
         # Set the column in Ancillarydata to value in row corresponding to the 
         #   column name in dl_fieldnames
-        value = row[ as_fieldnames[col] ]
-        print(f"Settting {col} in ancdata according to {as_fieldnames[col]}")
+        value = row[ as_f[col] ]
+        print(f"Settting {col} in ancdata according to {as_f[col]}")
         print(f"\tvalue: {value}")
         # if its nan then skip
         if pd.isna(value):
             continue
 
-        setattr(ancillarydata, col, row[ as_fieldnames[col] ])
+        setattr(ancillarydata, col, row[ as_f[col] ])
     
     ancillarydata.save()
 
@@ -270,6 +311,59 @@ fl_agsource_2025 = './data/labdata_2025/AgSource Fall 2025.csv'
 
 fl_dairyland_2025 = '/home/ubuntu/exploring_soils/dairyland_fall_2025.csv'
 # fl_agsource_2025 = '/home/ubuntu/exploring_soils/AgSource Fall 2025.csv'
+
+fl_dairyland_2025_spring = './data/labdata_2025/dairyland_spring_2025.csv'
+# fl_dairyland_2025_spring = '/home/ubuntu/exploring_soils/dairyland_spring_2025.csv'
+
+def process_dl_spring_2025(fl_dairyland_2025_spring):
+    
+    dat = pd.read_csv(fl_dairyland_2025_spring)
+    dat['Farmer_id'] = 0
+    dat['Farmer_name'] = ''
+    print(f"Number of records {len(dat)}")
+    # Dl
+    issues = []
+    for i, row in dat.iterrows():
+        print("_____________")
+        ancdata = find_ancdata_record(row['field_id'], survey_year = 2025)
+
+        
+        if not ancdata:
+            issues.append(row['field_id'])
+            continue
+
+        load_data_dl(ancdata, row, season = 'spring')
+        # try:
+        #     loaded_farmers_2025.append( need_farmers_2025.pop( need_farmers_2025.index(farmer_name) ) )
+        # except:
+        #     print(farmer_name)
+    print(issues)
+
+fl_name = "./data/labdata_2025/2026 Spring Tissue Sample.csv"
+def process_as_2025_spring(fl_name):
+    
+    dat = pd.read_csv(fl_name)
+    dat['Farmer_id'] = 0
+    dat['Farmer_name'] = ''
+    print(f"Number of records {len(dat)}")
+    issues = []
+    for i, row in dat.iterrows():
+        print("_____________")
+        ancdata = find_ancdata_record(row['ID Number'], survey_year = 2025)
+
+        if not ancdata:
+            issues.append(row['ID Number'])
+            continue
+
+
+
+
+        load_data_agsource(ancdata, row, season="spring")
+
+    print(issues)
+    
+
+
 
 def process_dl_2025(fl_dairyland_2025):
     dat = pd.read_csv(fl_dairyland_2025)
@@ -351,6 +445,9 @@ def process_as_2025(fl_name):
     # Agsource
     issues = []
     for i, row in dat.iterrows():
+
+        ancdata = find_ancdata_record(clean_lab_id, farmer_id, survey_year = 2025)
+
         clean_lab_id = clean_descr(row['Grower Name'])
         if clean_lab_id is None:
             print("No id found")
@@ -359,7 +456,7 @@ def process_as_2025(fl_name):
         farmer = Farmer.objects.get(id = farmer_id)
         farmer_name = f"{farmer.first_name} {farmer.last_name}"
         print(farmer_name)
-        ancdata = find_ancdata_record(clean_lab_id, farmer_id, survey_year = 2025)
+        
         if not ancdata:
             issues.append(farmer_name)
             continue
