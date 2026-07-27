@@ -1491,6 +1491,14 @@ def get_wisc_cc_data(request):
             feat["properties"]["image_2_url"] = survey_photo.image_2.url
             feat["properties"]["caption_photo_2"] = survey_photo.caption_photo_2
 
+
+        if survey_photo.spring_image_1:
+            feat["properties"]["spring_image_1_url"] = survey_photo.spring_image_1.url
+            feat["properties"]["spring_caption_photo_1"] = survey_photo.spring_caption_photo_1
+        if survey_photo.spring_image_2:
+            feat["properties"]["spring_image_2_url"] = survey_photo.spring_image_2.url
+            feat["properties"]["spring_caption_photo_2"] = survey_photo.spring_caption_photo_2            
+
     return JsonResponse(list(data["features"]), safe=False)
 
 

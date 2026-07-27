@@ -4,7 +4,7 @@ mapLink =
 wholink =
     'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
 var satelite = L.tileLayer(
-    'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     attribution: '&copy; ' + mapLink + ', ' + wholink,
     maxZoom: 18,
 });
@@ -466,10 +466,20 @@ function onEachFeature(feature, layer) {
     var image_1 = ""
     var image_2 = ""
     if (feature.properties.image_1_url != null) {
-        image_1 = "<dt>" + feature.properties.caption_photo_1 + "</td> <td>" + '<img class="popupphoto" src="' + feature.properties.image_1_url + '" width="250" height="250">' + "</td>"
+        image_1 = "<dt>Fall, " + feature.properties.caption_photo_1 + "</td> <td>" + '<img class="popupphoto" src="' + feature.properties.image_1_url + '" width="250" height="250">' + "</td>"
     }
     if (feature.properties.image_2_url != null) {
-        image_2 = "<dt>" + feature.properties.caption_photo_2 + "</td> <td>" + '<img src="' + feature.properties.image_2_url + '" width="250" height="250">' + "</td>"
+        image_2 = "<dt>Fall, " + feature.properties.caption_photo_2 + "</td> <td>" + '<img src="' + feature.properties.image_2_url + '" width="250" height="250">' + "</td>"
+    }
+
+
+    var spring_image_1 = ""
+    var spring_image_2 = ""
+    if (feature.properties.spring_image_1_url != null) {
+        spring_image_1 = "<dt>Spring, " + feature.properties.spring_caption_photo_1 + "</td> <td>" + '<img class="popupphoto" src="' + feature.properties.spring_image_1_url + '" width="250" height="250">' + "</td>"
+    }
+    if (feature.properties.spring_image_2_url != null) {
+        spring_image_2 = "<dt>Spring, " + feature.properties.spring_caption_photo_2 + "</td> <td>" + '<img src="' + feature.properties.spring_image_2_url + '" width="250" height="250">' + "</td>"
     }
 
     var table_farming_info = makeTableFarmInfo(feature)
@@ -481,7 +491,9 @@ function onEachFeature(feature, layer) {
         table_nutrient +
         table_forage +
         image_1 +
-        image_2
+        image_2 +
+        spring_image_1 +
+        spring_image_2
 
 
     if (feature.properties && feature.properties.popupContent) {
