@@ -820,17 +820,18 @@ def update_2020_2022():
     for i, cc in enumerate(wisc_cc):
         # split the third from last item, raw species
         # unpack first five to variables
-        if cc[-9] is None:
+        if cc[-10] is None:
             print("Null for", cc[1])
             continue
         id = cc[1]
 
         old_class = cc[-4]
-
-        cc_sps = cc[-9].split(", ")
+        print("______")
+        print("Old:", old_class)
+        cc_sps = cc[-10].split(", ")
 
         species_class = derive_species_class(cc_sps)
-
+        print("New:", species_class)
         update_static_species(id, species_class)
 
 
