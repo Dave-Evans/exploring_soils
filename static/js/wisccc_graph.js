@@ -380,7 +380,26 @@ d3.json(dataurl, function (data) {
             svg.select('.y_axis_label')
                 .transition().duration(1000)
                 .text("Spring dry matter (%)");
-        } else if (y_property == "fq_cp") {
+        } else if (y_property == "height_of_stand") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall height of stand (in)");
+        } else if (y_property == "spring_height_of_stand") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring height of stand (in)");
+        }
+        else if (y_property == "c_to_n_ratio") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Fall C to N ratio");
+        } else if (y_property == "spring_c_to_n_ratio") {
+            svg.select('.y_axis_label')
+                .transition().duration(1000)
+                .text("Spring C to N ratio");
+        }
+
+        else if (y_property == "fq_cp") {
             svg.select('.y_axis_label')
                 .transition().duration(1000)
                 .text("Fall crude protein (% dry matter)");
@@ -899,7 +918,17 @@ d3.json(dataurl, function (data) {
                 }))
             ).nice();
             // We are just take the extent of all these
-        } else if ((y_property.indexOf("fq_dry_matter") > -1) | (y_property.indexOf("fq_cp") > -1) | (y_property.indexOf("fq_rfv") > -1) | (y_property.indexOf("fq_undfom240") > -1) | (y_property.indexOf("fq_tdn_adf") > -1) | (y_property.indexOf("fq_ndfd30") > -1)) {
+        } else if (y_property.indexOf("c_to_n_ratio") > -1) {
+
+            y_scale = yScale
+
+            y_scale.domain(
+                d3.extent(filtered_data.map(function (child) {
+                    return child.properties[y_property]
+                }))
+            ).nice();
+            // We are just take the extent of all these
+        } else if ((y_property.indexOf("fq_dry_matter") > -1) | (y_property.indexOf("fq_cp") > -1) | (y_property.indexOf("fq_rfv") > -1) | (y_property.indexOf("fq_undfom240") > -1) | (y_property.indexOf("fq_tdn_adf") > -1) | (y_property.indexOf("fq_ndfd30") > -1) | (y_property.indexOf("height_of_stand") > -1)) {
 
             y_scale = yScale
 
