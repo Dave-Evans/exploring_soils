@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "django_tables2",
     "django_filters",
     "crispy_forms",
+    "crispy_bootstrap4",
     "leaflet",
     "djgeojson",
     "storages",
@@ -122,7 +123,6 @@ CSP_SCRIPT_SRC = [
     "'unsafe-inline'",
     "https://code.jquery.com/jquery-2.1.0.min.js",
     # "https://code.jquery.com/jquery-3.3.1.slim.min.js",
-    
     # "https://code.jquery.com/jquery.js",
     # "http://code.jquery.com/jquery.js",
     "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js",
@@ -141,10 +141,9 @@ CSP_SCRIPT_SRC = [
     "https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js",
     "https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js",
     "http://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js",
-    "https://unpkg.com/leaflet@1.3.4/dist/leaflet.js",    
+    "https://unpkg.com/leaflet@1.3.4/dist/leaflet.js",
     "https://unpkg.com/leaflet@1.7.1/dist/leaflet.js",
     "https://unpkg.com/leaflet@1.0.1/dist/leaflet.js",
-    
 ]
 CSP_IMG_SRC = [
     "'self'",
@@ -186,7 +185,7 @@ CSP_FRAME_SRC = [
     "'self'",
     "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/",
 ]
-CSP_CONNECT_SRC = ("'self'","https://data.rcc-acis.org/StnData")
+CSP_CONNECT_SRC = ("'self'", "https://data.rcc-acis.org/StnData")
 
 ROOT_URLCONF = "exploring_soils.urls"
 
