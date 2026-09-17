@@ -9,10 +9,41 @@
   - name: Update apt-get repo and cache
     apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
 
+  - name: Ensure snapd is installed                                                                                                                      
+    apt:                                                                                                                                                 
+      name: snapd                                                                                                                                        
+      state: present                                                                                                                                     
+      update_cache: yes                                                                                                                                  
+    become: yes                                                                                                                                          
+                                                                                                                                                        
+  - name: Ensure snapd is running and enabled                                                                                                            
+    systemd:                                                                                                                                             
+      name: snapd                                                                                                                                        
+      state: started                                                                                                                                     
+      enabled: yes                                                                                                                                       
+    become: yes                                                                                                                                          
+                                                                                                                                                        
+  - name: Install AWS CLI v2 via snap (classic confinement)                                                                                              
+    command: snap install aws-cli --classic                                                                                                              
+    args:                                                                                                                                                
+      creates: /snap/bin/aws                                                                                                                             
+    become: yes                                                                                                                                          
+                                                                                                                                                        
+  # snap exposes the binary at /snap/bin/aws, which cron and non-login shells                                                                            
+  # may not have on PATH. Symlink into /usr/bin so `aws` resolves everywhere.                                                                            
+  - name: Make aws available on the default PATH                                                                                                         
+    file:                                                                                                                                                
+      src: /snap/bin/aws                                                                                                                                 
+      dest: /usr/bin/aws                                                                                                                                 
+      state: link                                                                                                                                        
+      force: yes                                                                                                                                         
+    become: yes   
+
+
   # acl added because it is needed for some postgres steps
   - name: Install software
     apt:
-      name: ['awscli', 'python3-pip', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev', 'acl',   'python3-dev', 'build-essential']
+      name: ['python3-pip', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev', 'acl',   'python3-dev', 'build-essential']
       state: present
     tags: install
   
@@ -25,22 +56,23 @@
   - name: Ensure the PostgreSQL service is running
     service: name=postgresql state=started enabled=yes
 
-  - name: Ensure database is created
-    become_user: postgres
-    postgresql_db: name={{ database_name }}
-              encoding='UTF-8'
-              lc_collate='en_US.UTF-8'
-              lc_ctype='en_US.UTF-8'
-              template='template0'
-              state=present
-
-  - name: Ensure user has access to the database
-    become_user: postgres  
-    postgresql_user: db={{ database_name }}
-                name={{ database_user }}
-                password={{ database_pass }}
-                priv=ALL
-                state=present
+  - name: Ensure app user exists                                                                                                                       
+    become_user: postgres                                                                                                                              
+    postgresql_user:                                                                                                                                   
+      name: "{{ database_user }}"                                                                                                                      
+      password: "{{ database_pass }}"                                                                                                                  
+      state: present                                                                                                                                   
+                                                                                                                                                          
+  - name: Ensure database is created and owned by the app user                                                                                         
+    become_user: postgres                                                                                                                              
+    postgresql_db:                                                                                                                                     
+      name: "{{ database_name }}"                                                                                                                      
+      owner: "{{ database_user }}"                                                                                                                     
+      encoding: UTF-8                                                                                                                                  
+      lc_collate: en_US.UTF-8                                                                                                                          
+      lc_ctype: en_US.UTF-8                                                                                                                            
+      template: template0                                                                                                                              
+      state: present    
   
   - name: Adds postgis extension to the database
     become_user: postgres
@@ -48,13 +80,14 @@
       name: postgis
       db: "{{ database_name }}"
 
-  - name: Ensure user does not have unnecessary privileges
-    become_user: postgres
-    postgresql_user: name={{ database_user }}
-                role_attr_flags=NOSUPERUSER,NOCREATEDB
-                state=present
-    notify:
-    - Restart postgres
+  - name: Ensure user has least-privilege attributes                                                                                                     
+    become_user: postgres                                                                                                                                
+    postgresql_user:                                                                                                                                     
+      name: "{{ database_user }}"                                                                                                                        
+      role_attr_flags: NOSUPERUSER,NOCREATEDB                                                                                                            
+      state: present                                                                                                                                     
+    notify:                                                                                                                                              
+      - Restart postgres  
 
   handlers:
     - name: Restart postgres

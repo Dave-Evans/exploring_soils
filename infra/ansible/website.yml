@@ -12,7 +12,7 @@
 
   - name: Install software
     apt:
-      name: ['awscli', 'python3-pip', 'python3-venv', 'gdal-bin', 'apache2', 'libapache2-mod-wsgi-py3', 'git', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev',   'python3-dev', 'build-essential' ]
+      name: ['python3-pip', 'python3-venv', 'gdal-bin', 'apache2', 'libapache2-mod-wsgi-py3', 'git', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev',   'python3-dev', 'build-essential' ]
       state: present
     tags: install
 
@@ -96,6 +96,13 @@
       group: www-data
     notify:
     - Restart apache
+
+  - name: Allow www-data to traverse the ubuntu home directory                                                                                           
+    file:                                                                                                                                                
+      path: /home/ubuntu                                                                                                                                 
+      state: directory                                                                                                                                   
+      mode: "0751"                                                                                                                                       
+    become: yes       
 
   handlers:
     - name: Restart apache
