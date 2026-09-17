@@ -12,7 +12,7 @@
 
   - name: Install software
     apt:
-      name: ['awscli', 'python3-pip', 'python3-venv', 'gdal-bin', 'apache2', 'libapache2-mod-wsgi-py3', 'git', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev']
+      name: ['awscli', 'python3-pip', 'python3-venv', 'gdal-bin', 'apache2', 'libapache2-mod-wsgi-py3', 'git', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev',   'python3-dev', 'build-essential' ]
       state: present
     tags: install
 

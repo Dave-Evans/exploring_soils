@@ -12,13 +12,15 @@
   # acl added because it is needed for some postgres steps
   - name: Install software
     apt:
-      name: ['awscli', 'python3-pip', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev', 'acl']
+      name: ['awscli', 'python3-pip', 'postgresql', 'postgresql-contrib', 'postgis', 'libpq-dev', 'acl',   'python3-dev', 'build-essential']
       state: present
     tags: install
   
-  - name: Install Psycopg2
-    pip:
-      name: psycopg2
+  # Modified for ubuntu24
+  - name: Install Psycopg2                                                                                                                               
+    apt:                                                                                                                                                 
+      name: python3-psycopg2                                                                                                                             
+      state: present 
 
   - name: Ensure the PostgreSQL service is running
     service: name=postgresql state=started enabled=yes
