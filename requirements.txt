@@ -31,7 +31,7 @@ Fiona>=1.9
 geopandas>=0.14
 Shapely>=2.0
 pyproj>=3.4
-SQLAlchemy>=1.4,<2
+SQLAlchemy>=2.0
 XlsxWriter>=3.2
 
 # ===== AWS =====
