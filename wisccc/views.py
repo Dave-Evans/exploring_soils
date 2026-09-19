@@ -909,7 +909,7 @@ def wisc_cc_survey6(request, sfieldid):
 
         # For 2026, there is no section 7, back to survey page!
 
-        return redirect("wisc_cc_survey", survey_farm.id)
+        return redirect("wisc_cc_survey")
 
     template = "wisccc/survey_section_6_field_seeding_cost.html"
     form_file_name_surveyfield = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfield.html"
