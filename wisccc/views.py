@@ -30,7 +30,7 @@ from wisccc.tables import (
     ResearcherTable,
     InterestedPartyTable,
     InterestedAgronomistTable,
-    ScenarioTable
+    ScenarioTable,
 )
 from wisccc.filters import SurveyResponseFilter, SurveyRegistrationFilter
 from django_filters.views import FilterView
@@ -81,8 +81,7 @@ from wisccc.forms_2024 import (
     SurveyFieldFormSection5 as SurveyFieldFormSection5_2024,
     SurveyFarmFormSection6 as SurveyFarmFormSection6_2024,
     SurveyFieldFormSection6 as SurveyFieldFormSection6_2024,
-    SurveyFarmFormSection7 as SurveyFarmFormSection7_2024
-    
+    SurveyFarmFormSection7 as SurveyFarmFormSection7_2024,
 )
 from wisccc.models import (
     Survey,
@@ -178,8 +177,10 @@ def wisc_cc_manager_home(request):
 def wisc_cc_about(request):
     return render(request, "wisccc/wisc_cc_about.html")
 
+
 def wisc_cc_about_weather(request):
     return render(request, "wisccc/wisc_cc_about_weather.html")
+
 
 class ScenarioTableListView(SingleTableMixin, FilterView):
     """List wisc registration entries"""
@@ -189,10 +190,14 @@ class ScenarioTableListView(SingleTableMixin, FilterView):
     template_name = "wisccc/wisc_cc_scenario.html"
 
     def get_queryset(self):
-        
-        return super().get_queryset().filter(survey_field__survey_farm__survey_year__gt=2022)[:25]
+
+        return (
+            super()
+            .get_queryset()
+            .filter(survey_field__survey_farm__survey_year__gt=2022)[:25]
+        )
+
     # filterset_class = SurveyRegistrationFilter
-    
 
 
 def wisc_cc_acis(request):
@@ -336,7 +341,7 @@ def wisccc_download_data(request, opt):
 
 
 @login_required
-def wisc_cc_survey(request, survey_year=2025):
+def wisc_cc_survey(request, survey_year=2026):
     """
     Home page for Cover Crop survey. We check progress of different sections of the survey
     by querying one required question from each section (0 (the farmer section),1,2,3).
@@ -392,13 +397,15 @@ def wisc_cc_survey(request, survey_year=2025):
         farmer_id=farmer.id, survey_year=survey_year
     ).first()
     if survey_farm is None:
-        survey_farm = SurveyFarm.objects.create(farmer_id=farmer.id, survey_year=survey_year)
+        survey_farm = SurveyFarm.objects.create(
+            farmer_id=farmer.id, survey_year=survey_year
+        )
 
     survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id).order_by(
         "id"
     )
     if survey_fields.count() == 0:
-        survey_field = SurveyField.objects.create(survey_farm_id = survey_farm.id)
+        survey_field = SurveyField.objects.create(survey_farm_id=survey_farm.id)
 
     survey_fields = SurveyField.objects.filter(survey_farm_id=survey_farm.id).order_by(
         "id"
@@ -473,15 +480,18 @@ def wisc_cc_survey1(request, survey_year, farmer_id):
         new_form.save()
 
         return redirect(
-            reverse("wisc_cc_survey")
-                + f"/{survey_year}/?farmer_id={farmer_id}"          
+            reverse("wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer_id}"
         )
 
     template = "wisccc/survey_section_1_farmer.html"
     return render(
         request,
         template,
-        {"form_farmer": form_farmer, "farmer_id": farmer_id, "survey_year": survey_year},
+        {
+            "form_farmer": form_farmer,
+            "farmer_id": farmer_id,
+            "survey_year": survey_year,
+        },
     )
 
 
@@ -501,7 +511,7 @@ def wisc_cc_survey2(request, sfarmid):
     ):
         return redirect("wisc_cc_unauthorized")
     # pass the object as instance in form.
-    
+
     # Use year specific forms.
     if survey_farm.survey_year == 2025:
 
@@ -517,7 +527,7 @@ def wisc_cc_survey2(request, sfarmid):
 
     if form_surveyfarm_section_2.is_valid():
         new_form = form_surveyfarm_section_2.save(commit=False)
-        # Should not need to add farmer or year to these sections as they are 
+        # Should not need to add farmer or year to these sections as they are
         #   auto created with the registration
         # new_form.farmer = farmer
         # new_form.survey_year = survey_year
@@ -528,13 +538,13 @@ def wisc_cc_survey2(request, sfarmid):
         if survey_fields.count() > 1:
             return redirect(
                 reverse("wisc_cc_survey")
-                + f"/{survey_farm.survey_year}/?farmer_id={farmer.id}"                
+                + f"/{survey_farm.survey_year}/?farmer_id={farmer.id}"
             )
         else:
             return redirect("wisc_cc_survey3", survey_fields[0].id)
 
     template = "wisccc/survey_section_2_goals_support.html"
-    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_2_goals_support_surveyfarm.html'
+    form_file_name_surveyfarm = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_2_goals_support_surveyfarm.html"
     return render(
         request,
         template,
@@ -608,8 +618,8 @@ def wisc_cc_survey3(request, sfieldid):
             request.POST or None, instance=field_farm
         )
 
-    form_file_name_fieldfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_3_rotation_rates_fieldfarm.html'
-    form_file_name_surveyfield = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_3_rotation_rates_surveyfield.html'
+    form_file_name_fieldfarm = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_3_rotation_rates_fieldfarm.html"
+    form_file_name_surveyfield = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_3_rotation_rates_surveyfield.html"
 
     if form_surveyfield_section_3.is_valid() and form_fieldfarm_section_3.is_valid():
 
@@ -625,20 +635,19 @@ def wisc_cc_survey3(request, sfieldid):
         return redirect("wisc_cc_survey4", sfieldid)
     # add form dictionary to context
 
-    
     template = "wisccc/survey_section_3_field_rotation_rates.html"
     return render(
         request,
         template,
         {
-            "form_surveyfield_section_3" : form_surveyfield_section_3,
-            "form_fieldfarm_section_3" : form_fieldfarm_section_3,
-            "sfieldid" : sfieldid,
-            "farmer_id" : survey_farm.farmer.id,
-            "survey_year" : survey_farm.survey_year,
+            "form_surveyfield_section_3": form_surveyfield_section_3,
+            "form_fieldfarm_section_3": form_fieldfarm_section_3,
+            "sfieldid": sfieldid,
+            "farmer_id": survey_farm.farmer.id,
+            "survey_year": survey_farm.survey_year,
             "form_file_name_fieldfarm": form_file_name_fieldfarm,
             "form_file_name_surveyfield": form_file_name_surveyfield,
-        }
+        },
     )
 
 
@@ -705,7 +714,7 @@ def wisc_cc_survey4(request, sfieldid):
         )
         form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2_2024(
             request.POST or None, instance=survey_field
-        )        
+        )
 
     if (
         form_surveyfarm_section_4.is_valid()
@@ -729,9 +738,9 @@ def wisc_cc_survey4(request, sfieldid):
         return redirect("wisc_cc_survey5", sfieldid)
 
     template = "wisccc/survey_section_4_field_planting_dates_timing.html"
-    form_file_name_surveyfield_part_1 = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfield_part_1.html'
-    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfarm.html'
-    form_file_name_surveyfield_part_2 = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfield_part_2.html'
+    form_file_name_surveyfield_part_1 = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfield_part_1.html"
+    form_file_name_surveyfarm = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfarm.html"
+    form_file_name_surveyfield_part_2 = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_4_planting_dates_timing_surveyfield_part_2.html"
 
     return render(
         request,
@@ -744,7 +753,7 @@ def wisc_cc_survey4(request, sfieldid):
             "survey_year": survey_farm.survey_year,
             "form_file_name_surveyfield_part_1": form_file_name_surveyfield_part_1,
             "form_file_name_surveyfarm": form_file_name_surveyfarm,
-            "form_file_name_surveyfield_part_2": form_file_name_surveyfield_part_2
+            "form_file_name_surveyfield_part_2": form_file_name_surveyfield_part_2,
         },
     )
 
@@ -795,11 +804,12 @@ def wisc_cc_survey5(request, sfieldid):
     context["form_surveyfield_section_5"] = form_surveyfield_section_5
     context["farmer_id"] = farmer.id
     context["survey_year"] = survey_farm.survey_year
-    context["form_file_name_surveyfield"] = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_5_tillage_manure_soil_surveyfield.html'
-
+    context["form_file_name_surveyfield"] = (
+        f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_5_tillage_manure_soil_surveyfield.html"
+    )
 
     template = "wisccc/survey_section_5_field_tillage_manure_soil.html"
-    
+
     return render(request, template, context)
 
 
@@ -834,8 +844,8 @@ def wisc_cc_survey6(request, sfieldid):
         )
         form_surveyfield_section_6 = SurveyFieldFormSection6_2024(
             request.POST or None, instance=survey_field
-        )        
-            
+        )
+
     if form_surveyfarm_section_6.is_valid() and form_surveyfield_section_6.is_valid():
 
         new_form_survey_farm = form_surveyfarm_section_6.save(commit=False)
@@ -848,8 +858,8 @@ def wisc_cc_survey6(request, sfieldid):
         return redirect("wisc_cc_survey7", survey_farm.id)
 
     template = "wisccc/survey_section_6_field_seeding_cost.html"
-    form_file_name_surveyfield = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfield.html'
-    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfarm.html'
+    form_file_name_surveyfield = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfield.html"
+    form_file_name_surveyfarm = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfarm.html"
 
     return render(
         request,
@@ -860,7 +870,7 @@ def wisc_cc_survey6(request, sfieldid):
             "farmer_id": farmer.id,
             "survey_year": survey_farm.survey_year,
             "form_file_name_surveyfield": form_file_name_surveyfield,
-            "form_file_name_surveyfarm": form_file_name_surveyfarm
+            "form_file_name_surveyfarm": form_file_name_surveyfarm,
         },
     )
 
@@ -898,11 +908,11 @@ def wisc_cc_survey7(request, sfarmid):
 
         if request.user.has_perm("wisccc.survery_manager"):
             return redirect("response_table")
-        
+
         return redirect("wisc_cc_survey")
 
     template = "wisccc/survey_section_7_final_thoughts.html"
-    form_file_name_surveyfarm = f'wisccc/includes/survey_{survey_farm.survey_year}/form_section_7_final_thoughts_surveyfarm.html'
+    form_file_name_surveyfarm = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_7_final_thoughts_surveyfarm.html"
     return render(
         request,
         template,
@@ -910,7 +920,7 @@ def wisc_cc_survey7(request, sfarmid):
             "form_surveyfarm_section_7": form_surveyfarm_section_7,
             "farmer_id": farmer.id,
             "form_file_name_surveyfarm": form_file_name_surveyfarm,
-            "survey_year": survey_farm.survey_year
+            "survey_year": survey_farm.survey_year,
         },
     )
 
@@ -939,21 +949,19 @@ def create_addtl_surveyfield(request, sfarmid):
         # reponse table
         return redirect(
             reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
-        )    
+        )
 
     print(survey_farm.survey_year)
     return render(
         request,
         "wisccc/create_addtl_surveyfield.html",
-        {
-            "sfarmid": survey_farm.id,
-            "survey_farm": survey_farm,
-            "farmer": farmer
-        })
+        {"sfarmid": survey_farm.id, "survey_farm": survey_farm, "farmer": farmer},
+    )
+
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def delete_survey_field(request, sfieldid):
-    '''For delete a survey field'''
+    """For delete a survey field"""
     context = {}
 
     survey_field = SurveyField.objects.get(id=sfieldid)
@@ -961,9 +969,9 @@ def delete_survey_field(request, sfieldid):
     section_4 = survey_field.cash_crop_planting_date is not None
     section_5 = survey_field.manure_post is not None
     section_6 = survey_field.cover_crop_seeding_method is not None
-    completed = section_3 and section_4 and section_5 and section_6    
+    completed = section_3 and section_4 and section_5 and section_6
 
-    survey_farm = SurveyFarm.objects.get(id = survey_field.survey_farm_id)
+    survey_farm = SurveyFarm.objects.get(id=survey_field.survey_farm_id)
     survey_year = survey_farm.survey_year
     farmer = survey_farm.farmer
     context = {
@@ -983,16 +991,15 @@ def delete_survey_field(request, sfieldid):
         # reponse table
         return redirect(
             reverse(f"wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer.id}"
-        )    
+        )
 
     return render(request, "wisccc/delete_survey_field.html", context)
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def update_labdata(request, id):
-    """For updating labdata based on *ancillarydata id*
-    """
-    
+    """For updating labdata based on *ancillarydata id*"""
+
     # ancillary_data = AncillaryData.objects.get(id = anc_id)
     ancillary_data = get_object_or_404(AncillaryData, id=id)
     form_ancillary_data = AncillaryDataForm(
@@ -1002,18 +1009,18 @@ def update_labdata(request, id):
     survey_field = ancillary_data.survey_field
     survey_year = survey_field.survey_farm.survey_year
     first_and_last_name = f"{survey_field.survey_farm.farmer.first_name} {survey_field.survey_farm.farmer.last_name}"
-    
+
     if form_ancillary_data.is_valid():
 
         new_ancillary_data = form_ancillary_data.save()
-        
+
         if "cc_biomass" in form_ancillary_data.changed_data:
             print("Recalculating because new fall biomass value")
             new_ancillary_data.recalculate_fall_lbs_acre()
-        
+
         if "spring_cc_biomass" in form_ancillary_data.changed_data:
             print("Recalculating because new spring biomass value")
-            new_ancillary_data.recalculate_spring_lbs_acre()            
+            new_ancillary_data.recalculate_spring_lbs_acre()
 
         new_ancillary_data.survey_field_id = survey_field.id
 
@@ -1033,10 +1040,9 @@ def update_labdata(request, id):
             "first_and_last_name": first_and_last_name,
             "survey_year": survey_year,
             "farmer_id": survey_field.survey_farm.farmer.id,
-            "survey_field": survey_field
+            "survey_field": survey_field,
         },
     )
-
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -1045,7 +1051,7 @@ def update_labdata_fld(request, id):
     Will navigate to this page from new wisc survey page
     uses survey field id to grab ancillary data
     """
-    
+
     survey_field = SurveyField.objects.get(id=id)
     first_and_last_name = f"{survey_field.survey_farm.farmer.first_name} {survey_field.survey_farm.farmer.last_name}"
     survey_year = survey_field.survey_farm.survey_year
@@ -1067,9 +1073,9 @@ def update_labdata_fld(request, id):
                 "first_and_last_name": first_and_last_name,
                 "survey_year": survey_year,
                 "farmer_id": survey_field.survey_farm.farmer.id,
-                "survey_field": survey_field
+                "survey_field": survey_field,
             },
-        )        
+        )
 
     form_ancillary_data = AncillaryDataForm(
         request.POST or None, instance=ancillary_data
@@ -1077,14 +1083,14 @@ def update_labdata_fld(request, id):
     if form_ancillary_data.is_valid():
 
         new_ancillary_data = form_ancillary_data.save()
-        
+
         if "cc_biomass" in form_ancillary_data.changed_data:
             print("Recalculating because new fall biomass value")
             new_ancillary_data.recalculate_fall_lbs_acre()
-        
+
         if "spring_cc_biomass" in form_ancillary_data.changed_data:
             print("Recalculating because new spring biomass value")
-            new_ancillary_data.recalculate_spring_lbs_acre()            
+            new_ancillary_data.recalculate_spring_lbs_acre()
 
         new_ancillary_data.survey_field_id = survey_field.id
 
@@ -1104,16 +1110,17 @@ def update_labdata_fld(request, id):
             "first_and_last_name": first_and_last_name,
             "survey_year": survey_year,
             "farmer_id": survey_field.survey_farm.farmer.id,
-            "survey_field": survey_field
+            "survey_field": survey_field,
         },
     )
 
+
 @permission_required("wisccc.survery_manager", raise_exception=True)
 def recalculate_lbs_acre(request, sfieldid, season="fall"):
-    '''For running the model method to recalculate the 
+    """For running the model method to recalculate the
     lbs per acre when the biomass has been changed.
     Uses survey field ID
-    '''
+    """
 
     survey_field = SurveyField.objects.get(id=sfieldid)
 
@@ -1121,16 +1128,13 @@ def recalculate_lbs_acre(request, sfieldid, season="fall"):
 
     if season == "fall":
         ancillary_data.recalculate_fall_lbs_acre()
-        ancillary_data.save()    
+        ancillary_data.save()
 
     if season == "spring":
         ancillary_data.recalculate_spring_lbs_acre()
-        ancillary_data.save()            
-
+        ancillary_data.save()
 
     return redirect("update_labdata_fld", sfieldid)
-
-
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
@@ -1417,7 +1421,6 @@ def wisc_cc_survey_populate_fieldfarm(request, id):
 
 def wisc_cc_graph(request):
 
-    
     return render(request, "wisccc/wisc_cc_graph.html")
 
 
@@ -1435,8 +1438,7 @@ def get_wi_counties(request):
 
     def get_county_json():
         with connection.cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 SELECT jsonb_build_object(
                     'type',     'FeatureCollection',
                     'features', jsonb_agg(features.feature)
@@ -1456,8 +1458,7 @@ def get_wi_counties(request):
                             from wi_counties
                     ) as inputs
                 ) features;
-            """
-            )
+            """)
             rows = cursor.fetchone()
             data = json.loads(rows[0])
         return data
@@ -1491,13 +1492,16 @@ def get_wisc_cc_data(request):
             feat["properties"]["image_2_url"] = survey_photo.image_2.url
             feat["properties"]["caption_photo_2"] = survey_photo.caption_photo_2
 
-
         if survey_photo.spring_image_1:
             feat["properties"]["spring_image_1_url"] = survey_photo.spring_image_1.url
-            feat["properties"]["spring_caption_photo_1"] = survey_photo.spring_caption_photo_1
+            feat["properties"][
+                "spring_caption_photo_1"
+            ] = survey_photo.spring_caption_photo_1
         if survey_photo.spring_image_2:
             feat["properties"]["spring_image_2_url"] = survey_photo.spring_image_2.url
-            feat["properties"]["spring_caption_photo_2"] = survey_photo.spring_caption_photo_2            
+            feat["properties"][
+                "spring_caption_photo_2"
+            ] = survey_photo.spring_caption_photo_2
 
     return JsonResponse(list(data["features"]), safe=False)
 
@@ -1506,8 +1510,7 @@ def get_wisc_cc_data(request):
 def wisc_cc_static_data(request):
     def get_json():
         with connection.cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 SELECT jsonb_build_object(
                     'type',     'FeatureCollection',
                     'features', jsonb_agg(features.feature)
@@ -1567,8 +1570,7 @@ def wisc_cc_static_data(request):
                                 from wisc_cc wc
                             ) AS geom
                     ) as inputs) features;
-            """
-            )
+            """)
             rows = cursor.fetchone()
             data = json.loads(rows[0])
         return data
@@ -1840,13 +1842,15 @@ class ResponseTableListView(SingleTableMixin, FilterView):
     template_name = "wisccc/response_table.html"
 
     filterset_class = SurveyResponseFilter
+
     # Returning just those 2023 and later in the table
-    # Also returning only 1 record per survey farm id, thus make sure only one 
+    # Also returning only 1 record per survey farm id, thus make sure only one
     #  row in the table per survey farm
     # Scratch above! Return duplicates because other wise we can't search for field ID
     def get_queryset(self):
         from django.db.models import Window, F
-        from django.db.models.functions import RowNumber 
+        from django.db.models.functions import RowNumber
+
         window = {
             "partition_by": [F("survey_farm_id")],
         }
@@ -1892,7 +1896,6 @@ def response_table_bkup(request):
     )
 
 
-
 class RegistrationTableListView(SingleTableMixin, FilterView):
     """List wisc registration entries"""
 
@@ -1912,17 +1915,17 @@ class RegistrationTableListView(SingleTableMixin, FilterView):
     #             ws.id
     #             , signup_timestamp
     #             , wf.farm_name
-    #             , wf.first_name 
-    #             , wf.last_name 
+    #             , wf.first_name
+    #             , wf.last_name
     #             , wf.address_zipcode
     #             , au.email
     #             , ws.belong_to_groups
     #             , ws.notes
-    #             , howd_you_hear	
-    #         from wisccc_surveyregistration ws 
-    #         inner join wisccc_farmer wf 
+    #             , howd_you_hear
+    #         from wisccc_surveyregistration ws
+    #         inner join wisccc_farmer wf
     #         on ws.farmer_id = wf.id
-    #         inner join auth_user au 
+    #         inner join auth_user au
     #         on wf.user_id = au.id
     #         order by signup_timestamp desc"""
     #     dat = pd.read_sql(query, connection)
@@ -2116,7 +2119,7 @@ def wisc_cc_register_1(request):
 @login_required
 def wisc_cc_register_2(request):
     """For when a user already exists."""
-    survey_year = 2025
+    survey_year = 2026
     user = User.objects.get(id=request.user.id)
     # !!!!!!!!!!!!!!!!!!!!!!!!! #
     # CREATE necessary records here!
@@ -2205,7 +2208,7 @@ def wisc_cc_register_by_mgmt_exist_user(request, pk):
     This is for when the user already exists in our system.
     This page is for when the user has been selected. The id here is the user id.
     """
-    survey_year = 2025
+    survey_year = 2026
 
     selected_user = get_object_or_404(User, id=pk)
 
@@ -2261,7 +2264,7 @@ def wisc_cc_register_by_mgmt(request):
     """For when a registrant is signed up by survey manager
     This is for when the user is new.
     """
-    survey_year = 2025
+    survey_year = 2026
     client_ip = request.META.get("REMOTE_ADDR")
 
     registration_form = SurveyRegistrationFullForm(request.POST or None)
@@ -2346,11 +2349,11 @@ def upload_photo(request, id):
             new_survey_photo.image_1 = request.FILES["image_1"]
         if "image_2" in request.FILES.keys():
             new_survey_photo.image_2 = request.FILES["image_2"]
-            
+
         if "spring_image_1" in request.FILES.keys():
             new_survey_photo.spring_image_1 = request.FILES["spring_image_1"]
         if "spring_image_2" in request.FILES.keys():
-            new_survey_photo.spring_image_2 = request.FILES["spring_image_2"]          
+            new_survey_photo.spring_image_2 = request.FILES["spring_image_2"]
 
         new_survey_photo.save()
 
@@ -2398,7 +2401,7 @@ def upload_photo_fld(request, id):
         if "spring_image_1" in request.FILES.keys():
             new_survey_photo.spring_image_1 = request.FILES["spring_image_1"]
         if "spring_image_2" in request.FILES.keys():
-            new_survey_photo.spring_image_2 = request.FILES["spring_image_2"]            
+            new_survey_photo.spring_image_2 = request.FILES["spring_image_2"]
 
         new_survey_photo.save()
         return redirect(
