@@ -33,7 +33,7 @@
         {% else %}
 
         <p>
-          Welcome to the sixth season of our cover crop citizen science project.
+          Welcome to the seventh season of our cover crop citizen science project.
           You are part of a state-wide collaborative effort to build practical knowledge about cover cropping in
           Wisconsin.
           You're also helping improve tools like SnapPlus and developing better
@@ -48,11 +48,17 @@
         <p>Please contact Mrill Ingram <a href="mailto:mingram@wisc.edu">(mingram@wisc.edu)</a>
           or Dan Marzu <a href="mailto:dan.marzu@wisc.edu">(dan.marzu@wisc.edu)</a> with any questions</p>
 
+        {% if survey_farm.survey_year == 2026 %}
+        <p>
+          The survey has six sections, some of them very short.
+          Please submit each section before leaving so you don't lose the information you've put in.
+        </p>
+        {% else %}
         <p>
           The survey has seven sections, some of them very short.
           Please submit each section before leaving so you don't lose the information you've put in.
         </p>
-
+        {% endif %}
 
         {% endif %}
 
@@ -225,11 +231,17 @@
             </div>
             {% endif %}
             <div class="list-group">
-              {% if survey_farm.willing_to_share_more is not None and survey_farm.survey_year == 2025 %}
+              {% if survey_farm.survey_year == 2026 %}
+
+              {# No survey section 7 for 2026 #}
+
+              {% elif survey_farm.willing_to_share_more is not None and survey_farm.survey_year == 2025 %}
               <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
                 class="list-group-item list-group-item-action list-group-item-success">
                 VII. Final thoughts - completed! Click to edit your response.
               </a>
+
+
 
               {% elif survey_farm.encourage_cc is not None and survey_farm.survey_year == 2024 %}
               <a href="{% url 'wisc_cc_survey7' survey_farm.id %}"
