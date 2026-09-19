@@ -83,6 +83,19 @@ from wisccc.forms_2024 import (
     SurveyFieldFormSection6 as SurveyFieldFormSection6_2024,
     SurveyFarmFormSection7 as SurveyFarmFormSection7_2024,
 )
+
+from wisccc.forms_2025 import (
+    SurveyFarmFormSection2 as SurveyFarmFormSection2_2025,
+    SurveyFieldFormSection3 as SurveyFieldFormSection3_205,
+    SurveyFieldFormSection4_part1 as SurveyFieldFormSection4_part1_2025,
+    FieldFarmFormSection3 as FieldFarmFormSection3_2025,
+    SurveyFarmFormSection4 as SurveyFarmFormSection4_2025,
+    SurveyFieldFormSection4_part2 as SurveyFieldFormSection4_part2_2025,
+    SurveyFieldFormSection5 as SurveyFieldFormSection5_2025,
+    SurveyFarmFormSection6 as SurveyFarmFormSection6_2025,
+    SurveyFieldFormSection6 as SurveyFieldFormSection6_2025,
+    SurveyFarmFormSection7 as SurveyFarmFormSection7_2025,
+)
 from wisccc.models import (
     Survey,
     Farmer,
@@ -513,11 +526,18 @@ def wisc_cc_survey2(request, sfarmid):
     # pass the object as instance in form.
 
     # Use year specific forms.
-    if survey_farm.survey_year == 2025:
+    if survey_farm.survey_year == 2026:
 
         form_surveyfarm_section_2 = SurveyFarmFormSection2(
             request.POST or None, instance=survey_farm
         )
+
+    elif survey_farm.survey_year == 2025:
+
+        form_surveyfarm_section_2 = SurveyFarmFormSection2_2025(
+            request.POST or None, instance=survey_farm
+        )
+
     elif survey_farm.survey_year == 2024:
         form_surveyfarm_section_2 = SurveyFarmFormSection2_2024(
             request.POST or None, instance=survey_farm
