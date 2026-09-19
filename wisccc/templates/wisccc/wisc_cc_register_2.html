@@ -17,7 +17,15 @@
             <div class="card-body">
 
                 <h5>Welcome {{ user.username }}</h5>
-                <p>Please tell us a bit about yourself.</p>
+                <p>
+                    Thanks for joining us for the 2026-7 season.
+                    We are working on addressing two key information gaps in
+                    the Wisconsin Cover Crop Data Network dataset to better capture
+                    the true impact of cover crops on Wisconsin farms.
+                    We would like to track soil test results, cash crop yield data,
+                    as well as cover crop tissue samples.
+
+                </p>
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <hr>
