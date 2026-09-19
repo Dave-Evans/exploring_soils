@@ -15,7 +15,7 @@ class PrivateMediaStorage(S3Boto3Storage):
 
 
 class WiscCCPhotoStorage(S3Boto3Storage):
-    bucket_name = settings.AWS_WISC_CC_PHOTO_LOCATION
+    bucket_name = settings.AWS_WISC_CC_STORAGE_LOCATION
     location = "media/private"
     default_acl = "private"
     file_overwrite = False
@@ -23,8 +23,16 @@ class WiscCCPhotoStorage(S3Boto3Storage):
 
 
 class WiscCCResearcherDocStorage(S3Boto3Storage):
-    bucket_name = settings.AWS_WISC_CC_RESEARCHER_DOC_LOCATION
-    location = "media/private"
+    bucket_name = settings.AWS_WISC_CC_STORAGE_LOCATION
+    location = "researcher_docs/private"
+    default_acl = "private"
+    file_overwrite = False
+    custom_domain = False
+
+
+class WiscCCSoilTestStorage(S3Boto3Storage):
+    bucket_name = settings.AWS_WISC_CC_STORAGE_LOCATION
+    location = "soiltest_docs/private"
     default_acl = "private"
     file_overwrite = False
     custom_domain = False

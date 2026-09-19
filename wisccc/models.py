@@ -6,6 +6,7 @@ from .derive_species_class import derive_species_class
 from exploring_soils.storage_backends import (
     WiscCCPhotoStorage,
     WiscCCResearcherDocStorage,
+    WiscCCSoilTestStorage,
 )
 
 # For making User's email non-unique
@@ -1361,6 +1362,8 @@ class SurveyField(models.Model):
         blank=True,
         default="",
     )
+    # new 2026
+    soil_test_doc = models.FileField(storage=WiscCCSoilTestStorage(), blank=True)
 
     # In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
     # ??	Question about multiple year rotation?

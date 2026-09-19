@@ -624,7 +624,7 @@ def wisc_cc_survey3(request, sfieldid):
     if survey_farm.survey_year == 2026:
 
         form_surveyfield_section_3 = SurveyFieldFormSection3(
-            request.POST or None, instance=survey_field
+            request.POST or None, request.FILES or None, instance=survey_field
         )
         form_fieldfarm_section_3 = FieldFarmFormSection3(
             request.POST or None, instance=field_farm
@@ -1642,7 +1642,7 @@ def wisccc_create_researcher(request):
     populate user info by looking up existing email addresses?
     """
 
-    researcher_form = ResearcherSignupForm(request.POST or None)
+    researcher_form = ResearcherSignupForm(request.POST or None, request.FILES or None)
 
     client_ip = request.META.get("REMOTE_ADDR")
     signup_form = CustomUserCreationForm(
@@ -1687,7 +1687,10 @@ def wisccc_create_researcher_existing_user(request):
     This assumes we are creating a researcher for an existing user.
     """
 
-    researcher_form = ResearcherSignupForm(request.POST or None)
+    researcher_form = ResearcherSignupForm(
+        request.POST or None,
+        request.FILES or None,
+    )
 
     select_form = SelectUserForm(request.POST or None)
 

@@ -69,7 +69,7 @@ SOILTEST_CHOICES = (
         mark_safe("Yes, I will email them to Dan Marzu (dan.marzu@wisc.edu)"),
     ),
     ("YES", "Yes, Please contact me later for my soil test results."),
-    # ("YES", "I'll upload them below.")
+    ("YES", "I'll upload them below."),
 )
 
 
@@ -1060,6 +1060,10 @@ class SurveyFieldFormSection3(forms.ModelForm):
         required=False,
     )
 
+    soil_test_doc = forms.FileField(
+        label="Upload your soil test documents here.", required=False
+    )
+
     crop_rotation_2021_cash_crop_species = forms.ChoiceField(
         label="12a. Cash crop planted 2024",
         choices=CashCropChoices.choices,
@@ -1214,6 +1218,7 @@ class SurveyFieldFormSection3(forms.ModelForm):
             "previously_sampled_when",
             "yield_data_for_previous_crops",
             "share_soil_test_results",
+            "soil_test_doc",
             "crop_rotation_2021_cover_crop_species",
             "crop_rotation_2021_cash_crop_species",
             "crop_rotation_2022_cover_crop_species",
