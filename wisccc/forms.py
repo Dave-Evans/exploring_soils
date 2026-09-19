@@ -50,8 +50,8 @@ TRUE_FALSE_CHOICES = (("", ""), (True, "Yes"), (False, "No"))
 TRUE_FALSE_CHOICES_SHARE_OR_ANON = (
     ("", ""),
     (True, "Yes, you can attribute the above quote to me."),
-    (False, "No, I prefer to remain anonymous.")
-    )
+    (False, "No, I prefer to remain anonymous."),
+)
 
 
 class UserLoginForm(AuthenticationForm):
@@ -861,7 +861,7 @@ class SurveyFarmFormSection2(forms.ModelForm):
         required=True,
         initial=TopGoalChoices.BLANK,
     )
-    
+
     # new 2025
     main_cc_goal_this_year_write_in = forms.CharField(
         label="4a. If you selected 'other', please describe your top goal. Please also share any other goals or thoughts on why you are growing cover crops this year.",
@@ -874,7 +874,7 @@ class SurveyFarmFormSection2(forms.ModelForm):
         label="5. How satisfied are you with the results you get from cover cropping? Please select your level of satisfaction.",
         required=True,
         choices=HowSatisfiedChoices.choices,
-        initial=HowSatisfiedChoices.BLANK
+        initial=HowSatisfiedChoices.BLANK,
     )
 
     satisfied_with_cc_results_write_in = forms.CharField(
@@ -898,7 +898,6 @@ class SurveyFarmFormSection2(forms.ModelForm):
         max_length=1000,
     )
 
-
     biggest_challenge_cc = forms.CharField(
         label="7. What is your biggest challenge or unanswered question when it comes to cover cropping?",
         required=True,
@@ -916,7 +915,7 @@ class SurveyFarmFormSection2(forms.ModelForm):
     conservation_programs = forms.ChoiceField(
         label="8. Are you enrolled, or have you recently enrolled in Federal conservation programs such as EQIP, or CSP, or state or county programs that support your conservation practices? Which ones?",
         required=False,
-        choices=TRUE_FALSE_CHOICES
+        choices=TRUE_FALSE_CHOICES,
     )
 
     conservation_programs_which_ones = forms.CharField(
@@ -933,16 +932,16 @@ class SurveyFarmFormSection2(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 5}),
     )
 
-
     def clean(self):
         super().clean()
         main_cc_goal_this_year = self.cleaned_data.get("main_cc_goal_this_year")
-        main_cc_goal_this_year_write_in = self.cleaned_data.get("main_cc_goal_this_year_write_in")
+        main_cc_goal_this_year_write_in = self.cleaned_data.get(
+            "main_cc_goal_this_year_write_in"
+        )
         if main_cc_goal_this_year == "OTHER":
             if main_cc_goal_this_year_write_in == "":
                 msg = "Since you selected 'other', please supply a bit more information about your goals."
-                self.add_error("main_cc_goal_this_year_write_in", msg)                               
-
+                self.add_error("main_cc_goal_this_year_write_in", msg)
 
     class Meta:
         model = SurveyFarm
@@ -956,10 +955,8 @@ class SurveyFarmFormSection2(forms.ModelForm):
             "satisfied_with_cc_results_write_in",
             "barriers_to_expansion",
             "barriers_to_expansion_write_in",
-            
             "biggest_challenge_cc",
             "biggest_challenge_cc_changed_over_time",
-
             "conservation_programs",
             "conservation_programs_which_ones",
             "conservation_programs_if_helped_how",
@@ -1152,8 +1149,6 @@ class SurveyFieldFormSection3(forms.ModelForm):
     #     cover_crop_species_2 = self.cleaned_data.get("cover_crop_species_2")
     #     cover_crop_planting_rate_2 = self.cleaned_data.get("cover_crop_planting_rate_2")
     #     cover_crop_planting_rate_2_units = self.cleaned_data.get("cover_crop_planting_rate_2_units")
-        
-        
 
     class Meta:
         model = SurveyField
@@ -1198,7 +1193,6 @@ class SurveyFieldFormSection4_part1(forms.ModelForm):
 
 class SurveyFarmFormSection4(forms.ModelForm):
 
-    
     cover_crops_delay_cash_crop = forms.ChoiceField(
         label="REMOVE THIS SOMEHOW! QUESTION DEPRECATED. 21. Does planting a cover crop delay when you would otherwise plant your cash crop?",
         choices=TRUE_FALSE_CHOICES,
@@ -1208,7 +1202,6 @@ class SurveyFarmFormSection4(forms.ModelForm):
     class Meta:
         model = SurveyFarm
         fields = ("cover_crops_delay_cash_crop",)
-
 
 
 class SurveyFieldFormSection4_part2(forms.ModelForm):
@@ -1252,19 +1245,18 @@ class SurveyFieldFormSection4_part2(forms.ModelForm):
 
 class SurveyFieldFormSection5(forms.ModelForm):
 
-    
     manure_prior = forms.ChoiceField(
         label="21a. Will you or did you apply manure prior to seeding cover crops on this field?",
         required=True,
         choices=TRUE_FALSE_CHOICES,
     )
-    
+
     manure_prior_rate = forms.IntegerField(
         label="21b. At what rate will the manure be applied?",
         required=False,
         min_value=0,
     )
-    
+
     manure_prior_rate_units = forms.ChoiceField(
         label="21c. Please select the units for the manure application rate.",
         choices=ManureApplicateUnitsChoices.choices,
@@ -1282,20 +1274,19 @@ class SurveyFieldFormSection5(forms.ModelForm):
         choices=ManureConsistencyChoices.choices,
         required=False,
     )
-    
-    
+
     manure_post = forms.ChoiceField(
         label="22a. Will manure be applied to the field after the cover crop is established?",
         required=True,
         choices=TRUE_FALSE_CHOICES,
     )
-    
+
     manure_post_rate = forms.IntegerField(
         label="22b. At what rate will the manure be applied?",
         required=False,
         min_value=0,
     )
-    
+
     manure_post_rate_units = forms.ChoiceField(
         label="22c. The units for the manure application rate",
         choices=ManureApplicateUnitsChoices.choices,
@@ -1318,12 +1309,12 @@ class SurveyFieldFormSection5(forms.ModelForm):
     synth_fert_for_covers = forms.ChoiceField(
         label="23. Did you apply synthetic fertilizer for growing a cover crop?",
         choices=TRUE_FALSE_CHOICES,
-        required=True
+        required=True,
     )
     # New 2025
     synth_fert_for_covers_application_date = forms.DateField(
         label="23a. If yes, what is the estimated date of the application?",
-        required=False
+        required=False,
     )
 
     # 39	"What is your tillage system for the cash crop preceding the cover crop?
@@ -1384,16 +1375,19 @@ class SurveyFieldFormSection5(forms.ModelForm):
         # print("Manure prior rate units:")
         # print("\t", manure_prior_source)
         # print("\t", type(manure_prior_source))
-        # print("\tis equal to ''", manure_prior_source == "")        
+        # print("\tis equal to ''", manure_prior_source == "")
         manure_post = self.cleaned_data.get("manure_post")
         manure_post_rate = self.cleaned_data.get("manure_post_rate")
         manure_post_rate_units = self.cleaned_data.get("manure_post_rate_units")
         manure_post_source = self.cleaned_data.get("manure_post_source")
-        manure_post_consistency = self.cleaned_data.get("manure_post_consistency")        
+        manure_post_consistency = self.cleaned_data.get("manure_post_consistency")
 
         # If manure is *NOT* applied prior to cc, ensure rate and units, source, consistency are *NOT* populated
         if manure_prior == "False" and (
-            manure_prior_rate is not None or manure_prior_rate_units != "" or manure_prior_source != "" or manure_prior_consistency != ""
+            manure_prior_rate is not None
+            or manure_prior_rate_units != ""
+            or manure_prior_source != ""
+            or manure_prior_consistency != ""
         ):
             # Rate must be 0 or None
             if manure_prior_rate is not None:
@@ -1408,14 +1402,17 @@ class SurveyFieldFormSection5(forms.ModelForm):
                 self.add_error("manure_prior_rate_units", msg)
             if manure_prior_source != "":
                 msg = "If you are not applying manure, please leave blank."
-                self.add_error("manure_prior_source", msg)       
+                self.add_error("manure_prior_source", msg)
             if manure_prior_consistency != "":
                 msg = "If you are not applying manure, please leave blank."
-                self.add_error("manure_prior_consistency", msg)                                
+                self.add_error("manure_prior_consistency", msg)
 
         # If manure is *NOT* applied after to cc, ensure rate and units, source, consistency are *NOT* populated
         if manure_post == "False" and (
-            manure_post_rate is not None or manure_post_rate_units != "" or manure_post_source != "" or manure_post_consistency != ""
+            manure_post_rate is not None
+            or manure_post_rate_units != ""
+            or manure_post_source != ""
+            or manure_post_consistency != ""
         ):
             # Rate must be 0 or None
             if manure_post_rate is not None:
@@ -1431,11 +1428,11 @@ class SurveyFieldFormSection5(forms.ModelForm):
 
             if manure_post_source != "":
                 msg = "If you are not applying manure, please leave blank."
-                self.add_error("manure_prior_source", msg)       
+                self.add_error("manure_prior_source", msg)
 
             if manure_post_consistency != "":
                 msg = "If you are not applying manure, please leave blank."
-                self.add_error("manure_prior_consistency", msg)             
+                self.add_error("manure_prior_consistency", msg)
 
         # If manure is applied prior to cc, ensure rate and units, source, consistency are populated
         if manure_prior == "True":
@@ -1453,7 +1450,7 @@ class SurveyFieldFormSection5(forms.ModelForm):
 
             if manure_prior_consistency == "":
                 msg = "Please select the approximate moisture level of the manure"
-                self.add_error("manure_prior_consistency", msg)                
+                self.add_error("manure_prior_consistency", msg)
 
         # If manure is applied after to cc, ensure rate and units, source, consistency are populated
         if manure_post == "True":
@@ -1471,22 +1468,23 @@ class SurveyFieldFormSection5(forms.ModelForm):
 
             if manure_post_consistency == "":
                 msg = "Please select the approximate moisture level of the manure"
-                self.add_error("manure_post_consistency", msg)    
+                self.add_error("manure_post_consistency", msg)
 
         synth_fert_for_covers = self.cleaned_data.get("synth_fert_for_covers")
-        synth_fert_for_covers_application_date = self.cleaned_data.get("synth_fert_for_covers_application_date")
+        synth_fert_for_covers_application_date = self.cleaned_data.get(
+            "synth_fert_for_covers_application_date"
+        )
 
-        
         # If synth fert applied, then make sure to select a date
         if synth_fert_for_covers == "True":
             if synth_fert_for_covers_application_date is None:
                 msg = "Please select the approximate date of the synthetic fertilizer application."
-                self.add_error("synth_fert_for_covers_application_date", msg)    
+                self.add_error("synth_fert_for_covers_application_date", msg)
 
         if synth_fert_for_covers == "False":
             if synth_fert_for_covers_application_date is not None:
                 msg = "Please leave the date blank if you did not apply synthetic fertilizer."
-                self.add_error("synth_fert_for_covers_application_date", msg)   
+                self.add_error("synth_fert_for_covers_application_date", msg)
 
     class Meta:
         model = SurveyField
@@ -1495,7 +1493,7 @@ class SurveyFieldFormSection5(forms.ModelForm):
             "manure_prior_rate",
             "manure_prior_rate_units",
             "manure_prior_source",
-            "manure_prior_consistency",            
+            "manure_prior_consistency",
             "manure_post",
             "manure_post_rate",
             "manure_post_rate_units",
@@ -1514,7 +1512,6 @@ class SurveyFieldFormSection5(forms.ModelForm):
 
 
 class SurveyFieldFormSection6(forms.ModelForm):
-
 
     cover_crop_seeding_method = forms.ChoiceField(
         label="29a. Please select the seeding method for the cover crop in this field.",
@@ -1537,7 +1534,6 @@ class SurveyFieldFormSection6(forms.ModelForm):
         required=False,
     )
 
-
     # 44
     cover_crop_seed_cost = forms.IntegerField(
         label="30. Estimated cover crop seed cost for this field ($/acre)",
@@ -1554,12 +1550,14 @@ class SurveyFieldFormSection6(forms.ModelForm):
     def clean(self):
         super().clean()
         cover_crop_seeding_method = self.cleaned_data.get("cover_crop_seeding_method")
-        cover_crop_seeding_method_write_in = self.cleaned_data.get("cover_crop_seeding_method_write_in")
+        cover_crop_seeding_method_write_in = self.cleaned_data.get(
+            "cover_crop_seeding_method_write_in"
+        )
 
         if cover_crop_seeding_method == "OTHER":
             if cover_crop_seeding_method_write_in == "":
                 msg = "Since you selected 'other', please supply a bit more information about your seeding method."
-                self.add_error("cover_crop_seeding_method_write_in", msg)                               
+                self.add_error("cover_crop_seeding_method_write_in", msg)
 
     class Meta:
         model = SurveyField
@@ -1624,12 +1622,12 @@ class SurveyFarmFormSection7(forms.ModelForm):
     # )
 
     learn_about_cc_preferred_way = forms.CharField(
-            label="""33. What are your preferred ways to learn about using cover crops? Please be
+        label="""33. What are your preferred ways to learn about using cover crops? Please be
                 specific, for example, if there are particular Youtube channels, podcasts,
                 consultants, or leaders in your county that have helped you.""",
-            widget=forms.Textarea(attrs={"rows": 5}),
-            max_length=1000,
-            required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=1000,
+        required=False,
     )
     # what_info_other_farmers_most_useful = forms.CharField(
     #     label="33c. What information from other farms using cover crops would be most useful to you?",
@@ -1685,7 +1683,7 @@ please share anything regarding your experience with the project or
     willing_to_share_more = forms.ChoiceField(
         label="""35b. Can we attribute this to you or do you prefer to remain anonymous?""",
         required=True,
-        choices=TRUE_FALSE_CHOICES_SHARE_OR_ANON
+        choices=TRUE_FALSE_CHOICES_SHARE_OR_ANON,
     )
 
     class Meta:
@@ -1758,7 +1756,6 @@ class SurveyPhotoForm(forms.ModelForm):
         initial="",
     )
 
-
     notes = forms.CharField(
         label="Add any notes about these photos, notes will not be displayed.",
         widget=forms.TextInput(
@@ -1772,8 +1769,17 @@ class SurveyPhotoForm(forms.ModelForm):
 
     class Meta:
         model = SurveyPhoto
-        fields = ["image_1", "caption_photo_1", "image_2", "caption_photo_2",
-                  "spring_image_1", "spring_caption_photo_1", "spring_image_2", "spring_caption_photo_2", "notes"]
+        fields = [
+            "image_1",
+            "caption_photo_1",
+            "image_2",
+            "caption_photo_2",
+            "spring_image_1",
+            "spring_caption_photo_1",
+            "spring_image_2",
+            "spring_caption_photo_2",
+            "notes",
+        ]
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -1861,6 +1867,14 @@ class SurveyRegistrationFullForm(forms.ModelForm):
         required=True,
         widget=forms.RadioSelect,
     )
+    willing_to_complete_survey_and_sample = forms.BooleanField(
+        label="I am willing to complete the cover crop management survey (below) and to collect a cover crop sample and submit it in the prepaid envelopes you provide",
+        required=True,
+    )
+    participate_in_soil_sampling = forms.BooleanField(
+        label="I will participate in Michael Fields collecting a spring 2027 soil test of this field (details to come)",
+        required=True,
+    )
     do_you_need_assistance = forms.CharField(
         label="If you prefer a paper copy of the survey mailed to you, or would like assistance with filling out the online survey, or with biomass collection, please let us know in the box below.?",
         required=False,
@@ -1882,6 +1896,8 @@ class SurveyRegistrationFullForm(forms.ModelForm):
             "biomass_or_just_survey",
             "do_you_have_a_biomas_kit",
             "do_you_need_assistance",
+            "willing_to_complete_survey_and_sample",
+            "participate_in_soil_sampling",
             "privacy_consent",
         ]
 
@@ -1889,35 +1905,43 @@ class SurveyRegistrationFullForm(forms.ModelForm):
 class SurveyRegistrationPartialForm(forms.ModelForm):
     """For updating or reviewing signing up for survey and biomass kit"""
 
-    belong_to_groups = forms.CharField(
-        label="If you belong to a producer-led watershed protection group or other agricultural conservation group what is the name of the group?",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=500,
-    )
-    howd_you_hear = forms.CharField(
-        label="How did you hear about the project?",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=500,
-    )
-    biomass_or_just_survey = forms.ChoiceField(
-        label="Are you interested in sampling for biomass in addition to filling out a survey?",
+    # belong_to_groups = forms.CharField(
+    #     label="If you belong to a producer-led watershed protection group or other agricultural conservation group what is the name of the group?",
+    #     required=False,
+    #     widget=forms.Textarea(attrs={"rows": 5}),
+    #     max_length=500,
+    # )
+    # howd_you_hear = forms.CharField(
+    #     label="How did you hear about the project?",
+    #     required=False,
+    #     widget=forms.Textarea(attrs={"rows": 5}),
+    #     max_length=500,
+    # )
+    # biomass_or_just_survey = forms.ChoiceField(
+    #     label="Are you interested in sampling for biomass in addition to filling out a survey?",
+    #     required=True,
+    #     choices=SurveyRegistration.BiomassOrJustSurveyChoices.choices,
+    #     widget=forms.RadioSelect,
+    # )
+    # do_you_have_a_biomas_kit = forms.ChoiceField(
+    #     label="If you have agreed to sample, do you have a biomass sampling kit from previous years?",
+    #     choices=SurveyRegistration.HaveAKit.choices,
+    #     required=True,
+    #     widget=forms.RadioSelect,
+    # )
+    # do_you_need_assistance = forms.CharField(
+    #     label="If you prefer a paper copy of the survey mailed to you, or would like assistance with filling out the online survey, or with biomass collection, please let us know in the box below.?",
+    #     required=False,
+    #     widget=forms.Textarea(attrs={"rows": 5}),
+    #     max_length=500,
+    # )
+    willing_to_complete_survey_and_sample = forms.BooleanField(
+        label="I am willing to complete the cover crop management survey (below) and to collect a cover crop sample and submit it in the prepaid envelopes you provide",
         required=True,
-        choices=SurveyRegistration.BiomassOrJustSurveyChoices.choices,
-        widget=forms.RadioSelect,
     )
-    do_you_have_a_biomas_kit = forms.ChoiceField(
-        label="If you have agreed to sample, do you have a biomass sampling kit from previous years?",
-        choices=SurveyRegistration.HaveAKit.choices,
+    participate_in_soil_sampling = forms.BooleanField(
+        label="I will participate in Michael Fields collecting a spring 2027 soil test of this field (details to come)",
         required=True,
-        widget=forms.RadioSelect,
-    )
-    do_you_need_assistance = forms.CharField(
-        label="If you prefer a paper copy of the survey mailed to you, or would like assistance with filling out the online survey, or with biomass collection, please let us know in the box below.?",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=500,
     )
     privacy_consent = forms.ChoiceField(
         label="If you agree to this statement above click yes and proceed to the survey.",
@@ -1928,11 +1952,13 @@ class SurveyRegistrationPartialForm(forms.ModelForm):
     class Meta:
         model = SurveyRegistration
         fields = [
-            "belong_to_groups",
-            "howd_you_hear",
-            "biomass_or_just_survey",
-            "do_you_have_a_biomas_kit",
-            "do_you_need_assistance",
+            # "belong_to_groups",
+            # "howd_you_hear",
+            # "biomass_or_just_survey",
+            # "do_you_have_a_biomas_kit",
+            # "do_you_need_assistance",
+            "willing_to_complete_survey_and_sample",
+            "participate_in_soil_sampling",
             "privacy_consent",
         ]
 
@@ -2109,7 +2135,7 @@ class AncillaryDataForm(forms.ModelForm):
         label="Fall C to N ratio, agsource",
         required=False,
     )
-    
+
     percent_p = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
@@ -2121,25 +2147,25 @@ class AncillaryDataForm(forms.ModelForm):
         max_digits=7,
         label="Potassium content as percent of dry matter, agsource",
         required=False,
-    )    
+    )
     percent_ca = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Calcium content as percent of dry matter, agsource",
         required=False,
-    )        
+    )
     percent_mg = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Magnesium content as percent of dry matter, agsource",
         required=False,
-    )         
+    )
     percent_s = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Sulfur content as percent of dry matter, agsource",
         required=False,
-    )               
+    )
     p_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
@@ -2151,25 +2177,25 @@ class AncillaryDataForm(forms.ModelForm):
         max_digits=7,
         label="Nitrogen content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
-    )    
+    )
     k_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Potash (K2O) content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
-    )    
+    )
     ca_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Calcium content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
-    )        
+    )
     mg_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Magnesium content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
-    )         
+    )
     s_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
@@ -2183,9 +2209,11 @@ class AncillaryDataForm(forms.ModelForm):
         required=False,
     )
 
-
     total_nitrogen = forms.DecimalField(
-        decimal_places=2, max_digits=15, label="Fall, nitrogen content as percent of dry matter, agsource", required=False
+        decimal_places=2,
+        max_digits=15,
+        label="Fall, nitrogen content as percent of dry matter, agsource",
+        required=False,
     )
 
     acc_gdd = forms.DecimalField(
@@ -2222,7 +2250,7 @@ class AncillaryDataForm(forms.ModelForm):
         label="Spring C to N ratio, agsource",
         required=False,
     )
-    
+
     spring_percent_p = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
@@ -2234,25 +2262,25 @@ class AncillaryDataForm(forms.ModelForm):
         max_digits=7,
         label="Spring Potassium content as percent of dry matter, agsource",
         required=False,
-    )    
+    )
     spring_percent_ca = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Spring Calcium content as percent of dry matter, agsource",
         required=False,
-    )        
+    )
     spring_percent_mg = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Spring Magnesium content as percent of dry matter, agsource",
         required=False,
-    )         
+    )
     spring_percent_s = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Spring Sulfur content as percent of dry matter, agsource",
         required=False,
-    )               
+    )
     spring_p_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
@@ -2264,25 +2292,25 @@ class AncillaryDataForm(forms.ModelForm):
         max_digits=7,
         label="Spring Nitrogen content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
-    )    
+    )
     spring_k_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Spring Potash (K2O) content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
-    )    
+    )
     spring_ca_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Spring Calcium content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
-    )        
+    )
     spring_mg_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
         label="Spring Magnesium content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
-    )         
+    )
     spring_s_content = forms.DecimalField(
         decimal_places=2,
         max_digits=7,
@@ -2295,7 +2323,6 @@ class AncillaryDataForm(forms.ModelForm):
         label="Spring Carbon content of forage if 100% dry matter, lbs/acre; agsource",
         required=False,
     )
-
 
     spring_acc_gdd = forms.DecimalField(
         decimal_places=2,
@@ -2362,7 +2389,10 @@ class AncillaryDataForm(forms.ModelForm):
         required=False,
     )
     spring_total_nitrogen = forms.DecimalField(
-        decimal_places=2, max_digits=15, label="Spring Nitrogen content as percent of dry matter, agsource", required=False
+        decimal_places=2,
+        max_digits=15,
+        label="Spring Nitrogen content as percent of dry matter, agsource",
+        required=False,
     )
     spring_notes = forms.CharField(
         label="Text to be displayed regarding spring biomass sampling or lab processing.",
@@ -2381,39 +2411,38 @@ class AncillaryDataForm(forms.ModelForm):
         decimal_places=3,
         max_digits=15,
         label="Sum of precipitation 3 weeks until cover crop planting date",
-        required=False
+        required=False,
     )
     precip_preplant_2_wk = forms.DecimalField(
         decimal_places=3,
         max_digits=15,
         label="Sum of precipitation 2 weeks until cover crop planting date",
-        required=False
+        required=False,
     )
     precip_preplant_1_wk = forms.DecimalField(
         decimal_places=3,
         max_digits=15,
         label="Sum of precipitation 1 week until cover crop planting date",
-        required=False
+        required=False,
     )
     precip_postplant_1_wk = forms.DecimalField(
         decimal_places=3,
         max_digits=15,
         label="Sum of precipitation from cover crop planting date until 1 week later",
-        required=False
-    )    
+        required=False,
+    )
     precip_postplant_2_wk = forms.DecimalField(
         decimal_places=3,
         max_digits=15,
         label="Sum of precipitation from cover crop planting date until 2 weeks later",
-        required=False
-    )    
+        required=False,
+    )
     precip_postplant_3_wk = forms.DecimalField(
         decimal_places=3,
         max_digits=15,
         label="Sum of precipitation from cover crop planting date until 3 weeks later",
-        required=False
-    )            
-
+        required=False,
+    )
 
     class Meta:
         model = AncillaryData
@@ -2428,7 +2457,6 @@ class AncillaryDataForm(forms.ModelForm):
             "precip_postplant_2_wk",
             "precip_postplant_3_wk",
             "fall_notes",
-
             "cp",
             "andf",
             "undfom30",
@@ -2440,7 +2468,6 @@ class AncillaryDataForm(forms.ModelForm):
             "dry_matter",
             "adf",
             "rfv",
-
             "cc_biomass",
             "total_nitrogen",
             "height_of_stand",
@@ -2456,14 +2483,9 @@ class AncillaryDataForm(forms.ModelForm):
             "ca_content",
             "mg_content",
             "c_content",
-    
-
-
             "spring_biomass_collection_date",
-            
             "spring_cc_biomass",
             "spring_height_of_stand",
-
             "spring_rfq",
             "spring_undfom240",
             "spring_dry_matter",
@@ -2478,7 +2500,6 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_tdn_adf",
             "spring_milk_ton_milk2013",
             "spring_total_nitrogen",
-
             "spring_c_to_n_ratio",
             "spring_percent_p",
             "spring_percent_k",
@@ -2491,7 +2512,6 @@ class AncillaryDataForm(forms.ModelForm):
             "spring_ca_content",
             "spring_mg_content",
             "spring_c_content",
-
             "spring_notes",
             "notes_admin",
         )

@@ -29,6 +29,15 @@
     </div>
 </div>
 <div class="form-row">
+    <div class="form-group col-md-10 mb-0">
+        {{ registration_form.willing_to_complete_survey_and_sample|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-10 mb-0">
+        {{ registration_form.participate_in_soil_sampling|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
     <div class="form-group col-md-6 mb-0">
         {{ registration_form.notes|as_crispy_field }}
     </div>
