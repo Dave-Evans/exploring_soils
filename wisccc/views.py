@@ -1608,7 +1608,7 @@ def wisccc_create_researcher(request):
     populate user info by looking up existing email addresses?
     """
 
-    researcher_form = ResearcherSignupForm(request.POST or None)
+    researcher_form = ResearcherSignupForm(request.POST or None, request.FILES or None)
 
     client_ip = request.META.get("REMOTE_ADDR")
     signup_form = CustomUserCreationForm(
@@ -1653,7 +1653,7 @@ def wisccc_create_researcher_existing_user(request):
     This assumes we are creating a researcher for an existing user.
     """
 
-    researcher_form = ResearcherSignupForm(request.POST or None)
+    researcher_form = ResearcherSignupForm(request.POST or None, request.FILES or None)
 
     select_form = SelectUserForm(request.POST or None)
 
