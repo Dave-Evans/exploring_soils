@@ -163,10 +163,7 @@ CSP_IMG_SRC = [
         config("AWS_STORAGE_BUCKET_NAME")
     ),
     "https://{}.s3.amazonaws.com/media/private/".format(
-        config("AWS_WISC_CC_PHOTO_LOCATION")
-    ),
-    "https://{}.s3.amazonaws.com/media/private/".format(
-        config("AWS_WISC_CC_RESEARCHER_DOC_LOCATION")
+        config("AWS_WISC_CC_STORAGE_LOCATION")
     ),
     "https://{}.s3.amazonaws.com/dev/".format(config("AWS_GLCCP_PHOTO_LOCATION")),
     "https://greencover-photos-dev.s3.amazonaws.com/media/private/",
@@ -289,8 +286,7 @@ AWS_DEFAULT_ACL = None  # try private?
 AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
-AWS_WISC_CC_PHOTO_LOCATION = config("AWS_WISC_CC_PHOTO_LOCATION")
-AWS_WISC_CC_RESEARCHER_DOC_LOCATION = config("AWS_WISC_CC_RESEARCHER_DOC_LOCATION")
+AWS_WISC_CC_STORAGE_LOCATION = config("AWS_WISC_CC_STORAGE_LOCATION")
 AWS_GLCCP_PHOTO_LOCATION = config("AWS_GLCCP_PHOTO_LOCATION")
 AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME")
 AWS_S3_CUSTOM_DOMAIN = "%s.s3.amazonaws.com" % AWS_STORAGE_BUCKET_NAME

@@ -6,6 +6,7 @@ from .derive_species_class import derive_species_class
 from exploring_soils.storage_backends import (
     WiscCCPhotoStorage,
     WiscCCResearcherDocStorage,
+    WiscCCSoilTestStorage,
 )
 
 # For making User's email non-unique
@@ -1337,6 +1338,33 @@ class SurveyField(models.Model):
 
     survey_farm = models.ForeignKey(SurveyFarm, on_delete=models.CASCADE, null=True)
     field_farm = models.ForeignKey(FieldFarm, on_delete=models.CASCADE, null=True)
+
+    # New 2026
+    previously_sampled_when = models.CharField(
+        verbose_name="If you have previously sampled *this* field for WiCCDN, please tell us all the years you have sampled it.",
+        max_length=100,
+        null=False,
+        blank=True,
+        default="",
+    )
+
+    # New 2026
+    yield_data_for_previous_crops = models.TextField(
+        verbose_name="If you know the yield of the cash crop yield following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
+        null=True,
+    )
+
+    # New 2026
+    share_soil_test_results = models.CharField(
+        verbose_name="If you have previously sampled *this* field for WiCCDN, please tell us all the years you have sampled it.",
+        max_length=100,
+        null=False,
+        blank=True,
+        default="",
+    )
+    # new 2026
+    soil_test_doc = models.FileField(storage=WiscCCSoilTestStorage(), blank=True)
+
     # In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
     # ??	Question about multiple year rotation?
     # 18	"Please describe your crop rotation for this field including cover crops.
@@ -1669,6 +1697,11 @@ class SurveyField(models.Model):
         null=True,
     )
 
+    # new 2026
+    fertility_program = models.TextField(
+        verbose_name="What is your fertility program?", null=True
+    )
+
     derived_species_class = models.CharField(
         verbose_name="Cover crop species class",
         max_length=90,
@@ -1682,6 +1715,7 @@ class SurveyField(models.Model):
     #     verbose_name="(Would you be open to having your cover cropping experience shared on our website for other interested farmers?)",
     #     null=True,
     # )
+
     class Meta:
         permissions = (("survery_manager", "Survey Manager"),)
 

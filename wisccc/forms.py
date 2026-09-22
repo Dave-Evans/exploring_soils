@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.safestring import mark_safe
 from django.contrib.gis import forms as geo_forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -51,6 +52,24 @@ TRUE_FALSE_CHOICES_SHARE_OR_ANON = (
     ("", ""),
     (True, "Yes, you can attribute the above quote to me."),
     (False, "No, I prefer to remain anonymous."),
+)
+YEAR_CHOICES = (
+    ("2020", "2020"),
+    ("2021", "2021"),
+    ("2022", "2022"),
+    ("2023", "2023"),
+    ("2024", "2024"),
+    ("2025", "2025"),
+)
+SOILTEST_CHOICES = (
+    ("", ""),
+    ("NO", "No, I don't have any results I am able or willing to share."),
+    (
+        "YES",
+        mark_safe("Yes, I will email them to Dan Marzu (dan.marzu@wisc.edu)"),
+    ),
+    ("YES", "Yes, Please contact me later for my soil test results."),
+    ("YES", "I'll upload them below."),
 )
 
 
@@ -771,7 +790,9 @@ class SurveyFieldFormFull(forms.ModelForm):
     )
     # 45	Estimated cover crop planting cost per acre in this field. Please use UW Extension Custom Rate Guide.(https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf)
     cover_crop_planting_cost = forms.IntegerField(
-        label='34. Estimated cover crop planting cost per acre in this field. Please use <a href="https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf" target="_blank" rel="noopener noreferrer">UW Extension Custom Rate Guide.</a>',
+        label=mark_safe(
+            '34. Estimated cover crop planting cost per acre in this field. Please use <a href="https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf" target="_blank" rel="noopener noreferrer">UW Extension Custom Rate Guide.</a>'
+        ),
         min_value=0,
         required=True,
     )
@@ -1007,15 +1028,51 @@ class FieldFarmFormSection3(forms.ModelForm):
 
 class SurveyFieldFormSection3(forms.ModelForm):
 
+    # For helping previously sampled get a string with commas
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # DB stores a comma-separated string; the checkbox widget needs a list.
+        stored = self.instance.previously_sampled_when
+        if stored:
+            self.initial["previously_sampled_when"] = stored.split(",")
+
+    previously_sampled_when = forms.MultipleChoiceField(
+        label=mark_safe(
+            "Please select any previous years for which you have sampled <em>this</em> field for WiCCDN"
+        ),
+        choices=YEAR_CHOICES,
+        required=False,
+        widget=forms.CheckboxSelectMultiple(),
+    )
+
+    yield_data_for_previous_crops = forms.CharField(
+        label="If you know the yield of the cash crop yield following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        max_length=900,
+        required=True,
+    )
+
+    share_soil_test_results = forms.ChoiceField(
+        label=mark_safe(
+            "Please share any historical or recent soil test results from a WCCDN sampled cover-cropped field that you would be willing to share.",
+        ),
+        choices=SOILTEST_CHOICES,
+        required=False,
+    )
+
+    soil_test_doc = forms.FileField(
+        label="Upload your soil test documents here.", required=False
+    )
+
     crop_rotation_2021_cash_crop_species = forms.ChoiceField(
-        label="12a. Cash crop planted 2023",
+        label="12a. Cash crop planted 2024",
         choices=CashCropChoices.choices,
         required=True,
         initial=CashCropChoices.BLANK,
     )
 
     crop_rotation_2021_cover_crop_species = forms.ChoiceField(
-        label="12b. Cover crop planted 2023",
+        label="12b. Cover crop planted 2024",
         choices=CoverCropChoicesWMulti.choices,
         required=True,
         initial=CoverCropChoices.BLANK,
@@ -1023,26 +1080,26 @@ class SurveyFieldFormSection3(forms.ModelForm):
 
     # 21 a.
     crop_rotation_2022_cash_crop_species = forms.ChoiceField(
-        label="13a. Cash crop planted 2024",
+        label="13a. Cash crop planted 2025",
         choices=CashCropChoices.choices,
         required=True,
     )
     # 21 b
     crop_rotation_2022_cover_crop_species = forms.ChoiceField(
-        label="13b. Cover crop planted 2024",
+        label="13b. Cover crop planted 2025",
         choices=CoverCropChoicesWMulti.choices,
         required=True,
         initial=CoverCropChoices.BLANK,
     )
     # 22 a.
     crop_rotation_2023_cash_crop_species = forms.ChoiceField(
-        label="14a. Cash crop planted 2025",
+        label="14a. Cash crop planted 2026",
         choices=CashCropChoices.choices,
         required=True,
     )
     # 22 b.
     crop_rotation_2023_cover_crop_species = forms.ChoiceField(
-        label="14b. Cover crop planted 2025",
+        label="14b. Cover crop planted 2026",
         choices=CoverCropChoicesWMulti.choices,
         required=True,
     )
@@ -1134,6 +1191,10 @@ class SurveyFieldFormSection3(forms.ModelForm):
         required=False,
     )
 
+    def clean_previously_sampled_when(self):
+        years = self.cleaned_data["previously_sampled_when"]
+        return ",".join(sorted(years))
+
     # def clean(self):
     #     super().clean()
     #     addlt_species = [
@@ -1154,6 +1215,10 @@ class SurveyFieldFormSection3(forms.ModelForm):
     class Meta:
         model = SurveyField
         fields = (
+            "previously_sampled_when",
+            "yield_data_for_previous_crops",
+            "share_soil_test_results",
+            "soil_test_doc",
             "crop_rotation_2021_cover_crop_species",
             "crop_rotation_2021_cash_crop_species",
             "crop_rotation_2022_cover_crop_species",
@@ -1245,6 +1310,13 @@ class SurveyFieldFormSection4_part2(forms.ModelForm):
 
 
 class SurveyFieldFormSection5(forms.ModelForm):
+
+    fertility_program = forms.CharField(
+        label='For this field, what was your fertility program for the cash/forage crop prior to the 2026 growing season?  List the timing and amount of manure/fertilizer applications after harvest of the 2026 cash/forage crop. (The idea is to capture any "left over" nutrients from the 2026 growing season and/or taking up from the fall application.)',
+        widget=forms.Textarea(attrs={"rows": 7}),
+        max_length=1000,
+        required=True,
+    )
 
     manure_prior = forms.ChoiceField(
         label="21a. Will you or did you apply manure prior to seeding cover crops on this field?",
@@ -1490,6 +1562,7 @@ class SurveyFieldFormSection5(forms.ModelForm):
     class Meta:
         model = SurveyField
         fields = (
+            "fertility_program",
             "manure_prior",
             "manure_prior_rate",
             "manure_prior_rate_units",
@@ -1543,7 +1616,9 @@ class SurveyFieldFormSection6(forms.ModelForm):
     )
     # 45	Estimated cover crop planting cost per acre in this field. Please use UW Extension Custom Rate Guide.(https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf)
     cover_crop_planting_cost = forms.IntegerField(
-        label='31. Estimated cover crop planting cost per acre in this field. Please use <a href="https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf" target="_blank" rel="noopener noreferrer">UW Extension Custom Rate Guide.</a>',
+        label=mark_safe(
+            '31. Estimated cover crop planting cost per acre in this field. Please use <a href="https://www.nass.usda.gov/Statistics_by_State/Wisconsin/Publications/WI-CRate20.pdf" target="_blank" rel="noopener noreferrer">UW Extension Custom Rate Guide.</a>'
+        ),
         min_value=0,
         required=True,
     )

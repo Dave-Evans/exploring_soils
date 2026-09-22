@@ -86,7 +86,7 @@ from wisccc.forms_2024 import (
 
 from wisccc.forms_2025 import (
     SurveyFarmFormSection2 as SurveyFarmFormSection2_2025,
-    SurveyFieldFormSection3 as SurveyFieldFormSection3_205,
+    SurveyFieldFormSection3 as SurveyFieldFormSection3_2025,
     SurveyFieldFormSection4_part1 as SurveyFieldFormSection4_part1_2025,
     FieldFarmFormSection3 as FieldFarmFormSection3_2025,
     SurveyFarmFormSection4 as SurveyFarmFormSection4_2025,
@@ -160,6 +160,7 @@ def check_section_completed(farmer_id, survey_year, survey_farm, survey_fields):
 
         completed = section_3 and section_4 and section_5 and section_6
 
+        # Was used JUST for looking at the field related questions
         if not completed:
             one_incomplete = True
 
@@ -621,12 +622,21 @@ def wisc_cc_survey3(request, sfieldid):
         # Else, then we will just be creating it here.
 
     # Use year specific forms.
-    if survey_farm.survey_year == 2025:
+    if survey_farm.survey_year == 2026:
 
         form_surveyfield_section_3 = SurveyFieldFormSection3(
-            request.POST or None, instance=survey_field
+            request.POST or None, request.FILES or None, instance=survey_field
         )
         form_fieldfarm_section_3 = FieldFarmFormSection3(
+            request.POST or None, instance=field_farm
+        )
+
+    elif survey_farm.survey_year == 2025:
+
+        form_surveyfield_section_3 = SurveyFieldFormSection3_2025(
+            request.POST or None, instance=survey_field
+        )
+        form_fieldfarm_section_3 = FieldFarmFormSection3_2025(
             request.POST or None, instance=field_farm
         )
 
@@ -714,7 +724,7 @@ def wisc_cc_survey4(request, sfieldid):
 
     farmer = Farmer.objects.get(id=survey_farm.farmer.id)
 
-    if survey_farm.survey_year == 2025:
+    if survey_farm.survey_year == 2026:
         form_surveyfarm_section_4 = SurveyFarmFormSection4(
             request.POST or None, instance=survey_farm
         )
@@ -722,6 +732,17 @@ def wisc_cc_survey4(request, sfieldid):
             request.POST or None, instance=survey_field
         )
         form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2(
+            request.POST or None, instance=survey_field
+        )
+
+    elif survey_farm.survey_year == 2025:
+        form_surveyfarm_section_4 = SurveyFarmFormSection4_2025(
+            request.POST or None, instance=survey_farm
+        )
+        form_surveyfield_section_4_part_1 = SurveyFieldFormSection4_part1_2025(
+            request.POST or None, instance=survey_field
+        )
+        form_surveyfield_section_4_part_2 = SurveyFieldFormSection4_part2_2025(
             request.POST or None, instance=survey_field
         )
 
@@ -802,9 +823,14 @@ def wisc_cc_survey5(request, sfieldid):
     #     request.POST or None, instance=survey_field
     # )
     # pass the object as instance in form
-    if survey_farm.survey_year == 2025:
+    if survey_farm.survey_year == 2026:
 
         form_surveyfield_section_5 = SurveyFieldFormSection5(
+            request.POST or None, instance=survey_field
+        )
+    elif survey_farm.survey_year == 2025:
+
+        form_surveyfield_section_5 = SurveyFieldFormSection5_2025(
             request.POST or None, instance=survey_field
         )
     elif survey_farm.survey_year == 2024:
@@ -851,11 +877,18 @@ def wisc_cc_survey6(request, sfieldid):
         return redirect("wisc_cc_unauthorized")
 
     farmer = Farmer.objects.get(id=survey_farm.farmer.id)
-    if survey_farm.survey_year == 2025:
+    if survey_farm.survey_year == 2026:
         form_surveyfarm_section_6 = SurveyFarmFormSection6(
             request.POST or None, instance=survey_farm
         )
         form_surveyfield_section_6 = SurveyFieldFormSection6(
+            request.POST or None, instance=survey_field
+        )
+    elif survey_farm.survey_year == 2025:
+        form_surveyfarm_section_6 = SurveyFarmFormSection6_2025(
+            request.POST or None, instance=survey_farm
+        )
+        form_surveyfield_section_6 = SurveyFieldFormSection6_2025(
             request.POST or None, instance=survey_field
         )
     elif survey_farm.survey_year == 2024:
@@ -875,7 +908,9 @@ def wisc_cc_survey6(request, sfieldid):
         new_form_survey_field.survey_farm = survey_farm
         new_form_survey_field.save()
 
-        return redirect("wisc_cc_survey7", survey_farm.id)
+        # For 2026, there is no section 7, back to survey page!
+
+        return redirect("wisc_cc_survey")
 
     template = "wisccc/survey_section_6_field_seeding_cost.html"
     form_file_name_surveyfield = f"wisccc/includes/survey_{survey_farm.survey_year}/form_section_6_seeding_cost_surveyfield.html"
@@ -1653,7 +1688,10 @@ def wisccc_create_researcher_existing_user(request):
     This assumes we are creating a researcher for an existing user.
     """
 
-    researcher_form = ResearcherSignupForm(request.POST or None, request.FILES or None)
+    researcher_form = ResearcherSignupForm(
+        request.POST or None,
+        request.FILES or None,
+    )
 
     select_form = SelectUserForm(request.POST or None)
 
