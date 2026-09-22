@@ -1266,6 +1266,17 @@ class SurveyFarm(models.Model):
         null=True,
     )
 
+    # New 2026
+    share_soil_test_results = models.CharField(
+        verbose_name="If you have previously sampled *this* field for WiCCDN, please tell us all the years you have sampled it.",
+        max_length=100,
+        null=False,
+        blank=True,
+        default="",
+    )
+    # new 2026
+    soil_test_doc = models.FileField(storage=WiscCCSoilTestStorage(), blank=True)
+
     class Meta:
         permissions = (("survery_manager", "Survey Manager"),)
 
@@ -1353,17 +1364,6 @@ class SurveyField(models.Model):
         verbose_name="If you know the yield of the cash crop yield following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
         null=True,
     )
-
-    # New 2026
-    share_soil_test_results = models.CharField(
-        verbose_name="If you have previously sampled *this* field for WiCCDN, please tell us all the years you have sampled it.",
-        max_length=100,
-        null=False,
-        blank=True,
-        default="",
-    )
-    # new 2026
-    soil_test_doc = models.FileField(storage=WiscCCSoilTestStorage(), blank=True)
 
     # In the following section we ask you about your specific cover cropping practices in one field or set of fields (can be one acre ro 1,000) from which you'll take your samples for biomass, nutrient, and forage analysis. Provide answers *for that field.*
     # ??	Question about multiple year rotation?

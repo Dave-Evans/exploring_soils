@@ -530,7 +530,7 @@ def wisc_cc_survey2(request, sfarmid):
     if survey_farm.survey_year == 2026:
 
         form_surveyfarm_section_2 = SurveyFarmFormSection2(
-            request.POST or None, instance=survey_farm
+            request.POST or None, request.FILES or None, instance=survey_farm
         )
 
     elif survey_farm.survey_year == 2025:

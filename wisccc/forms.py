@@ -906,6 +906,19 @@ class SurveyFarmFormSection2(forms.ModelForm):
         max_length=1000,
     )
 
+    share_soil_test_results = forms.ChoiceField(
+        label=mark_safe(
+            "Please provide any historical or recent soil test results from a WCCDN sampled cover-cropped field that you would be willing to share.",
+        ),
+        choices=SOILTEST_CHOICES,
+        required=False,
+        help_text="Note we are interested in soil test results for a field you have sampled with WCCDN but not this current year.",
+    )
+
+    soil_test_doc = forms.FileField(
+        label="Upload your soil test documents here.", required=False
+    )
+
     # barriers_to_expansion = forms.ChoiceField(
     #     label="6. Would you like to expand the number of acres you cover crop?",
     #     required=False,
@@ -975,6 +988,8 @@ class SurveyFarmFormSection2(forms.ModelForm):
             "main_cc_goal_this_year_write_in",
             "satisfied_with_cc_results",
             "satisfied_with_cc_results_write_in",
+            "share_soil_test_results",
+            "soil_test_doc",
             # "barriers_to_expansion",
             # "barriers_to_expansion_write_in",
             # "biggest_challenge_cc",
@@ -1038,7 +1053,7 @@ class SurveyFieldFormSection3(forms.ModelForm):
 
     previously_sampled_when = forms.MultipleChoiceField(
         label=mark_safe(
-            "Please select any previous years for which you have sampled <em>this</em> field for WiCCDN"
+            "Please select any previous years for which you have sampled <b><em>this</em></b> field for WiCCDN"
         ),
         choices=YEAR_CHOICES,
         required=False,
@@ -1050,18 +1065,6 @@ class SurveyFieldFormSection3(forms.ModelForm):
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=900,
         required=True,
-    )
-
-    share_soil_test_results = forms.ChoiceField(
-        label=mark_safe(
-            "Please share any historical or recent soil test results from a WCCDN sampled cover-cropped field that you would be willing to share.",
-        ),
-        choices=SOILTEST_CHOICES,
-        required=False,
-    )
-
-    soil_test_doc = forms.FileField(
-        label="Upload your soil test documents here.", required=False
     )
 
     crop_rotation_2021_cash_crop_species = forms.ChoiceField(
@@ -1217,8 +1220,6 @@ class SurveyFieldFormSection3(forms.ModelForm):
         fields = (
             "previously_sampled_when",
             "yield_data_for_previous_crops",
-            "share_soil_test_results",
-            "soil_test_doc",
             "crop_rotation_2021_cover_crop_species",
             "crop_rotation_2021_cash_crop_species",
             "crop_rotation_2022_cover_crop_species",
