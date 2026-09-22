@@ -160,6 +160,7 @@ def check_section_completed(farmer_id, survey_year, survey_farm, survey_fields):
 
         completed = section_3 and section_4 and section_5 and section_6
 
+        # Was used JUST for looking at the field related questions
         if not completed:
             one_incomplete = True
 
