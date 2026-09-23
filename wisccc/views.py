@@ -2248,6 +2248,8 @@ def wisc_cc_register_2(request):
         new_register.farmer = new_farmer
         new_register.survey_year = survey_year
         new_register.save()
+        new_surveyfarm_section1.farmer = new_farmer
+        new_surveyfarm_section1.survey_year = survey_year
         new_surveyfarm_section1.save()
         return redirect("wisc_cc_register_3")
 
