@@ -36,6 +36,7 @@ from wisccc.filters import SurveyResponseFilter, SurveyRegistrationFilter
 from django_filters.views import FilterView
 from wisccc.forms import (
     SurveyFieldFormFull,
+    SurveyFarmFormSection1,
     SurveyFarmFormSection2,
     FieldFarmFormSection3,
     SurveyFieldFormSection3,
@@ -2200,11 +2201,33 @@ def wisc_cc_register_2(request):
     registration_form = SurveyRegistrationPartialForm(
         request.POST or None, instance=registration_instance
     )
+    # If new create new survey farm record, survey field, acil data, and photo records
+    if is_new_registration:
+        survey_farm = SurveyFarm.objects.create(
+            farmer=farmer_instance, survey_year=survey_year
+        )
+        survey_field = SurveyField.objects.create(survey_farm=survey_farm)
+        ancillary_data = AncillaryData.objects.create(survey_field=survey_field)
+        survey_photo = SurveyPhoto.objects.create(survey_field=survey_field)
+    else:
+        survey_farm = SurveyFarm.objects.get(
+            farmer=farmer_instance, survey_year=survey_year
+        )
 
-    if farmer_form.is_valid() and registration_form.is_valid():
+    surveyfarm_form_section_1 = SurveyFarmFormSection1(
+        request.POST or None, request.FILES or None, instance=survey_farm
+    )
+
+    if (
+        farmer_form.is_valid()
+        and registration_form.is_valid()
+        and surveyfarm_form_section_1.is_valid()
+    ):
 
         new_farmer = farmer_form.save(commit=False)
         new_register = registration_form.save(commit=False)
+
+        new_surveyfarm_section1 = surveyfarm_form_section_1.save()
 
         new_farmer.user = user
         new_farmer.save()
@@ -2212,14 +2235,6 @@ def wisc_cc_register_2(request):
         new_register.farmer = new_farmer
         new_register.survey_year = survey_year
         new_register.save()
-
-        if is_new_registration:
-            survey_farm = SurveyFarm.objects.create(
-                farmer=new_farmer, survey_year=survey_year
-            )
-            survey_field = SurveyField.objects.create(survey_farm=survey_farm)
-            ancillary_data = AncillaryData.objects.create(survey_field=survey_field)
-            survey_photo = SurveyPhoto.objects.create(survey_field=survey_field)
 
         return redirect("wisc_cc_register_3")
 
@@ -2229,6 +2244,7 @@ def wisc_cc_register_2(request):
         {
             "form_farmer": farmer_form,
             "registration_form": registration_form,
+            "form_surveyfarm_section_1": surveyfarm_form_section_1,
         },
     )
 

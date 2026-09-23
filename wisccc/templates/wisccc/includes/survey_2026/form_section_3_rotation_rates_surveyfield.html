@@ -10,7 +10,7 @@
     </div>
 
     <div class="form-group col-md-10 mb-0">
-        {{ form_surveyfield_section_3.yield_data_for_previous_crops|as_crispy_field }}
+        {{ form_surveyfield_section_3.yield_data_for_this_years_cash_crop|as_crispy_field }}
     </div>
 
 
@@ -47,7 +47,9 @@
 </div>
 <h4>Cover Crop Planting Rate {{ survey_year }}</h4>
 <p>
-    {% if survey_year == 2025 or survey_year == 2026 %}
+    {% if survey_year == 2026 %}
+    13.
+    {% elif survey_year == 2025 %}
     15.
     {% else %}
     18.

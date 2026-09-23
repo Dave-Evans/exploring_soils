@@ -1,0 +1,21 @@
+{% load crispy_forms_tags %}
+
+<p>
+    Help us address gaps in our data.
+    Please provide any historical or recent yield or soil test results from *<em>any</em>*
+    cover-cropped field previously sampled for WCCDN.
+</p>
+<div class="form-group col-md-8 mb-0">
+    {{ form_surveyfarm_section_1.yield_data_for_previous_crops|as_crispy_field }}
+</div>
+
+<div class="form-group col-md-8 mb-0">
+    {{ form_surveyfarm_section_1.share_soil_test_results|as_crispy_field }}
+</div>
+<div class="form-group col-md-8 mb-0">
+    {{ form_surveyfarm_section_1.soil_test_doc|as_crispy_field }}
+</div>
+
+
+
+{{ form_surveyfarm_section_1.errors }}

@@ -1277,6 +1277,12 @@ class SurveyFarm(models.Model):
     # new 2026
     soil_test_doc = models.FileField(storage=WiscCCSoilTestStorage(), blank=True)
 
+    # New 2026
+    yield_data_for_previous_crops = models.TextField(
+        verbose_name="If you know the yield of the cash crop yield following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
+        null=True,
+    )
+
     class Meta:
         permissions = (("survery_manager", "Survey Manager"),)
 
@@ -1360,8 +1366,8 @@ class SurveyField(models.Model):
     )
 
     # New 2026
-    yield_data_for_previous_crops = models.TextField(
-        verbose_name="If you know the yield of the cash crop yield following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
+    yield_data_for_this_years_cash_crop = models.TextField(
+        verbose_name="Please provide the yield for this year's cash crop.",
         null=True,
     )
 
