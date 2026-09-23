@@ -853,7 +853,7 @@ class SurveyFarmFormSection1(forms.ModelForm):
     """Added in 2026 to registration form"""
 
     yield_data_for_previous_crops = forms.CharField(
-        label="If you know the yield of the cash crop yield following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
+        label="If you know the yield of the cash crop following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
         widget=forms.Textarea(attrs={"rows": 5}),
         max_length=900,
         required=True,
@@ -861,7 +861,7 @@ class SurveyFarmFormSection1(forms.ModelForm):
 
     share_soil_test_results = forms.ChoiceField(
         label=mark_safe(
-            "Please provide any historical or recent soil test results from a WCCDN sampled cover-cropped field that you would be willing to share.",
+            "Please provide any historical or recent soil test results from a WCCDN sampled cover-cropped field.",
         ),
         choices=SOILTEST_CHOICES,
         required=False,
