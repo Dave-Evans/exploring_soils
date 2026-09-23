@@ -2198,10 +2198,13 @@ def wisc_cc_register_2(request):
     farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
     is_new_registration = False
     try:
+
         registration_instance = SurveyRegistration.objects.get(
             farmer_id=farmer_instance.id, survey_year=survey_year
         )
+        print("Registrant already exists.")
     except:
+        print("New registrant.")
         registration_instance = None
         is_new_registration = True
 
@@ -2210,6 +2213,7 @@ def wisc_cc_register_2(request):
     )
     # If new create new survey farm record, survey field, acil data, and photo records
     if is_new_registration:
+        print("New registrant, creating records")
         survey_farm = SurveyFarm.objects.create(
             farmer=farmer_instance, survey_year=survey_year
         )
@@ -2217,10 +2221,12 @@ def wisc_cc_register_2(request):
         ancillary_data = AncillaryData.objects.create(survey_field=survey_field)
         survey_photo = SurveyPhoto.objects.create(survey_field=survey_field)
     else:
+        print("Existingn registrant, grabbing survey farm record")
         survey_farm = SurveyFarm.objects.get(
             farmer=farmer_instance, survey_year=survey_year
         )
 
+    print(f"Survey farm object: {survey_farm}")
     surveyfarm_form_section_1 = SurveyFarmFormSection1(
         request.POST or None, request.FILES or None, instance=survey_farm
     )
@@ -2234,7 +2240,7 @@ def wisc_cc_register_2(request):
         new_farmer = farmer_form.save(commit=False)
         new_register = registration_form.save(commit=False)
 
-        new_surveyfarm_section1 = surveyfarm_form_section_1.save()
+        new_surveyfarm_section1 = surveyfarm_form_section_1.save(commit=False)
 
         new_farmer.user = user
         new_farmer.save()
@@ -2242,7 +2248,7 @@ def wisc_cc_register_2(request):
         new_register.farmer = new_farmer
         new_register.survey_year = survey_year
         new_register.save()
-
+        new_surveyfarm_section1.save()
         return redirect("wisc_cc_register_3")
 
     return render(
