@@ -484,16 +484,22 @@ def wisc_cc_survey1(request, survey_year, farmer_id):
     # The case where a user gets to wisc-cc-survey/1
     #   but is not a farmer
     try:
-        instance = Farmer.objects.get(id=farmer_id)
+        farmer_instance = Farmer.objects.get(id=farmer_id)
     except:
         return redirect("wisc_cc_register_1")
 
-    form_farmer = FarmerForm(request.POST or None, instance=instance)
-    if form_farmer.is_valid():
+    survey_farm = SurveyFarm.objects.get(
+        farmer_id=farmer_instance.id, survey_year=survey_year
+    )
+    form_farmer = FarmerForm(request.POST or None, instance=farmer_instance)
+    surveyfarm_form_section_1 = SurveyFarmFormSection1(
+        request.POST or None, request.FILES or None, instance=survey_farm
+    )
+    if form_farmer.is_valid() and surveyfarm_form_section_1.is_valid():
         new_form = form_farmer.save(commit=False)
         # new_form.user = instance.user
         new_form.save()
-
+        new_surveyfarm_section1 = surveyfarm_form_section_1.save()
         return redirect(
             reverse("wisc_cc_survey") + f"/{survey_year}/?farmer_id={farmer_id}"
         )
@@ -504,6 +510,7 @@ def wisc_cc_survey1(request, survey_year, farmer_id):
         template,
         {
             "form_farmer": form_farmer,
+            "form_surveyfarm_section_1": surveyfarm_form_section_1,
             "farmer_id": farmer_id,
             "survey_year": survey_year,
         },
