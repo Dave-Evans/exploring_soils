@@ -2187,46 +2187,36 @@ def wisc_cc_register_2(request):
     """For when a user already exists."""
     survey_year = 2026
     user = User.objects.get(id=request.user.id)
-    # !!!!!!!!!!!!!!!!!!!!!!!!! #
-    # CREATE necessary records here!
-    # survey farm
-    # survey field
-    # farm field?
-    # !!!!!!!!!!!!!!!!!!!!!!!!! #
+
     farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
 
     farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
-    is_new_registration = False
-    try:
 
-        registration_instance = SurveyRegistration.objects.get(
-            farmer_id=farmer_instance.id, survey_year=survey_year
-        )
-        print("Registrant already exists.")
-    except:
-        print("New registrant.")
-        registration_instance = None
-        is_new_registration = True
+    registration_instance = SurveyRegistration.objects.filter(
+        farmer_id=farmer_instance.id, survey_year=survey_year
+    ).first()
+    is_new_registration = registration_instance is None
 
     registration_form = SurveyRegistrationPartialForm(
         request.POST or None, instance=registration_instance
     )
-    # If new create new survey farm record, survey field, acil data, and photo records
-    if is_new_registration:
-        print("New registrant, creating records")
-        survey_farm = SurveyFarm.objects.create(
-            farmer=farmer_instance, survey_year=survey_year
-        )
-        survey_field = SurveyField.objects.create(survey_farm=survey_farm)
-        ancillary_data = AncillaryData.objects.create(survey_field=survey_field)
-        survey_photo = SurveyPhoto.objects.create(survey_field=survey_field)
-    else:
-        print("Existingn registrant, grabbing survey farm record")
-        survey_farm = SurveyFarm.objects.get(
-            farmer=farmer_instance, survey_year=survey_year
-        )
 
-    print(f"Survey farm object: {survey_farm}")
+    # Look up the survey farm if it already exists. Do NOT create it here:
+    # GET requests must not write to the database.
+    survey_farm = SurveyFarm.objects.filter(
+        farmer=farmer_instance, survey_year=survey_year
+    ).first()
+
+    if request.method == "POST" and is_new_registration:
+        # Create the records only on submit, and idempotently, so a resubmit
+        # (e.g. after a validation error) reuses the same rows.
+        survey_farm, _ = SurveyFarm.objects.get_or_create(
+            farmer=farmer_instance, survey_year=survey_year
+        )
+        survey_field, _ = SurveyField.objects.get_or_create(survey_farm=survey_farm)
+        AncillaryData.objects.get_or_create(survey_field=survey_field)
+        SurveyPhoto.objects.get_or_create(survey_field=survey_field)
+
     surveyfarm_form_section_1 = SurveyFarmFormSection1(
         request.POST or None, request.FILES or None, instance=survey_farm
     )
