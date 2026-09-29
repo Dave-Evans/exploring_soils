@@ -54,6 +54,7 @@ from wisccc.forms import (
     SurveyPhotoForm,
     CustomUserCreationForm,
     SurveyRegistrationFullForm,
+    SurveyRegistrationFullForm2026,
     SurveyRegistrationPartialForm,
     UserInfoForm,
     ResearcherSignupForm,
@@ -2022,6 +2023,7 @@ def update_registration(request, id):
 
     # fetch the survey object related to passed id
     registration = get_object_or_404(SurveyRegistration, id=id)
+    survey_year = registration.survey_year
 
     # Get farmer associated with registrant
     farmer = registration.farmer
@@ -2029,14 +2031,27 @@ def update_registration(request, id):
     # Get user associated with registrant
     user = registration.farmer.user
 
+    # Get SurveyFarm Record for new 2026 fields
+    surveyfarm = SurveyFarm.objects.get(farmer=farmer, survey_year=survey_year)
+
     # pass the object as instance in form
-    registration_form = SurveyRegistrationFullForm(
-        request.POST or None, instance=registration
-    )
+    if survey_year == 2026:
+        registration_form = SurveyRegistrationFullForm2026(
+            request.POST or None, instance=registration
+        )
+    else:
+
+        registration_form = SurveyRegistrationFullForm(
+            request.POST or None, instance=registration
+        )
 
     farmer_form = FarmerForm(request.POST or None, instance=farmer)
 
     user_info_form = UserInfoForm(request.POST or None, instance=user)
+
+    surveyfarm_form_section_1 = SurveyFarmFormSection1(
+        request.POST or None, request.FILES or None, instance=surveyfarm
+    )
     # save the data from the form and
     # redirect to detail_view
 
@@ -2044,6 +2059,7 @@ def update_registration(request, id):
         registration_form.is_valid()
         and farmer_form.is_valid()
         and user_info_form.is_valid()
+        and surveyfarm_form_section_1.is_valid()
     ):
 
         registration_form.save()
@@ -2052,11 +2068,15 @@ def update_registration(request, id):
 
         user_info_form.save()
 
+        surveyfarm_form_section_1.save()
+
         return redirect("registration_table")
     # add form dictionary to context
     context["registration_form"] = registration_form
     context["form_farmer"] = farmer_form
     context["user_info_form"] = user_info_form
+    context["form_surveyfarm_section_1"] = surveyfarm_form_section_1
+    context["survey_year"] = survey_year
 
     return render(request, "wisccc/wisc_cc_registration_review.html", context)
 

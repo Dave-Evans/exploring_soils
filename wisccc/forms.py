@@ -2003,6 +2003,38 @@ class SurveyRegistrationFullForm(forms.ModelForm):
         ]
 
 
+class SurveyRegistrationFullForm2026(forms.ModelForm):
+    """For updating or reviewing signing up for survey and biomass kit"""
+
+    notes = forms.CharField(
+        label="Admin notes",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 10}),
+        max_length=1000,
+    )
+    willing_to_complete_survey_and_sample = forms.BooleanField(
+        label="I am willing to complete the cover crop management survey (below) and to collect a cover crop sample and submit it in the prepaid envelopes you provide",
+        required=True,
+    )
+    participate_in_soil_sampling = forms.BooleanField(
+        label="I will participate in Michael Fields collecting a spring 2027 soil test of this field (details to come)",
+        required=True,
+    )
+    privacy_consent = forms.ChoiceField(
+        label="If you agree to this statement above click yes and proceed to the survey.",
+        choices=TRUE_FALSE_CHOICES,
+        required=False,
+    )
+
+    class Meta:
+        model = SurveyRegistration
+        fields = [
+            "willing_to_complete_survey_and_sample",
+            "participate_in_soil_sampling",
+            "privacy_consent",
+        ]
+
+
 class SurveyRegistrationPartialForm(forms.ModelForm):
     """For updating or reviewing signing up for survey and biomass kit"""
 
