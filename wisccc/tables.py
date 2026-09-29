@@ -5,6 +5,7 @@ import itertools
 import pandas as pd
 from wisccc.models import SurveyFarm, Farmer, SurveyRegistration, SurveyField
 
+
 class ScenarioTable(tables.Table):
     row_number = tables.Column(empty_values=())
     # survey_field__survey_farm__id = tables.Column()
@@ -13,22 +14,25 @@ class ScenarioTable(tables.Table):
     # survey_field__cover_crop_species_1 = tables.Column()
     survey_field__cover_crop_seeding_method = tables.Column()
     survey_field__cover_crop_planting_date = tables.Column()
-    survey_field__manure_prior = tables.Column(verbose_name="Manure added before cover?")
+    survey_field__manure_prior = tables.Column(
+        verbose_name="Manure added before cover?"
+    )
     # survey_field__tillage_system_cash_crop = tables.Column()
     cc_biomass = tables.Column()
     total_nitrogen = tables.Column()
     # def render_cover_crop_species(self, record):
-        # return ", ".join(record.cover_crop_species_1 + record.cover_crop_species_2, record.cover_crop_species_3 + record.cover_crop_species_4, record.cover_crop_species_5)
-    
+    # return ", ".join(record.cover_crop_species_1 + record.cover_crop_species_2, record.cover_crop_species_3 + record.cover_crop_species_4, record.cover_crop_species_5)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.counter = itertools.count()
 
     def render_row_number(self):
         return f"{next(self.counter) + 1}"
-    
+
     class Meta:
         orderable = False
+
 
 class ResponseTable(tables.Table):
     survey_farm__farmer__first_name = tables.Column()
@@ -78,6 +82,8 @@ class RegistrationTable(tables.Table):
         template_name = "django_tables2/bootstrap4.html"
 
         attrs = {"class": "table table-hover"}
+
+        order_by = "-signup_timestamp"
 
 
 class ResearcherTable(tables.Table):
