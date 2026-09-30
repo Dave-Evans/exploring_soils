@@ -92,6 +92,9 @@ def get_registration_download(survey_year):
                 "do_you_need_assistance",
                 "howd_you_hear",
                 "belong_to_groups",
+                "willing_to_complete_survey_and_sample",
+                "participate_in_soil_sampling",
+                "privacy_consent",
                 "notes",
             )
         ),
