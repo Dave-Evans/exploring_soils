@@ -2111,7 +2111,6 @@ def download_registrants_page(request):
             cd = form.cleaned_data
             # now in the object cd, you have the form as a dictionary.
             survey_year = cd.get("survey_year")
-            print(f"Survey year: {survey_year}")
 
             return download_registrants(survey_year)  # redirect("registration_table")
 
@@ -2120,7 +2119,6 @@ def download_registrants_page(request):
 
 # @permission_required("wisccc.survery_manager", raise_exception=True)
 def download_registrants(survey_year):
-    print("We're in download_registrants...")
     df = get_registration_download(survey_year)
 
     filename = "registrants{}.csv".format(datetime.datetime.now().strftime("%Y_%m_%d"))

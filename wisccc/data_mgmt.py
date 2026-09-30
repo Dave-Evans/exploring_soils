@@ -39,11 +39,30 @@ import os
 
 def get_registration_download(survey_year):
 
-    season = "F"
     survey_registrants = (
         SurveyRegistration.objects.all()
         .select_related("farmer")
         .select_related("farmer__user")
+    )
+    survey_farm = SurveyFarm.objects.all()
+
+    df_sf = pd.DataFrame(
+        list(
+            survey_farm.values_list(
+                "survey_year",
+                "farmer_id",
+                "yield_data_for_previous_crops",
+                "share_soil_test_results",
+                "soil_test_doc",
+            )
+        ),
+        columns=[
+            "survey_year",
+            "id",
+            "yield_data_for_previous_crops",
+            "share_soil_test_results",
+            "soil_test_doc",
+        ],
     )
 
     df = pd.DataFrame(
@@ -110,6 +129,7 @@ def get_registration_download(survey_year):
         except ValueError as e:
             print("Something went wrong with the survey year.")
 
+    df = df.merge(df_sf, how="left", on=["survey_year", "id"])
     # convert farmer id to string, convert survey_year to string
     #   grab just the year and create and id
     # Add -F for fall sampling
