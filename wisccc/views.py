@@ -35,6 +35,7 @@ from wisccc.tables import (
 from wisccc.filters import SurveyResponseFilter, SurveyRegistrationFilter
 from django_filters.views import FilterView
 from wisccc.forms import (
+    RegistrationDownloadForm,
     SurveyFieldFormFull,
     SurveyFarmFormSection1,
     SurveyFarmFormSection2,
@@ -2101,9 +2102,28 @@ def delete_registration(request, id):
 
 
 @permission_required("wisccc.survery_manager", raise_exception=True)
-def download_registrants(request):
-    df = get_registration_download()
-    filename = "registrants.csv"
+def download_registrants_page(request):
+
+    form = RegistrationDownloadForm()
+    if request.method == "POST":
+        form = RegistrationDownloadForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            # now in the object cd, you have the form as a dictionary.
+            survey_year = cd.get("survey_year")
+            print(f"Survey year: {survey_year}")
+
+            return download_registrants(survey_year)  # redirect("registration_table")
+
+    return render(request, "wisccc/wisc_cc_registration_download.html", {"form": form})
+
+
+# @permission_required("wisccc.survery_manager", raise_exception=True)
+def download_registrants(survey_year):
+    print("We're in download_registrants...")
+    df = get_registration_download(survey_year)
+
+    filename = "registrants{}.csv".format(datetime.datetime.now().strftime("%Y_%m_%d"))
     resp = HttpResponse(content_type="text/csv")
     resp["Content-Disposition"] = f"attachment; filename={filename}"
 

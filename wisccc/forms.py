@@ -71,6 +71,12 @@ SOILTEST_CHOICES = (
     ("YES", "Yes, Please contact me later for my soil test results."),
     ("YES", "I'll upload them below."),
 )
+SURVEY_YEAR_CHOICES = (
+    ("", ""),
+    ("2026", "2026"),
+    ("2025", "2025"),
+    ("2024", "2024"),
+)
 
 
 class UserLoginForm(AuthenticationForm):
@@ -2000,6 +2006,25 @@ class SurveyRegistrationFullForm(forms.ModelForm):
             "willing_to_complete_survey_and_sample",
             "participate_in_soil_sampling",
             "privacy_consent",
+        ]
+
+
+class RegistrationDownloadForm(forms.Form):
+    """For requesting attributes of the downloaded registrations
+    survey_year
+    spring/fall indicator
+    """
+
+    survey_year = forms.ChoiceField(
+        label="Select a year to filter the registration download to a particular year, otherwise leave blank for all years.",
+        choices=SURVEY_YEAR_CHOICES,
+        required=False,
+    )
+
+    class Meta:
+
+        fields = [
+            "survey_year",
         ]
 
 
