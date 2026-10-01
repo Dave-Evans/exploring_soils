@@ -1,5 +1,5 @@
 # ===== Core framework (keep Django 4.2 LTS) =====
-Django==4.2.25
+Django==4.2.30
 asgiref>=3.6
 sqlparse>=0.3.1
 pytz>=2018.5
