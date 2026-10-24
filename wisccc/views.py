@@ -2227,6 +2227,8 @@ def wisc_cc_register_2(request):
     user = User.objects.get(id=request.user.id)
 
     farmer_instance = Farmer.objects.filter(user_id=request.user.id).first()
+    if farmer_instance is None:
+        farmer_instance = Farmer.objects.create(user=user)
 
     farmer_form = FarmerForm(request.POST or None, instance=farmer_instance)
 
