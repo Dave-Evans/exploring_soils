@@ -13,6 +13,17 @@ from exploring_soils.storage_backends import (
 User._meta.get_field("email")._unique = True
 
 
+PLANTING_YEAR_CHOICES = (
+    (None, ""),
+    (2027, "2027"),
+    (2026, "2026"),
+    (2025, "2025"),
+    (2024, "2024"),
+    (2023, "2023"),
+    (2022, "2022"),
+)
+
+
 class StateAbrevChoices(models.TextChoices):
     """In case someone doesn't exactly in WI"""
 
@@ -1281,6 +1292,83 @@ class SurveyFarm(models.Model):
     yield_data_for_previous_crops = models.TextField(
         verbose_name="If you know the yield of the cash crop yield following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
         null=True,
+    )
+    yield_prev_crop_year_1 = models.IntegerField(
+        null=True,
+        verbose_name="Year of previous cash crop yield data 1",
+        choices=PLANTING_YEAR_CHOICES,
+    )
+    yield_prev_crop_species_1 = models.CharField(
+        verbose_name="Species of previous cash crop yield data 1",
+        choices=CashCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    yield_prev_crop_value_1 = models.IntegerField(
+        null=True, verbose_name="Yield value of previous cash crop yield data 1"
+    )
+    yield_prev_crop_units_1 = models.CharField(
+        null=True,
+        verbose_name="Units of yield for previous cash crop yield data 1",
+        choices=CoverCropRateUnitsChoices.choices,
+    )
+    yield_prev_crop_year_2 = models.IntegerField(
+        null=True,
+        verbose_name="Year of previous cash crop yield data 2",
+        choices=PLANTING_YEAR_CHOICES,
+    )
+    yield_prev_crop_species_2 = models.CharField(
+        verbose_name="Species of previous cash crop yield data 2",
+        choices=CashCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    yield_prev_crop_value_2 = models.IntegerField(
+        null=True, verbose_name="Yield value of previous cash crop yield data 2"
+    )
+    yield_prev_crop_units_2 = models.CharField(
+        null=True,
+        verbose_name="Units of yield for previous cash crop yield data 2",
+        choices=CoverCropRateUnitsChoices.choices,
+    )
+    yield_prev_crop_year_3 = models.IntegerField(
+        null=True,
+        verbose_name="Year of previous cash crop yield data 3",
+        choices=PLANTING_YEAR_CHOICES,
+    )
+    yield_prev_crop_species_3 = models.CharField(
+        verbose_name="Species of previous cash crop yield data 3",
+        choices=CashCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    yield_prev_crop_value_3 = models.IntegerField(
+        null=True, verbose_name="Yield value of previous cash crop yield data 3"
+    )
+    yield_prev_crop_units_3 = models.CharField(
+        null=True,
+        verbose_name="Units of yield for previous cash crop yield data 3",
+        choices=CoverCropRateUnitsChoices.choices,
+    )
+
+    yield_prev_crop_year_4 = models.IntegerField(
+        null=True,
+        verbose_name="Year of previous cash crop yield data 4",
+        choices=PLANTING_YEAR_CHOICES,
+    )
+    yield_prev_crop_species_4 = models.CharField(
+        verbose_name="Species of previous cash crop yield data 4",
+        choices=CashCropChoices.choices,
+        max_length=30,
+        null=True,
+    )
+    yield_prev_crop_value_4 = models.IntegerField(
+        null=True, verbose_name="Yield value of previous cash crop yield data 4"
+    )
+    yield_prev_crop_units_4 = models.CharField(
+        null=True,
+        verbose_name="Units of yield for previous cash crop yield data 4",
+        choices=CoverCropRateUnitsChoices.choices,
     )
 
     class Meta:

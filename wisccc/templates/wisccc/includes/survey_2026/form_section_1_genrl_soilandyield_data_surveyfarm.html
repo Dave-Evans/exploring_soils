@@ -5,9 +5,69 @@
     Please provide any historical or recent yield or soil test results from *<em>any</em>*
     cover-cropped field previously sampled for WCCDN.
 </p>
-<div class="form-group col-md-8 mb-0">
-    {{ form_surveyfarm_section_1.yield_data_for_previous_crops|as_crispy_field }}
+<p>
+    If you know the yield of the cash crop following a cover crop that you previously sampled with the Wisconsin Cover
+    Crop Data Network, please tell us the year, crop, yield, and the units.
+</p>
+<div class="form-row">
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_year_1|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_species_1|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_value_1|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-2 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_units_1|as_crispy_field }}
+    </div>
 </div>
+<div class="form-row">
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_year_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_species_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_value_2|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-2 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_units_2|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_year_3|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_species_3|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_value_3|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-2 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_units_3|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_year_4|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_species_4|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-3 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_value_4|as_crispy_field }}
+    </div>
+    <div class="form-group col-md-2 mb-0">
+        {{ form_surveyfarm_section_1.yield_prev_crop_units_4|as_crispy_field }}
+    </div>
+</div>
+
+
+
 
 <div class="form-group col-md-8 mb-0">
     {{ form_surveyfarm_section_1.share_soil_test_results|as_crispy_field }}

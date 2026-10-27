@@ -23,6 +23,7 @@ from wisccc.models import (
     InterestedAgronomist,
 )
 from wisccc.models import (
+    PLANTING_YEAR_CHOICES,
     CashCropChoices,
     CoverCropChoices,
     CoverCropChoicesWMulti,
@@ -858,11 +859,87 @@ class SurveyFieldFormFull(forms.ModelForm):
 class SurveyFarmFormSection1(forms.ModelForm):
     """Added in 2026 to registration form"""
 
-    yield_data_for_previous_crops = forms.CharField(
-        label="If you know the yield of the cash crop following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
-        widget=forms.Textarea(attrs={"rows": 5}),
-        max_length=900,
-        required=True,
+    # yield_data_for_previous_crops = forms.CharField(
+    #     label="If you know the yield of the cash crop following a cover crop that you previously sampled with the Wisconsin Cover Crop Data Network, please tell us the year, crop, and yield.",
+    #     widget=forms.Textarea(attrs={"rows": 5}),
+    #     max_length=900,
+    #     required=True,
+    # )
+    yield_prev_crop_year_1 = forms.ChoiceField(
+        required=False,
+        label="Year of previous cash crop yield data 1",
+        choices=PLANTING_YEAR_CHOICES,
+    )
+    yield_prev_crop_species_1 = forms.ChoiceField(
+        label="Species of previous cash crop yield data 1",
+        choices=CashCropChoices.choices,
+        required=False,
+    )
+    yield_prev_crop_value_1 = forms.IntegerField(
+        required=False, label="Yield value of previous cash crop yield data 1"
+    )
+    yield_prev_crop_units_1 = forms.ChoiceField(
+        required=False,
+        label=mark_safe("Units for crop yield"),
+        choices=CoverCropRateUnitsChoices.choices,
+        initial=CoverCropRateUnitsChoices.choices[2],
+    )
+    yield_prev_crop_year_2 = forms.ChoiceField(
+        required=False,
+        label="Year of previous cash crop yield data 2",
+        choices=PLANTING_YEAR_CHOICES,
+    )
+    yield_prev_crop_species_2 = forms.ChoiceField(
+        label="Species of previous cash crop yield data 2",
+        choices=CashCropChoices.choices,
+        required=False,
+    )
+    yield_prev_crop_value_2 = forms.IntegerField(
+        required=False, label="Yield value of previous cash crop yield data 2"
+    )
+    yield_prev_crop_units_2 = forms.ChoiceField(
+        required=False,
+        label=mark_safe("Units for crop yield"),
+        choices=CoverCropRateUnitsChoices.choices,
+        initial=CoverCropRateUnitsChoices.choices[2],
+    )
+    yield_prev_crop_year_3 = forms.ChoiceField(
+        required=False,
+        label="Year of previous cash crop yield data 3",
+        choices=PLANTING_YEAR_CHOICES,
+    )
+    yield_prev_crop_species_3 = forms.ChoiceField(
+        label="Species of previous cash crop yield data 3",
+        choices=CashCropChoices.choices,
+        required=False,
+    )
+    yield_prev_crop_value_3 = forms.IntegerField(
+        required=False, label="Yield value of previous cash crop yield data 3"
+    )
+    yield_prev_crop_units_3 = forms.ChoiceField(
+        required=False,
+        label=mark_safe("Units for crop yield"),
+        choices=CoverCropRateUnitsChoices.choices,
+        initial=CoverCropRateUnitsChoices.choices[2],
+    )
+    yield_prev_crop_year_4 = forms.ChoiceField(
+        required=False,
+        label="Year of previous cash crop yield data 4",
+        choices=PLANTING_YEAR_CHOICES,
+    )
+    yield_prev_crop_species_4 = forms.ChoiceField(
+        label="Species of previous cash crop yield data 4",
+        choices=CashCropChoices.choices,
+        required=False,
+    )
+    yield_prev_crop_value_4 = forms.IntegerField(
+        required=False, label="Yield value of previous cash crop yield data 4"
+    )
+    yield_prev_crop_units_4 = forms.ChoiceField(
+        required=False,
+        label=mark_safe("Units for crop yield"),
+        choices=CoverCropRateUnitsChoices.choices,
+        initial=CoverCropRateUnitsChoices.choices[2],
     )
 
     share_soil_test_results = forms.ChoiceField(
@@ -881,7 +958,23 @@ class SurveyFarmFormSection1(forms.ModelForm):
     class Meta:
         model = SurveyFarm
         fields = (
-            "yield_data_for_previous_crops",
+            # "yield_data_for_previous_crops",
+            "yield_prev_crop_year_1",
+            "yield_prev_crop_species_1",
+            "yield_prev_crop_value_1",
+            "yield_prev_crop_units_1",
+            "yield_prev_crop_year_2",
+            "yield_prev_crop_species_2",
+            "yield_prev_crop_value_2",
+            "yield_prev_crop_units_2",
+            "yield_prev_crop_year_3",
+            "yield_prev_crop_species_3",
+            "yield_prev_crop_value_3",
+            "yield_prev_crop_units_3",
+            "yield_prev_crop_year_4",
+            "yield_prev_crop_species_4",
+            "yield_prev_crop_value_4",
+            "yield_prev_crop_units_4",
             "share_soil_test_results",
             "soil_test_doc",
             # "barriers_to_expansion",
