@@ -947,7 +947,7 @@ class SurveyFarmFormSection1(forms.ModelForm):
             "Please provide any historical or recent soil test results from a WCCDN sampled cover-cropped field.",
         ),
         choices=SOILTEST_CHOICES,
-        required=False,
+        required=True,
         help_text="Note we are interested in soil test results for a field you have sampled with WCCDN.",
     )
 
