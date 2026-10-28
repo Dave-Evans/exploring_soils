@@ -14,7 +14,7 @@ User._meta.get_field("email")._unique = True
 
 
 PLANTING_YEAR_CHOICES = (
-    (None, 1900),
+    (1900, ""),
     (2027, "2027"),
     (2026, "2026"),
     (2025, "2025"),
